@@ -1,10 +1,12 @@
-import TestPage from "./pages/_tests_/TestPage";
-import { Auth } from "./components/Auth";
+import { AuthUser } from "./components/firebase/AuthUser";
+import { CreateUser } from "./components/firebase/CreateUser";
 
 function App() {
 	return (
 		<>
-			<Auth />
+			<AuthUser />
+			<br />
+			<CreateUser />
 		</>
 	);
 }
