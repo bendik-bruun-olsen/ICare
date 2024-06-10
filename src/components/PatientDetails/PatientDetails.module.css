@@ -1,0 +1,32 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.patientDetailsWrapper {
+	background-color: aqua;
+}
+
+.patientInfoBlock {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* margin-top: 20px; */
+}
+
+.PatientInfo {
+	margin: 10px 20px;
+}
+
+.PatientInfo > h1 {
+	margin-bottom: 10px;
+}
+
+.signedInAs {
+	display: flex;
+	justify-content: end;
+	width: 100wv;
+	margin-right: 10px;
+	user-select: none;
+}
