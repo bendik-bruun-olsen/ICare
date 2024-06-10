@@ -1,0 +1,25 @@
+.navbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	/* min-height: 80px; */
+	height: fit-content;
+	background-color: green;
+}
+
+.logo {
+	background-color: red;
+	width: fit-content;
+	padding: 8px 10px;
+	font-size: 2rem;
+}
+
+.hamburger {
+}
+
+.test {
+	width: 50px;
+	height: 50px;
+	background-color: orange;
+}
