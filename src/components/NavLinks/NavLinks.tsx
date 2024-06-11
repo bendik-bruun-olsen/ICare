@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Icon } from "@equinor/eds-core-react";
-import { styles } from "./NavLinks.module.css";
+import styles from "./NavLinks.module.css";
 import {
 	home,
 	list,

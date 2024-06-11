@@ -1,16 +1,35 @@
 import styles from "./Navbar.module.css";
-import DesktopNav from "../DesktopNav/DesktopNav";
-import MobileNav from "../MobileNav/MobileNav";
+import NavLinks from "../NavLinks/NavLinks";
+import { Icon } from "@equinor/eds-core-react";
+import { menu, close } from "@equinor/eds-icons";
+import { useState } from "react";
+import Logo from "../Logo/Logo";
 
 export default function Navbar() {
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+
+	const handleClick = () => {
+		setIsOpen((prev: boolean) => !prev);
+	};
+	console.log("isOpen: ", isOpen);
+
 	return (
 		<>
-			<div className={styles.DesktopNav}>
-				<DesktopNav />
-			</div>
-			<div className={styles.MobileNav}>
-				<MobileNav />
-			</div>
+			<nav className={styles.navbar}>
+				<Logo />
+				<Icon
+					className={styles.hamburgerMenuIcon}
+					data={isOpen ? close : menu}
+					size={40}
+					onClick={handleClick}
+				/>
+				{isOpen && (
+					<>
+						<div className={styles.backdrop} />
+					</>
+				)}
+				<NavLinks />
+			</nav>
 		</>
 	);
 }
