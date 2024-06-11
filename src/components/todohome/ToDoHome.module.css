@@ -1,0 +1,18 @@
+.ToDoWrapper {
+	display: flex;
+	background-color: var(--blue);
+	padding: 2rem 1rem 2rem 1rem;
+	width: 11rem;
+	justify-content: center;
+	border-radius: 18px;
+	/* Temporary placement */
+	margin: 200px 200px;
+}
+
+.ToDoText {
+	margin-bottom: 0.5rem;
+}
+
+.Icon {
+	margin-left: 1rem;
+}
