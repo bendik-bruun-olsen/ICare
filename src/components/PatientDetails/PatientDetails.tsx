@@ -11,7 +11,9 @@ export default function PatientDetails() {
 						<p>Age</p>
 					</div>
 				</div>
-				<p className={styles.signedInAs}>Signed in as: First name</p>
+				<div className={styles.signedInAs}>
+					<p>Signed in as: First name</p>
+				</div>
 			</div>
 		</>
 	);
