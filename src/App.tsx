@@ -19,40 +19,40 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: "/:Login",
+    path: "/:login",
     element: <Login />,
   },
   {
-    path: "/:Logout",
+    path: "/:logout",
     element: <Logout />,
   },
 
   {
-    path: "/:Signup",
+    path: "/:signup",
     element: <Signup />,
   },
   {
-    path: "/:Todo",
+    path: "/:todo",
     element: <Todo />,
   },
   {
-    path: "/:AddTodo",
+    path: "/:addtodo",
     element: <AddTodo />,
   },
   {
-    path: "/:EditTodo",
+    path: "/:edittodo",
     element: <EditTodo />,
   },
   {
-    path: "/:Appointment",
+    path: "/:appointment",
     element: <Appointment />,
   },
   {
-    path: "/:AddAppointment",
+    path: "/:addappointment",
     element: <AddAppointment />,
   },
   {
-    path: "/:EditAppointment",
+    path: "/:editappointment",
     element: <EditAppointment />,
   },
 
