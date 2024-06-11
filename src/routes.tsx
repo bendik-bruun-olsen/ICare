@@ -17,56 +17,56 @@ import Contact from "./pages/ContactPage1";
 import NotFound from "./pages/NotFound";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/:Login",
-    element: <Login />,
-  },
-  {
-    path: "/:Logout",
-    element: <Logout />,
-  },
+	{
+		path: "/",
+		element: <Home />,
+	},
+	{
+		path: "/login",
+		element: <Login />,
+	},
+	{
+		path: "/logout",
+		element: <Logout />,
+	},
 
-  {
-    path: "/:Signup",
-    element: <Signup />,
-  },
-  {
-    path: "/:Todo",
-    element: <Todo />,
-  },
-  {
-    path: "/:AddTodo",
-    element: <AddTodo />,
-  },
-  {
-    path: "/:EditTodo",
-    element: <EditTodo />,
-  },
-  {
-    path: "/:Appointment",
-    element: <Appointment />,
-  },
-  {
-    path: "/:AddAppointment",
-    element: <AddAppointment />,
-  },
-  {
-    path: "/:EditAppointment",
-    element: <EditAppointment />,
-  },
+	{
+		path: "/signup",
+		element: <Signup />,
+	},
+	{
+		path: "/todo",
+		element: <Todo />,
+	},
+	{
+		path: "/add-todo",
+		element: <AddTodo />,
+	},
+	{
+		path: "/edit-todo",
+		element: <EditTodo />,
+	},
+	{
+		path: "/appointment",
+		element: <Appointment />,
+	},
+	{
+		path: "/add-appointment",
+		element: <AddAppointment />,
+	},
+	{
+		path: "/edit-appointment",
+		element: <EditAppointment />,
+	},
 
-  {
-    path: "/:contact",
-    element: <Contact />,
-  },
+	{
+		path: "/contact",
+		element: <Contact />,
+	},
 
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+	{
+		path: "*",
+		element: <NotFound />,
+	},
 ]);
 export default router;

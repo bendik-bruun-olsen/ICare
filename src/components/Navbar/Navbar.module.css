@@ -1,25 +1,71 @@
-.navbar {
+.DesktopNav,
+.MobileNav {
+	width: 100%;
+}
+
+@media (max-width: 768px) {
+	.DesktopNav {
+		display: none;
+	}
+	.MobileNav {
+		display: fixed;
+	}
+	nav ul {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		position: absolute;
+		top: 50px;
+		left: 50%;
+		transform: translate(-50%);
+		margin: 30px 0;
+	}
+}
+
+@media (min-width: 768px) {
+	.MobileNav {
+		display: none;
+	}
+	.DesktopNav {
+		display: inline-block;
+	}
+	nav ul {
+		display: flex;
+		flex-direction: row;
+		gap: 20px;
+		/* margin: 0 30px; */
+	}
+}
+
+nav {
+	background-color: var(--blue);
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	/* min-height: 80px; */
-	height: fit-content;
-	background-color: green;
-}
-
-.logo {
-	background-color: red;
-	width: fit-content;
-	padding: 8px 10px;
-	font-size: 2rem;
-}
-
-.hamburger {
-}
-
-.test {
-	width: 50px;
+	/* padding: 10px; */
+	user-select: none;
 	height: 50px;
-	background-color: orange;
+}
+
+/* nav ul {
+	display: flex;
+	gap: 20px;
+	margin: 0 30px;
+} */
+
+nav ul li {
+	display: flex;
+	list-style-type: none;
+	align-items: center;
+}
+
+nav ul :hover {
+	background-color: var(--black);
+	cursor: pointer;
+}
+
+nav ul li h3 {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	padding: 0 10px;
 }
