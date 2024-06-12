@@ -11,7 +11,6 @@ export default function Navbar() {
 	const handleClick = () => {
 		setIsOpen((prev: boolean) => !prev);
 	};
-	console.log("isOpen: ", isOpen);
 
 	return (
 		<>
@@ -26,9 +25,12 @@ export default function Navbar() {
 				{isOpen && (
 					<>
 						<div className={styles.backdrop} />
+						<NavLinks />
 					</>
 				)}
-				<NavLinks />
+				<div className={styles.desktopMenu}>
+					<NavLinks />
+				</div>
 			</nav>
 		</>
 	);

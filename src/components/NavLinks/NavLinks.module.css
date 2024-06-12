@@ -3,5 +3,5 @@
 }
 
 h3 {
-	color: green;
+	color: var(--white);
 }
