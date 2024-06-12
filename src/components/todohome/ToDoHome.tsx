@@ -4,10 +4,10 @@ import styles from "./ToDoHome.module.css";
 
 export default function ToDoHome() {
 	const icons = {
-		restaurant: restaurant,
-		group: group,
-		walk: walk,
-		placeholder_icon: placeholder_icon,
+		food: restaurant,
+		social: group,
+		exercise: walk,
+		medicine: placeholder_icon,
 	};
 
 	return (
@@ -17,7 +17,12 @@ export default function ToDoHome() {
 				<h1>0/5 tasks</h1>
 			</div>
 			<div className={styles.Icon}>
-				<Icon data={restaurant} size={48}></Icon>
+				<Icon
+					data={icons.food}
+					size={48}
+					color={"#F5F5F5"}
+					className={styles.IconOpacity}
+				></Icon>
 			</div>
 		</div>
 	);

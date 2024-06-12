@@ -1,7 +1,7 @@
 .ToDoWrapper {
 	display: flex;
-	background-color: var(--blue);
-	padding: 2rem 1rem 2rem 1rem;
+	background-color: #b3d0d3;
+	padding: 1rem;
 	width: 11rem;
 	justify-content: center;
 	border-radius: 18px;
@@ -15,4 +15,8 @@
 
 .Icon {
 	margin-left: 1rem;
+}
+
+.IconOpacity {
+	opacity: 0.5;
 }
