@@ -1,10 +1,14 @@
 import React from "react";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes";
-import { Paths } from "./utils/paths";
+import { StateContextProvider } from "./context/StateContext";
 
 const App: React.FC = () => {
-	return <RouterProvider router={router} />;
+	return (
+		<StateContextProvider>
+			<RouterProvider router={router} />;
+		</StateContextProvider>
+	);
 };
 
 export default App;

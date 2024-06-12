@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useState } from "react";
 import { User, StateContextType } from "../types/User";
 
 const defaultState: StateContextType = {
@@ -7,9 +7,10 @@ const defaultState: StateContextType = {
 };
 
 const StateContext = createContext<StateContextType>(defaultState);
-export const useStateContext = () => useContext(StateContext);
 
-export const StateContextProvider: React.FC = ({ children }) => {
+export const StateContextProvider: React.FC<{ children: React.ReactNode }> = ({
+	children,
+}) => {
 	const [user, setUser] = useState<User | null>(null);
 
 	return (
