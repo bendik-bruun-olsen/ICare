@@ -15,57 +15,51 @@ import AddAppointment from "./pages/AddAppointment";
 import EditAppointment from "./pages/EditAppointmentPage";
 import Contact from "./pages/ContactPage1";
 import NotFound from "./pages/NotFound";
+import { Paths } from "./utils/paths";
 
 const router = createBrowserRouter([
 	{
-		path: "/",
+		path: Paths.HOME,
 		element: <Home />,
 	},
 	{
-		path: "/login",
+		path: Paths.LOGIN,
 		element: <Login />,
 	},
 	{
-		path: "/logout",
-		element: <Logout />,
-	},
-
-	{
-		path: "/signup",
+		path: Paths.SIGNUP,
 		element: <Signup />,
 	},
 	{
-		path: "/todo",
+		path: Paths.TODO,
 		element: <Todo />,
 	},
 	{
-		path: "/add-todo",
+		path: Paths.ADD_TODO,
 		element: <AddTodo />,
 	},
 	{
-		path: "/edit-todo",
+		path: Paths.EDIT_TODO,
 		element: <EditTodo />,
 	},
 	{
-		path: "/appointment",
+		path: Paths.APPOINTMENT,
 		element: <Appointment />,
 	},
 	{
-		path: "/add-appointment",
+		path: Paths.ADD_APPOINTMENT,
 		element: <AddAppointment />,
 	},
 	{
-		path: "/edit-appointment",
+		path: Paths.EDIT_APPOINTMENT,
 		element: <EditAppointment />,
 	},
-
 	{
-		path: "/contact",
+		path: Paths.CONTACT,
 		element: <Contact />,
 	},
-
 	{
-		path: "*",
+		path: Paths.NOT_FOUND,
 		element: <NotFound />,
 	},
 ]);
