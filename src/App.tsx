@@ -1,12 +1,16 @@
 import { AuthUser } from "./components/firebase/AuthUser";
 import { CreateUser } from "./components/firebase/CreateUser";
+import TaskContainer from "./components/taskcontainer/TaskContainer";
 
+// <>
+// 	<AuthUser />
+// 	<br />
+// 	<CreateUser />
+// </>
 function App() {
 	return (
 		<>
-			<AuthUser />
-			<br />
-			<CreateUser />
+			<TaskContainer />
 		</>
 	);
 }
