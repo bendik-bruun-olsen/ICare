@@ -1,6 +1,3 @@
-// src/routes.js
-
-import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { Paths } from "./utils/paths";
 
