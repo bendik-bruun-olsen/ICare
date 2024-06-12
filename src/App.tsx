@@ -1,14 +1,15 @@
-import { AuthUser } from "./components/firebase/AuthUser";
-import { CreateUser } from "./components/firebase/CreateUser";
+import React from "react";
+import { RouterProvider } from "react-router-dom";
+import router from "./routes";
+import { CircularProgress } from "@equinor/eds-core-react";
 
-function App() {
+const App: React.FC = () => {
 	return (
-		<>
-			<AuthUser />
-			<br />
-			<CreateUser />
-		</>
+		<RouterProvider
+			router={router}
+			fallbackElement={<CircularProgress />}
+		/>
 	);
-}
+};
 
 export default App;
