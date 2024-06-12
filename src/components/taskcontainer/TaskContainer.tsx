@@ -7,7 +7,7 @@ export default function TaskContainer() {
 				<h1>08:00 - Morning Walk</h1>
 			</div>
 			<div>
-				<p className={styles.descriptionSection}>
+				<p className={styles.DescriptionSection}>
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
 					elementum tempor facilisis.
 				</p>
