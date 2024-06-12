@@ -5,10 +5,10 @@
 }
 
 .patientDetailsWrapper {
-	background-color: var(--black);
+	background-color: #b3d0d3;
 	padding-top: 1.5rem;
 	flex-wrap: wrap;
-	color: white;
+	color: black;
 }
 
 .patientInfoBlock {
