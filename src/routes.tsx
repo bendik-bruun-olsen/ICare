@@ -4,7 +4,7 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { Paths } from "./utils/paths";
 
-import Dashboard from "./components/Daskboard";
+import Dashboard from "./components/Dashboard";
 import Home from "./pages/HomePage";
 import Login from "./pages/LoginPage";
 import Signup from "./pages/SignupPage";
