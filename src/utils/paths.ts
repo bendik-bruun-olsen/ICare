@@ -10,5 +10,5 @@ export enum Paths {
 	ADD_APPOINTMENT = "/add-appointment",
 	EDIT_APPOINTMENT = "/edit-appointment",
 	CONTACT = "/contact",
-	NOT_FOUND = "*",
+	ERROR = "*",
 }
