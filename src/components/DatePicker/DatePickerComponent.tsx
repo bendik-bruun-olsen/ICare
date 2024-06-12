@@ -10,15 +10,35 @@ const DatePickerComponent = () => {
     setSelectedDate(newDate);
   };
 
+
+  const handlePrevDate=()=>{
+const prevDate=new Date(selectedDate);
+prevDate.setDate(prevDate.getDate()-1)
+setSelectedDate(prevDate)
+
+  }
+
+  const handleNextDate=()=>{
+    const nextDate=new Date(selectedDate);
+    nextDate.setDate(nextDate.getDate()+1)
+    setSelectedDate(nextDate)
+  }
+
+
   return (
     <div className={styles.datePickerContainer}>
-      <I18nProvider locale="en-GB">
+      <I18nProvider locale="nb-NO">
+
+<div className={styles.dateNavigateContainer}>
+  <button onClick={handlePrevDate}>&lt;</button>
         <DatePicker
-          label="Select Date"
+          // label="Select Date"
           value={selectedDate}
           onChange={handleDateChange}
-          formatOptions={{ day: '2-digit', month: '2-digit', year: 'numeric' }} 
+          formatOptions={{ day: '2-digit', month: 'long', year: 'numeric' }}
         />
+  <button onClick={handleNextDate}>&gt;</button>
+</div>
       </I18nProvider>
     </div>
   );
