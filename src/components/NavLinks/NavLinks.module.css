@@ -1,0 +1,7 @@
+.list {
+	z-index: 5;
+}
+
+h3 {
+	color: var(--white);
+}

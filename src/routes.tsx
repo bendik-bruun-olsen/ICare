@@ -1,7 +1,10 @@
+// src/routes.js
+
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Home from "./pages/HomePage";
 import Login from "./pages/LoginPage";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Logout from "./pages/LogoutPage";
 import Signup from "./pages/SignupPage";
 import Todo from "./pages/TodoPage";
@@ -19,45 +22,45 @@ const router = createBrowserRouter([
 		element: <Home />,
 	},
 	{
-		path: "/:login",
+		path: "/login",
 		element: <Login />,
 	},
 	{
-		path: "/:logout",
+		path: "/logout",
 		element: <Logout />,
 	},
 
 	{
-		path: "/:signup",
+		path: "/signup",
 		element: <Signup />,
 	},
 	{
-		path: "/:todo",
+		path: "/todo",
 		element: <Todo />,
 	},
 	{
-		path: "/:addtodo",
+		path: "/add-todo",
 		element: <AddTodo />,
 	},
 	{
-		path: "/:edittodo",
+		path: "/edit-todo",
 		element: <EditTodo />,
 	},
 	{
-		path: "/:appointment",
+		path: "/appointment",
 		element: <Appointment />,
 	},
 	{
-		path: "/:addappointment",
+		path: "/add-appointment",
 		element: <AddAppointment />,
 	},
 	{
-		path: "/:editappointment",
+		path: "/edit-appointment",
 		element: <EditAppointment />,
 	},
 
 	{
-		path: "/:contact",
+		path: "/contact",
 		element: <Contact />,
 	},
 
@@ -66,9 +69,4 @@ const router = createBrowserRouter([
 		element: <NotFound />,
 	},
 ]);
-
-const App: React.FC = () => {
-	return <RouterProvider router={router} />;
-};
-
-export default App;
+export default router;
