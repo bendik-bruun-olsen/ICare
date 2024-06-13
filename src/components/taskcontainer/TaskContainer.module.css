@@ -1,4 +1,51 @@
+.ToDoWrapper {
+	display: flex;
+	flex-direction: column;
+	background-color: #e9e9e9;
+	padding: 0.5rem;
+}
+
 .DescriptionSection {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 0.5rem;
+	margin-bottom: 1rem;
+	align-items: center;
+}
+
+h1,
+p {
+	cursor: pointer;
+}
+
+.DescriptionSection p {
 	width: 39ch;
-	margin-bottom: 10px;
+}
+
+.moreIcon {
+	cursor: pointer;
+	margin-right: 0.5rem;
+}
+
+.CommentWrapper {
+	display: flex;
+	justify-content: space-between;
+}
+
+.CommentSection {
+	display: flex;
+	text-align: center;
+}
+
+.CommentSection p {
+	margin-left: 0.2rem;
+	font-style: italic;
+}
+
+.iconContainer {
+	margin-top: 2px;
+}
+.badgeIcon {
+	margin: 0 0.5rem 0.5rem 0;
+	opacity: 0.3;
 }
