@@ -15,7 +15,7 @@ export default function ToDoHome() {
 			<div className={styles.flexContainer}>
 				<div>
 					<h1 className={styles.toDoText}>Category</h1>
-					<h1>0/5 tasks</h1>
+					<p>0/5 tasks</p>
 				</div>
 				<div className={styles.icon}>
 					<Icon
