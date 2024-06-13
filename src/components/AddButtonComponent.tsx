@@ -3,11 +3,11 @@ import { Button } from "@equinor/eds-core-react";
 
 interface AddButtonProps {
   label: string;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
-
-const AddButtonComponent: React.FC<AddButtonProps> = ({ label }) => {
+const AddButtonComponent: React.FC<AddButtonProps> = ({ label, onClick }) => {
   return (
-    <Button as="button" type="submit">
+    <Button as="button" type="submit" onClick={onClick}>
       {label}
     </Button>
   );

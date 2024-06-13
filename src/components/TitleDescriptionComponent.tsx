@@ -1,11 +1,11 @@
-import { Input, Label } from "@equinor/eds-core-react";
+import { Input, Label, TextField } from "@equinor/eds-core-react";
 import React, { useState } from "react";
 import styled from "styled-components";
 
 // type TitleDescriptionComponentProps = {};
 
 const StyledTitleDescription = styled.div`
-  width: 200px;
+  width: 300px;
 `;
 
 const TitleDescriptionComponent: React.FC = () => {
@@ -27,10 +27,11 @@ const TitleDescriptionComponent: React.FC = () => {
           />
         </div>
         <div>
-          <Label htmlFor="description" label="Description" />
-          <Input
-            type="text"
+          <TextField
             id="description"
+            label="Description"
+            multiline
+            rows={3}
             value={description}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setDescription(e.target.value)

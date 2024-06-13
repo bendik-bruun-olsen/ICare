@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const StyledCategory = styled.div`
-  width: 200px;
+  width: 150px;
 `;
 
 import React from "react";

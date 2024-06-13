@@ -10,27 +10,51 @@
 
 // export default AddTodo;
 
-import { Checkbox, Button } from "@equinor/eds-core-react";
+import React from "react";
+import { Checkbox, TextField } from "@equinor/eds-core-react";
 import TitleDescriptionComponent from "../components/TitleDescriptionComponent";
 import StartAndEndDate from "../components/StartAndEndDate";
-import TimePickerComponent from "../components/TimePickerComponent";
+import AddButtonComponent from "../components/AddButtonComponent";
 import CategoryComponent from "../components/CategoryComponent";
 import DaysComponent from "../components/DaysComponent";
-import AddButtonComponent from "../components/AddButtonComponenet";
+import styled from "styled-components";
 
-const AddTodo = () => {
+const StyleTimePicker = styled.div`
+  width: 200px;
+`;
+
+const FormComponent: React.FC = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const newTodo = {
+      title,
+      description,
+      startDate,
+      endDate: repeat ? endDate : null,
+      time,
+      category,
+      frequency: repeat ? frequency : [],
+      repeat,
+    };
+    console.log(newTodo);
+  };
+
   return (
-    <>
-      <TitleDescriptionComponent />
-      <Checkbox label="Repeat" />
-      <StartAndEndDate label="Start date" />
-      <TimePickerComponent />
-      <StartAndEndDate label="End date" />
-      <CategoryComponent />
-      <DaysComponent />
+    <form onSubmit={handleSubmit}>
+      <div>
+        <TitleDescriptionComponent />
+        <Checkbox label="Repeat" />
+        <StartAndEndDate label="Start date" />
+        <StyleTimePicker>
+          <TextField id="time" label="Select time" type="time" />
+        </StyleTimePicker>
+        <StartAndEndDate label="End date" />
+        <CategoryComponent />
+        <DaysComponent />
+      </div>
       <AddButtonComponent label="Add" />
-    </>
+    </form>
   );
 };
 
-export default AddTodo;
+export default FormComponent;
