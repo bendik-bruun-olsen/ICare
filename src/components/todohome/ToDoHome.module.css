@@ -1,22 +1,20 @@
-.ToDoWrapper {
+.toDoWrapper {
 	display: flex;
 	background-color: #b3d0d3;
 	padding: 1rem;
 	width: 11rem;
 	justify-content: center;
 	border-radius: 18px;
-	/* Temporary placement */
-	margin: 200px 200px;
 }
 
-.ToDoText {
+.toDoText {
 	margin-bottom: 0.5rem;
 }
 
-.Icon {
+.icon {
 	margin-left: 1rem;
 }
 
-.IconOpacity {
+.iconOpacity {
 	opacity: 0.5;
 }

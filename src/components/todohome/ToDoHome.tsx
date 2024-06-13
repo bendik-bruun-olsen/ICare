@@ -11,17 +11,17 @@ export default function ToDoHome() {
 	};
 
 	return (
-		<div className={styles.ToDoWrapper}>
+		<div className={styles.toDoWrapper}>
 			<div>
-				<h1 className={styles.ToDoText}>Category</h1>
+				<h1 className={styles.toDoText}>Category</h1>
 				<h1>0/5 tasks</h1>
 			</div>
-			<div className={styles.Icon}>
+			<div className={styles.icon}>
 				<Icon
 					data={icons.food}
 					size={48}
 					color={"#F5F5F5"}
-					className={styles.IconOpacity}
+					className={styles.iconOpacity}
 				></Icon>
 			</div>
 		</div>
