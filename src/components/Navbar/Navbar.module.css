@@ -13,6 +13,17 @@ nav ul li {
 	align-items: center;
 }
 
+nav ul li a {
+	text-decoration: none;
+	color: var(--black);
+}
+
+nav ul li {
+	display: flex;
+	gap: 5px;
+	color: var(--black);
+}
+
 nav ul :hover {
 	background-color: var(--black);
 	cursor: pointer;
@@ -20,10 +31,11 @@ nav ul :hover {
 
 .backdrop {
 	position: absolute;
-	background-color: var(--black);
+	background-color: #a5cdcf;
 	top: 50px;
 	min-width: 100%;
 	height: calc(100% - 50px);
+	z-index: 5;
 }
 
 .hamburgerMenuIcon {
@@ -43,9 +55,10 @@ nav ul :hover {
 		flex-direction: column;
 		align-items: center;
 		position: absolute;
+		margin-top: 5vh;
+		gap: 5vh;
 		top: 50px;
 		right: 0;
-		/* height: calc(100% - 50px); */
 		width: 100%;
 	}
 
