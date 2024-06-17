@@ -1,11 +1,5 @@
-.container {
-	display: flex;
-	/* padding: 5px 10px; */
-	border: 1px solid red;
-}
-
 .text {
-	color: #fff;
+	color: var(--white);
 	text-align: center;
 	font-size: 34px;
 	font-weight: 500;
