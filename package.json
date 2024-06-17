@@ -12,11 +12,8 @@
   "dependencies": {
     "@equinor/eds-core-react": "^0.39.0",
     "@equinor/eds-icons": "^0.21.0",
-<<<<<<< HEAD
     "@equinor/eds-tokens": "^0.9.2",
     "date-fns": "^3.6.0",
-=======
->>>>>>> 3efcf61652823e1728d11ba23747193b0fff46e3
     "firebase": "^10.12.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -1,11 +1,12 @@
 import { I18nProvider } from "@react-aria/i18n";
 import { useState } from "react";
 import { DatePicker } from "@equinor/eds-core-react";
-import styles from "./DatePickerComponent.module.css";
 import styled from "styled-components";
 
-const StyledDatePicker = styled(DatePicker)`
-  width: 200px;
+const DatePickerWrapper = styled.div`
+  display: flex;
+  // flex-direction: row;
+  align-items: center;
 `;
 
 const DatePickerComponent = () => {
@@ -28,16 +29,22 @@ const DatePickerComponent = () => {
   };
 
   return (
-    <div className={styles.datePickerContainer}>
+    <div>
       <I18nProvider locale="nb-NO">
-        <div className={styles.dateNavigateContainer}>
-          <button onClick={handlePrevDate}>&lt;</button>
-          <DatePicker
-            value={selectedDate}
-            onChange={handleDateChange}
-            formatOptions={{ day: "2-digit", month: "long", year: "numeric" }}
-          />
-          <button onClick={handleNextDate}>&gt;</button>
+        <div>
+          <DatePickerWrapper>
+            <button onClick={handlePrevDate}>&lt;</button>
+            <DatePicker
+              value={selectedDate}
+              onChange={handleDateChange}
+              formatOptions={{
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              }}
+            />
+            <button onClick={handleNextDate}>&gt;</button>
+          </DatePickerWrapper>
         </div>
       </I18nProvider>
     </div>
