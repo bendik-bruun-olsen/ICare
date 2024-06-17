@@ -1,8 +1,8 @@
 nav {
 	background-color: var(--blue);
 	display: flex;
-	/* justify-content: space-between; */
-	/* padding: 10px; */
+	align-items: center;
+	padding: 5px;
 	user-select: none;
 	height: 50px;
 }
@@ -33,6 +33,7 @@ nav ul :hover {
 	position: absolute;
 	background-color: #a5cdcf;
 	top: 50px;
+	left: 0;
 	min-width: 100%;
 	height: calc(100% - 50px);
 	z-index: 5;
@@ -40,8 +41,9 @@ nav ul :hover {
 
 .hamburgerMenuIcon {
 	position: absolute;
-	right: 2%;
+	right: 5px;
 	cursor: pointer;
+	border: 1px solid red;
 }
 
 .desktopMenu {
