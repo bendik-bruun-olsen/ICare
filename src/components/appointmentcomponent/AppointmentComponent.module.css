@@ -1,0 +1,10 @@
+.appointmentsWrapper {
+	display: flex;
+	justify-content: center;
+	background-color: aqua;
+}
+
+.appointmentIconWrapper {
+	display: flex;
+	flex-direction: column;
+}

@@ -2,12 +2,14 @@ import React from "react";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes";
 import { StateContextProvider } from "./context/StateContext";
+import AppointmentComponent from "./components/appointmentcomponent/AppointmentComponent";
 
 const App: React.FC = () => {
 	return (
-		<StateContextProvider>
-			<RouterProvider router={router} />;
-		</StateContextProvider>
+		// <StateContextProvider>
+		// 	<RouterProvider router={router} />;
+		// </StateContextProvider>
+		<AppointmentComponent />
 	);
 };
 
