@@ -1,12 +1,7 @@
-.container {
-	display: flex;
-	padding: 5px 10px;
-	width: fit-content;
-	background-color: #414141;
-}
-
 .text {
-	color: #fff;
+	color: var(--white);
 	text-align: center;
-	font-size: 30px;
+	font-size: 34px;
+	font-weight: 500;
+	font-family: "jsMath-cmmi10", sans-serif;
 }
