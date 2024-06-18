@@ -7,7 +7,9 @@ export default function AppointmentsQuickView() {
 		<div className={styles.appointmentsWrapper}>
 			<div>
 				<p className={styles.appointmentsText}>08:30 - Meeting with doctor</p>
-				<p>11:00 - Meeting with chiropractor</p>
+				<p className={styles.appointmentsTime}>
+					11:00 - Meeting with chiropractor
+				</p>
 			</div>
 			<div className={styles.appointmentIconWrapper}>
 				<Icon
