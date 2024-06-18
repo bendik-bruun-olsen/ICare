@@ -20,7 +20,6 @@ nav ul li a {
 }
 
 nav ul :hover {
-	background-color: var(--black);
 	cursor: pointer;
 }
 
