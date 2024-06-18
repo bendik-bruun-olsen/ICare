@@ -6,7 +6,7 @@ import React from "react";
 // import TitleDescriptionComponent from "../components/TitleDescriptionComponent";
 // import TimePickerComponent from "../components/TimePickerComponent";
 // import AddTodo from "./AddTodo";
-import FormComponent from "../components/FormComponent";
+import FormComponent from "./FormComponent";
 
 const Home = () => {
   return (
