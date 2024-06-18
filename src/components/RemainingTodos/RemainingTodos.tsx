@@ -1,0 +1,44 @@
+import { Icon } from "@equinor/eds-core-react";
+import { restaurant, group, walk, placeholder_icon } from "@equinor/eds-icons";
+import styles from "./RemainingTodos.module.css";
+
+type IconType =
+	| typeof restaurant
+	| typeof group
+	| typeof walk
+	| typeof placeholder_icon;
+
+interface PropData {
+	categoryTitle: string;
+	completedTodosCount: string;
+	allTodosCount: string;
+	icon: IconType;
+}
+
+export default function RemainingTodos({
+	categoryTitle,
+	completedTodosCount,
+	allTodosCount,
+	icon,
+}: PropData) {
+	return (
+		<div className={styles.toDoWrapper}>
+			<div className={styles.flexContainer}>
+				<div>
+					<h1 className={styles.toDoText}>{categoryTitle}</h1>
+					<p>
+						{completedTodosCount}/{allTodosCount} tasks
+					</p>
+				</div>
+				<div className={styles.icon}>
+					<Icon
+						data={icon}
+						size={48}
+						color={"#F5F5F5"}
+						className={styles.iconOpacity}
+					></Icon>
+				</div>
+			</div>
+		</div>
+	);
+}
