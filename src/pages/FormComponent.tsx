@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Checkbox, TextField, Button } from "@equinor/eds-core-react";
 import StartAndEndDate from "../components/StartAndEndDate";
-import CategoryComponent from "../components/CategoryComponent";
+// import CategoryComponent from "../components/CategoryComponent";
 import DaysComponent from "../components/DaysComponent";
 import styled from "styled-components";
 import { db } from "../config/firebase";
 import { collection, addDoc } from "firebase/firestore";
+import CategoryComponent from "../components/CategoryComponent";
+// import { connectAuthEmulator } from "firebase/auth";
 
 const StyleTimePicker = styled.div`
   width: 200px;
@@ -15,11 +17,15 @@ const FormComponent: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [repeat, setRepeat] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().substring(0, 10)
+  ); // Today's date
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().substring(0, 10)
+  ); // Today's date
   const [time, setTime] = useState("");
-  const [category, setCategory] = useState("_");
-  const [frequency, setFrequency] = useState<string[]>([]);
+  const [selectCategory, setSelectCategory] = useState<string | null>(null); //check this
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
   const handleCheckboxChange = () => {
     setRepeat((prev) => !prev);
@@ -27,6 +33,7 @@ const FormComponent: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Selected option:", selectCategory);
 
     const newTodo = {
       title: title,
@@ -35,8 +42,8 @@ const FormComponent: React.FC = () => {
       startDate: startDate,
       endDate: repeat ? endDate : null,
       time: time,
-      category: category,
-      frequency: repeat ? frequency : [],
+      category: selectCategory,
+      selectedDays: repeat ? selectedDays : [],
     };
 
     try {
@@ -45,6 +52,17 @@ const FormComponent: React.FC = () => {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
+  };
+  const handleSelectionChange = (value: string | null) => {
+    setSelectCategory(value);
+  };
+
+  const handleDayToggle = (day: string) => {
+    setSelectedDays((prevSelectedDays) =>
+      prevSelectedDays.includes(day)
+        ? prevSelectedDays.filter((d) => d !== day)
+        : [...prevSelectedDays, day]
+    );
   };
 
   return (
@@ -100,15 +118,16 @@ const FormComponent: React.FC = () => {
               value={endDate}
               onChange={(date: string) => setEndDate(date)}
             />
+
             <DaysComponent
-              selectedDays={frequency}
-              onChange={(days: string[]) => setFrequency(days)}
+              selectedDays={selectedDays}
+              onDayToggle={handleDayToggle}
             />
           </>
         )}
         <CategoryComponent
-          value={category}
-          onChange={(newCategory: string) => setCategory(newCategory)}
+          selectedOption={selectCategory}
+          onSelectionChange={handleSelectionChange}
         />
         <Button type="submit">Add</Button>
       </form>
@@ -117,13 +136,3 @@ const FormComponent: React.FC = () => {
 };
 
 export default FormComponent;
-
-// const FormComponent: React.FC = () => {
-//   return (
-//     <div>
-//       <h1>FormComponent</h1>
-//     </div>
-//   );
-// };
-
-// export default FormComponent;

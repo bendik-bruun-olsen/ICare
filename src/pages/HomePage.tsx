@@ -7,6 +7,7 @@ import React from "react";
 // import TimePickerComponent from "../components/TimePickerComponent";
 // import AddTodo from "./AddTodo";
 import FormComponent from "./FormComponent";
+// import ParentForm from "./HandleSubmit";
 
 const Home = () => {
   return (
@@ -20,6 +21,7 @@ const Home = () => {
       <TimePickerComponent /> */}
       {/* <AddTodo /> */}
       <FormComponent />
+      {/* <ParentForm /> */}
     </div>
   );
 };

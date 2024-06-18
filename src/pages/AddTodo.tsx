@@ -1,14 +1,14 @@
-// import React from "react";
+import React from "react";
 
-// const AddTodo = () => {
-//   return (
-//     <div>
-//       <h1>AddTodo</h1>
-//     </div>
-//   );
-// };
+const AddTodo = () => {
+  return (
+    <div>
+      <h1>AddTodo</h1>
+    </div>
+  );
+};
 
-// export default AddTodo;
+export default AddTodo;
 
 // import React from "react";
 // import { Checkbox, TextField } from "@equinor/eds-core-react";

@@ -1,18 +1,32 @@
 import styled from "styled-components";
+import React from "react";
+import { Autocomplete } from "@equinor/eds-core-react";
 
 const StyledCategory = styled.div`
   width: 150px;
 `;
 
-import React from "react";
-import { Autocomplete } from "@equinor/eds-core-react";
-
 const options: string[] = ["Food", "Medicine", "Social", "Exercise", "Others"];
 
-const CategoryComponent: React.FC = () => {
+interface CategoryComponentProps {
+  selectedOption: string | null;
+  onSelectionChange: (value: string | null) => void;
+}
+
+const CategoryComponent: React.FC<CategoryComponentProps> = ({
+  selectedOption,
+  onSelectionChange,
+}) => {
   return (
     <StyledCategory>
-      <Autocomplete<string> label="Category" options={options} />
+      <Autocomplete<string>
+        label="Category"
+        options={options}
+        selectedItems={selectedOption ? [selectedOption] : []}
+        onOptionsChange={({ selectedItems }) =>
+          onSelectionChange(selectedItems[0] ?? null)
+        }
+      />
     </StyledCategory>
   );
 };
