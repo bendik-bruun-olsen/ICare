@@ -10,28 +10,38 @@ import {
 } from "@equinor/eds-icons";
 import { Paths } from "../../utils/paths";
 
-export default function NavLinks() {
+export default function NavLinks({ onNavClick }: { onNavClick?: () => void }) {
 	return (
 		<ul className={styles.list}>
 			<li>
-				<Icon data={home} size={32} />
-				<NavLink to={Paths.HOME}>Home</NavLink>
+				<NavLink to={Paths.HOME} onClick={onNavClick}>
+					<Icon data={home} size={32} />
+					<p>Home</p>
+				</NavLink>
 			</li>
 			<li>
-				<Icon data={list} size={32} />
-				<NavLink to={Paths.TODO}>To Do</NavLink>
+				<NavLink to={Paths.TODO} onClick={onNavClick}>
+					<Icon data={list} size={32} />
+					<p>To Do</p>
+				</NavLink>
 			</li>
 			<li>
-				<Icon data={calendar_today} size={32} />
-				<NavLink to={Paths.APPOINTMENT}>Appointments</NavLink>
+				<NavLink to={Paths.APPOINTMENT} onClick={onNavClick}>
+					<Icon data={calendar_today} size={32} />
+					<p>Appointments</p>
+				</NavLink>
 			</li>
 			<li>
-				<Icon data={contacts} size={32} />
-				<NavLink to={Paths.CONTACT}>Contact</NavLink>
+				<NavLink to={Paths.CONTACT} onClick={onNavClick}>
+					<Icon data={contacts} size={32} />
+					<p>Contact</p>
+				</NavLink>
 			</li>
 			<li>
-				<Icon data={log_out} size={32} />
-				<NavLink to={Paths.LOGIN}>Logout</NavLink>
+				<NavLink to={Paths.LOGIN} onClick={onNavClick}>
+					<Icon data={log_out} size={32} />
+					<p>Logout</p>
+				</NavLink>
 			</li>
 		</ul>
 	);

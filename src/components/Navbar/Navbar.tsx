@@ -12,6 +12,10 @@ export default function Navbar() {
 		setIsOpen((prev: boolean) => !prev);
 	};
 
+	const closeMenu = () => {
+		setIsOpen(false);
+	};
+
 	return (
 		<>
 			<nav className={styles.navbar}>
@@ -25,7 +29,7 @@ export default function Navbar() {
 				{isOpen && (
 					<>
 						<div className={styles.backdrop} />
-						<NavLinks />
+						<NavLinks onNavClick={closeMenu} />
 					</>
 				)}
 				<div className={styles.desktopMenu}>
