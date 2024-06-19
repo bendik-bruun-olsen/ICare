@@ -33,8 +33,8 @@ export default function RemainingTodos({
 				<div className={styles.icon}>
 					<Icon
 						data={icon}
-						size={48}
-						color={"#F5F5F5"}
+						size={24}
+						color={"#2c8891"}
 						className={styles.iconOpacity}
 					></Icon>
 				</div>
