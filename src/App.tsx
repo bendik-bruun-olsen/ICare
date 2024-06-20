@@ -1,6 +1,6 @@
 import { AuthUser } from "./components/firebase/AuthUser";
 import { CreateUser } from "./components/firebase/CreateUser";
-import TaskContainer from "./components/taskcontainer/TaskContainer";
+import TaskContainer from "./components/TaskContainer/TaskContainer";
 
 // <>
 // 	<AuthUser />
@@ -10,7 +10,11 @@ import TaskContainer from "./components/taskcontainer/TaskContainer";
 function App() {
 	return (
 		<>
-			<TaskContainer />
+			<TaskContainer
+				toDoTitle="09:10 - Daily Walk"
+				toDoDescription="Went around mosvannet"
+				toDoComment="He had to use the inhaler, pollen is high today"
+			/>
 		</>
 	);
 }
