@@ -1,4 +1,4 @@
-import {
+import React, {
 	useContext,
 	useState,
 	useEffect,
@@ -15,6 +15,10 @@ interface AuthContextType {
 	error: Error | null;
 }
 
+interface Props {
+	children?: ReactNode;
+}
+
 const AuthContext = createContext<AuthContextType>({
 	currentUser: null,
 	isUserLoggedIn: false,
@@ -22,40 +26,26 @@ const AuthContext = createContext<AuthContextType>({
 	error: null,
 });
 
-interface Props {
-	children?: ReactNode;
-}
-
 export const useAuth = (): AuthContextType => useContext(AuthContext);
 
-export const AuthProvider = ({ children }: Props) => {
+export const AuthProvider: React.FC<Props> = ({ children }) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<Error | null>(null);
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, initializeUser);
-		return unsubscribe;
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			if (user) {
+				setCurrentUser(user);
+				setIsUserLoggedIn(true);
+			} else {
+				setCurrentUser(null);
+				setIsUserLoggedIn(false);
+			}
+		});
+		return () => unsubscribe();
 	}, []);
-
-	async function initializeUser(user: User | null) {
-		if (user) {
-			setCurrentUser({ ...user });
-			setIsUserLoggedIn(true);
-		} else {
-			setCurrentUser(null);
-			setIsUserLoggedIn(false);
-		}
-		setLoading(false);
-	}
-
-	// const value = {
-	//     currentUser,
-	//     isUserLoggedIn,
-	//     loading,
-	//     error,
-	// }
 
 	return (
 		<AuthContext.Provider
