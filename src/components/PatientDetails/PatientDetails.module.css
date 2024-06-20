@@ -1,5 +1,5 @@
 .patientDetailsWrapper {
-	background-color: #b3d0d3;
+	background-color: #ebf8f9;
 	padding-top: 1.5rem;
 	flex-wrap: wrap;
 	color: black;
@@ -20,15 +20,19 @@
 	margin-bottom: 0.5rem;
 }
 
-.signedInAs {
+.morePatientDetails {
 	display: flex;
 	justify-content: end;
-	min-width: 100vw;
+	align-items: center;
+	width: 100%;
 	padding-right: 0.5rem;
 	padding-bottom: 0.3rem;
 	user-select: none;
+	cursor: pointer;
+	color: var(--blue);
 }
 
-.signedInAs > p {
-	font-size: 0.6rem;
+.morePatientDetails > p {
+	font-size: 0.8rem;
+	margin: 0 0 2px 0;
 }

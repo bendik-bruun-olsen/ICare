@@ -1,27 +1,31 @@
+import { Icon } from "@equinor/eds-core-react";
+import { arrow_forward } from "@equinor/eds-icons";
 import styles from "./PatientDetails.module.css";
 interface PatientDetailsProps {
 	patientName: string;
 	age: string;
-	signedInAs: string;
 }
 
 export default function PatientDetails({
 	patientName,
 	age,
-	signedInAs,
 }: PatientDetailsProps) {
 	return (
 		<>
 			<div className={styles.patientDetailsWrapper}>
 				<div className={styles.patientInfoBlock}>
-					<img src="https://placehold.co/85x85" alt="Profile picture" />
+					<img
+						src="https://placehold.co/85x85/gray/white"
+						alt="Profile picture"
+					/>
 					<div className={styles.PatientInfo}>
-						<h1>{patientName}</h1>
+						<h2>{patientName}</h2>
 						<p>{age}</p>
 					</div>
 				</div>
-				<div className={styles.signedInAs}>
-					<p>Signed in as: {signedInAs}</p>
+				<div className={styles.morePatientDetails}>
+					<p>Patient details </p>
+					<Icon data={arrow_forward} size={18}></Icon>
 				</div>
 			</div>
 		</>

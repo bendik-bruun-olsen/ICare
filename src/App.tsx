@@ -1,16 +1,14 @@
-// import { AuthUser } from "./components/firebase/AuthUser";
-// import { CreateUser } from "./components/firebase/CreateUser";
-import PatientDetails from "./components/PatientDetails/PatientDetails";
-/* <AuthUser />
-<br />
-<CreateUser />   */
+import { AuthUser } from "./components/firebase/AuthUser";
+import { CreateUser } from "./components/firebase/CreateUser";
 
 function App() {
-  return (
-    <>
-      <PatientDetails/>
-    </>
-  )
+	return (
+		<>
+			<AuthUser />
+			<br />
+			<CreateUser />
+		</>
+	);
 }
 
 export default App;
