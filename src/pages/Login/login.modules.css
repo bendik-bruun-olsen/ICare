@@ -1,0 +1,31 @@
+body {
+  background-color: #2c8891;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10rem;
+}
+
+.Inputfield {
+  color: var(--black);
+  /* background-color: var(--white); */
+  margin-bottom: 5rem;
+  display: block;
+  justify-content: center;
+  align-items: center;
+  max-width: 70%;
+}
+
+.image {
+  width: 90%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#SignInButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(128, 205, 209);
+}
