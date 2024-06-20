@@ -6,7 +6,7 @@ import { Styled } from "styled-components";
 import { StateContext } from "../../context/StateContext";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
-import { Paths } from "../../utils/paths";
+import { Paths } from "../../paths";
 import "./login.modules.css";
 
 export default function LoginPage() {
