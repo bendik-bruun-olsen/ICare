@@ -1,7 +1,7 @@
 import styles from "./PatientDetails.module.css";
 interface PatientDetailsProps {
 	patientName: string;
-	age: number;
+	age: string;
 	signedInAs: string;
 }
 
