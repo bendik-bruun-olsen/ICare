@@ -27,7 +27,6 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
   const handleDateChange = (newDate: Date) => {
     setSelectedDate(newDate);
     onChange(newDate.toISOString().substring(0, 10));
-    // Ensure date is formatted correctly
   };
 
   return (

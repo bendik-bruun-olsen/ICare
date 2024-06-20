@@ -5,7 +5,7 @@ import Login from "./pages/LoginPage";
 import Logout from "./pages/LogoutPage";
 import Signup from "./pages/SignupPage";
 import Todo from "./pages/TodoPage";
-import AddTodo from "./pages/AddTodo";
+import AddTodo from "./pages/AddTodo/AddTodo";
 import EditTodo from "./pages/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
 import AddAppointment from "./pages/AddAppointment";

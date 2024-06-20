@@ -13,7 +13,7 @@ interface CategoryComponentProps {
   onSelectionChange: (value: string | null) => void;
 }
 
-const CategoryComponent: React.FC<CategoryComponentProps> = ({
+const SelectCategory: React.FC<CategoryComponentProps> = ({
   selectedOption,
   onSelectionChange,
 }) => {
@@ -22,7 +22,7 @@ const CategoryComponent: React.FC<CategoryComponentProps> = ({
       <Autocomplete<string>
         label="Category"
         options={options}
-        selectedItems={selectedOption ? [selectedOption] : []}
+        initialSelectedOptions={selectedOption ? [selectedOption] : []}
         onOptionsChange={({ selectedItems }) =>
           onSelectionChange(selectedItems[0] ?? null)
         }
@@ -31,4 +31,4 @@ const CategoryComponent: React.FC<CategoryComponentProps> = ({
   );
 };
 
-export default CategoryComponent;
+export default SelectCategory;

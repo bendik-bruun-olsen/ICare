@@ -25,18 +25,21 @@ const DaysComponent: React.FC<DaysComponentProps> = ({
   };
 
   return (
-    <Button.Toggle multiple aria-label="days selection">
-      {buttons.map((button, index) => (
-        <Button
-          key={index}
-          aria-label={button.label}
-          onClick={() => handleButtonClick(button.label)}
-          selected={selectedDays.includes(button.label)}
-        >
-          {button.text}
-        </Button>
-      ))}
-    </Button.Toggle>
+    <div>
+      <h2 style={{ color: "#6F6F6F", fontWeight: 500 }}>Frequency</h2>
+      <Button.Toggle multiple aria-label="days selection">
+        {buttons.map((button, index) => (
+          <Button
+            key={index}
+            aria-label={button.label}
+            onClick={() => handleButtonClick(button.label)}
+            selected={selectedDays.includes(button.label)}
+          >
+            {button.text}
+          </Button>
+        ))}
+      </Button.Toggle>
+    </div>
   );
 };
 

@@ -5,7 +5,7 @@ interface AddButtonProps {
   label: string;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
-const AddButtonComponent: React.FC<AddButtonProps> = ({ label, onClick }) => {
+const AddButton: React.FC<AddButtonProps> = ({ label, onClick }) => {
   return (
     <Button as="button" type="submit" onClick={onClick}>
       {label}
@@ -13,4 +13,4 @@ const AddButtonComponent: React.FC<AddButtonProps> = ({ label, onClick }) => {
   );
 };
 
-export default AddButtonComponent;
+export default AddButton;
