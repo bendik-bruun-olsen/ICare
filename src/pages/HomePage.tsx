@@ -1,15 +1,11 @@
-
-import DatePickerComponent from "../components/DatePicker/DatePickerComponent";
-
+import React from "react";
 
 const Home = () => {
-  return (
-    <div>
-      <h1>Homepage</h1>
-      <DatePickerComponent />
-     
-    </div>
-  );
+	return (
+		<div>
+			<h1>Homepage</h1>
+		</div>
+	);
 };
 
 export default Home;
