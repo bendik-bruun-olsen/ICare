@@ -2,6 +2,7 @@ nav {
 	background-color: var(--blue);
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	padding: 5px;
 	user-select: none;
 	height: 50px;
@@ -14,9 +15,17 @@ nav ul li {
 	gap: 5px;
 }
 
-.hamburgerMenuIcon {
+.userIcon {
 	/* position: absolute;
 	right: 5px; */
+	display: flex;
+	justify-content: flex-end;
 	cursor: pointer;
 	color: var(--black);
+}
+
+.pageTitleContainer {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
 }
