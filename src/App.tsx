@@ -3,13 +3,17 @@ import { RouterProvider } from "react-router-dom";
 import router from "./routes";
 import { StateContextProvider } from "./context/StateContext";
 import TaskContainer from "./components/TaskContainer/TaskContainer";
+import AppointmentsQuickView from "./components/AppointmentsQuickView/AppointmentsQuickView";
 
 const App: React.FC = () => {
 	return (
 		// <StateContextProvider>
 		// 	<RouterProvider router={router} />;
 		// </StateContextProvider>
-		<TaskContainer />
+		<AppointmentsQuickView
+			firstAppointment="08:30 - Meeting with doctor"
+			secondAppointment="11:00 - Meeting with chiropractor"
+		/>
 	);
 };
 
