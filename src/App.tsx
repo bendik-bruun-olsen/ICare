@@ -6,7 +6,7 @@ import { StateContextProvider } from "./context/StateContext";
 const App: React.FC = () => {
 	return (
 		<StateContextProvider>
-			<RouterProvider router={router} />
+			<RouterProvider router={router} />;
 		</StateContextProvider>
 	);
 };

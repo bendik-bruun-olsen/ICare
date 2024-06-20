@@ -1,23 +1,24 @@
 import { createContext, useState } from "react";
-import { User, StateContextType } from "../types/User";
+import { StateContextType } from "../types/User";
+import { User } from "./types";
 
 const defaultState: StateContextType = {
-	user: undefined,
-	setUser: () => {},
+  user: undefined,
+  setUser: () => {},
 };
 
-const StateContext = createContext<StateContextType>(defaultState);
+export const StateContext = createContext<StateContextType>(defaultState);
 
 export const StateContextProvider: React.FC<{ children: React.ReactNode }> = ({
-	children,
+  children,
 }) => {
-	const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-	return (
-		<StateContext.Provider value={{ user, setUser }}>
-			{children}
-		</StateContext.Provider>
-	);
+  return (
+    <StateContext.Provider value={{ user, setUser }}>
+      {children}
+    </StateContext.Provider>
+  );
 };
 
 // How to use:
