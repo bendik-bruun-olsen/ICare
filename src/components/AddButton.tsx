@@ -1,5 +1,10 @@
 import React from "react";
 import { Button } from "@equinor/eds-core-react";
+import styled from "styled-components";
+
+const StyledButton = styled.div`
+  width: 150px;
+`;
 
 interface AddButtonProps {
   label: string;
@@ -7,9 +12,11 @@ interface AddButtonProps {
 }
 const AddButton: React.FC<AddButtonProps> = ({ label, onClick }) => {
   return (
-    <Button as="button" type="submit" onClick={onClick}>
-      {label}
-    </Button>
+    <StyledButton>
+      <Button as="button" type="submit" onClick={onClick}>
+        {label}
+      </Button>
+    </StyledButton>
   );
 };
 

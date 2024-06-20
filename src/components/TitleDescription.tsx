@@ -3,7 +3,7 @@ import { Input, Label, TextField } from "@equinor/eds-core-react";
 import styled from "styled-components";
 
 const StyledTitleDescription = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 `;
 
 type TitleDescriptionProps = {

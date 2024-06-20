@@ -4,7 +4,7 @@ import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
 import DaysComponent from "../../components/DaysComponent";
 import { db } from "../../config/firebase";
-import { collection, addDoc, doc } from "firebase/firestore";
+import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodo.module.css";
@@ -29,18 +29,18 @@ const AddToDo: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    // push data into firebase
     const newTodo = {
       title,
       description,
       repeat,
-      startDate: formatDate(startDate),
-      endDate: repeat ? formatDate(endDate) : null,
+      startDate: Timestamp.fromDate(new Date(startDate)),
+      endDate: repeat ? Timestamp.fromDate(new Date(endDate)) : null,
       time,
       category: selectCategory,
       selectedDays: repeat ? selectedDays : [],
     };
-
+    //
     try {
       const patientRef = doc(db, "patientdetails", "patient@patient.com");
       const todoRef = collection(patientRef, "todos");
@@ -52,16 +52,11 @@ const AddToDo: React.FC = () => {
     }
   };
 
-  const handleSelectionChange = (value: string | null) => {
+  const handleCategorySelectionChange = (value: string | null) => {
     setSelectCategory(value);
   };
 
-  const formatDate = (date: string) => {
-    const [year, month, day] = date.split("-");
-    return `${day}.${month}.${year}`;
-  };
-
-  const Onclick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onclickAddButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
     await handleSubmit(e);
     setTitle("");
     setDescription("");
@@ -141,14 +136,13 @@ const AddToDo: React.FC = () => {
           <div className={styles.fieldContainer}>
             <SelectCategory
               selectedOption={selectCategory}
-              onSelectionChange={handleSelectionChange}
+              onSelectionChange={handleCategorySelectionChange}
             />
           </div>
-          <AddButton label="Add" onClick={Onclick} />
+          <AddButton label="Add" onClick={onclickAddButton} />
         </div>
       </form>
     </div>
   );
 };
-
 export default AddToDo;
