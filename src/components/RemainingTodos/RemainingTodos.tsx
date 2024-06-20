@@ -25,7 +25,7 @@ export default function RemainingTodos({
 		<div className={styles.toDoWrapper}>
 			<div className={styles.flexContainer}>
 				<div>
-					<h1 className={styles.toDoText}>{categoryTitle}</h1>
+					<h2 className={styles.toDoText}>{categoryTitle}</h2>
 					<p>
 						{completedTodosCount}/{allTodosCount} tasks
 					</p>
