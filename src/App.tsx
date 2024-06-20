@@ -1,14 +1,14 @@
-import { AuthUser } from "./components/firebase/AuthUser";
-import { CreateUser } from "./components/firebase/CreateUser";
+import React from "react";
+import { RouterProvider } from "react-router-dom";
+import router from "./routes";
+import { StateContextProvider } from "./context/StateContext";
 
-function App() {
+const App: React.FC = () => {
 	return (
-		<>
-			<AuthUser />
-			<br />
-			<CreateUser />
-		</>
+		<StateContextProvider>
+			<RouterProvider router={router} />
+		</StateContextProvider>
 	);
-}
+};
 
 export default App;
