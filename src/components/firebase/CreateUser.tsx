@@ -13,6 +13,8 @@ export const CreateUser = () => {
       try {
         await createUserWithEmailAndPassword(auth, email, password);
         console.log("User signed up successfully!");
+
+        //Insert into users collection with email as document ID
       } catch (err) {
         console.error("Error signing up: ", err);
         console.log("Error code: ", err.code);

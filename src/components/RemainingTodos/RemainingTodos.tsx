@@ -1,29 +1,44 @@
 import { Icon } from "@equinor/eds-core-react";
 import { restaurant, group, walk, placeholder_icon } from "@equinor/eds-icons";
-import styles from "./ToDoHome.module.css";
+import styles from "./RemainingTodos.module.css";
 
-export default function ToDoHome() {
-  const icons = {
-    food: restaurant,
-    social: group,
-    exercise: walk,
-    medicine: placeholder_icon,
-  };
+type IconType =
+	| typeof restaurant
+	| typeof group
+	| typeof walk
+	| typeof placeholder_icon;
 
-  return (
-    <div className={styles.toDoWrapper}>
-      <div>
-        <h1 className={styles.toDoText}>Category</h1>
-        <h1>0/5 tasks</h1>
-      </div>
-      <div className={styles.icon}>
-        <Icon
-          data={icons.food}
-          size={48}
-          color={"#F5F5F5"}
-          className={styles.iconOpacity}
-        ></Icon>
-      </div>
-    </div>
-  );
+interface PropData {
+	categoryTitle: string;
+	completedTodosCount: string;
+	allTodosCount: string;
+	icon: IconType;
+}
+
+export default function RemainingTodos({
+	categoryTitle,
+	completedTodosCount,
+	allTodosCount,
+	icon,
+}: PropData) {
+	return (
+		<div className={styles.toDoWrapper}>
+			<div className={styles.flexContainer}>
+				<div>
+					<h2 className={styles.toDoText}>{categoryTitle}</h2>
+					<p>
+						{completedTodosCount}/{allTodosCount} tasks
+					</p>
+				</div>
+				<div className={styles.icon}>
+					<Icon
+						data={icon}
+						size={24}
+						color={"#2c8891"}
+						className={styles.iconOpacity}
+					></Icon>
+				</div>
+			</div>
+		</div>
+	);
 }
