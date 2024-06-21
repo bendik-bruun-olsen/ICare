@@ -8,7 +8,7 @@ import Todo from "./pages/TodoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
 import EditTodo from "./pages/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
-import AddAppointment from "./pages/AddAppointment";
+import AddAppointment from "./pages/AddAppointment/AddAppointment";
 import EditAppointment from "./pages/EditAppointmentPage";
 import Contact from "./pages/ContactPage1";
 import NotFound from "./pages/NotFound";
