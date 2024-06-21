@@ -12,9 +12,8 @@ export const AuthUser = () => {
     try {
       console.log("test");
 
-      const user = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       console.log("User signed in successfully!");
-      console.log("user: ", user.tostring());
     } catch (err) {
       console.error("Error logging in: ", err);
     }

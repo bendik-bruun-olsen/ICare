@@ -4,10 +4,11 @@ import { useState, useContext, useEffect } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import { Styled } from "styled-components";
 import { StateContext } from "../../context/StateContext";
-import Logo from "../assets/images/Logo.png";
+import Logo from "../../assets/images/Logo.png";
+import headline from "../../assets/images/headline.png";
 import { useNavigate } from "react-router-dom";
 import { Paths } from "../../utils/paths";
-import "./login.modules.css";
+import "./LoginPage.modules.css";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -48,42 +49,52 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="Image">
-        <img src={Logo} className="App-logo" alt="logo" />
-      </div>
-      <div className="Inputfield">
-        <div>
-          <Label htmlFor="textfield-normal" label="Username" />
-          <Input
-            id="textfield-normal"
-            placeholder="e-mail ID"
-            autoComplete="off"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <Label htmlFor="textfield-password" label="Password" />
-          <Input
-            type="password"
-            placeholder="Password"
-            id="textfield-password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
+      <div className="LoginPageElements">
+        <div className="heading">
+          <img src={headline} className="App-headline" alt="logo" />
         </div>
 
+        <div className="Image">
+          <img src={Logo} className="App-logo" alt="logo image" />
+        </div>
+        <form className="InputContainer" onSubmit={signIn}>
+          <div className="input">
+            <Label htmlFor="textfield-normal" label="Username" />
+            <Input
+              id="textfield-normal"
+              placeholder="E-mail ID"
+              autoComplete="off"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="input">
+            <Label htmlFor="textfield-password" label="Password" />
+            <Input
+              type="password"
+              placeholder="Password"
+              id="textfield-password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </form>
         {/* <input
-				placeholder="Enter your Email ID"
-				onChange={(e) => setEmail(e.target.value)}
-			/>
-			<input
-				placeholder="Password"
-				type="password"
-				onChange={(e) => setPassword(e.target.value)}
-			/> */}
-        <Button id="SignInButton" onClick={signIn}>
+        placeholder="Enter your Email ID"
+        onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+        placeholder="Password"
+        type="password"
+        onChange={(e) => setPassword(e.target.value)}
+        /> */}
+        <Button fullwidth id="SignInButton" type="submit">
           Sign In
         </Button>
         {/* <Button onClick={logout}>Logout</Button> */}
+        <div>
+          <a href={Paths.SIGNUP}>Sign Up</a>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href={Paths.RECOVER_PASSWORD}>Forgot Password?</a>
+        </div>
       </div>
     </>
   );
