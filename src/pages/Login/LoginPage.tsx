@@ -3,7 +3,6 @@ import { signOut, signInWithEmailAndPassword } from "firebase/auth";
 import { useState, useContext, useEffect } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import { Styled } from "styled-components";
-import { StateContext } from "../../context/StateContext";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Paths } from "../../paths";

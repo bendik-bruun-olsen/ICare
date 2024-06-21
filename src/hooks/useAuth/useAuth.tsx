@@ -36,6 +36,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			console.log("test");
+
 			if (user) {
 				setCurrentUser(user);
 				setIsUserLoggedIn(true);
@@ -51,7 +53,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 		<AuthContext.Provider
 			value={{ currentUser, isUserLoggedIn, loading, error }}
 		>
-			{!loading && children}
+			{children}
 		</AuthContext.Provider>
 	);
 };

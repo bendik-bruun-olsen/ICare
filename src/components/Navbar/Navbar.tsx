@@ -3,15 +3,13 @@ import { Icon } from "@equinor/eds-core-react";
 import { account_circle } from "@equinor/eds-icons";
 import Logo from "../Logo/Logo";
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import { pageTitleFormatter } from "../../utils/pageTitleFormatter";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 
 export default function Navbar() {
 	const location = useLocation();
 
-	useEffect(() => {
-		console.log("pathname: ", pageTitleFormatter(location.pathname));
-	}, [location]);
+	const { currentUser } = useAuth();
 
 	return (
 		<nav className={styles.navbar}>
@@ -26,6 +24,8 @@ export default function Navbar() {
 					size={40}
 					// onClick={}
 				/>
+				{/* Split is temporary, until name can be fetched from the database */}
+				<p>{currentUser?.email?.split("@")[0]}</p>
 			</div>
 		</nav>
 	);
