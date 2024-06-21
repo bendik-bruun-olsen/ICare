@@ -1,15 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Paths } from "./utils/paths";
-
 import Dashboard from "./components/Dashboard";
-import Home from "./pages/HomePage";
 import Login from "./pages/Login/LoginPage";
+import Home from "./pages/HomePage/HomePage";
 import Signup from "./pages/SignupPage";
 import Todo from "./pages/TodoPage";
-import AddTodo from "./pages/AddTodo";
+import AddTodo from "./pages/AddTodo/AddTodo";
 import EditTodo from "./pages/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
-import AddAppointment from "./pages/AddAppointment";
+import AddAppointment from "./pages/AddAppointment/AddAppointment";
 import EditAppointment from "./pages/EditAppointmentPage";
 import Contact from "./pages/ContactPage1";
 import ErrorPage from "./pages/ErrorPage";
