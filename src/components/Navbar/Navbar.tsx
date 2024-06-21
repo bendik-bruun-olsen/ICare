@@ -21,7 +21,7 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 				<Icon
 					className={styles.userIcon}
 					data={account_circle}
-					size={40}
+					size={32}
 					onClick={doSignOut}
 				/>
 				<p>{currentUser?.email?.split("@")[0]}</p>
