@@ -3,42 +3,37 @@
   flex-direction: column;
   justify-content: auto;
   padding: 20px;
-  margin-top: 20px;
+  height: 100vh;
   background-color: #a5cdcf;
 }
 
 @media (max-width: 480px) {
   .mainContainer {
     padding: 10px;
-    margin-top: 10px;
   }
 }
 
 @media (min-width: 481px) {
   .mainContainer {
     padding: 15px;
-    margin-top: 15px;
   }
 }
 
 @media (min-width: 769px) {
   .mainContainer {
     padding: 20px;
-    margin-top: 20px;
   }
 }
 
 @media (min-width: 1025px) {
   .mainContainer {
     padding: 25px;
-    margin-top: 25px;
   }
 }
 
 @media (min-width: 1201px) {
   .mainContainer {
     padding: 30px;
-    margin-top: 30px;
   }
 }
 
