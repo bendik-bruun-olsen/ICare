@@ -2,22 +2,17 @@ import styles from "./Navbar.module.css";
 import { Icon } from "@equinor/eds-core-react";
 import { account_circle } from "@equinor/eds-icons";
 import Logo from "../Logo/Logo";
-import { useLocation } from "react-router-dom";
-import { formatPageTitle } from "../../utils/pageTitleFormatter";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { doSignOut } from "../../firebase/auth";
 
-export default function Navbar() {
-	const location = useLocation();
+export default function Navbar({ pageTitle }: { pageTitle: string }) {
 	const { currentUser } = useAuth();
-
-	if (!currentUser) return "please log in";
 
 	return (
 		<nav className={styles.navbar}>
 			<Logo />
 			<div className={styles.pageTitleContainer}>
-				<h1>{formatPageTitle(location.pathname)}</h1>
+				<h1>{pageTitle ? pageTitle : "Missing title"}</h1>
 			</div>
 			<div className={styles.userContainer}>
 				<Icon

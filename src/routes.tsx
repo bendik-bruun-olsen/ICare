@@ -17,55 +17,48 @@ import ErrorPage from "./pages/ErrorPage";
 const router = createBrowserRouter([
 	{
 		path: Paths.HOME,
-		element: <Dashboard />,
-		errorElement: <ErrorPage />,
-		children: [
-			{
-				path: Paths.HOME,
-				element: <Home />,
-				index: true,
-			},
-			{
-				path: Paths.LOGIN,
-				element: <Login />,
-			},
-			{
-				path: Paths.SIGNUP,
-				element: <Signup />,
-			},
-			{
-				path: Paths.TODO,
-				element: <Todo />,
-			},
-			{
-				path: Paths.ADD_TODO,
-				element: <AddTodo />,
-			},
-			{
-				path: Paths.EDIT_TODO,
-				element: <EditTodo />,
-			},
-			{
-				path: Paths.APPOINTMENT,
-				element: <Appointment />,
-			},
-			{
-				path: Paths.ADD_APPOINTMENT,
-				element: <AddAppointment />,
-			},
-			{
-				path: Paths.EDIT_APPOINTMENT,
-				element: <EditAppointment />,
-			},
-			{
-				path: Paths.CONTACT,
-				element: <Contact />,
-			},
-			{
-				path: Paths.ERROR,
-				element: <ErrorPage />,
-			},
-		],
+		element: <Home />,
+		index: true,
+	},
+	{
+		path: Paths.LOGIN,
+		element: <Login />,
+	},
+	{
+		path: Paths.SIGNUP,
+		element: <Signup />,
+	},
+	{
+		path: Paths.TODO,
+		element: <Todo />,
+	},
+	{
+		path: Paths.ADD_TODO,
+		element: <AddTodo />,
+	},
+	{
+		path: Paths.EDIT_TODO,
+		element: <EditTodo />,
+	},
+	{
+		path: Paths.APPOINTMENT,
+		element: <Appointment />,
+	},
+	{
+		path: Paths.ADD_APPOINTMENT,
+		element: <AddAppointment />,
+	},
+	{
+		path: Paths.EDIT_APPOINTMENT,
+		element: <EditAppointment />,
+	},
+	{
+		path: Paths.CONTACT,
+		element: <Contact />,
+	},
+	{
+		path: Paths.ERROR,
+		element: <ErrorPage />,
 	},
 ]);
 export default router;
