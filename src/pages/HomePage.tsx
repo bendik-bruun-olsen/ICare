@@ -5,8 +5,7 @@ import AddAppointment from "./AddAppointment/AddAppointment";
 const Home = () => {
   return (
     <div>
-      <AddTodo />
-      <AddAppointment />
+      <h1>Homepage</h1>
     </div>
   );
 };
