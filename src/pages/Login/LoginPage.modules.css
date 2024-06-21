@@ -7,10 +7,9 @@ body {
   justify-content: center;
   align-items: center;
   margin: 10px;
-  color: var(black);
+  color: black;
 }
 .InputContainer {
-  /* margin-bottom: 40%; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -22,8 +21,8 @@ input {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid var(--black);
-  width: 200rem;
-  color: var(black);
+  width: 20rem;
+  color: black;
 }
 .Image {
   width: 400px;
