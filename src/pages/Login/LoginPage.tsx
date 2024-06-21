@@ -1,18 +1,16 @@
-import { auth } from "../../config/firebase";
+import { auth } from "../../firebase/firebase";
 import { signOut, signInWithEmailAndPassword } from "firebase/auth";
 import { useState, useContext, useEffect } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import { Styled } from "styled-components";
-import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Paths } from "../../paths";
 import "./login.modules.css";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const context = useContext(StateContext);
-	const { user, setUser } = context;
 	const navigate = useNavigate();
 
 	const signIn = async () => {
@@ -24,19 +22,9 @@ export default function LoginPage() {
 				email,
 				password
 			);
-			// console.log("user: ", JSON.stringify(user));
-
-			//   return redirect(Paths.HOME);
-			// }
-			console.log(userdata);
-
-			setUser(userdata);
 			navigate(Paths.HOME);
-			console.log("User signed in successfully!");
-			console.log("user: ", user);
 		} catch (err) {
-			console.error("Error logging in: ", err);
-			console.log("Error code: ", err.code);
+			console.error(err);
 		}
 	};
 
@@ -52,7 +40,7 @@ export default function LoginPage() {
 	return (
 		<>
 			<div className="Image">
-				<img src={Logo} className="App-logo" alt="logo" />
+				{/* <img src={logo} className="App-logo" alt="logo" /> */}
 			</div>
 			<div className="Inputfield">
 				<div>

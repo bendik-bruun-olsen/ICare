@@ -5,7 +5,7 @@ import React, {
 	createContext,
 	ReactNode,
 } from "react";
-import { auth } from "../../config/firebase";
+import { auth } from "../../firebase/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 
 interface AuthContextType {
@@ -45,6 +45,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 				setCurrentUser(null);
 				setIsUserLoggedIn(false);
 			}
+			setLoading(false);
 		});
 		return () => unsubscribe();
 	}, []);
@@ -53,7 +54,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 		<AuthContext.Provider
 			value={{ currentUser, isUserLoggedIn, loading, error }}
 		>
-			{children}
+			{!loading && children}
 		</AuthContext.Provider>
 	);
 };
