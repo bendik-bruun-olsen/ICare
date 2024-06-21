@@ -16,15 +16,13 @@ nav ul li {
 }
 
 .userIcon {
-	/* position: absolute;
-	right: 5px; */
 	display: flex;
 	justify-content: flex-end;
 	cursor: pointer;
 	color: var(--black);
 }
 
-.pageTitleContainer {
+.centerContent {
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
