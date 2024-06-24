@@ -1,6 +1,6 @@
 import { auth } from "../../config/firebase";
-import { signOut, signInWithEmailAndPassword } from "firebase/auth";
-import { useState, useContext, useEffect } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState, useContext } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import { Styled } from "styled-components";
 import { StateContext } from "../../context/StateContext";
@@ -22,10 +22,7 @@ export default function LoginPage() {
       console.log("test");
 
       const userdata = await signInWithEmailAndPassword(auth, email, password);
-      // console.log("user: ", JSON.stringify(user));
 
-      //   return redirect(Paths.HOME);
-      // }
       console.log(userdata);
 
       setUser(userdata);
@@ -37,15 +34,6 @@ export default function LoginPage() {
       console.log("Error code: ", err.code);
     }
   };
-
-  // const logout = async () => {
-  //   try {
-  //     await signOut(auth);
-  //     console.log("User logged out successfully!");
-  //   } catch (err) {
-  //     console.error("Error logging out: ", err);
-  //   }
-  // };
 
   return (
     <>
@@ -62,7 +50,7 @@ export default function LoginPage() {
             <Label htmlFor="textfield-normal" label="Username" />
             <Input
               id="textfield-normal"
-              placeholder="E-mail ID"
+              placeholder="E-mail"
               autoComplete="off"
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -77,19 +65,10 @@ export default function LoginPage() {
             />
           </div>
         </form>
-        {/* <input
-        placeholder="Enter your Email ID"
-        onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-        placeholder="Password"
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-        /> */}
+
         <Button fullwidth id="SignInButton" type="submit">
           Sign In
         </Button>
-        {/* <Button onClick={logout}>Logout</Button> */}
         <div>
           <a href={Paths.SIGNUP}>Sign Up</a>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
