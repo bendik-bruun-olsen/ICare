@@ -14,16 +14,30 @@ import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import React from "react";
+import { Navigate } from "react-router-dom";
 
-const HomeOrLogin: React.FC = () => {
+// const HomeOrLogin: React.FC = () => {
+// 	const { isUserLoggedIn } = useAuth();
+// 	return isUserLoggedIn ? <HomePage /> : <Login />;
+// };
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 	const { isUserLoggedIn } = useAuth();
-	return isUserLoggedIn ? <HomePage /> : <Login />;
+	return isUserLoggedIn ? (
+		<>{children}</>
+	) : (
+		<Navigate to={Paths.LOGIN} replace />
+	);
 };
 
 const router = createBrowserRouter([
 	{
 		path: Paths.HOME,
-		element: <HomeOrLogin />,
+		element: (
+			<ProtectedRoute>
+				<HomePage />
+			</ProtectedRoute>
+		),
 	},
 	{
 		path: Paths.LOGIN,
@@ -47,7 +61,11 @@ const router = createBrowserRouter([
 	},
 	{
 		path: Paths.APPOINTMENT,
-		element: <Appointment />,
+		element: (
+			<ProtectedRoute>
+				<Appointment />
+			</ProtectedRoute>
+		),
 	},
 	{
 		path: Paths.ADD_APPOINTMENT,
