@@ -20,43 +20,31 @@ body {
   --coral: #f5774d;
   --white: #e9e9e9;
   --grey: #d7d7d7;
+  --lightblue: #aacccf;
 }
-/* Container class */
+
 .container {
   margin-left: 16px;
   margin-right: 16px;
   margin-top: 16px;
   margin-bottom: 16px;
-  /* Alternatively, you can use margin: 16px; to apply the same margin to all sides */
 }
 
-/* Element class */
 .element {
-  margin: 8px 0; /* vertical margin: 8px */
+  margin: 8px 0;
   padding: 12px;
-  /* Other styling properties */
 }
 
-/* Button class */
 .button {
-  margin: 10px 0; /* vertical margin: 10px */
-  padding: 12px 24px; /* vertical padding: 12px, horizontal padding: 24px */
-  /* Other styling properties */
+  margin: 10px 0;
+  padding: 12px 24px;
 }
 
-/* Text class */
 .text {
-  margin: 8px 0; /* vertical margin: 8px */
-  /* Other styling properties */
+  margin: 8px 0;
 }
 
-/* Input class */
 .input {
-  margin: 12px 0; /* vertical margin: 12px */
+  margin: 12px 0;
   padding: 10px;
-  /* Other styling properties */
-}
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
 }

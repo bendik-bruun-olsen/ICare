@@ -1,12 +1,14 @@
-import { auth } from "../../firebase/firebase";
-import { signOut, signInWithEmailAndPassword } from "firebase/auth";
-import { useState, useContext, useEffect } from "react";
+import { auth } from "../../config/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState, useContext } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import { Styled } from "styled-components";
+import { StateContext } from "../../context/StateContext";
+import Logo from "../../assets/images/Logo.png";
+import headline from "../../assets/images/headline.png";
 import { useNavigate } from "react-router-dom";
-import { Paths } from "../../paths";
-import "./login.modules.css";
-import { useAuth } from "../../hooks/useAuth/useAuth";
+import { Paths } from "../../utils/paths";
+import "./LoginPage.modules.css";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
@@ -15,66 +17,58 @@ export default function LoginPage() {
 
 	const signIn = async () => {
 		try {
-			console.log("test");
-
 			const userdata = await signInWithEmailAndPassword(
 				auth,
 				email,
 				password
 			);
+
+			setUser(userdata);
 			navigate(Paths.HOME);
 		} catch (err) {
-			console.error(err);
+			console.error("Error logging in: ", err);
 		}
 	};
 
-	// const logout = async () => {
-	//   try {
-	//     await signOut(auth);
-	//     console.log("User logged out successfully!");
-	//   } catch (err) {
-	//     console.error("Error logging out: ", err);
-	//   }
-	// };
-
 	return (
 		<>
-			<div className="Image">
-				{/* <img src={logo} className="App-logo" alt="logo" /> */}
-			</div>
-			<div className="Inputfield">
-				<div>
-					<Label htmlFor="textfield-normal" label="Username" />
-					<Input
-						id="textfield-normal"
-						placeholder="e-mail ID"
-						autoComplete="off"
-						onChange={(e) => setEmail(e.target.value)}
-					/>
-				</div>
-				<div>
-					<Label htmlFor="textfield-password" label="Password" />
-					<Input
-						type="password"
-						placeholder="Password"
-						id="textfield-password"
-						onChange={(e) => setPassword(e.target.value)}
-					/>
+			<div className="LoginPageElements">
+				<div className="heading">
+					<img src={headline} className="App-headline" alt="logo" />
 				</div>
 
-				{/* <input
-				placeholder="Enter your Email ID"
-				onChange={(e) => setEmail(e.target.value)}
-			/>
-			<input
-				placeholder="Password"
-				type="password"
-				onChange={(e) => setPassword(e.target.value)}
-			/> */}
-				<Button id="SignInButton" onClick={signIn}>
+				<div className="Image">
+					<img src={Logo} className="App-logo" alt="logo image" />
+				</div>
+				<form className="InputContainer" onSubmit={signIn}>
+					<div className="input">
+						<Label htmlFor="textfield-normal" label="Username" />
+						<Input
+							id="textfield-normal"
+							placeholder="E-mail"
+							autoComplete="off"
+							onChange={(e) => setEmail(e.target.value)}
+						/>
+					</div>
+					<div className="input">
+						<Label htmlFor="textfield-password" label="Password" />
+						<Input
+							type="password"
+							placeholder="Password"
+							id="textfield-password"
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+					</div>
+				</form>
+
+				<Button fullwidth id="SignInButton" type="submit">
 					Sign In
 				</Button>
-				{/* <Button onClick={logout}>Logout</Button> */}
+				<div>
+					<a href={Paths.SIGNUP}>Sign Up</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href={Paths.RECOVER_PASSWORD}>Forgot Password?</a>
+				</div>
 			</div>
 		</>
 	);
