@@ -13,6 +13,7 @@ import AddAppointment from "./pages/AddAppointment";
 import EditAppointment from "./pages/EditAppointmentPage";
 import Contact from "./pages/ContactPage1";
 import ErrorPage from "./pages/ErrorPage";
+import AboutUsPage from "./pages/AboutUsPage";
 
 const router = createBrowserRouter([
 	{
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
 	{
 		path: Paths.CONTACT,
 		element: <Contact />,
+	},
+	{
+		path: Paths.ABOUT,
+		element: <AboutUsPage />,
 	},
 	{
 		path: Paths.ERROR,
