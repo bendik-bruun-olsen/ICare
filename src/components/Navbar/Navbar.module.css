@@ -9,30 +9,36 @@ nav {
 	height: 50px;
 }
 
-nav ul li {
-	display: flex;
-	list-style-type: none;
-	align-items: center;
-	gap: 5px;
-}
-
 .userIcon {
 	display: flex;
 	justify-content: flex-end;
 	cursor: pointer;
-	color: var(--black);
+	color: inherit;
 }
 
 .centerContent {
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
+	color: white;
+}
+
+.centerContent h1 {
+	font-size: 22px;
+	color: inherit;
+	font-weight: 500;
 }
 
 .rightContent {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	cursor: pointer;
+	color: white;
+}
+
+.rightContent p {
+	font-weight: 400;
 }
 
 .modalOverlay {
@@ -48,23 +54,36 @@ nav ul li {
 	position: absolute;
 	background-color: var(--white);
 	padding: 10px 10px;
-	width: 100px;
+	border-radius: 5px;
+	min-width: 100px;
 	top: 50px;
 	right: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
+	list-style: none;
 }
 
 .modalItem {
 	color: var(--black);
 	text-decoration: none;
 	cursor: pointer;
+	display: flex;
 }
 
 .modalItem a {
 	color: inherit;
 	text-decoration: inherit;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.signOutContainer {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 5px;
 }
 
 .modalItem button {
