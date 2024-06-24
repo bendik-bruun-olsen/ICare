@@ -1,9 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Paths } from "./utils/paths";
-
 import Dashboard from "./components/Dashboard";
+import Login from "./pages/Login/LoginPage";
 import Home from "./pages/HomePage/HomePage";
-import Login from "./pages/LoginPage";
 import Signup from "./pages/SignupPage";
 import Todo from "./pages/TodoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
