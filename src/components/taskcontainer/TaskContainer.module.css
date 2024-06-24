@@ -10,7 +10,7 @@
 }
 
 .checkBox {
-	clip-path: circle(40% at 50% 50%);
+	/* clip-path: circle(40% at 50% 50%); */
 }
 
 .toDoWrapper {
@@ -28,6 +28,7 @@
 	justify-content: space-between;
 	margin-bottom: 0.5rem;
 	align-items: center;
+	overflow: hidden;
 }
 
 .titleText h1,
@@ -38,6 +39,7 @@
 
 .descriptionSection p {
 	width: 39ch;
+	font-size: 0.9rem;
 }
 
 .moreIcon {
@@ -68,9 +70,21 @@
 	opacity: 0.3;
 }
 
-@media (max-width: 354px) {
+@media (max-width: 320px) {
 	.commentSection p {
 		font-size: 0.8rem;
+	}
+	.descriptionSection p {
+		font-size: 0.8rem;
+	}
+}
+
+@media (max-width: 375px) {
+	.commentSection p {
+		font-size: 0.8rem;
+	}
+	.descriptionSection p {
+		font-size: 0.6rem;
 	}
 }
 

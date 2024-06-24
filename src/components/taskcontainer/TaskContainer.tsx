@@ -7,7 +7,7 @@ interface TaskContainerProps {
 	toDoDescription: string;
 	toDoComment: string;
 	taskStatus: "complete" | "incomplete" | "default";
-	checked: boolean;
+	time: string;
 }
 
 export default function TaskContainer({
@@ -15,18 +15,20 @@ export default function TaskContainer({
 	toDoDescription,
 	toDoComment,
 	taskStatus,
-	checked,
+	time,
 }: TaskContainerProps) {
 	const statusClass = styles[`${taskStatus}Background`];
 
 	return (
 		<div className={styles.fullWrapper}>
 			<div className={styles.checkBoxWrapper}>
-				<Checkbox checked={checked} className={styles.checkBox} />
+				<Checkbox className={styles.checkBox} />
 			</div>
 			<div className={`${styles.toDoWrapper} ${statusClass}`}>
 				<div className={styles.titleText}>
-					<h1>{toDoTitle}</h1>
+					<h1>
+						{time} - {toDoTitle}
+					</h1>
 				</div>
 				<div className={styles.descriptionSection}>
 					<p>{toDoDescription}</p>
