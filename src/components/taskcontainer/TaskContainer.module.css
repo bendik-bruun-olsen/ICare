@@ -1,3 +1,18 @@
+.fullWrapper {
+	display: flex;
+	align-items: start;
+}
+
+.checkBoxWrapper {
+	display: flex;
+	height: 40px;
+	width: 40px;
+}
+
+.checkBox {
+	clip-path: circle(40% at 50% 50%);
+}
+
 .toDoWrapper {
 	display: flex;
 	flex-direction: column;
