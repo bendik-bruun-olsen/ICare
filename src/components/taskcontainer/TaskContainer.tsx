@@ -18,16 +18,16 @@ export default function TaskContainer({
 	const statusClass = styles[`${taskStatus}Background`];
 
 	return (
-		<div className={`${styles.ToDoWrapper} ${statusClass}`}>
-			<div>
+		<div className={`${styles.toDoWrapper} ${statusClass}`}>
+			<div className={styles.titleText}>
 				<h1>{toDoTitle}</h1>
 			</div>
-			<div className={styles.DescriptionSection}>
+			<div className={styles.descriptionSection}>
 				<p>{toDoDescription}</p>
 				<Icon data={more_horizontal} size={40} className={styles.moreIcon} />
 			</div>
-			<div className={styles.CommentWrapper}>
-				<div className={styles.CommentSection}>
+			<div className={styles.commentWrapper}>
+				<div className={styles.commentSection}>
 					<div className={styles.iconContainer}>
 						<Icon data={comment} size={16} />
 					</div>
