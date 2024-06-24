@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Paths } from "./paths";
+import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/SignupPage";
@@ -12,12 +13,17 @@ import EditAppointment from "./pages/EditAppointmentPage";
 import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
+import React from "react";
+
+const HomeOrLogin: React.FC = () => {
+	const { isUserLoggedIn } = useAuth();
+	return isUserLoggedIn ? <HomePage /> : <Login />;
+};
 
 const router = createBrowserRouter([
 	{
 		path: Paths.HOME,
-		element: <HomePage />,
-		index: true,
+		element: <HomeOrLogin />,
 	},
 	{
 		path: Paths.LOGIN,
