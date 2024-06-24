@@ -19,19 +19,12 @@ export default function LoginPage() {
 
   const signIn = async () => {
     try {
-      console.log("test");
-
       const userdata = await signInWithEmailAndPassword(auth, email, password);
-
-      console.log(userdata);
 
       setUser(userdata);
       navigate(Paths.HOME);
-      console.log("User signed in successfully!");
-      console.log("user: ", user);
     } catch (err) {
       console.error("Error logging in: ", err);
-      console.log("Error code: ", err.code);
     }
   };
 
