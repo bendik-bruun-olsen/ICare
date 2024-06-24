@@ -3,6 +3,9 @@
 	flex-direction: column;
 	background-color: #e9e9e9;
 	padding: 0.5rem;
+	max-width: 80%;
+	justify-content: center;
+	border-radius: 3px;
 }
 
 .DescriptionSection {
@@ -47,4 +50,22 @@ p {
 .badgeIcon {
 	margin: 0 0.5rem 0.5rem 0;
 	opacity: 0.3;
+}
+
+@media (max-width: 354px) {
+	.CommentSection p {
+		font-size: 0.8rem;
+	}
+}
+
+.incompleteBackground {
+	background-color: #eea88e;
+}
+
+.completeBackground {
+	background-color: #9db3b6;
+}
+
+.defaultBackground {
+	background-color: #e6e6e6;
 }

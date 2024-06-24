@@ -6,15 +6,19 @@ interface TaskContainerProps {
 	toDoTitle: string;
 	toDoDescription: string;
 	toDoComment: string;
+	taskStatus: "complete" | "incomplete" | "default";
 }
 
 export default function TaskContainer({
 	toDoTitle,
 	toDoDescription,
 	toDoComment,
+	taskStatus,
 }: TaskContainerProps) {
+	const statusClass = styles[`${taskStatus}Background`];
+
 	return (
-		<div className={styles.ToDoWrapper}>
+		<div className={`${styles.ToDoWrapper} ${statusClass}`}>
 			<div>
 				<h1>{toDoTitle}</h1>
 			</div>
