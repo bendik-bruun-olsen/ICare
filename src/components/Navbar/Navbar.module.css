@@ -1,0 +1,22 @@
+nav {
+	background-color: var(--blue);
+	display: flex;
+	align-items: center;
+	padding: 5px;
+	user-select: none;
+	height: 50px;
+}
+
+nav ul li {
+	display: flex;
+	list-style-type: none;
+	align-items: center;
+	gap: 5px;
+}
+
+.hamburgerMenuIcon {
+	/* position: absolute;
+	right: 5px; */
+	cursor: pointer;
+	color: var(--black);
+}

@@ -1,0 +1,30 @@
+body {
+	background-color: #aacccf;
+}
+
+.toDoWrapper {
+	display: flex;
+	background-color: #d7d7d7;
+	padding: 1rem;
+	max-width: 150px;
+	justify-content: center;
+	border-radius: 8px;
+}
+
+.flexContainer {
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.toDoText {
+	margin-bottom: 0.5rem;
+}
+
+.icon {
+	margin-left: 1rem;
+}
+
+.iconOpacity {
+	opacity: 0.5;
+}
