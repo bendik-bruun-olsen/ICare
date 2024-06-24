@@ -3,7 +3,7 @@ import RemainingTodos from "../../components/RemainingTodos/RemainingTodos";
 import styles from "./HomePage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 
-const Home = () => {
+const HomePage = () => {
 	return (
 		<>
 			<Navbar leftContent={<h2>LogoTest</h2>} centerContent="Home" />
@@ -37,4 +37,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default HomePage;

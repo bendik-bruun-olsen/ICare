@@ -1,13 +1,12 @@
-import { auth } from "../../config/firebase";
+import { auth } from "../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import { Styled } from "styled-components";
-import { StateContext } from "../../context/StateContext";
 import Logo from "../../assets/images/Logo.png";
 import headline from "../../assets/images/headline.png";
 import { useNavigate } from "react-router-dom";
-import { Paths } from "../../utils/paths";
+import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
 
 export default function LoginPage() {
@@ -17,13 +16,7 @@ export default function LoginPage() {
 
 	const signIn = async () => {
 		try {
-			const userdata = await signInWithEmailAndPassword(
-				auth,
-				email,
-				password
-			);
-
-			setUser(userdata);
+			await signInWithEmailAndPassword(auth, email, password);
 			navigate(Paths.HOME);
 		} catch (err) {
 			console.error("Error logging in: ", err);
@@ -61,7 +54,7 @@ export default function LoginPage() {
 					</div>
 				</form>
 
-				<Button fullwidth id="SignInButton" type="submit">
+				<Button id="SignInButton" type="submit" onClick={signIn}>
 					Sign In
 				</Button>
 				<div>
