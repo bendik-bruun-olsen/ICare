@@ -1,7 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Paths } from "./paths";
-
-import Dashboard from "./components/Dashboard";
 import Home from "./pages/HomePage";
 import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/SignupPage";
@@ -11,7 +9,7 @@ import EditTodo from "./pages/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
 import AddAppointment from "./pages/AddAppointment";
 import EditAppointment from "./pages/EditAppointmentPage";
-import Contact from "./pages/ContactPage1";
+import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 
@@ -55,7 +53,7 @@ const router = createBrowserRouter([
 	},
 	{
 		path: Paths.CONTACT,
-		element: <Contact />,
+		element: <ContactDetailsPage />,
 	},
 	{
 		path: Paths.ABOUT,

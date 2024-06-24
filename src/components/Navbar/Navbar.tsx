@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./Navbar.module.css";
 import { Icon } from "@equinor/eds-core-react";
-import { person, contacts, log_out } from "@equinor/eds-icons";
+import { person, contacts, contact_email, log_out } from "@equinor/eds-icons";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -53,6 +53,12 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 						className={styles.modalList}
 						onClick={(e) => e.stopPropagation()}
 					>
+						<li className={styles.modalItem}>
+							<NavLink to={Paths.CONTACT}>
+								<Icon data={contact_email} size={24} />
+								<p>Contact Details</p>
+							</NavLink>
+						</li>
 						<li className={styles.modalItem}>
 							<NavLink to={Paths.ABOUT}>
 								<Icon data={contacts} size={24} />
