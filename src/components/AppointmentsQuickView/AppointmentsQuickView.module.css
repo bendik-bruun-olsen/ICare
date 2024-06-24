@@ -1,15 +1,25 @@
+.fullWrapper {
+	display: flex;
+	flex-direction: column;
+}
+
 .appointmentsWrapper {
 	display: flex;
-	justify-content: center;
 	background-color: #e9e9e9;
 	max-width: 19rem;
-	height: 7rem;
+	height: 6rem;
 	align-items: center;
 	border-radius: 10px;
 	cursor: pointer;
 }
 
-.textMargin p {
+.textWrapper {
+	display: flex;
+	justify-content: start;
+	flex-direction: column;
+}
+
+.textWrapper p {
 	margin-left: 10px;
 	font-size: 0.9rem;
 }
@@ -27,6 +37,18 @@
 
 .calendarIcon {
 	margin-bottom: 1rem;
+}
+
+.arrowIconWrapper {
+	padding-right: 25px;
+	text-align: center;
+	cursor: pointer;
+	/* justify-content: end; */
+	/* flex-direction: column; */
+}
+
+.arrowIconWrapper p {
+	color: var(--blue);
 }
 
 @media (max-width: 330px) {
