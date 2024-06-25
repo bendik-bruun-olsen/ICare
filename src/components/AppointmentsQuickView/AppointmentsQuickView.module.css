@@ -1,6 +1,8 @@
 .fullWrapper {
 	display: flex;
 	flex-direction: column;
+	/* margin: 200px; */
+	position: relative;
 }
 
 .appointmentsWrapper {
@@ -40,9 +42,13 @@
 }
 
 .arrowIconWrapper {
-	padding-right: 25px;
+	display: flex;
 	text-align: center;
 	cursor: pointer;
+	position: absolute;
+	bottom: -30%;
+	left: 16%;
+	user-select: none;
 }
 
 .arrowIconWrapper p {
