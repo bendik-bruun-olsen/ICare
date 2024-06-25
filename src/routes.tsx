@@ -3,7 +3,7 @@ import { Paths } from "./utils/paths";
 import Dashboard from "./components/Dashboard";
 import Login from "./pages/Login/LoginPage";
 import Home from "./pages/HomePage/HomePage";
-import Signup from "./pages/SignupPage";
+import Signup from "./pages/Signup/SignupPage";
 import Todo from "./pages/TodoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
 import EditTodo from "./pages/EditTodoPage";

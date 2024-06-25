@@ -1,8 +1,8 @@
 import { auth } from "../../config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState, useContext } from "react";
-import { Input, Label, Button } from "@equinor/eds-core-react";
-import { Styled } from "styled-components";
+import { Input, Button } from "@equinor/eds-core-react";
+
 import { StateContext } from "../../context/StateContext";
 import Logo from "../../assets/images/Logo.png";
 import headline from "../../assets/images/headline.png";
@@ -40,7 +40,6 @@ export default function LoginPage() {
         </div>
         <form className="InputContainer" onSubmit={signIn}>
           <div className="input">
-            <Label htmlFor="textfield-normal" label="Username" />
             <Input
               id="textfield-normal"
               placeholder="E-mail"
@@ -49,7 +48,6 @@ export default function LoginPage() {
             />
           </div>
           <div className="input">
-            <Label htmlFor="textfield-password" label="Password" />
             <Input
               type="password"
               placeholder="Password"
@@ -57,11 +55,11 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          <Button id="SignInButton" type="submit">
+            Sign In
+          </Button>
         </form>
 
-        <Button fullwidth id="SignInButton" type="submit">
-          Sign In
-        </Button>
         <div>
           <a href={Paths.SIGNUP}>Sign Up</a>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
