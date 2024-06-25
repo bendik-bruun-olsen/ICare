@@ -70,7 +70,6 @@ export default function TaskContainer({
 						</>
 					)}
 				</div>
-
 				<div className={styles.commentWrapper}>
 					<div className={styles.commentSection}>
 						<div className={styles.iconContainer}>
