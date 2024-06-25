@@ -5,9 +5,9 @@ import { Input, Label, Button } from "@equinor/eds-core-react";
 import { Styled } from "styled-components";
 import Logo from "../../assets/images/Logo.png";
 import headline from "../../assets/images/headline.png";
-import { useNavigate } from "react-router-dom";
 import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");

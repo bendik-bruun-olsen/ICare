@@ -16,7 +16,6 @@ interface NavbarProps {
 export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 	const { currentUser } = useAuth();
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const navigate = useNavigate();
 
 	const toggleModalVisibility = () => {
 		setIsModalOpen((prev) => !prev);
@@ -25,7 +24,6 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 	const handleSignOut = async () => {
 		try {
 			await auth.signOut();
-			navigate(Paths.LOGIN);
 		} catch (e) {
 			console.error(e);
 		}
