@@ -43,13 +43,8 @@
 	padding-right: 25px;
 	text-align: center;
 	cursor: pointer;
-	/* justify-content: end; */
-	/* flex-direction: column; */
 }
 
 .arrowIconWrapper p {
 	color: var(--blue);
-}
-
-@media (max-width: 330px) {
 }
