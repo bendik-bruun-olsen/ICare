@@ -11,7 +11,7 @@ import Appointment from "./pages/AppointmentPage";
 import AddAppointment from "./pages/AddAppointment/AddAppointment";
 import EditAppointment from "./pages/EditAppointmentPage";
 import ContactDetailsPage from "./pages/ContactDetailsPage";
-import ErrorPage from "./pages/ErrorPage";
+import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import { Navigate } from "react-router-dom";
 

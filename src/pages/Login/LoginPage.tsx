@@ -12,21 +12,32 @@ export default function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<Error | null>(null);
+	const [notificationMessage, setNotificationMessage] = useState<
+		string | undefined
+	>("");
 	const navigate = useNavigate();
 
 	const signIn = async () => {
+		setError(null);
+		setNotificationMessage("");
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
 			navigate(Paths.HOME);
 		} catch (err) {
-			if (err instanceof Error) {
-				console.error("Error logging in: ", err);
+			if (
+				err.message.includes("auth/invalid-email") ||
+				err.message.includes("auth/invalid-credential")
+			) {
+				setNotificationMessage(
+					"Invalid login credentials. Please try again."
+				);
+			} else {
 				setError(err);
 			}
 		}
 	};
 
-	if (error) return <Navigate to={Paths.ERROR} state={error} />;
+	if (error) return <Navigate to={Paths.ERROR} state={{ error }} />;
 
 	return (
 		<>
@@ -38,6 +49,9 @@ export default function LoginPage() {
 				<div className="Image">
 					<img src={Logo} className="App-logo" alt="logo image" />
 				</div>
+				{notificationMessage && (
+					<div className="notification">{notificationMessage}</div>
+				)}
 				<form className="InputContainer" onSubmit={signIn}>
 					<div className="input">
 						<Label htmlFor="textfield-normal" label="Username" />

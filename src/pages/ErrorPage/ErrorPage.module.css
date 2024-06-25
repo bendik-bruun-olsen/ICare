@@ -1,0 +1,21 @@
+.wrapper {
+	padding: 20px;
+}
+
+.title {
+	color: var(--white);
+	font-size: 2rem;
+}
+
+.subtitle {
+	color: var(--white);
+}
+
+.buttonContainer {
+	display: flex;
+	justify-content: center;
+}
+
+#returnButton {
+	background-color: var(--lightblue);
+}
