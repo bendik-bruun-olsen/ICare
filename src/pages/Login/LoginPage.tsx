@@ -2,16 +2,16 @@ import { auth } from "../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
-import { Styled } from "styled-components";
 import Logo from "../../assets/images/Logo.png";
 import headline from "../../assets/images/headline.png";
 import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState<Error | null>(null);
 	const navigate = useNavigate();
 
 	const signIn = async () => {
@@ -19,9 +19,14 @@ export default function LoginPage() {
 			await signInWithEmailAndPassword(auth, email, password);
 			navigate(Paths.HOME);
 		} catch (err) {
-			console.error("Error logging in: ", err);
+			if (err instanceof Error) {
+				console.error("Error logging in: ", err);
+				setError(err);
+			}
 		}
 	};
+
+	if (error) return <Navigate to={Paths.ERROR} state={error} />;
 
 	return (
 		<>

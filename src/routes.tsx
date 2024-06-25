@@ -20,48 +20,7 @@ const RequireAuthWrapper = () => {
 	return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
 };
 
-const router = createBrowserRouter([
-	{
-		element: <RequireAuthWrapper />,
-		children: [
-			{
-				path: Paths.HOME,
-				element: <HomePage />,
-			},
-			{
-				path: Paths.TODO,
-				element: <Todo />,
-			},
-			{
-				path: Paths.ADD_TODO,
-				element: <AddTodo />,
-			},
-			{
-				path: Paths.EDIT_TODO,
-				element: <EditTodo />,
-			},
-			{
-				path: Paths.APPOINTMENT,
-				element: <Appointment />,
-			},
-			{
-				path: Paths.ADD_APPOINTMENT,
-				element: <AddAppointment />,
-			},
-			{
-				path: Paths.EDIT_APPOINTMENT,
-				element: <EditAppointment />,
-			},
-			{
-				path: Paths.CONTACT,
-				element: <ContactDetailsPage />,
-			},
-			{
-				path: Paths.ABOUT,
-				element: <AboutUsPage />,
-			},
-		],
-	},
+const unprotectedRoutes = [
 	{
 		path: Paths.LOGIN,
 		element: <Login />,
@@ -74,6 +33,53 @@ const router = createBrowserRouter([
 		path: Paths.ERROR,
 		element: <ErrorPage />,
 	},
+];
+
+const protectedRoutes = [
+	{
+		path: Paths.HOME,
+		element: <HomePage />,
+	},
+	{
+		path: Paths.TODO,
+		element: <Todo />,
+	},
+	{
+		path: Paths.ADD_TODO,
+		element: <AddTodo />,
+	},
+	{
+		path: Paths.EDIT_TODO,
+		element: <EditTodo />,
+	},
+	{
+		path: Paths.APPOINTMENT,
+		element: <Appointment />,
+	},
+	{
+		path: Paths.ADD_APPOINTMENT,
+		element: <AddAppointment />,
+	},
+	{
+		path: Paths.EDIT_APPOINTMENT,
+		element: <EditAppointment />,
+	},
+	{
+		path: Paths.CONTACT,
+		element: <ContactDetailsPage />,
+	},
+	{
+		path: Paths.ABOUT,
+		element: <AboutUsPage />,
+	},
+];
+
+const router = createBrowserRouter([
+	{
+		element: <RequireAuthWrapper />,
+		children: protectedRoutes,
+	},
+	...unprotectedRoutes,
 ]);
 
 export default router;

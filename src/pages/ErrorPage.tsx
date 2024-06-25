@@ -1,10 +1,10 @@
-import React from "react";
+const ErrorPage = (error) => {
+	console.log("error page: ", error);
 
-const ErrorPage = () => {
 	return (
-		<div>
+		<>
 			<h1>NotFound</h1>
-		</div>
+		</>
 	);
 };
 
