@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Input, Button } from "@equinor/eds-core-react";
 import { Paths } from "../../utils/paths";
 import { useNavigate } from "react-router-dom";
+import { getfirestore, doc, setDoc } from "firebase/firestore";
+
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -12,9 +14,20 @@ export default function SignupPage() {
   const navigate = useNavigate();
 
   const signUp = async () => {
+    const db = getfirestore();
+
     if (password === confirmPassword) {
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userDetails = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userDetails.user;
+        await setDoc(doc(db, "users", user.uid), {
+          name: name,
+          email: email,
+        });
 
         navigate(Paths.LOGIN);
       } catch (err) {
