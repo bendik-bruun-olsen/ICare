@@ -1,12 +1,18 @@
 .fullWrapper {
 	display: flex;
 	align-items: start;
+	position: relative;
 }
 
 .checkBoxWrapper {
 	display: flex;
 	height: 40px;
 	width: 40px;
+	clip-path: circle(45% at 50% 50%);
+}
+
+.checkBox {
+	color: pink;
 }
 
 .toDoWrapper {
@@ -17,6 +23,7 @@
 	max-width: 80%;
 	justify-content: center;
 	border-radius: 3px;
+	position: relative;
 }
 
 .descriptionSection {
@@ -24,7 +31,7 @@
 	justify-content: space-between;
 	margin-bottom: 0.5rem;
 	align-items: center;
-	overflow: hidden;
+	position: relative;
 }
 
 .titleText h1,
@@ -41,6 +48,49 @@
 .moreIcon {
 	cursor: pointer;
 	margin-right: 0.5rem;
+	position: relative;
+}
+
+.modalOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+}
+
+.modalContainer {
+	position: absolute;
+	top: 75%;
+	left: 52%;
+	transform: translateY(10px);
+	background-color: var(--white);
+	padding: 10px;
+	border-radius: 3px;
+	max-width: 100%;
+	width: 50%;
+	outline: 1px solid var(--lightblue);
+}
+
+.modalList {
+	border-radius: 5px;
+	min-width: 100px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	list-style: none;
+}
+
+.modalItem {
+	color: var(--black);
+	text-decoration: none;
+	cursor: pointer;
+	display: flex;
+	user-select: none;
+}
+
+.modalItem:hover {
+	background-color: var(--lightblue);
 }
 
 .commentWrapper {
@@ -61,6 +111,7 @@
 .iconContainer {
 	margin-top: 2px;
 }
+
 .badgeIcon {
 	margin: 0 0.5rem 0.5rem 0;
 	opacity: 0.3;
