@@ -23,8 +23,8 @@ const AddAppointment: React.FC = () => {
       title,
       description,
       startDate: Timestamp.fromDate(new Date(startDate)),
+      time,
     };
-    //
     try {
       const patientRef = doc(db, "patientdetails", "patient@patient.com");
       const appointmentRef = collection(patientRef, "appointments");
