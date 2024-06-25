@@ -2,7 +2,7 @@ import { auth } from "../../config/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Input, Button } from "@equinor/eds-core-react";
-import { Paths } from "../../utils/paths";
+import { Paths } from "../../paths";
 import { useNavigate } from "react-router-dom";
 import { getfirestore, doc, setDoc } from "firebase/firestore";
 
@@ -38,6 +38,9 @@ export default function SignupPage() {
     }
   };
 
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.currentTarget.value;
+  };
   return (
     <>
       <form className="InputContainer" onSubmit={signUp}>
