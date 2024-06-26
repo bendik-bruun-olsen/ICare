@@ -6,20 +6,18 @@ import Logo from "../../assets/images/Logo.png";
 import headline from "../../assets/images/headline.png";
 import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [error, setError] = useState<Error | null>(null);
 	const [notificationMessage, setNotificationMessage] = useState<
 		string | undefined
 	>("");
+	const [hasError, setHasError] = useState(false);
 	const navigate = useNavigate();
 
 	const signIn = async () => {
-		setError(null);
-		setNotificationMessage("");
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
 			navigate(Paths.HOME);
@@ -32,12 +30,12 @@ export default function LoginPage() {
 					"Invalid login credentials. Please try again."
 				);
 			} else {
-				setError(err);
+				setHasError(true);
 			}
 		}
 	};
 
-	if (error) return <Navigate to={Paths.ERROR} state={{ error }} />;
+	if (hasError) navigate(Paths.ERROR);
 
 	return (
 		<>

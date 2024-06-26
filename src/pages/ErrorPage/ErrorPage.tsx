@@ -1,15 +1,13 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import styles from "./ErrorPage.module.css";
 import { Button } from "@equinor/eds-core-react";
+import { useNavigate } from "react-router-dom";
+import { Paths } from "../../paths";
 
 const ErrorPage = () => {
-	const location = useLocation();
-	const error = location.state?.error;
-
-	useEffect(() => {
-		console.log("error page: ", error);
-	}, [error]);
+	const navigate = useNavigate();
+	const handleClick = () => {
+		navigate(Paths.HOME);
+	};
 
 	return (
 		<div className={styles.wrapper}>
@@ -17,11 +15,10 @@ const ErrorPage = () => {
 			<p className={styles.subtitle}>
 				Please contact an administrator if the problem persists.
 			</p>
-			{error.message && (
-				<p className={styles.subtitle}>{error.message}</p>
-			)}
 			<div className={styles.buttonContainer}>
-				<Button id={styles.returnButton}>Return Home</Button>
+				<Button id={styles.returnButton} onClick={handleClick}>
+					Return Home
+				</Button>
 			</div>
 		</div>
 	);
