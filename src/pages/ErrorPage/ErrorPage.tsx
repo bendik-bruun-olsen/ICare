@@ -11,13 +11,17 @@ const ErrorPage = () => {
 
 	return (
 		<div className={styles.wrapper}>
-			<h1 className={styles.title}>An unexpected error occurred.</h1>
-			<p className={styles.subtitle}>
-				Please contact an administrator if the problem persists.
-			</p>
+			<div className={styles.textContainer}>
+				<h1 className={styles.title}>Oops!</h1>
+				<h2 className={styles.subtitle}>Something Went Wrong.</h2>
+				<p className={styles.paragraph}>
+					We're experiencing an issue right now. Please try again
+					later.
+				</p>
+			</div>
 			<div className={styles.buttonContainer}>
 				<Button id={styles.returnButton} onClick={handleClick}>
-					Return Home
+					Back To Home
 				</Button>
 			</div>
 		</div>
