@@ -1,27 +1,30 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import styles from "./ErrorPage.module.css";
 import { Button } from "@equinor/eds-core-react";
+import { useNavigate } from "react-router-dom";
+import { Paths } from "../../paths";
 
 const ErrorPage = () => {
-	const location = useLocation();
-	const error = location.state?.error;
-
-	useEffect(() => {
-		console.log("error page: ", error);
-	}, [error]);
+	const navigate = useNavigate();
+	const handleClick = () => {
+		navigate(Paths.HOME);
+	};
 
 	return (
-		<div className={styles.wrapper}>
-			<h1 className={styles.title}>An unexpected error occurred.</h1>
-			<p className={styles.subtitle}>
-				Please contact an administrator if the problem persists.
-			</p>
-			{error.message && (
-				<p className={styles.subtitle}>{error.message}</p>
-			)}
-			<div className={styles.buttonContainer}>
-				<Button id={styles.returnButton}>Return Home</Button>
+		<div className="pageWrapper">
+			<div className={styles.wrapper}>
+				<div className={styles.textContainer}>
+					<h1 className={styles.title}>Oops!</h1>
+					<h2 className={styles.subtitle}>Something Went Wrong.</h2>
+					<p className={styles.paragraph}>
+						We're experiencing an issue right now. Please try again
+						later.
+					</p>
+				</div>
+				<div className={styles.buttonContainer}>
+					<Button id={styles.returnButton} onClick={handleClick}>
+						Back To Home
+					</Button>
+				</div>
 			</div>
 		</div>
 	);
