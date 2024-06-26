@@ -37,10 +37,6 @@ nav {
 	color: white;
 }
 
-.rightContent p {
-	font-weight: 400;
-}
-
 .modalOverlay {
 	position: fixed;
 	top: 0;
