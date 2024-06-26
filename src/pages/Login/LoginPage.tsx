@@ -17,14 +17,16 @@ export default function LoginPage() {
 	const [hasError, setHasError] = useState(false);
 	const navigate = useNavigate();
 
-	const signIn = async () => {
+	const signIn = async (e: React.FormEvent) => {
+		e.preventDefault();
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
 			navigate(Paths.HOME);
 		} catch (err) {
+			const error = err as Error;
 			if (
-				err.message.includes("auth/invalid-email") ||
-				err.message.includes("auth/invalid-credential")
+				error.message.includes("auth/invalid-email") ||
+				error.message.includes("auth/invalid-credential")
 			) {
 				setNotificationMessage(
 					"Invalid login credentials. Please try again."
