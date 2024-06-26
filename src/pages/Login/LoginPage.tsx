@@ -1,7 +1,7 @@
 import { auth } from "../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { Input, Label, Button } from "@equinor/eds-core-react";
+import { Input, Button } from "@equinor/eds-core-react";
 import Logo from "../../assets/images/Logo.png";
 import headline from "../../assets/images/headline.png";
 import { Paths } from "../../paths";
@@ -13,7 +13,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const signIn = async () => {
+  const signIn = async (e) => {
+    e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate(Paths.HOME);
@@ -32,6 +33,7 @@ export default function LoginPage() {
         <div className="Image">
           <img src={Logo} className="App-logo" alt="logo image" />
         </div>
+
         <form className="InputContainer" onSubmit={signIn}>
           <div className="input">
             <Input
