@@ -4,7 +4,7 @@ import { Icon } from "@equinor/eds-core-react";
 import { person, contacts, contact_email, log_out } from "@equinor/eds-icons";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Paths } from "../../paths";
 import { auth } from "../../firebase/firebase";
 
