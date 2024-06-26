@@ -10,19 +10,21 @@ const ErrorPage = () => {
 	};
 
 	return (
-		<div className={styles.wrapper}>
-			<div className={styles.textContainer}>
-				<h1 className={styles.title}>Oops!</h1>
-				<h2 className={styles.subtitle}>Something Went Wrong.</h2>
-				<p className={styles.paragraph}>
-					We're experiencing an issue right now. Please try again
-					later.
-				</p>
-			</div>
-			<div className={styles.buttonContainer}>
-				<Button id={styles.returnButton} onClick={handleClick}>
-					Back To Home
-				</Button>
+		<div className="pageWrapper">
+			<div className={styles.wrapper}>
+				<div className={styles.textContainer}>
+					<h1 className={styles.title}>Oops!</h1>
+					<h2 className={styles.subtitle}>Something Went Wrong.</h2>
+					<p className={styles.paragraph}>
+						We're experiencing an issue right now. Please try again
+						later.
+					</p>
+				</div>
+				<div className={styles.buttonContainer}>
+					<Button id={styles.returnButton} onClick={handleClick}>
+						Back To Home
+					</Button>
+				</div>
 			</div>
 		</div>
 	);

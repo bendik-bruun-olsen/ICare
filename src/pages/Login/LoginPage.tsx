@@ -7,6 +7,7 @@ import headline from "../../assets/images/headline.png";
 import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
 import { useNavigate } from "react-router-dom";
+import { FirestoreError } from "firebase/firestore";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ export default function LoginPage() {
 			await signInWithEmailAndPassword(auth, email, password);
 			navigate(Paths.HOME);
 		} catch (err) {
-			const error = err as Error;
+			const error = err as FirestoreError;
 			if (
 				error.message.includes("auth/invalid-email") ||
 				error.message.includes("auth/invalid-credential")

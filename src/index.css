@@ -6,11 +6,6 @@
 	font-size: 16px;
 }
 
-body {
-	max-width: 960px;
-	margin: 0 auto;
-}
-
 :root {
 	--blue: #1c7b82;
 	--black: #1b1c1d;
@@ -44,4 +39,9 @@ body {
 .input {
 	margin: 12px 0;
 	padding: 10px;
+}
+
+.pageWrapper {
+	max-width: 960px;
+	margin: 0 auto;
 }
