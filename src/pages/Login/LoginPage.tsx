@@ -41,7 +41,7 @@ export default function LoginPage() {
 	if (hasError) navigate(Paths.ERROR);
 
 	return (
-		<>
+		<div className="pageWrapper">
 			<div className="LoginPageElements">
 				<div className="heading">
 					<img src={headline} className="App-headline" alt="logo" />
@@ -83,6 +83,6 @@ export default function LoginPage() {
 					<a href={Paths.RECOVER_PASSWORD}>Forgot Password?</a>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }
