@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import "./SignupPage.modules.css";
 import { FirebaseError } from "firebase/app";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -14,7 +16,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-  const [error, setError] = useState<string | undefined>("");
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -38,45 +39,99 @@ export default function SignupPage() {
     e.preventDefault();
     const db = getFirestore();
 
-    if (password === confirmPassword) {
-      try {
-        const userDetails = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        const user = userDetails.user;
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
-        await setDoc(doc(db, "users", user.uid), {
-          name: name,
-          email: email,
-        });
+    try {
+      const userDetails = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userDetails.user;
 
-        navigate(Paths.LOGIN);
-      } catch (err: unknown) {
-        if (
-          err instanceof Error &&
-          (err as FirebaseError).code === "EMAIL_EXISTS"
-        ) {
-          setError("Email already in use");
-          console.error("Email already in use:", err);
-        } else {
-          navigate(Paths.ERROR);
-        }
-      }
-    } else {
-      console.error("Password and confirm password do not match.");
-      setError("Passwords do not match");
+      await setDoc(doc(db, "users", user.uid), {
+        name: name,
+        email: email,
+      });
+
+      navigate(Paths.LOGIN);
+    } catch (err: unknown) {
+      signUpError(err);
     }
   };
 
+  const signUpError = (err: unknown) => {
+    if (err instanceof FirebaseError) {
+      switch (err.code) {
+        case "auth/email-already-in-use":
+          toast.error("Email already in use");
+          break;
+        case "auth/weak-password":
+          toast.error("Password is too weak");
+          break;
+        default:
+          toast.error("An unknown error occurred");
+          navigate(Paths.ERROR);
+      }
+    } else {
+      toast.error("An unknown error occurred");
+      navigate(Paths.ERROR);
+    }
+  };
+
+  //   if (password === confirmPassword) {
+  //     try {
+  //       const userDetails = await createUserWithEmailAndPassword(
+  //         auth,
+  //         email,
+  //         password
+  //       );
+  //       const user = userDetails.user;
+
+  //       await setDoc(doc(db, "users", user.uid), {
+  //         name: name,
+  //         email: email,
+  //       });
+
+  //       navigate(Paths.LOGIN);
+  //     } catch (err: unknown) {
+  //       if (
+  //         err instanceof Error &&
+  //         (err as FirebaseError).code === "EMAIL_EXISTS"
+  //       ) {
+  //         setError("Email already in use");
+  //         console.error("Email already in use:", err);
+  //       } else {
+  //         navigate(Paths.ERROR);
+  //       }
+  //     }
+  //   } else {
+  //     console.error("Password and confirm password do not match.");
+  //     setError("Passwords do not match");
+  //   }
+  // };
+
   return (
     <form className="inputcontainer" onSubmit={signUp}>
-      {error && <div className="error-message">{error}</div>}
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ top: "20%", transform: "translateY(-50%)" }}
+      />
       <InputWrapper
         className="input"
         labelProps={{
-          label: "Username",
+          label: "Name",
           htmlFor: "textfield-normal",
           style: { display: "block" },
         }}
