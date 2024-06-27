@@ -37,8 +37,8 @@ nav {
 	color: white;
 }
 
-.rightContent p {
-	font-weight: 400;
+.rightContent span {
+	margin-top: -5px;
 }
 
 .modalOverlay {
