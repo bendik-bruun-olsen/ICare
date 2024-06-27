@@ -1,7 +1,15 @@
-import { restaurant, group, walk, placeholder_icon } from "@equinor/eds-icons";
+import { Icon } from "@equinor/eds-core-react";
+import {
+	restaurant,
+	group,
+	walk,
+	placeholder_icon,
+	arrow_forward,
+} from "@equinor/eds-icons";
 import RemainingTodos from "../../components/RemainingTodos/RemainingTodos";
 import styles from "./HomePage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
 	return (
@@ -26,12 +34,20 @@ const HomePage = () => {
 					allTodosCount="1"
 					icon={group}
 				/>
-				<RemainingTodos
-					categoryTitle="Exercise"
-					completedTodosCount="2"
-					allTodosCount="3"
-					icon={walk}
-				/>
+				<div className={styles.arrowPositionWrapper}>
+					<RemainingTodos
+						categoryTitle="Exercise"
+						completedTodosCount="2"
+						allTodosCount="3"
+						icon={walk}
+					/>
+					<Link to="/todo">
+						<div className={styles.arrowIconWrapper}>
+							<p>All Todos</p>
+							<Icon data={arrow_forward} />
+						</div>
+					</Link>
+				</div>
 			</div>
 		</>
 	);
