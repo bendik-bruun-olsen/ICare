@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import DatePickerComponent from "../components/DatePicker/DatePickerComponent";
-import { db } from "../firebase/firebase";
+
+import { db } from "../../src/firebase/firebase";
+
 import {
 	collection,
 	query,

@@ -29,9 +29,7 @@ const TodoPage: React.FC = () => {
 		const fetchTodos = async () => {
 			try {
 				const todoRef = collection(
-					db,
-					"patientdetails",
-					"patient@patient.com",
+					doc(db, "patientdetails", "patient@patient.com"),
 					"todos"
 				);
 

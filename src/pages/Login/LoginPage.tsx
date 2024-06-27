@@ -2,7 +2,8 @@ import { auth } from "../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
-import Logo from "../../assets/images/Logo.png";
+import BannerImage from "../../assets/images/Logo.png";
+import Logo from "../../components/Logo/Logo";
 import headline from "../../assets/images/headline.png";
 import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
@@ -44,11 +45,11 @@ export default function LoginPage() {
 		<div className="pageWrapper">
 			<div className="LoginPageElements">
 				<div className="heading">
-					<img src={headline} className="App-headline" alt="logo" />
+					<Logo size={"70px"} color={"var(--blue)"} />
 				</div>
 
 				<div className="Image">
-					<img src={Logo} className="App-logo" alt="logo image" />
+					<img src={BannerImage} alt="logo-image" />
 				</div>
 				{notificationMessage && (
 					<div className="notification">{notificationMessage}</div>
