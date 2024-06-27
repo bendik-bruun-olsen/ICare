@@ -37,6 +37,10 @@ nav {
 	color: white;
 }
 
+.rightContent span {
+	margin-top: -5px;
+}
+
 .modalOverlay {
 	position: fixed;
 	top: 0;
