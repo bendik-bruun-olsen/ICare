@@ -1,9 +1,16 @@
-import style from "./Logo.module.css";
-
-export default function Logo() {
+export default function Logo({ size, color }: { size: string; color: string }) {
 	return (
-		<div className={style.container}>
-			<span className={style.text}>iCare</span>
-		</div>
+		<span
+			style={{
+				color: color ? color : "var(--white)",
+				textAlign: "center",
+				fontSize: size ? size : "32px",
+				fontFamily: "'Lora', serif",
+				fontWeight: "500",
+				fontStyle: "italic",
+			}}
+		>
+			iCare
+		</span>
 	);
 }
