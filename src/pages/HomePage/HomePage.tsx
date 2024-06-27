@@ -1,6 +1,8 @@
 import { restaurant, group, walk, placeholder_icon } from "@equinor/eds-icons";
 import RemainingTodos from "../../components/RemainingTodos/RemainingTodos";
 import styles from "./HomePage.module.css";
+import AddToDo from "../AddTodo/AddTodo";
+import TodoPage from "../TodoPage";
 
 const Home = () => {
   return (
@@ -30,6 +32,8 @@ const Home = () => {
           allTodosCount="3"
           icon={walk}
         />
+        <AddToDo />
+        <TodoPage />
       </div>
     </>
   );

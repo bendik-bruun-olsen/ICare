@@ -29,7 +29,7 @@ const AddToDo: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // push data into firebase
+
     const newTodo = {
       title,
       description,
