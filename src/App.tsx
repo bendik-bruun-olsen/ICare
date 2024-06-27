@@ -6,13 +6,9 @@ import AppointmentsQuickView from "./components/AppointmentsQuickView/Appointmen
 
 const App: React.FC = () => {
 	return (
-		// <StateContextProvider>
-		// 	<RouterProvider router={router} />;
-		// </StateContextProvider>
-		<AppointmentsQuickView
-			firstAppointment="08:30 - Meeting with doctor"
-			secondAppointment="11:00 - Meeting with chiropractor"
-		/>
+		<StateContextProvider>
+			<RouterProvider router={router} />
+		</StateContextProvider>
 	);
 };
 

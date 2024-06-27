@@ -1,13 +1,15 @@
 .fullWrapper {
 	display: flex;
 	flex-direction: column;
-	/* margin: 200px; */
-	position: relative;
+	align-items: center;
+	margin-top: 50px;
+	margin-bottom: 50px;
 }
 
 .appointmentsWrapper {
+	position: relative;
 	display: flex;
-	background-color: #e9e9e9;
+	background-color: #d7d7d7;
 	max-width: 19rem;
 	height: 6rem;
 	align-items: center;
@@ -42,15 +44,23 @@
 }
 
 .arrowIconWrapper {
+	top: 105%;
+	left: 54%;
 	display: flex;
+	text-decoration: none;
 	text-align: center;
 	cursor: pointer;
 	position: absolute;
-	bottom: -30%;
-	left: 16%;
 	user-select: none;
 }
 
 .arrowIconWrapper p {
 	color: var(--blue);
+	font-size: 0.9rem;
+}
+
+.arrowIconWrapper a,
+.arrowIconWrapper a:visited {
+	text-decoration: none;
+	color: inherit;
 }
