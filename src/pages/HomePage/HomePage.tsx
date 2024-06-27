@@ -2,11 +2,12 @@ import { restaurant, group, walk, placeholder_icon } from "@equinor/eds-icons";
 import RemainingTodos from "../../components/RemainingTodos/RemainingTodos";
 import styles from "./HomePage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
+import Logo from "../../components/Logo/Logo";
 
 const HomePage = () => {
 	return (
 		<>
-			<Navbar leftContent={<h2>LogoTest</h2>} centerContent="Home" />
+			<Navbar leftContent={<Logo />} centerContent="Home" />
 			<div className={styles.remainingTodosWrapper}>
 				<RemainingTodos
 					categoryTitle="Food"

@@ -1,7 +1,7 @@
 .text {
 	color: var(--white);
 	text-align: center;
-	font-size: 34px;
+	font-size: 32px;
 	font-weight: 500;
 	font-family: "jsMath-cmmi10", sans-serif;
 }
