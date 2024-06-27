@@ -4,7 +4,7 @@ import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
-import Todo from "./pages/TodoPage";
+import TodoPage from "./pages/TodoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
 import EditTodo from "./pages/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
