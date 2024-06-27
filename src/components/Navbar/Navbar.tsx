@@ -4,9 +4,10 @@ import { Icon } from "@equinor/eds-core-react";
 import { person, contacts, contact_email, log_out } from "@equinor/eds-icons";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Paths } from "../../paths";
 import { auth } from "../../firebase/firebase";
+import { useNavigate } from "react-router-dom";
 
 interface NavbarProps {
 	leftContent: ReactNode;
@@ -14,8 +15,12 @@ interface NavbarProps {
 }
 
 export default function Navbar({ leftContent, centerContent }: NavbarProps) {
-	const { currentUser } = useAuth();
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const navigate = useNavigate();
+	const username = useAuth().userData?.name;
+	const capitalizedUsername =
+		(username ?? "").toLowerCase().charAt(0).toUpperCase() +
+		(username ?? "").slice(1);
 
 	const toggleModalVisibility = () => {
 		setIsModalOpen((prev) => !prev);
@@ -24,8 +29,8 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 	const handleSignOut = async () => {
 		try {
 			await auth.signOut();
-		} catch (e) {
-			console.error(e);
+		} catch (err) {
+			navigate(Paths.ERROR);
 		}
 	};
 
@@ -40,7 +45,7 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 				onClick={toggleModalVisibility}
 			>
 				<Icon className={styles.userIcon} data={person} size={32} />
-				<p>{currentUser?.email?.split("@")[0]}</p>
+				<span>{capitalizedUsername}</span>
 			</div>
 			{isModalOpen && (
 				<div
@@ -54,13 +59,13 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 						<li className={styles.modalItem}>
 							<NavLink to={Paths.CONTACT}>
 								<Icon data={contact_email} size={24} />
-								<p>Contact Details</p>
+								<span>Contact Details</span>
 							</NavLink>
 						</li>
 						<li className={styles.modalItem}>
 							<NavLink to={Paths.ABOUT}>
 								<Icon data={contacts} size={24} />
-								<p>About Us</p>
+								<span>About Us</span>
 							</NavLink>
 						</li>
 						<li className={styles.modalItem}>
@@ -69,7 +74,7 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 								onClick={handleSignOut}
 							>
 								<Icon data={log_out} size={24} />
-								<p>Sign Out</p>
+								<span>Sign Out</span>
 							</div>
 						</li>
 					</ul>
