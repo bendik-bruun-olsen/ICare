@@ -10,5 +10,6 @@ export enum Paths {
 	ADD_APPOINTMENT = "/add-appointment",
 	EDIT_APPOINTMENT = "/edit-appointment",
 	CONTACT = "/contact",
+	ABOUT = "/about-us",
 	ERROR = "*",
 }
