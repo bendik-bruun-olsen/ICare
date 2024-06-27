@@ -1,16 +1,23 @@
+// DatePickerComponent.tsx
 import { I18nProvider } from "@react-aria/i18n";
-import { useState } from "react";
 import { DatePicker } from "@equinor/eds-core-react";
 import styled from "styled-components";
+import { FC } from "react";
 
 const DatePickerWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
 
-const DatePickerComponent = () => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+interface DatePickerComponentProps {
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
+}
 
+const DatePickerComponent: FC<DatePickerComponentProps> = ({
+  selectedDate,
+  setSelectedDate,
+}) => {
   const handleDateChange = (newDate: Date) => {
     setSelectedDate(newDate);
   };
@@ -32,17 +39,21 @@ const DatePickerComponent = () => {
       <I18nProvider locale="nb-NO">
         <div>
           <DatePickerWrapper>
-            <button onClick={handlePrevDate}>&lt;</button>
-            <DatePicker
-              value={selectedDate}
-              onChange={handleDateChange}
-              formatOptions={{
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              }}
-            />
-            <button onClick={handleNextDate}>&gt;</button>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <button onClick={handlePrevDate}>&lt;</button>
+              <div style={{ width: "10px" }} />
+              <DatePicker
+                value={selectedDate}
+                onChange={handleDateChange}
+                formatOptions={{
+                  day: "2-digit",
+                  month: "long",
+                  year: "numeric",
+                }}
+              />
+              <div style={{ width: "10px" }} />
+              <button onClick={handleNextDate}>&gt;</button>
+            </div>
           </DatePickerWrapper>
         </div>
       </I18nProvider>
