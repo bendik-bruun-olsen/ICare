@@ -18,7 +18,10 @@ export default function LoginPage() {
   const [hasError, setHasError] = useState(false);
   const navigate = useNavigate();
 
-  const signIn = async (e: React.FormEvent) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+  const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -55,7 +58,6 @@ export default function LoginPage() {
           <Label htmlFor="textfield-normal" label="Email" />
           <Input
             id="textfield-normal"
-            placeholder="E-mail"
             autoComplete="off"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setEmail(e.target.value)
@@ -66,7 +68,7 @@ export default function LoginPage() {
           <Label htmlFor="textfield-password" label="Password" />
           <Input
             type="password"
-            placeholder="Password"
+            autoComplete="off"
             id="textfield-password"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setPassword(e.target.value)

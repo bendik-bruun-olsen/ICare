@@ -1,6 +1,9 @@
 .heading {
   margin: 10px;
 }
+.inputContainer {
+  width: 100%;
+}
 .inputContainer label {
   color: var(--black);
 }
@@ -28,4 +31,10 @@
 .links {
   color: var(--blue);
   margin: 10px;
+}
+
+@media (min-width: 501px) {
+  .inputContainer {
+    width: 500px;
+  }
 }
