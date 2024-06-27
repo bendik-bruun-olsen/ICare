@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DatePickerComponent from "../components/DatePicker/DatePickerComponent";
-import { db } from "../config/firebase";
+import { db } from "../firebase/firebase";
 import {
 	collection,
 	query,
@@ -29,7 +29,9 @@ const TodoPage: React.FC = () => {
 		const fetchTodos = async () => {
 			try {
 				const todoRef = collection(
-					doc(db, "patientdetails", "patient@patient.com"),
+					db,
+					"patientdetails",
+					"patient@patient.com",
 					"todos"
 				);
 
