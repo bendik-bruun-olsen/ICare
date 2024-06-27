@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
-import headline from "../../assets/images/headline.png";
 import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
 import { useNavigate } from "react-router-dom";
