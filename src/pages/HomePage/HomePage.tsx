@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 const HomePage = () => {
 	return (
 		<>
-			<Navbar leftContent={<h2>LogoTest</h2>} centerContent="Home" />
+			<Navbar leftContent={<h2>LOGOTEST</h2>} centerContent="Home" />
 			<div className="pageWrapper">
 				<div className={styles.remainingTodosWrapper}>
 					<RemainingTodos
