@@ -1,11 +1,9 @@
 .LoginPageElements {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background-color: var(--blue);
-  min-width: 100vw;
-  min-height: 100vh;
+  margin: 10px;
+  color: var(--black);
 }
 .InputContainer {
   display: flex;
