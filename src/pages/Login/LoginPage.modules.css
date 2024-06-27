@@ -1,17 +1,7 @@
-/* .LoginPageElements {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.heading {
   margin: 10px;
-  color: var(--black);
-} */
+}
 .inputContainer label {
-  /*
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  max-width: 100%;*/
   color: var(--black);
 }
 .input {
