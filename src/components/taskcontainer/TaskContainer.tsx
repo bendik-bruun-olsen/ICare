@@ -1,47 +1,28 @@
-import { Icon, Checkbox } from "@equinor/eds-core-react";
-import { comment, more_horizontal } from "@equinor/eds-icons";
+import { Icon } from "@equinor/eds-core-react";
+import { comment, more_horizontal, badge } from "@equinor/eds-icons";
 import styles from "./TaskContainer.module.css";
 
-interface TaskContainerProps {
-	toDoTitle: string;
-	toDoDescription: string;
-	toDoComment: string;
-	taskStatus: "complete" | "incomplete" | "default";
-	time: string;
-}
-
-export default function TaskContainer({
-	toDoTitle,
-	toDoDescription,
-	toDoComment,
-	taskStatus,
-	time,
-}: TaskContainerProps) {
-	const statusClass = styles[`${taskStatus}Background`];
-
+export default function TaskContainer() {
 	return (
-		<div className={styles.fullWrapper}>
-			<div className={styles.checkBoxWrapper}>
-				<Checkbox className={styles.checkBox} />
+		<div className={styles.ToDoWrapper}>
+			<div>
+				<h1>08:00 - Morning Walk</h1>
 			</div>
-			<div className={`${styles.toDoWrapper} ${statusClass}`}>
-				<div className={styles.titleText}>
-					<h1>
-						{time} - {toDoTitle}
-					</h1>
-				</div>
-				<div className={styles.descriptionSection}>
-					<p>{toDoDescription}</p>
-					<Icon data={more_horizontal} size={40} className={styles.moreIcon} />
-				</div>
-				<div className={styles.commentWrapper}>
-					<div className={styles.commentSection}>
-						<div className={styles.iconContainer}>
-							<Icon data={comment} size={16} />
-						</div>
-						<p>{toDoComment}</p>
+			<div className={styles.DescriptionSection}>
+				<p>
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
+					elementum tempor facilisis.
+				</p>
+				<Icon data={more_horizontal} size={48} className={styles.moreIcon} />
+			</div>
+			<div className={styles.CommentWrapper}>
+				<div className={styles.CommentSection}>
+					<div className={styles.iconContainer}>
+						<Icon data={comment} size={16} />
 					</div>
+					<p>Comment</p>
 				</div>
+				<Icon data={badge} size={24} className={styles.badgeIcon} />
 			</div>
 		</div>
 	);
