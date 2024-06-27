@@ -10,11 +10,12 @@ import RemainingTodos from "../../components/RemainingTodos/RemainingTodos";
 import styles from "./HomePage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import { Link } from "react-router-dom";
+import Logo from "../../components/Logo/Logo";
 
 const HomePage = () => {
 	return (
 		<>
-			<Navbar leftContent={<h2>LOGOTEST</h2>} centerContent="Home" />
+			<Navbar leftContent={<Logo />} centerContent="Home" />
 			<div className="pageWrapper">
 				<div className={styles.remainingTodosWrapper}>
 					<RemainingTodos
