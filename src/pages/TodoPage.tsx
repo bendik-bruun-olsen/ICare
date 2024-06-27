@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DatePickerComponent from "../components/DatePicker/DatePickerComponent";
-import { db } from "../config/firebase";
+import { db } from "../firebase/firebase";
 import {
 	collection,
 	query,
@@ -55,8 +55,7 @@ const TodoPage: React.FC = () => {
 							: todoStartDate;
 
 						const isWithinDateRange =
-							startOfDay <= todoEndDate &&
-							endOfDay >= todoStartDate;
+							startOfDay <= todoEndDate && endOfDay >= todoStartDate;
 
 						const dayOfWeek = selectedDate.toLocaleString("en-us", {
 							weekday: "long",
@@ -67,14 +66,9 @@ const TodoPage: React.FC = () => {
 
 						const isStartDateOnlyMatch =
 							!todo.endDate &&
-							todoStartDate.toDateString() ===
-								selectedDate.toDateString();
+							todoStartDate.toDateString() === selectedDate.toDateString();
 
-						return (
-							isWithinDateRange ||
-							repeatsOnDay ||
-							isStartDateOnlyMatch
-						);
+						return isWithinDateRange || repeatsOnDay || isStartDateOnlyMatch;
 					});
 
 				setTodos(fetchedTodos);
