@@ -1,11 +1,15 @@
-import React from "react";
+import Navbar from "../components/Navbar/Navbar";
+import HomeButton from "../components/HomeButton/HomeButton";
 
-const Todo = () => {
-  return (
-    <div>
-      <h1>TodoPage</h1>
-    </div>
-  );
+const TodoPage = () => {
+	return (
+		<>
+			<Navbar leftContent={<HomeButton />} centerContent="Todo" />
+			<div className="pageWrapper">
+				<h2>TodoPage</h2>
+			</div>
+		</>
+	);
 };
 
-export default Todo;
+export default TodoPage;
