@@ -1,5 +1,4 @@
 import { auth } from "../../firebase/firebase";
-
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Input, Button, InputWrapper } from "@equinor/eds-core-react";
@@ -8,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import "./SignupPage.modules.css";
 import { FirebaseError } from "firebase/app";
+import Logo from "../../components/Logo/Logo";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -85,6 +85,9 @@ export default function SignupPage() {
       {notificationMessage && (
         <div className="notification">{notificationMessage}</div>
       )}
+      <div className="heading">
+        <Logo size={"60px"} color={"var(--blue)"} />
+      </div>
       <form className="inputcontainer" onSubmit={signUp}>
         <InputWrapper
           className="input"

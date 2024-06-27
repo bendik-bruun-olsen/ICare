@@ -1,11 +1,3 @@
-.inputcontainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-width: 100vw;
-  min-height: 100vh;
-}
 .inputcontainer label {
   color: var(--black);
 }
@@ -13,11 +5,11 @@
 .inputcontainer input {
   margin: 10px;
   padding: 10px;
-  width: 20rem;
+
   color: var(--black);
 }
 #signupbutton {
   background-color: var(--blue);
-  margin: 20px;
+  margin: 10px;
   color: var(--white);
 }
