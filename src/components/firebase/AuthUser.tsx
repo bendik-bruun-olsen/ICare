@@ -1,4 +1,4 @@
-import { auth } from "../../config/firebase.tsx";
+import { auth } from "../../firebase/firebase.tsx";
 import { signOut, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 
@@ -12,8 +12,13 @@ export const AuthUser = () => {
 		try {
 			console.log("test");
 
-			await signInWithEmailAndPassword(auth, email, password);
+			const user = await signInWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
 			console.log("User signed in successfully!");
+			console.log("user: ", user.tostring());
 		} catch (err) {
 			console.error("Error logging in: ", err);
 		}
@@ -31,11 +36,11 @@ export const AuthUser = () => {
 	return (
 		<>
 			<input
-				placeholder="Email..."
+				placeholder="Enter your Email ID"
 				onChange={(e) => setEmail(e.target.value)}
 			/>
 			<input
-				placeholder="Password..."
+				placeholder="Password"
 				type="password"
 				onChange={(e) => setPassword(e.target.value)}
 			/>

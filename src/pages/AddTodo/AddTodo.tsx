@@ -3,7 +3,7 @@ import { Checkbox, TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
 import DaysComponent from "../../components/DaysComponent";
-import { db } from "../../config/firebase";
+import { db } from "../../firebase/firebase";
 import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
