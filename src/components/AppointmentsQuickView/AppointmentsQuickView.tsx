@@ -1,17 +1,27 @@
+<<<<<<< HEAD
 import { Link } from "react-router-dom";
 import { Icon } from "@equinor/eds-core-react";
 import { calendar_today, arrow_forward } from "@equinor/eds-icons";
+=======
+import { Icon } from "@equinor/eds-core-react";
+import { calendar_today } from "@equinor/eds-icons";
+>>>>>>> development
 import styles from "./AppointmentsQuickView.module.css";
 
 interface AppointmentsQuickViewProps {
 	firstAppointment: string;
+<<<<<<< HEAD
 	firstAppointmentTime: string;
 	secondAppointment: string;
 	secondAppointmentTime: string;
+=======
+	secondAppointment: string;
+>>>>>>> development
 }
 
 export default function AppointmentsQuickView({
 	firstAppointment,
+<<<<<<< HEAD
 	firstAppointmentTime,
 	secondAppointment,
 	secondAppointmentTime,
@@ -45,5 +55,24 @@ export default function AppointmentsQuickView({
 				</div>
 			</div>
 		</>
+=======
+	secondAppointment,
+}: AppointmentsQuickViewProps) {
+	return (
+		<div className={styles.appointmentsWrapper}>
+			<div className={styles.textMargin}>
+				<p className={styles.firstAppointment}>{firstAppointment}</p>
+				<p className={styles.secondAppointment}>{secondAppointment}</p>
+			</div>
+			<div className={styles.appointmentIconWrapper}>
+				<Icon
+					data={calendar_today}
+					size={48}
+					color={"#aacccf"}
+					className={styles.calendarIcon}
+				/>
+			</div>
+		</div>
+>>>>>>> development
 	);
 }
