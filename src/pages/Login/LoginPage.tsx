@@ -20,6 +20,7 @@ export default function LoginPage() {
 
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate(Paths.HOME);
@@ -40,46 +41,47 @@ export default function LoginPage() {
 
   return (
     <div className="pageWrapper">
-      <div className="LoginPageElements">
-        <div className="heading">
-          <Logo size={"70px"} color={"var(--blue)"} />
-        </div>
+      <div className="heading">
+        <Logo size={"70px"} color={"var(--blue)"} />
+      </div>
 
-        <div className="Image">
-          <img src={BannerImage} alt="logo-image" />
-        </div>
-        {notificationMessage && (
-          <div className="notification">{notificationMessage}</div>
-        )}
-        <form className="InputContainer" onSubmit={signIn}>
-          <div className="input">
-            <Label htmlFor="textfield-normal" label="Username" />
-            <Input
-              id="textfield-normal"
-              placeholder="E-mail"
-              autoComplete="off"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="input">
-            <Label htmlFor="textfield-password" label="Password" />
-            <Input
-              type="password"
-              placeholder="Password"
-              id="textfield-password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-        </form>
+      <img src={BannerImage} alt="logo-image" className="bannerImage" />
 
-        <Button id="SignInButton" type="submit" onClick={signIn}>
-          Sign In
-        </Button>
-        <div>
-          <a href={Paths.SIGNUP}>Sign Up</a>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href={Paths.RECOVER_PASSWORD}>Forgot Password?</a>
+      {notificationMessage && (
+        <div className="notification">{notificationMessage}</div>
+      )}
+      <form className="inputContainer" onSubmit={signIn}>
+        <div className="input">
+          <Label htmlFor="textfield-normal" label="Email" />
+          <Input
+            id="textfield-normal"
+            placeholder="E-mail"
+            autoComplete="off"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+          />
         </div>
+        <div className="input">
+          <Label htmlFor="textfield-password" label="Password" />
+          <Input
+            type="password"
+            placeholder="Password"
+            id="textfield-password"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+          />
+        </div>
+      </form>
+
+      <Button id="signInButton" type="submit" onClick={signIn}>
+        Sign In
+      </Button>
+      <div className="links">
+        <a href={Paths.SIGNUP}>Sign Up</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href={Paths.RECOVER_PASSWORD}>Forgot Password?</a>
       </div>
     </div>
   );
