@@ -48,7 +48,7 @@ const HomePage = () => {
 					</div>
 					<div className={styles.arrowIconWrapper}>
 						<Link to={Paths.TODO}>
-							<p>All Todos</p>
+							<span>All Todos</span>
 							<Icon data={arrow_forward} />
 						</Link>
 					</div>

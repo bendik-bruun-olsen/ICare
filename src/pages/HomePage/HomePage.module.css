@@ -1,3 +1,7 @@
+.remainingTodosWrapper {
+	width: fit-content;
+}
+
 .remainingTodosContainer {
 	display: flex;
 	flex-wrap: wrap;
@@ -14,7 +18,14 @@
 } */
 
 .arrowIconWrapper {
-	width: 100%;
 	display: flex;
 	justify-content: flex-end;
+}
+
+.arrowIconWrapper a {
+	display: flex;
+}
+
+.arrowIconWrapper span {
+	padding-top: 2px;
 }
