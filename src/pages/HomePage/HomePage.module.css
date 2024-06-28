@@ -4,3 +4,15 @@
 	gap: 10px;
 	justify-content: center;
 }
+
+.arrowPositionWrapper {
+	position: relative;
+}
+
+.arrowIconWrapper {
+	display: flex;
+	color: var(--blue);
+	position: absolute;
+	left: 31%;
+	bottom: -40%;
+}
