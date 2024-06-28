@@ -6,6 +6,10 @@
 	font-size: 16px;
 }
 
+body {
+	background-color: var(--lightblue);
+}
+
 :root {
 	--blue: #1c7b82;
 	--black: #1b1c1d;
