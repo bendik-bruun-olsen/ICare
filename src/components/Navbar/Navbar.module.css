@@ -1,5 +1,4 @@
 nav {
-	position: relative;
 	background-color: var(--blue);
 	display: flex;
 	align-items: center;
@@ -54,7 +53,7 @@ nav {
 	background-color: var(--white);
 	padding: 10px 10px;
 	border-radius: 5px;
-	min-width: 100px;
+	max-width: 200px;
 	top: 50px;
 	right: 0;
 	display: flex;
