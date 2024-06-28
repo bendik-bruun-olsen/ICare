@@ -12,13 +12,16 @@ import Navbar from "../../components/Navbar/Navbar";
 import { Link } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
 import { Paths } from "../../paths";
+import PatientDetails from "../../components/PatientDetails/PatientDetails";
 
 const HomePage = () => {
 	return (
 		<>
 			<Navbar leftContent={<Logo />} centerContent="Home" />
+			<PatientDetails patientName="Gjertrud" age="99" />
 			<div className="pageWrapper">
 				<div className={styles.remainingTodosWrapper}>
+					<h2>ToDo</h2>
 					<div className={styles.remainingTodosContainer}>
 						<RemainingTodos
 							categoryTitle="Food"
