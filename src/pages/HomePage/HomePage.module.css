@@ -21,3 +21,15 @@
 .arrowIconWrapper span {
 	padding-top: 2px;
 }
+
+.arrowPositionWrapper {
+	position: relative;
+}
+
+.arrowIconWrapper {
+	display: flex;
+	color: var(--blue);
+	position: absolute;
+	left: 31%;
+	bottom: -40%;
+}

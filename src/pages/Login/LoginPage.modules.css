@@ -1,38 +1,46 @@
-.LoginPageElements {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin: 10px;
-	color: var(--black);
+.heading {
+    margin: 10px;
+    text-align: center;
 }
-.InputContainer {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	max-width: 100%;
+.inputContainer {
+    width: 100%;
 }
-input {
-	margin: 10px;
-	padding: 10px;
-	border-radius: 5px;
-	border: 1px solid var(--black);
-	width: 20rem;
-	color: var(--black);
+.inputContainer label {
+    color: var(--black);
 }
-.Image {
-	width: 400px;
-	height: 400px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
+.input {
+    margin: 10px;
+
+    color: var(--black);
+}
+.bannerImage {
+    width: 40%;
+    height: 40%;
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#SignInButton {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: var(--lightblue);
-	max-width: 70%;
+#signInButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--blue);
+    max-width: 70%;
+    margin: 20px;
+    color: var(--white);
+}
+
+.links {
+    color: var(--blue);
+    margin: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+@media (min-width: 501px) {
+    .inputContainer {
+        width: 500px;
+    }
 }
