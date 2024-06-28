@@ -11,6 +11,7 @@ import styles from "./HomePage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import { Link } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
+import { Paths } from "../../paths";
 
 const HomePage = () => {
 	return (
@@ -18,36 +19,37 @@ const HomePage = () => {
 			<Navbar leftContent={<Logo />} centerContent="Home" />
 			<div className="pageWrapper">
 				<div className={styles.remainingTodosWrapper}>
-					<RemainingTodos
-						categoryTitle="Food"
-						completedTodosCount="3"
-						allTodosCount="6"
-						icon={restaurant}
-					/>
-					<RemainingTodos
-						categoryTitle="Medicine"
-						completedTodosCount="2"
-						allTodosCount="5"
-						icon={placeholder_icon}
-					/>
-					<RemainingTodos
-						categoryTitle="Social"
-						completedTodosCount="1"
-						allTodosCount="1"
-						icon={group}
-					/>
-					<div className={styles.arrowPositionWrapper}>
+					<div className={styles.remainingTodosContainer}>
+						<RemainingTodos
+							categoryTitle="Food"
+							completedTodosCount="3"
+							allTodosCount="6"
+							icon={restaurant}
+						/>
+						<RemainingTodos
+							categoryTitle="Medicine"
+							completedTodosCount="2"
+							allTodosCount="5"
+							icon={placeholder_icon}
+						/>
+						<RemainingTodos
+							categoryTitle="Social"
+							completedTodosCount="1"
+							allTodosCount="1"
+							icon={group}
+						/>
+
 						<RemainingTodos
 							categoryTitle="Exercise"
 							completedTodosCount="2"
 							allTodosCount="3"
 							icon={walk}
 						/>
-						<Link to="/todo">
-							<div className={styles.arrowIconWrapper}>
-								<p>All Todos</p>
-								<Icon data={arrow_forward} />
-							</div>
+					</div>
+					<div className={styles.arrowIconWrapper}>
+						<Link to={Paths.TODO}>
+							<p>All Todos</p>
+							<Icon data={arrow_forward} />
 						</Link>
 					</div>
 				</div>

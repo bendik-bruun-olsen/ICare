@@ -1,18 +1,20 @@
-.remainingTodosWrapper {
+.remainingTodosContainer {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 10px;
-	justify-content: center;
+	/* justify-content: center; */
 }
 
-.arrowPositionWrapper {
-	position: relative;
-}
-
-.arrowIconWrapper {
+/* .arrowIconWrapper {
 	display: flex;
 	color: var(--blue);
 	position: absolute;
 	left: 31%;
 	bottom: -40%;
+} */
+
+.arrowIconWrapper {
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
 }
