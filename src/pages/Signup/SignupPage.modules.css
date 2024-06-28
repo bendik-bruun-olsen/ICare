@@ -5,11 +5,16 @@
 .inputcontainer input {
   margin: 10px;
   padding: 10px;
-
+  width: 100%;
   color: var(--black);
 }
 #signupbutton {
   background-color: var(--blue);
   margin: 10px;
   color: var(--white);
+}
+@media (min-width: 501px) {
+  .input {
+    width: 500px;
+  }
 }
