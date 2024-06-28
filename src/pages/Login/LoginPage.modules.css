@@ -1,40 +1,41 @@
 .heading {
-  margin: 10px;
+    margin: 10px;
 }
 .inputContainer {
-  width: 100%;
+    width: 100%;
 }
 .inputContainer label {
-  color: var(--black);
+    color: var(--black);
 }
 .input {
-  margin: 10px;
+    margin: 10px;
 
-  color: var(--black);
+    color: var(--black);
 }
 .bannerImage {
-  width: 40%;
-  height: 40%;
-  margin: 10px;
+    width: 40%;
+    height: 40%;
+    margin: 10px;
 }
 
 #signInButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--blue);
-  max-width: 70%;
-  margin: 20px;
-  color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--blue);
+    max-width: 70%;
+    margin: 20px;
+    color: var(--white);
 }
 
 .links {
-  color: var(--blue);
-  margin: 10px;
+    color: var(--blue);
+    margin: 10px;
+    align-items: space-between;
 }
 
 @media (min-width: 501px) {
-  .inputContainer {
-    width: 500px;
-  }
+    .inputContainer {
+        width: 500px;
+    }
 }
