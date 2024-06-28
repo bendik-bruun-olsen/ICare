@@ -60,25 +60,6 @@ export default function LoginPage() {
             {notificationMessage && (
                 <div className="notification">{notificationMessage}</div>
             )}
-            <form className="inputContainer" onSubmit={signIn}>
-                <div className="input">
-                    <Label htmlFor="textfield-normal" label="Email" />
-                    <Input
-                        id="textfield-normal"
-                        autoComplete="off"
-                        onChange={handleEmailChange}
-                    />
-                </div>
-                <div className="input">
-                    <Label htmlFor="textfield-password" label="Password" />
-                    <Input
-                        type="password"
-                        autoComplete="off"
-                        id="textfield-password"
-                        onChange={handlePasswordChange}
-                    />
-                </div>
-            </form>
 
             <form className="inputContainer" onSubmit={signIn}>
                 <div className="input">
