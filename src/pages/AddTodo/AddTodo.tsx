@@ -3,13 +3,12 @@ import { Checkbox, TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
 import DaysComponent from "../../components/DaysComponent";
-import { db } from "../../firebase/firebase";
-import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodo.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import HomeButton from "../../components/HomeButton/HomeButton";
+import { addNewTodo } from "../../firebase/todoServices/addNewTodo";
 
 const AddToDo: React.FC = () => {
 	const [title, setTitle] = useState("");
@@ -36,19 +35,16 @@ const AddToDo: React.FC = () => {
 			title,
 			description,
 			repeat,
-			startDate: Timestamp.fromDate(new Date(startDate)),
-			endDate: repeat ? Timestamp.fromDate(new Date(endDate)) : null,
+			startDate,
+			endDate: repeat ? endDate : null,
 			time,
 			category: selectCategory,
 			selectedDays: repeat ? selectedDays : [],
 		};
-		//
-		try {
-			const patientRef = doc(db, "patientdetails", "patient@patient.com");
-			const todoRef = collection(patientRef, "todos");
 
-			const todoDocRef = await addDoc(todoRef, newTodo);
-			console.log("Document written with ID: ", todoDocRef.id);
+		try {
+			await addNewTodo(newTodo);
+			console.log("Todo added successfully");
 		} catch (e) {
 			console.error("Error adding document: ", e);
 		}
