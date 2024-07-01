@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Icon, Checkbox } from "@equinor/eds-core-react";
 import { comment, more_horizontal } from "@equinor/eds-icons";
 import styles from "./TaskContainer.module.css";
@@ -9,9 +9,6 @@ interface TaskContainerProps {
 	toDoComment: string;
 	taskStatus: "complete" | "incomplete" | "default";
 	time: string;
-	handleTaskStatusChange: (
-		newStatus: "complete" | "incomplete" | "default"
-	) => void;
 }
 
 export default function TaskContainer({
@@ -20,9 +17,21 @@ export default function TaskContainer({
 	toDoComment,
 	taskStatus,
 	time,
-	handleTaskStatusChange,
 }: TaskContainerProps) {
-	const statusClass = styles[`${taskStatus}Background`];
+	const [currentTaskStatus, setCurrentTaskStatus] = useState<
+		"complete" | "incomplete" | "default"
+	>(taskStatus);
+
+	const statusClass = useMemo(() => {
+		switch (currentTaskStatus) {
+			case "complete":
+				return styles.complete;
+			case "incomplete":
+				return styles.incomplete;
+			default:
+				return "";
+		}
+	}, [currentTaskStatus]);
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -30,14 +39,20 @@ export default function TaskContainer({
 		setIsModalOpen((prev) => !prev);
 	};
 
+	const handleTaskStatus = (
+		newStatus: "complete" | "incomplete" | "default"
+	) => {
+		setCurrentTaskStatus(newStatus);
+	};
+
 	return (
 		<div className={styles.fullWrapper}>
 			<div className={styles.checkBoxWrapper}>
 				<Checkbox
 					className={styles.checkBox}
-					checked={taskStatus === "complete"}
+					checked={currentTaskStatus === "complete"}
 					onChange={(e) =>
-						handleTaskStatusChange(e.target.checked ? "complete" : "default")
+						handleTaskStatus(e.target.checked ? "complete" : "default")
 					}
 				/>
 			</div>
@@ -68,9 +83,19 @@ export default function TaskContainer({
 								<ul className={styles.modalList}>
 									<li
 										className={styles.modalItem}
-										onClick={() => handleTaskStatusChange("incomplete")}
+										onClick={() =>
+											handleTaskStatus(
+												currentTaskStatus === "incomplete"
+													? "default"
+													: "incomplete"
+											)
+										}
 									>
-										<p>Mark as Incomplete</p>
+										<p>
+											{currentTaskStatus === "incomplete"
+												? "Mark as in progress"
+												: "Mark as incomplete"}
+										</p>
 									</li>
 									<li className={styles.modalItem}>
 										<p>Edit/Delete</p>

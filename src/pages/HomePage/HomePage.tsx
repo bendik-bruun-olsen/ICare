@@ -13,18 +13,9 @@ import { Link } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
 import { Paths } from "../../paths";
 import PatientDetails from "../../components/PatientDetails/PatientDetails";
+import TaskContainer from "../../components/TaskContainer/TaskContainer";
 
 const HomePage = () => {
-	const [currentTaskStatus, setCurrentTaskStatus] = useState<
-		"complete" | "incomplete" | "default"
-	>("default");
-
-	const handleTaskStatusChange = (
-		newStatus: "complete" | "incomplete" | "default"
-	) => {
-		setCurrentTaskStatus(newStatus);
-	};
-
 	return (
 		<>
 			<Navbar leftContent={<Logo />} centerContent="Home" />
@@ -70,6 +61,15 @@ const HomePage = () => {
 						</Link>
 					</div>
 				</div>
+			</div>
+			<div>
+				<TaskContainer
+					time="08:30"
+					toDoTitle="Walk around mosvannet"
+					toDoDescription="Long walk"
+					toDoComment="Very good walk"
+					taskStatus="default"
+				/>
 			</div>
 		</>
 	);

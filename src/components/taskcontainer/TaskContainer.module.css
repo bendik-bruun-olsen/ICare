@@ -13,6 +13,7 @@
 	padding: 0.5rem;
 	max-width: 80%;
 	border-radius: 3px;
+	background-color: #e6e6e6;
 }
 
 .descriptionSection {
@@ -26,6 +27,7 @@
 .descriptionSection p,
 .commentSection p {
 	cursor: pointer;
+	color: black;
 }
 
 .descriptionSection p {
@@ -40,6 +42,10 @@
 
 .modalOverlay {
 	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
 }
 
 .modalContainer {
@@ -118,14 +124,10 @@
 	}
 }
 
-.incompleteBackground {
+.incomplete {
 	background-color: #eea88e;
 }
 
-.completeBackground {
+.complete {
 	background-color: #9db3b6;
-}
-
-.defaultBackground {
-	background-color: #e6e6e6;
 }
