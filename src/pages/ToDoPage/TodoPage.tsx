@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DatePickerComponent from "../components/DatePicker/DatePickerComponent";
-import { db } from "../firebase/firebase";
+import DatePickerComponent from "../../components/DatePicker/DatePickerComponent";
+import { db } from "../../firebase/firebase";
 import {
 	collection,
 	query,
@@ -8,9 +8,17 @@ import {
 	getDocs,
 	Timestamp,
 	doc,
+	CollectionReference,
 } from "firebase/firestore";
+import TaskContainer from "../../components/TaskContainer/TaskContainer";
 
-interface Todo {
+enum ToDoState {
+	Complete = "completed",
+	Uncompleted = "uncompleted",
+	Disabled = "disabled",
+}
+
+interface ToDo {
 	id: string;
 	title: string;
 	description: string;
@@ -23,7 +31,8 @@ interface Todo {
 
 const TodoPage: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [todos, setTodos] = useState<Todo[]>([]);
+	const [todos, setTodos] = useState<ToDo[]>([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const fetchTodos = async () => {
@@ -31,7 +40,7 @@ const TodoPage: React.FC = () => {
 				const todoRef = collection(
 					doc(db, "patientdetails", "patient@patient.com"),
 					"todos"
-				);
+				) as CollectionReference<ToDo>;
 
 				const startOfDay = new Date(selectedDate);
 				startOfDay.setHours(0, 0, 0, 0);
@@ -43,10 +52,10 @@ const TodoPage: React.FC = () => {
 					where("startDate", "<=", Timestamp.fromDate(endOfDay))
 				);
 				const querySnapshot = await getDocs(q);
-				const fetchedTodos: Todo[] = querySnapshot.docs
+				const fetchedTodos = querySnapshot.docs
 					.map((doc) => ({
-						id: doc.id,
 						...doc.data(),
+						id: doc.id,
 					}))
 					.filter((todo) => {
 						const todoStartDate = todo.startDate.toDate();
@@ -75,13 +84,14 @@ const TodoPage: React.FC = () => {
 			} catch (error) {
 				console.error("Error fetching appointments: ", error);
 			}
+			setLoading(false);
 		};
 
 		fetchTodos();
 	}, [selectedDate]);
 
-	const groupTodosByCategory = (todos: Todo[]): { [key: string]: Todo[] } => {
-		const grouped: { [key: string]: Todo[] } = {};
+	const groupTodosByCategory = (todos: ToDo[]): { [key: string]: ToDo[] } => {
+		const grouped: { [key: string]: ToDo[] } = {};
 		todos.forEach((todo) => {
 			const category = todo.category || "Others";
 			if (!grouped[category]) {
@@ -94,6 +104,10 @@ const TodoPage: React.FC = () => {
 
 	const groupedTodos = groupTodosByCategory(todos);
 
+	if (loading) {
+		return <div>Loading...</div>;
+	}
+
 	return (
 		<div>
 			<DatePickerComponent
@@ -101,19 +115,21 @@ const TodoPage: React.FC = () => {
 				setSelectedDate={setSelectedDate}
 			/>
 			<div>
-				<h2>Appointments for {selectedDate.toDateString()}</h2>
+				<h1>{todos[0]?.title || "No Todos"}</h1>
+				<h2>Todos for {selectedDate.toDateString()}</h2>
 				{Object.keys(groupedTodos).map((category) => (
 					<div key={category}>
 						<h3>{category}</h3>
-						<ul>
-							{groupedTodos[category].map((todo) => (
-								<li key={todo.id}>
-									<p>Title: {todo.title}</p>
-									<p>Description: {todo.description}</p>
-									{todo.time && <p>Time: {todo.time}</p>}
-								</li>
-							))}
-						</ul>
+						{groupedTodos[category].map((todo) => (
+							<TaskContainer
+								key={todo.id}
+								toDoTitle={todo.title}
+								toDoDescription={todo.description}
+								toDoComment={""}
+								taskStatus={"default"}
+								time={todo.time || ""}
+							/>
+						))}
 					</div>
 				))}
 			</div>

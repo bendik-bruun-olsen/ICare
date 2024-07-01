@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
 import { Paths } from "../../paths";
 import PatientDetails from "../../components/PatientDetails/PatientDetails";
+import TaskContainer from "../../components/TaskContainer/TaskContainer";
 
 const HomePage = () => {
 	return (
@@ -44,7 +45,6 @@ const HomePage = () => {
 								allTodosCount="1"
 								icon={group}
 							/>
-
 							<RemainingTodos
 								categoryTitle="Exercise"
 								completedTodosCount="2"
@@ -60,6 +60,15 @@ const HomePage = () => {
 						</Link>
 					</div>
 				</div>
+			</div>
+			<div>
+				<TaskContainer
+					toDoTitle="Movannet walk"
+					toDoDescription="Walked around mosvannet"
+					toDoComment="Hei"
+					time="08:30"
+					taskStatus="default"
+				/>
 			</div>
 		</>
 	);

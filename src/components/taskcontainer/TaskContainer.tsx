@@ -33,16 +33,16 @@ export default function TaskContainer({
 		}
 	}, [currentTaskStatus]);
 
-	const [isModalOpen, setIsModalOpen] = useState(false);
-
-	const toggleModalVisibility = () => {
-		setIsModalOpen((prev) => !prev);
-	};
-
 	const handleTaskStatus = (
 		newStatus: "complete" | "incomplete" | "default"
 	) => {
 		setCurrentTaskStatus(newStatus);
+	};
+
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const toggleModalVisibility = () => {
+		setIsModalOpen((prev) => !prev);
 	};
 
 	return (
