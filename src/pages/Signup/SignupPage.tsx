@@ -1,4 +1,4 @@
-import { auth } from "../../firebase/firebase";
+import { auth, db } from "../../firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import {
@@ -53,7 +53,6 @@ export default function SignupPage() {
 
     const signUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const db = getFirestore();
 
         const newErrors = { ...errors };
 
@@ -86,7 +85,7 @@ export default function SignupPage() {
             );
             const user = userDetails.user;
 
-            await setDoc(doc(db, "users", user.uid), {
+            await setDoc(doc(db, "users", email), {
                 name: name,
                 email: email,
             });
