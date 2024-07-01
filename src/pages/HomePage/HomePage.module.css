@@ -1,6 +1,36 @@
-.remainingTodosWrapper {
+.remainingTodosOuterWrapper {
+	width: fit-content;
+}
+
+.remainingTodosInnerWrapper {
 	display: flex;
-	flex-wrap: wrap;
 	gap: 10px;
-	justify-content: center;
+}
+
+.remainingTodosContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.arrowIconWrapper {
+	display: flex;
+	justify-content: flex-end;
+	color: var(--lightblue);
+}
+
+.arrowIconWrapper a {
+	display: flex;
+	color: var(--blue);
+}
+
+.arrowIconWrapper span {
+	padding-top: 2px;
+	color: inherit;
+}
+
+@media (min-width: 768px) {
+	.remainingTodosContainer {
+		flex-direction: row;
+	}
 }

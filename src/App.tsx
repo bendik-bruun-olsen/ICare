@@ -1,13 +1,13 @@
 import React from "react";
-import { RouterProvider } from "react-router-dom";
 import router from "./routes";
-import { StateContextProvider } from "./context/StateContext";
+import { RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./hooks/useAuth/useAuth";
 
 const App: React.FC = () => {
   return (
-    <StateContextProvider>
+    <AuthProvider>
       <RouterProvider router={router} />
-    </StateContextProvider>
+    </AuthProvider>
   );
 };
 
