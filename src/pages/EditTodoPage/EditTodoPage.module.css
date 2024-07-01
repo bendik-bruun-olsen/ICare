@@ -1,0 +1,109 @@
+.mainContainer {
+	display: flex;
+	flex-direction: column;
+	justify-content: auto;
+	padding: 20px;
+	height: 100vh;
+	background-color: #a5cdcf;
+}
+
+@media (max-width: 480px) {
+	.mainContainer {
+		padding: 10px;
+	}
+}
+
+@media (min-width: 481px) {
+	.mainContainer {
+		padding: 15px;
+	}
+}
+
+@media (min-width: 769px) {
+	.mainContainer {
+		padding: 20px;
+	}
+}
+
+@media (min-width: 1025px) {
+	.mainContainer {
+		padding: 25px;
+	}
+}
+
+@media (min-width: 1201px) {
+	.mainContainer {
+		padding: 30px;
+	}
+}
+
+.formContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	width: 100%;
+}
+
+@media (max-width: 480px) {
+	.formContainer {
+		width: 90%;
+	}
+}
+
+@media (min-width: 481px) {
+	.formContainer {
+		width: 80%;
+	}
+}
+
+@media (min-width: 769px) {
+	.formContainer {
+		width: 70%;
+	}
+}
+
+@media (min-width: 1025px) {
+	.formContainer {
+		width: 60%;
+	}
+}
+
+@media (min-width: 1201px) {
+	.formContainer {
+		width: 50%;
+	}
+}
+
+.fieldContainer {
+	margin-bottom: 15px;
+}
+
+@media (max-width: 480px) {
+	.fieldContainer {
+		margin-bottom: 10px;
+	}
+}
+
+@media (min-width: 481px) {
+	.fieldContainer {
+		margin-bottom: 12px;
+	}
+}
+
+@media (min-width: 769px) {
+	.fieldContainer {
+		margin-bottom: 14px;
+	}
+}
+
+@media (min-width: 1025px) {
+	.fieldContainer {
+		margin-bottom: 16px;
+	}
+}
+
+@media (min-width: 1201px) {
+	.fieldContainer {
+		margin-bottom: 18px;
+	}
+}

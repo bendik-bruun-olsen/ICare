@@ -6,7 +6,7 @@ import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
 import TodoPage from "./pages/TodoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
-import EditTodo from "./pages/EditTodoPage";
+import EditTodoPage from "./pages/EditTodoPage/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
 import AddAppointment from "./pages/AddAppointment/AddAppointment";
 import EditAppointment from "./pages/EditAppointmentPage";
@@ -17,74 +17,74 @@ import RecoverPasswordPage from "./pages/RecoverPasswordPage/RecoverPasswordPage
 import { Navigate } from "react-router-dom";
 
 const RequireAuthWrapper = () => {
-  const { isUserLoggedIn } = useAuth();
-  return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
+	const { isUserLoggedIn } = useAuth();
+	return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
 };
 
 const unprotectedRoutes = [
-  {
-    path: Paths.LOGIN,
-    element: <Login />,
-  },
-  {
-    path: Paths.SIGNUP,
-    element: <Signup />,
-  },
-  {
-    path: Paths.RECOVER_PASSWORD,
-    element: <RecoverPasswordPage />,
-  },
-  {
-    path: Paths.ERROR,
-    element: <ErrorPage />,
-  },
+	{
+		path: Paths.LOGIN,
+		element: <Login />,
+	},
+	{
+		path: Paths.SIGNUP,
+		element: <Signup />,
+	},
+	{
+		path: Paths.RECOVER_PASSWORD,
+		element: <RecoverPasswordPage />,
+	},
+	{
+		path: Paths.ERROR,
+		element: <ErrorPage />,
+	},
 ];
 
 const protectedRoutes = [
-  {
-    path: Paths.HOME,
-    element: <HomePage />,
-  },
-  {
-    path: Paths.TODO,
-    element: <TodoPage />,
-  },
-  {
-    path: Paths.ADD_TODO,
-    element: <AddTodo />,
-  },
-  {
-    path: Paths.EDIT_TODO,
-    element: <EditTodo />,
-  },
-  {
-    path: Paths.APPOINTMENT,
-    element: <Appointment />,
-  },
-  {
-    path: Paths.ADD_APPOINTMENT,
-    element: <AddAppointment />,
-  },
-  {
-    path: Paths.EDIT_APPOINTMENT,
-    element: <EditAppointment />,
-  },
-  {
-    path: Paths.CONTACT,
-    element: <ContactDetailsPage />,
-  },
-  {
-    path: Paths.ABOUT,
-    element: <AboutUsPage />,
-  },
+	{
+		path: Paths.HOME,
+		element: <HomePage />,
+	},
+	{
+		path: Paths.TODO,
+		element: <TodoPage />,
+	},
+	{
+		path: Paths.ADD_TODO,
+		element: <AddTodo />,
+	},
+	{
+		path: Paths.EDIT_TODO,
+		element: <EditTodoPage />,
+	},
+	{
+		path: Paths.APPOINTMENT,
+		element: <Appointment />,
+	},
+	{
+		path: Paths.ADD_APPOINTMENT,
+		element: <AddAppointment />,
+	},
+	{
+		path: Paths.EDIT_APPOINTMENT,
+		element: <EditAppointment />,
+	},
+	{
+		path: Paths.CONTACT,
+		element: <ContactDetailsPage />,
+	},
+	{
+		path: Paths.ABOUT,
+		element: <AboutUsPage />,
+	},
 ];
 
 const router = createBrowserRouter([
-  {
-    element: <RequireAuthWrapper />,
-    children: protectedRoutes,
-  },
-  ...unprotectedRoutes,
+	{
+		element: <RequireAuthWrapper />,
+		children: protectedRoutes,
+	},
+	...unprotectedRoutes,
 ]);
 
 export default router;
