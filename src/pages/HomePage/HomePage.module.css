@@ -1,35 +1,36 @@
-.remainingTodosWrapper {
-	/* width: fit-content; */
+.remainingTodosOuterWrapper {
+	width: fit-content;
+}
+
+.remainingTodosInnerWrapper {
+	display: flex;
+	gap: 10px;
 }
 
 .remainingTodosContainer {
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: column;
 	gap: 10px;
-	justify-content: center;
 }
 
 .arrowIconWrapper {
 	display: flex;
 	justify-content: flex-end;
+	color: var(--lightblue);
 }
 
 .arrowIconWrapper a {
 	display: flex;
+	color: var(--blue);
 }
 
 .arrowIconWrapper span {
 	padding-top: 2px;
+	color: inherit;
 }
 
-.arrowPositionWrapper {
-	position: relative;
-}
-
-.arrowIconWrapper {
-	display: flex;
-	color: var(--blue);
-	position: absolute;
-	left: 31%;
-	bottom: -40%;
+@media (min-width: 768px) {
+	.remainingTodosContainer {
+		flex-direction: row;
+	}
 }

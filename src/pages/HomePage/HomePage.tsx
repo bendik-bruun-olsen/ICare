@@ -18,36 +18,40 @@ const HomePage = () => {
 	return (
 		<>
 			<Navbar leftContent={<Logo />} centerContent="Home" />
-			<PatientDetails patientName="Gjertrud" age="99" />
 			<div className="pageWrapper">
-				<div className={styles.remainingTodosWrapper}>
+				<PatientDetails patientName="Gjertrud" age="99" />
+				<div className={styles.remainingTodosOuterWrapper}>
 					<h2>ToDo</h2>
-					<div className={styles.remainingTodosContainer}>
-						<RemainingTodos
-							categoryTitle="Food"
-							completedTodosCount="3"
-							allTodosCount="6"
-							icon={restaurant}
-						/>
-						<RemainingTodos
-							categoryTitle="Medicine"
-							completedTodosCount="2"
-							allTodosCount="5"
-							icon={placeholder_icon}
-						/>
-						<RemainingTodos
-							categoryTitle="Social"
-							completedTodosCount="1"
-							allTodosCount="1"
-							icon={group}
-						/>
+					<div className={styles.remainingTodosInnerWrapper}>
+						<div className={styles.remainingTodosContainer}>
+							<RemainingTodos
+								categoryTitle="Food"
+								completedTodosCount="3"
+								allTodosCount="6"
+								icon={restaurant}
+							/>
+							<RemainingTodos
+								categoryTitle="Medicine"
+								completedTodosCount="2"
+								allTodosCount="5"
+								icon={placeholder_icon}
+							/>
+						</div>
+						<div className={styles.remainingTodosContainer}>
+							<RemainingTodos
+								categoryTitle="Social"
+								completedTodosCount="1"
+								allTodosCount="1"
+								icon={group}
+							/>
 
-						<RemainingTodos
-							categoryTitle="Exercise"
-							completedTodosCount="2"
-							allTodosCount="3"
-							icon={walk}
-						/>
+							<RemainingTodos
+								categoryTitle="Exercise"
+								completedTodosCount="2"
+								allTodosCount="3"
+								icon={walk}
+							/>
+						</div>
 					</div>
 					<div className={styles.arrowIconWrapper}>
 						<Link to={Paths.TODO}>
