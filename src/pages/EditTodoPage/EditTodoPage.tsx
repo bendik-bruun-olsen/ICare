@@ -1,5 +1,5 @@
 // import { useParams } from "react-router-dom";
-import { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
@@ -13,14 +13,14 @@ import { editTodo } from "../../firebase/todoServices/editTodo";
 import { getTodo } from "../../firebase/todoServices/getTodo";
 import { TodoType } from "../../types/TodoType";
 
-export default function EditTodoPage(): ReactNode {
+export default function EditTodoPage() {
 	// const todoId = useParams<{ id: string }>().id;
 	const todoId = "vfrIdkn8BkCDJmaZfznJ";
 	const [todo, setTodo] = useState<TodoType | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		const fetchTodo = async () => {
+		const fetchTodoById = async () => {
 			setIsLoading(true);
 			try {
 				const fetchedTodo = await getTodo(todoId);
@@ -33,7 +33,7 @@ export default function EditTodoPage(): ReactNode {
 			}
 		};
 
-		fetchTodo();
+		fetchTodoById();
 	}, [todoId]);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +62,6 @@ export default function EditTodoPage(): ReactNode {
 			<Navbar leftContent={<HomeButton />} centerContent="Edit ToDo" />
 			<div className="pageWrapper">
 				<div className={styles.mainContainer}>
-					<h1>Edit ToDo</h1>
 					<form onSubmit={handleSubmit}>
 						<div className={styles.formContainer}>
 							<TitleDescription
@@ -108,11 +107,25 @@ export default function EditTodoPage(): ReactNode {
 									/> */}
 									<DaysComponent
 										selectedDays={todo?.selectedDays || []}
-										onDayToggle={(selectedDays) =>
-											setTodo((prev) => ({
-												...prev,
-												selectedDays,
-											}))
+										onDayToggle={(day) =>
+											setTodo((prev) => {
+												const isDaySelected =
+													prev?.selectedDays?.includes(
+														day
+													);
+												return {
+													...prev,
+													selectedDays: isDaySelected
+														? prev?.selectedDays.filter(
+																(d) => d !== day
+														  )
+														: [
+																...(prev?.selectedDays ||
+																	[]),
+																day,
+														  ],
+												};
+											})
 										}
 									/>
 								</>
