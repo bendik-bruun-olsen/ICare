@@ -9,6 +9,9 @@ interface TaskContainerProps {
 	toDoComment: string;
 	taskStatus: "complete" | "incomplete" | "default";
 	time: string;
+	handleTaskStatusChange: (
+		newStatus: "complete" | "incomplete" | "default"
+	) => void;
 }
 
 export default function TaskContainer({
@@ -17,6 +20,7 @@ export default function TaskContainer({
 	toDoComment,
 	taskStatus,
 	time,
+	handleTaskStatusChange,
 }: TaskContainerProps) {
 	const statusClass = styles[`${taskStatus}Background`];
 
@@ -29,7 +33,13 @@ export default function TaskContainer({
 	return (
 		<div className={styles.fullWrapper}>
 			<div className={styles.checkBoxWrapper}>
-				<Checkbox className={styles.checkBox} />
+				<Checkbox
+					className={styles.checkBox}
+					checked={taskStatus === "complete"}
+					onChange={(e) =>
+						handleTaskStatusChange(e.target.checked ? "complete" : "default")
+					}
+				/>
 			</div>
 			<div className={`${styles.toDoWrapper} ${statusClass}`}>
 				<div className={styles.titleText}>
@@ -56,11 +66,14 @@ export default function TaskContainer({
 								onClick={(e) => e.stopPropagation()}
 							>
 								<ul className={styles.modalList}>
-									<li className={styles.modalItem}>
+									<li
+										className={styles.modalItem}
+										onClick={() => handleTaskStatusChange("incomplete")}
+									>
 										<p>Mark as Incomplete</p>
 									</li>
 									<li className={styles.modalItem}>
-										<p>Edit/Delete </p>
+										<p>Edit/Delete</p>
 									</li>
 									<li className={styles.modalItem}>
 										<p>Add Comment</p>
