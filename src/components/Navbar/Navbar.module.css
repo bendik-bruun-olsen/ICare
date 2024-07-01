@@ -22,12 +22,6 @@ nav {
 	color: white;
 }
 
-.centerContent h1 {
-	font-size: 22px;
-	color: inherit;
-	font-weight: 500;
-}
-
 .rightContent {
 	display: flex;
 	flex-direction: column;
