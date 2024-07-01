@@ -1,7 +1,13 @@
+import HomeButton from "../components/HomeButton/HomeButton";
+import Navbar from "../components/Navbar/Navbar";
+
 const ContactDetailsPage = () => {
 	return (
 		<>
-			<h1>ContactPage</h1>
+			<Navbar leftContent={<HomeButton />} centerContent="Contact" />
+			<div className="pageWrapper">
+				<h2>ContactPage</h2>
+			</div>
 		</>
 	);
 };

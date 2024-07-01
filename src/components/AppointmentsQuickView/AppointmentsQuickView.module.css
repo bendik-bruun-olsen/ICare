@@ -1,0 +1,66 @@
+.fullWrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.appointmentsWrapper {
+	position: relative;
+	display: flex;
+	background-color: #d7d7d7;
+	max-width: 19rem;
+	height: 6rem;
+	align-items: center;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.textWrapper {
+	display: flex;
+	justify-content: start;
+	flex-direction: column;
+}
+
+.textWrapper p {
+	margin-left: 10px;
+	font-size: 0.9rem;
+}
+
+.firstAppointment {
+	margin-bottom: 5px;
+}
+
+.appointmentIconWrapper {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin-left: 0.5rem;
+}
+
+.calendarIcon {
+	margin-bottom: 1rem;
+}
+
+.arrowIconWrapper {
+	top: 105%;
+	left: 54%;
+	display: flex;
+	text-decoration: none;
+	text-align: center;
+	cursor: pointer;
+	position: absolute;
+	user-select: none;
+}
+
+.arrowIconWrapper p {
+	color: var(--blue);
+	font-size: 0.9rem;
+}
+
+.arrowIconWrapper a,
+.arrowIconWrapper a:visited {
+	text-decoration: none;
+	color: inherit;
+}

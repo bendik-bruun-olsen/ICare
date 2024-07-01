@@ -20,7 +20,7 @@ export default function PatientDetails({
 					/>
 					<div className={styles.PatientInfo}>
 						<h2>{patientName}</h2>
-						<p>{age}</p>
+						<p>Age: {age}</p>
 					</div>
 				</div>
 				<div className={styles.morePatientDetails}>

@@ -6,6 +6,8 @@ import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "../AddTodo/AddTodo.module.css";
+import Navbar from "../../components/Navbar/Navbar";
+import HomeButton from "../../components/HomeButton/HomeButton";
 
 const AddAppointment: React.FC = () => {
 	const [title, setTitle] = useState("");
@@ -23,8 +25,8 @@ const AddAppointment: React.FC = () => {
 			title,
 			description,
 			startDate: Timestamp.fromDate(new Date(startDate)),
+			time,
 		};
-		//
 		try {
 			const patientRef = doc(db, "patientdetails", "patient@patient.com");
 			const appointmentRef = collection(patientRef, "appointments");
@@ -45,42 +47,52 @@ const AddAppointment: React.FC = () => {
 	};
 
 	return (
-		<div className={styles.mainContainer}>
-			<h1>Add Appointments</h1>
-			<form onSubmit={handleSubmit}>
-				<div className={styles.formContainer}>
-					<div className={styles.fieldContainer}>
-						<TitleDescription
-							title={title}
-							setTitle={setTitle}
-							description={description}
-							setDescription={setDescription}
-						/>
-					</div>
-					<div className={styles.fieldContainer}>
-						<StartAndEndDate
-							label="Select Date"
-							value={startDate}
-							onChange={(date: string) => setStartDate(date)}
-						/>
-					</div>
-					<div className={styles.fieldContainer}>
-						<TextField
-							id="time"
-							label="Select time"
-							type="time"
-							value={time}
-							className={styles.time}
-							onChange={(
-								e: React.ChangeEvent<HTMLInputElement>
-							) => setTime(e.target.value)}
-							style={{ width: "150px" }}
-						/>
-					</div>
-					<AddButton label="Add" onClick={onclickAddButton} />
+		<>
+			<Navbar
+				leftContent={<HomeButton />}
+				centerContent="Add Appointments"
+			/>
+			<div className="pageWrapper">
+				<div className={styles.mainContainer}>
+					<h1>Add Appointments</h1>
+					<form onSubmit={handleSubmit}>
+						<div className={styles.formContainer}>
+							<div className={styles.fieldContainer}>
+								<TitleDescription
+									title={title}
+									setTitle={setTitle}
+									description={description}
+									setDescription={setDescription}
+								/>
+							</div>
+							<div className={styles.fieldContainer}>
+								<StartAndEndDate
+									label="Select Date"
+									value={startDate}
+									onChange={(date: string) =>
+										setStartDate(date)
+									}
+								/>
+							</div>
+							<div className={styles.fieldContainer}>
+								<TextField
+									id="time"
+									label="Select time"
+									type="time"
+									value={time}
+									className={styles.time}
+									onChange={(
+										e: React.ChangeEvent<HTMLInputElement>
+									) => setTime(e.target.value)}
+									style={{ width: "150px" }}
+								/>
+							</div>
+							<AddButton label="Add" onClick={onclickAddButton} />
+						</div>
+					</form>
 				</div>
-			</form>
-		</div>
+			</div>
+		</>
 	);
 };
 export default AddAppointment;

@@ -8,6 +8,8 @@ import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodo.module.css";
+import Navbar from "../../components/Navbar/Navbar";
+import HomeButton from "../../components/HomeButton/HomeButton";
 
 const AddToDo: React.FC = () => {
 	const [title, setTitle] = useState("");
@@ -29,7 +31,7 @@ const AddToDo: React.FC = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		// push data into firebase
+
 		const newTodo = {
 			title,
 			description,
@@ -77,74 +79,83 @@ const AddToDo: React.FC = () => {
 	};
 
 	return (
-		<div className={styles.mainContainer}>
-			<h1>Add To Do</h1>
-			<form onSubmit={handleSubmit}>
-				<div className={styles.formContainer}>
-					<div className={styles.fieldContainer}>
-						<TitleDescription
-							title={title}
-							setTitle={setTitle}
-							description={description}
-							setDescription={setDescription}
-						/>
-					</div>
-					<div className={styles.fieldContainer}>
-						<StartAndEndDate
-							label="Start date"
-							value={startDate}
-							onChange={(date: string) => setStartDate(date)}
-						/>
-					</div>
-					<div className={styles.fieldContainer}>
-						<TextField
-							id="time"
-							label="Select time"
-							type="time"
-							value={time}
-							className={styles.time}
-							onChange={(
-								e: React.ChangeEvent<HTMLInputElement>
-							) => setTime(e.target.value)}
-							style={{ width: "150px" }}
-						/>
-					</div>
-					<div className={styles.fieldContainer}>
-						<Checkbox
-							label="Repeat"
-							checked={repeat}
-							onChange={handleCheckboxChange}
-						/>
-					</div>
-					{repeat && (
-						<>
+		<>
+			<Navbar leftContent={<HomeButton />} centerContent="Add To Do" />
+			<div className="pageWrapper">
+				<div className={styles.mainContainer}>
+					<h1>Add To Do</h1>
+					<form onSubmit={handleSubmit}>
+						<div className={styles.formContainer}>
+							<div className={styles.fieldContainer}>
+								<TitleDescription
+									title={title}
+									setTitle={setTitle}
+									description={description}
+									setDescription={setDescription}
+								/>
+							</div>
 							<div className={styles.fieldContainer}>
 								<StartAndEndDate
-									label="End date"
-									value={endDate}
+									label="Start date"
+									value={startDate}
 									onChange={(date: string) =>
-										setEndDate(date)
+										setStartDate(date)
 									}
 								/>
 							</div>
 							<div className={styles.fieldContainer}>
-								<DaysComponent
-									selectedDays={selectedDays}
-									onDayToggle={handleDayToggle}
+								<TextField
+									id="time"
+									label="Select time"
+									type="time"
+									value={time}
+									className={styles.time}
+									onChange={(
+										e: React.ChangeEvent<HTMLInputElement>
+									) => setTime(e.target.value)}
+									style={{ width: "150px" }}
 								/>
 							</div>
-						</>
-					)}
-					<div className={styles.fieldContainer}>
-						<SelectCategory
-							selectedOption={selectCategory}
-							onSelectionChange={handleCategorySelectionChange}
-						/>
-					</div>
-					<AddButton label="Add" onClick={onclickAddButton} />
+							<div className={styles.fieldContainer}>
+								<Checkbox
+									label="Repeat"
+									checked={repeat}
+									onChange={handleCheckboxChange}
+								/>
+							</div>
+							{repeat && (
+								<>
+									<div className={styles.fieldContainer}>
+										<StartAndEndDate
+											label="End date"
+											value={endDate}
+											onChange={(date: string) =>
+												setEndDate(date)
+											}
+										/>
+									</div>
+									<div className={styles.fieldContainer}>
+										<DaysComponent
+											selectedDays={selectedDays}
+											onDayToggle={handleDayToggle}
+										/>
+									</div>
+								</>
+							)}
+							<div className={styles.fieldContainer}>
+								<SelectCategory
+									selectedOption={selectCategory}
+									onSelectionChange={
+										handleCategorySelectionChange
+									}
+								/>
+							</div>
+							<AddButton label="Add" onClick={onclickAddButton} />
+						</div>
+					</form>
 				</div>
-			</form>
-		</div>
+			</div>
+		</>
 	);
 };
 export default AddToDo;

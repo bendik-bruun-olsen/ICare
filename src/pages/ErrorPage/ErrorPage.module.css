@@ -1,0 +1,43 @@
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	justify-content: center;
+	padding: 20px;
+	gap: 10px;
+}
+
+.title {
+	color: var(--blue);
+	font-size: 6rem;
+}
+
+.subtitle {
+	font-size: 3rem;
+}
+
+.paragraph {
+	color: var(--black);
+	margin-top: 10px;
+	font-weight: 450;
+}
+
+.buttonContainer {
+	display: flex;
+	margin: 10px 0;
+}
+
+#returnButton {
+	background-color: var(--blue);
+	width: fit-content;
+}
+
+@media (max-width: 768px) {
+	.wrapper {
+		justify-content: space-between;
+	}
+
+	.buttonContainer {
+		justify-content: center;
+	}
+}

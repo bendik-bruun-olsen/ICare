@@ -1,5 +1,4 @@
 nav {
-	position: relative;
 	background-color: var(--blue);
 	display: flex;
 	align-items: center;
@@ -23,12 +22,6 @@ nav {
 	color: white;
 }
 
-.centerContent h1 {
-	font-size: 22px;
-	color: inherit;
-	font-weight: 500;
-}
-
 .rightContent {
 	display: flex;
 	flex-direction: column;
@@ -37,8 +30,8 @@ nav {
 	color: white;
 }
 
-.rightContent p {
-	font-weight: 400;
+.rightContent span {
+	margin-top: -5px;
 }
 
 .modalOverlay {
@@ -54,7 +47,7 @@ nav {
 	background-color: var(--white);
 	padding: 10px 10px;
 	border-radius: 5px;
-	min-width: 100px;
+	max-width: 200px;
 	top: 50px;
 	right: 0;
 	display: flex;
