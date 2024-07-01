@@ -9,7 +9,7 @@ import {
 } from "@equinor/eds-core-react";
 import { Paths } from "../../paths";
 import { useNavigate } from "react-router-dom";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import "./SignupPage.modules.css";
 import { FirebaseError } from "firebase/app";
 import Logo from "../../components/Logo/Logo";
@@ -78,12 +78,7 @@ export default function SignupPage() {
             return;
         }
         try {
-            const userDetails = await createUserWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-            const user = userDetails.user;
+            await createUserWithEmailAndPassword(auth, email, password);
 
             await setDoc(doc(db, "users", email), {
                 name: name,
