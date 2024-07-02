@@ -1,10 +1,12 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface TodoType {
 	title: string;
 	description: string;
 	repeat: boolean;
-	startDate: string;
-	endDate?: string | null;
+	startDate: Timestamp;
+	endDate: Timestamp | null;
 	time: string;
-	category?: string | null;
-	selectedDays?: string[];
+	category: string | null;
+	selectedDays: string[];
 }

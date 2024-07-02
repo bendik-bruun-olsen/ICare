@@ -10,7 +10,7 @@ import {
 	doc,
 } from "firebase/firestore";
 
-interface Todo {
+interface TodoInterface {
 	id: string;
 	title: string;
 	description: string;
@@ -23,7 +23,7 @@ interface Todo {
 
 const TodoPage: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [todos, setTodos] = useState<Todo[]>([]);
+	const [todos, setTodos] = useState<TodoInterface[]>([]);
 
 	useEffect(() => {
 		const fetchTodos = async () => {
@@ -43,7 +43,7 @@ const TodoPage: React.FC = () => {
 					where("startDate", "<=", Timestamp.fromDate(endOfDay))
 				);
 				const querySnapshot = await getDocs(q);
-				const fetchedTodos: Todo[] = querySnapshot.docs
+				const fetchedTodos: TodoInterface[] = querySnapshot.docs
 					.map((doc) => ({
 						id: doc.id,
 						...doc.data(),
@@ -86,8 +86,10 @@ const TodoPage: React.FC = () => {
 		fetchTodos();
 	}, [selectedDate]);
 
-	const groupTodosByCategory = (todos: Todo[]): { [key: string]: Todo[] } => {
-		const grouped: { [key: string]: Todo[] } = {};
+	const groupTodosByCategory = (
+		todos: TodoInterface[]
+	): { [key: string]: TodoInterface[] } => {
+		const grouped: { [key: string]: TodoInterface[] } = {};
 		todos.forEach((todo) => {
 			const category = todo.category || "Others";
 			if (!grouped[category]) {

@@ -11,29 +11,36 @@ import Navbar from "../../components/Navbar/Navbar";
 import HomeButton from "../../components/HomeButton/HomeButton";
 import { editTodo } from "../../firebase/todoServices/editTodo";
 import { getTodo } from "../../firebase/todoServices/getTodo";
-import { TodoType } from "../../types/TodoType";
+import { Timestamp } from "firebase/firestore";
 
-export default function EditTodoPage() {
+interface TodoInterface {
+	title: string;
+	description: string;
+	repeat: boolean;
+	startDate: Timestamp;
+	endDate: Timestamp | null;
+	time: string;
+	category: string | null;
+	selectedDays: string[];
+}
+
+const EditTodoPage: React.FC = () => {
 	// const todoId = useParams<{ id: string }>().id;
-	const todoId = "vfrIdkn8BkCDJmaZfznJ";
-	const [todo, setTodo] = useState<TodoType | null>(null);
+	const todoId = "pwdKTNJarLQzuMkbLqDI";
+	const [todo, setToDo] = useState<TodoInterface | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
+	const [notificationMessage, setNotificationMessage] = useState<string>("");
 
 	useEffect(() => {
 		const fetchTodoById = async () => {
 			setIsLoading(true);
 			try {
 				const fetchedTodo = await getTodo(todoId);
-				if (fetchedTodo) {
-					const convertedTodo = {
-						...fetchedTodo,
-						startDate: fetchedTodo.startDate.toDate(),
-						endDate: fetchedTodo.endDate?.toDate(),
-					};
-					setTodo(convertedTodo);
-				}
+				setToDo(fetchedTodo as TodoInterface);
 			} catch (e) {
-				console.error("Error fetching document: ", e);
+				setNotificationMessage(
+					"Error fetching data. Please try again later."
+				);
 			} finally {
 				setIsLoading(false);
 			}
@@ -42,27 +49,50 @@ export default function EditTodoPage() {
 	}, [todoId]);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		console.log("e.target: ", e.target);
 		const { name, value } = e.target;
-		setTodo((prev) => ({ ...prev, [name]: value }));
+		setToDo((prev) => (prev ? { ...prev, [name]: value } : null));
 	};
 
 	const handleCheckboxChange = () => {
-		setTodo((prev) => ({ ...prev, repeat: !prev.repeat }));
+		setToDo((prev) => (prev ? { ...prev, repeat: !prev.repeat } : null));
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (todo && checkIfDateIsInPast(todo.startDate)) {
+			setNotificationMessage("Start date cannot be in the past.");
+			return;
+		}
 		try {
 			if (todo) {
-				console.log(todo);
-
 				await editTodo(todoId, todo);
-				console.log("Todo edited successfully");
+				setNotificationMessage("Todo edited successfully!");
 			}
 		} catch (e) {
-			console.error("Error editing document: ", e);
+			setNotificationMessage(
+				"Error editing todo. Please try again later."
+			);
 		}
+	};
+
+	const checkIfDateIsInPast = (date: Timestamp) => {
+		// const convertedDate = date.toDate();
+		const currentDate = Timestamp.now();
+		console.log("date: ", date);
+		console.log("dateType: ", typeof date);
+		console.log("currentDate: ", currentDate);
+
+		return date.toMillis() < currentDate.toMillis();
+	};
+
+	const handleDateChange = (field: string, dateString: string) => {
+		const newTimestamp = Timestamp.fromDate(new Date(dateString));
+		setToDo((prev) => ({ ...prev, [field]: newTimestamp }));
+	};
+
+	const formatDate = (timestamp: Timestamp): string => {
+		const date = timestamp.toDate();
+		return date.toISOString().substring(0, 10);
 	};
 
 	if (isLoading) return <h1>Loading....</h1>;
@@ -75,13 +105,13 @@ export default function EditTodoPage() {
 					<form onSubmit={handleSubmit}>
 						<div className={styles.formContainer}>
 							<TitleDescription
-								title={todo?.title || ""}
+								title={todo.title}
 								setTitle={(title) =>
-									setTodo((prev) => ({ ...prev, title }))
+									setToDo((prev) => ({ ...prev, title }))
 								}
-								description={todo?.description || ""}
+								description={todo.description}
 								setDescription={(description) =>
-									setTodo((prev) => ({
+									setToDo((prev) => ({
 										...prev,
 										description,
 									}))
@@ -89,36 +119,36 @@ export default function EditTodoPage() {
 							/>
 							<StartAndEndDate
 								label="Start date"
-								value={todo?.startDate || ""}
-								onChange={(startDate) =>
-									setTodo((prev) => ({ ...prev, startDate }))
+								value={formatDate(todo.startDate)}
+								onChange={(dateString) =>
+									handleDateChange("startDate", dateString)
 								}
 							/>
 							<TextField
 								id="time"
 								label="Select time"
 								type="time"
-								value={todo?.time || ""}
+								value={todo.time}
 								className={styles.time}
 								onChange={handleChange}
 								style={{ width: "150px" }}
 							/>
 							{todo?.repeat && (
 								<>
-									{/* <StartAndEndDate
+									<StartAndEndDate
 										label="End date"
-										value={todo?.endDate || ""}
-										onChange={(endDate) =>
-											setTodo((prev) => ({
-												...prev,
-												endDate,
-											}))
+										value={formatDate(todo.startDate)}
+										onChange={(dateString) =>
+											handleDateChange(
+												"endDate",
+												dateString
+											)
 										}
-									/> */}
+									/>
 									<DaysComponent
 										selectedDays={todo?.selectedDays || []}
 										onDayToggle={(day) =>
-											setTodo((prev) => {
+											setToDo((prev) => {
 												const isDaySelected =
 													prev?.selectedDays?.includes(
 														day
@@ -143,7 +173,7 @@ export default function EditTodoPage() {
 							<SelectCategory
 								selectedOption={todo?.category || null}
 								onSelectionChange={(category) =>
-									setTodo((prev) => ({ ...prev, category }))
+									setToDo((prev) => ({ ...prev, category }))
 								}
 							/>
 							<Checkbox
@@ -152,10 +182,15 @@ export default function EditTodoPage() {
 								onChange={handleCheckboxChange}
 							/>
 							<AddButton label="Save" onClick={handleSubmit} />
+							{notificationMessage && (
+								<h3>{notificationMessage}</h3>
+							)}
 						</div>
 					</form>
 				</div>
 			</div>
 		</>
 	);
-}
+};
+
+export default EditTodoPage;
