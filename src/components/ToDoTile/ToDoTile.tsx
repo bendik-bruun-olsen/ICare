@@ -1,43 +1,29 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Icon, Checkbox } from "@equinor/eds-core-react";
 import { comment, more_horizontal } from "@equinor/eds-icons";
-import styles from "./TaskContainer.module.css";
+import styles from "./ToDoTile.module.css";
+import { ToDoStatus } from "../../types";
+import { updateToDoStatusInDatabase } from "../../pages/ToDoPage/ToDoPage";
 
-interface TaskContainerProps {
+interface ToDoTileProps {
 	toDoTitle: string;
 	toDoDescription: string;
 	toDoComment: string;
-	taskStatus: "complete" | "incomplete" | "default";
 	time: string;
+	taskStatus: ToDoStatus;
+	toDoId: string;
 }
 
-export default function TaskContainer({
+export default function ToDoTile({
+	toDoId,
 	toDoTitle,
 	toDoDescription,
 	toDoComment,
 	taskStatus,
 	time,
-}: TaskContainerProps) {
-	const [currentTaskStatus, setCurrentTaskStatus] = useState<
-		"complete" | "incomplete" | "default"
-	>(taskStatus);
-
-	const statusClass = useMemo(() => {
-		switch (currentTaskStatus) {
-			case "complete":
-				return styles.complete;
-			case "incomplete":
-				return styles.incomplete;
-			default:
-				return "";
-		}
-	}, [currentTaskStatus]);
-
-	const handleTaskStatus = (
-		newStatus: "complete" | "incomplete" | "default"
-	) => {
-		setCurrentTaskStatus(newStatus);
-	};
+}: ToDoTileProps) {
+	const [currentTaskStatus, setCurrentTaskStatus] =
+		useState<ToDoStatus>(taskStatus);
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -45,22 +31,39 @@ export default function TaskContainer({
 		setIsModalOpen((prev) => !prev);
 	};
 
+	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
+		if (currentToDoStatus === ToDoStatus.Checked) return styles.checked;
+		if (currentToDoStatus === ToDoStatus.NotApplicable)
+			return styles.notApplicable;
+		return styles.default;
+	}
+
+	useEffect(() => {
+		updateToDoStatusInDatabase(toDoId, currentTaskStatus);
+	}, [currentTaskStatus]);
+
 	return (
 		<div className={styles.fullWrapper}>
 			<div className={styles.checkBoxWrapper}>
 				<Checkbox
 					className={styles.checkBox}
-					checked={currentTaskStatus === "complete"}
-					onChange={(e) =>
-						handleTaskStatus(e.target.checked ? "complete" : "default")
+					checked={currentTaskStatus === ToDoStatus.Checked}
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+						setCurrentTaskStatus(
+							e.target.checked ? ToDoStatus.Checked : ToDoStatus.Unchecked
+						)
 					}
 				/>
 			</div>
-			<div className={`${styles.toDoWrapper} ${statusClass}`}>
+			<div
+				className={`${styles.toDoWrapper} ${chooseTileStyle(
+					currentTaskStatus
+				)}`}
+			>
 				<div className={styles.titleText}>
-					<h1>
+					<h3>
 						{time} - {toDoTitle}
-					</h1>
+					</h3>
 				</div>
 				<div className={styles.descriptionSection}>
 					<p>{toDoDescription}</p>
@@ -83,18 +86,19 @@ export default function TaskContainer({
 								<ul className={styles.modalList}>
 									<li
 										className={styles.modalItem}
-										onClick={() =>
-											handleTaskStatus(
-												currentTaskStatus === "incomplete"
-													? "default"
-													: "incomplete"
-											)
-										}
+										onClick={() => {
+											setCurrentTaskStatus((prev) =>
+												prev === ToDoStatus.NotApplicable
+													? ToDoStatus.Unchecked
+													: ToDoStatus.NotApplicable
+											);
+											toggleModalVisibility();
+										}}
 									>
 										<p>
-											{currentTaskStatus === "incomplete"
-												? "Mark as in progress"
-												: "Mark as incomplete"}
+											{currentTaskStatus === ToDoStatus.NotApplicable
+												? "Mark as applicable"
+												: "Mark as N/A"}
 										</p>
 									</li>
 									<li className={styles.modalItem}>

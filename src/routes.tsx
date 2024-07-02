@@ -4,7 +4,7 @@ import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
-import TodoPage from "./pages/ToDoPage/TodoPage";
+import ToDoPage from "./pages/ToDoPage/ToDoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
 import EditTodo from "./pages/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
@@ -47,7 +47,7 @@ const protectedRoutes = [
 	},
 	{
 		path: Paths.TODO,
-		element: <TodoPage />,
+		element: <ToDoPage />,
 	},
 	{
 		path: Paths.ADD_TODO,

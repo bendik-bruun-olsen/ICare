@@ -125,10 +125,10 @@
 	}
 }
 
-.incomplete {
+.notApplicable {
 	background-color: #eea88e;
 }
 
-.complete {
+.checked {
 	background-color: #9db3b6;
 }
