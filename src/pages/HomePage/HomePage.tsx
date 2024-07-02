@@ -44,7 +44,6 @@ const HomePage = () => {
 								allTodosCount="1"
 								icon={group}
 							/>
-
 							<RemainingTodos
 								categoryTitle="Exercise"
 								completedTodosCount="2"
