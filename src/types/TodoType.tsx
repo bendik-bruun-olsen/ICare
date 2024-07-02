@@ -3,8 +3,8 @@ export interface TodoType {
 	description: string;
 	repeat: boolean;
 	startDate: string;
-	endDate: string | null;
+	endDate?: string | null;
 	time: string;
-	category: string | null;
-	selectedDays: string[];
+	category?: string | null;
+	selectedDays?: string[];
 }

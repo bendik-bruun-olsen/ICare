@@ -33,6 +33,7 @@ const DaysComponent: React.FC<DaysComponentProps> = ({
 		.map((button) => button.index);
 
 	console.log("selectedDays", selectedDays);
+	console.log("selectedIndexes", selectedIndexes);
 
 	return (
 		<div>
@@ -47,7 +48,6 @@ const DaysComponent: React.FC<DaysComponentProps> = ({
 						key={index}
 						aria-label="days"
 						onClick={() => handleButtonClick(button.label)}
-						// selected={selectedDays.includes(button.label)}
 					>
 						{button.text}
 					</Button>

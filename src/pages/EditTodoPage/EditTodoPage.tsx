@@ -24,19 +24,25 @@ export default function EditTodoPage() {
 			setIsLoading(true);
 			try {
 				const fetchedTodo = await getTodo(todoId);
-				setTodo(fetchedTodo);
-				console.log("List: ", fetchedTodo);
+				if (fetchedTodo) {
+					const convertedTodo = {
+						...fetchedTodo,
+						startDate: fetchedTodo.startDate.toDate(),
+						endDate: fetchedTodo.endDate?.toDate(),
+					};
+					setTodo(convertedTodo);
+				}
 			} catch (e) {
 				console.error("Error fetching document: ", e);
 			} finally {
 				setIsLoading(false);
 			}
 		};
-
 		fetchTodoById();
 	}, [todoId]);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		console.log("e.target: ", e.target);
 		const { name, value } = e.target;
 		setTodo((prev) => ({ ...prev, [name]: value }));
 	};
@@ -48,8 +54,12 @@ export default function EditTodoPage() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		try {
-			await editTodo(todoId, todo);
-			console.log("Todo edited successfully");
+			if (todo) {
+				console.log(todo);
+
+				await editTodo(todoId, todo);
+				console.log("Todo edited successfully");
+			}
 		} catch (e) {
 			console.error("Error editing document: ", e);
 		}
@@ -77,13 +87,13 @@ export default function EditTodoPage() {
 									}))
 								}
 							/>
-							{/* <StartAndEndDate
+							<StartAndEndDate
 								label="Start date"
 								value={todo?.startDate || ""}
 								onChange={(startDate) =>
 									setTodo((prev) => ({ ...prev, startDate }))
 								}
-							/> */}
+							/>
 							<TextField
 								id="time"
 								label="Select time"
