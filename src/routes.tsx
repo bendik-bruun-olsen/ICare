@@ -4,7 +4,7 @@ import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
-import TodoPage from "./pages/TodoPage";
+import ToDoPage from "./pages/ToDoPage/ToDoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
 import EditTodo from "./pages/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
@@ -15,7 +15,6 @@ import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
 import { Navigate } from "react-router-dom";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const RequireAuthWrapper = () => {
     const { isUserLoggedIn } = useAuth();
@@ -36,10 +35,6 @@ const unprotectedRoutes = [
         element: <RecoverPasswordPage />,
     },
     {
-        path: Paths.RESET_PASSWORD,
-        element: <ResetPasswordPage />,
-    },
-    {
         path: Paths.ERROR,
         element: <ErrorPage />,
     },
@@ -52,7 +47,7 @@ const protectedRoutes = [
     },
     {
         path: Paths.TODO,
-        element: <TodoPage />,
+        element: <ToDoPage />,
     },
     {
         path: Paths.ADD_TODO,
