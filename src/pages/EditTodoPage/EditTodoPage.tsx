@@ -26,10 +26,14 @@ interface TodoInterface {
 
 function EditToDoPage() {
 	// const todoId = useParams<{ id: string }>().id;
-	const todoId = "pwdKTNJarLQzuMkbLqDI";
+	const todoId = "F167KVtgHBGehgXzdEth";
 	const [todo, setToDo] = useState<TodoInterface | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [notificationMessage, setNotificationMessage] = useState<string>("");
+	const [initialDates, setInitialDates] = useState<{
+		startDate: Timestamp;
+		endDate: Timestamp | null;
+	}>({ startDate: Timestamp.now(), endDate: null });
 
 	useEffect(() => {
 		const fetchTodoById = async () => {
@@ -37,6 +41,10 @@ function EditToDoPage() {
 			try {
 				const fetchedTodo = await getTodo(todoId);
 				setToDo(fetchedTodo as TodoInterface);
+				setInitialDates({
+					startDate: fetchedTodo?.startDate,
+					endDate: fetchedTodo?.endDate,
+				});
 			} catch (e) {
 				setNotificationMessage(
 					"Error fetching data. Please try again later."
@@ -61,15 +69,28 @@ function EditToDoPage() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!validateDate(todo.startDate, todo.repeat ? todo.endDate : null)) {
-			setNotificationMessage("Invalid date range. Please try again.");
+		if (!todo) {
+			setNotificationMessage(
+				"Error editing todo. Please try again later."
+			);
 			return;
 		}
-		try {
-			if (todo) {
-				await editTodo(todoId, todo);
-				setNotificationMessage("Todo edited successfully!");
+
+		const { startDate, endDate, time } = todo;
+
+		const hasStartDateChanged = !startDate.isEqual(initialDates.startDate);
+		const hasEndDateChanged = !endDate.isEqual(initialDates.endDate);
+
+		if (hasStartDateChanged || hasEndDateChanged) {
+			if (!validateDate(startDate, endDate, time)) {
+				setNotificationMessage("Invalid date range. Please try again.");
+				return;
 			}
+		}
+
+		try {
+			await editTodo(todoId, todo);
+			setNotificationMessage("Todo edited successfully!");
 		} catch (e) {
 			setNotificationMessage(
 				"Error editing todo. Please try again later."
@@ -89,16 +110,38 @@ function EditToDoPage() {
 
 	const validateDate = (
 		startDate: Timestamp,
-		endDate: Timestamp | null
+		endDate: Timestamp | null,
+		time: string
 	): boolean => {
+		console.log("Validating...");
+
 		const currentDate = new Date().getTime();
-		if (startDate.toMillis() < currentDate) return false;
+		console.log("CurrentDate: ", currentDate, "Type: ", typeof currentDate);
+
+		const [hours, minutes] = time.split(":");
+		const hoursInMs = parseInt(hours) * 60 * 60 * 1000;
+		const minutesInMs = parseInt(minutes) * 60 * 1000;
+		console.log("hoursInMs: ", hoursInMs, "Type: ", typeof hoursInMs);
+		console.log("Math: ", startDate.toMillis() + hoursInMs + minutesInMs);
+		console.log(
+			"CompareBool: ",
+			startDate.toMillis() + hoursInMs + minutesInMs < currentDate
+		);
+
+		console.log("currentDate: ", currentDate, "Type: ", typeof currentDate);
+
+		console.log("First validate...");
+		if (startDate.toMillis() + hoursInMs + minutesInMs < currentDate)
+			return false;
+		console.log("Done first validate...");
+
+		console.log("Second validate...");
+
 		if (endDate && startDate.toMillis() >= endDate.toMillis()) return false;
+		console.log("Done second validate...");
 
 		return true;
 	};
-
-	console.log("ToDoTime: ", todo?.time);
 
 	if (isLoading) return <h1>Loading....</h1>;
 
@@ -110,11 +153,11 @@ function EditToDoPage() {
 					<form onSubmit={handleSubmit}>
 						<div className={styles.formContainer}>
 							<TitleDescription
-								title={todo.title}
+								title={todo?.title || ""}
 								setTitle={(title) =>
 									setToDo((prev) => ({ ...prev, title }))
 								}
-								description={todo.description}
+								description={todo?.description || ""}
 								setDescription={(description) =>
 									setToDo((prev) => ({
 										...prev,
@@ -124,7 +167,9 @@ function EditToDoPage() {
 							/>
 							<StartAndEndDate
 								label="Start date"
-								value={formatDate(todo.startDate)}
+								value={formatDate(
+									todo?.startDate || Timestamp.now()
+								)}
 								onChange={(dateString) =>
 									handleDateChange("startDate", dateString)
 								}
@@ -134,7 +179,7 @@ function EditToDoPage() {
 								label="Select time"
 								type="time"
 								name="time"
-								value={todo.time}
+								value={todo?.time}
 								className={styles.time}
 								onChange={handleChange}
 								style={{ width: "150px" }}

@@ -32,9 +32,6 @@ const DaysComponent: React.FC<DaysComponentProps> = ({
 		.filter((button) => button.isSelected)
 		.map((button) => button.index);
 
-	console.log("selectedDays", selectedDays);
-	console.log("selectedIndexes", selectedIndexes);
-
 	return (
 		<div>
 			<h2 style={{ color: "#6F6F6F", fontWeight: 500 }}>Frequency</h2>
