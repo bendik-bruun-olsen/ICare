@@ -76,15 +76,30 @@ function EditToDoPage() {
 			return;
 		}
 
-		const { startDate, endDate, time } = todo;
+		const { startDate, endDate, time, repeat } = todo;
 
 		const hasStartDateChanged = !startDate.isEqual(initialDates.startDate);
 		const hasEndDateChanged = !endDate.isEqual(initialDates.endDate);
 
-		if (hasStartDateChanged || hasEndDateChanged) {
-			if (!validateDate(startDate, endDate, time)) {
-				setNotificationMessage("Invalid date range. Please try again.");
-				return;
+		if (repeat) {
+			if (hasStartDateChanged || hasEndDateChanged) {
+				if (!validateDate(startDate, endDate, time)) {
+					setNotificationMessage(
+						"Invalid date range. Please try again."
+					);
+					resetDateToInitial();
+					return;
+				}
+			}
+		} else {
+			if (hasStartDateChanged) {
+				if (!validateDate(startDate, null, time)) {
+					setNotificationMessage(
+						"Invalid date range. Please try again."
+					);
+					resetDateToInitial();
+					return;
+				}
 			}
 		}
 
@@ -113,38 +128,40 @@ function EditToDoPage() {
 		endDate: Timestamp | null,
 		time: string
 	): boolean => {
-		console.log("Validating...");
-
 		const currentDate = new Date().getTime();
-		console.log("CurrentDate: ", currentDate, "Type: ", typeof currentDate);
 
 		const [hours, minutes] = time.split(":");
-		const hoursInMs = parseInt(hours) * 60 * 60 * 1000;
-		const minutesInMs = parseInt(minutes) * 60 * 1000;
-		console.log("hoursInMs: ", hoursInMs, "Type: ", typeof hoursInMs);
-		console.log("Math: ", startDate.toMillis() + hoursInMs + minutesInMs);
-		console.log(
-			"CompareBool: ",
-			startDate.toMillis() + hoursInMs + minutesInMs < currentDate
-		);
+		const hoursAsMillis = parseInt(hours) * 60 * 60 * 1000;
+		const minutesAsMillis = parseInt(minutes) * 60 * 1000;
 
-		console.log("currentDate: ", currentDate, "Type: ", typeof currentDate);
+		const startDateWithHoursAndMinutes =
+			startDate.toMillis() + hoursAsMillis + minutesAsMillis;
 
-		console.log("First validate...");
-		if (startDate.toMillis() + hoursInMs + minutesInMs < currentDate)
-			return false;
-		console.log("Done first validate...");
+		const hasStartDateChanged = !startDate.isEqual(initialDates.startDate);
 
-		console.log("Second validate...");
+		if (hasStartDateChanged) {
+			if (startDateWithHoursAndMinutes < currentDate) return false;
+		}
 
 		if (endDate && startDate.toMillis() >= endDate.toMillis()) return false;
-		console.log("Done second validate...");
 
 		return true;
 	};
 
 	if (isLoading) return <h1>Loading....</h1>;
 
+	const resetDateToInitial = () => {
+		setToDo((prev) => {
+			if (prev) {
+				return {
+					...prev,
+					startDate: initialDates.startDate,
+					endDate: prev.repeat ? initialDates.endDate : null,
+				};
+			}
+			return prev;
+		});
+	};
 	return (
 		<>
 			<Navbar leftContent={<HomeButton />} centerContent="Edit ToDo" />
@@ -167,9 +184,7 @@ function EditToDoPage() {
 							/>
 							<StartAndEndDate
 								label="Start date"
-								value={formatDate(
-									todo?.startDate || Timestamp.now()
-								)}
+								value={formatDate(todo?.startDate)}
 								onChange={(dateString) =>
 									handleDateChange("startDate", dateString)
 								}
@@ -193,7 +208,7 @@ function EditToDoPage() {
 								<>
 									<StartAndEndDate
 										label="End date"
-										value={formatDate(todo.startDate)}
+										value={formatDate(todo.endDate)}
 										onChange={(dateString) =>
 											handleDateChange(
 												"endDate",
