@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DatePickerComponent from "../components/DatePicker/DatePickerComponent";
+import DateSelector from "../components/DateSelector/DateSelector";
 
 import { db } from "../../src/firebase/firebase";
 
@@ -58,7 +58,7 @@ const AppointmentPage: React.FC = () => {
 
 	return (
 		<div>
-			<DatePickerComponent
+			<DateSelector
 				selectedDate={selectedDate}
 				setSelectedDate={setSelectedDate}
 			/>

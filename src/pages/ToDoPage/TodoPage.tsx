@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DatePickerComponent from "../../components/DatePicker/DatePickerComponent";
+import DateSelector from "../../components/DateSelector/DateSelector";
 import ToDoTile from "../../components/ToDoTile/ToDoTile";
 import styles from "./ToDoPage.module.css";
 import { db } from "../../firebase/firebase";
@@ -101,35 +101,26 @@ const TodoPage: React.FC = () => {
 	return (
 		<>
 			<Navbar leftContent={<HomeButton />} centerContent="ToDo" />
-			<div className="pageWrapper">
-				<div className={styles.fullWrapper}>
-					<DatePickerComponent
-						selectedDate={selectedDate}
-						setSelectedDate={setSelectedDate}
-					/>
-					<div>
-						<h2>Todos for {selectedDate.toDateString()}</h2>
-						{Object.keys(groupedTodos).map((category) => (
-							<div key={category} className={styles.categoryStyle}>
-								<h3>{category}</h3>
-								<div className={styles.toDoTileMargin}>
-									{groupedTodos[category].map((todo) => (
-										<div className={styles.toDoTile} key={todo.id}>
-											<ToDoTile
-												toDoId={todo.id}
-												toDoTitle={todo.title}
-												toDoDescription={todo.description}
-												toDoComment={""}
-												taskStatus={todo.toDoStatus}
-												time={todo.time || ""}
-											/>
-										</div>
-									))}
-								</div>
-							</div>
+			<div className={styles.fullPage}>
+				<DateSelector
+					selectedDate={selectedDate}
+					setSelectedDate={setSelectedDate}
+				/>
+				{Object.keys(groupedTodos).map((category) => (
+					<div key={category} className={styles.categoryStyle}>
+						<h3>{category}</h3>
+						{groupedTodos[category].map((todo) => (
+							<ToDoTile
+								toDoId={todo.id}
+								toDoTitle={todo.title}
+								toDoDescription={todo.description}
+								toDoComment={""}
+								taskStatus={todo.toDoStatus}
+								time={todo.time || ""}
+							/>
 						))}
 					</div>
-				</div>
+				))}
 			</div>
 		</>
 	);

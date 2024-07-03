@@ -1,19 +1,20 @@
-.fullWrapper {
+.checkboxAndToDoTileWrapper {
 	display: flex;
+	margin-top: 8px;
 }
 
-.checkBoxWrapper {
+.checkboxWrapper {
 	display: flex;
 	height: 40px;
 	width: 40px;
 	clip-path: circle(45% at 50% 50%);
+	/* align-items: center; */
 }
 
 .toDoWrapper {
 	padding: 0.5rem;
-	/* max-width: 80%; */
 	border-radius: 3px;
-	width: 100%;
+	width: 85%;
 	background-color: #e6e6e6;
 }
 
@@ -22,18 +23,22 @@
 	margin-bottom: 0.5rem;
 	align-items: center;
 	position: relative;
+	justify-content: space-between;
 }
 
-.titleText h1,
+.titleText h2 {
+	font-weight: 300;
+}
+
+.titleText h2,
 .descriptionSection p,
 .commentSection p {
 	cursor: pointer;
-	color: black;
 }
 
 .descriptionSection p {
-	width: 39ch;
 	font-size: 0.9rem;
+	width: 30ch;
 }
 
 .moreIcon {
@@ -110,19 +115,10 @@
 
 @media (max-width: 320px) {
 	.commentSection p {
-		font-size: 0.8rem;
+		font-size: 0.9rem;
 	}
 	.descriptionSection p {
 		font-size: 0.8rem;
-	}
-}
-
-@media (max-width: 375px) {
-	.commentSection p {
-		font-size: 0.8rem;
-	}
-	.descriptionSection p {
-		font-size: 0.6rem;
 	}
 }
 
