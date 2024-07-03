@@ -14,6 +14,7 @@ import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasssword/ResetPasswordPage";
 import { Navigate } from "react-router-dom";
 
 const RequireAuthWrapper = () => {
@@ -33,6 +34,10 @@ const unprotectedRoutes = [
     {
         path: Paths.RECOVER_PASSWORD,
         element: <RecoverPasswordPage />,
+    },
+    {
+        path: Paths.RESET_PASSWORD,
+        element: <ResetPasswordPage />,
     },
     {
         path: Paths.ERROR,

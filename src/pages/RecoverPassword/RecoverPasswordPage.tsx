@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { auth } from "../../firebase/firebase";
 import { Input, Button, InputWrapper } from "@equinor/eds-core-react";
-import { sendPasswordResetEmail } from "firebase/auth";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
-import "./RecoverPasswordPage.module.css";
+import "./RecoverPasswordPage.modules.css";
 import styled from "styled-components";
-import checkUserExistence from "../../components/checkUserExistence";
+import { sendResetEmail } from "../../utils";
+import { checkUserExists } from "../../utils";
 
 const CustomButton = styled(Button)`
     margin-top: 1rem;
@@ -25,13 +24,21 @@ const CustomInputWrapper = styled(InputWrapper)`
 export default function RecoverPasswordPage() {
     const [email, setEmail] = useState<string>("");
     const [message, setMessage] = useState<string>("");
+    const [userExists, setUserExists] = useState<boolean | null>(null);
 
     const handleForgotPassword = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const handleCheckUser = async () => {
+            console.log(email);
+            const exists = await checkUserExists(email);
+            setUserExists(exists);
+        };
+
         try {
-            const userExists = await checkUserExistence(email);
+            await handleCheckUser();
             if (userExists) {
-                await sendPasswordResetEmail(auth, email);
+                await sendResetEmail(email);
                 setMessage("Password reset email sent!");
             } else {
                 setMessage("User does not exist");
@@ -53,30 +60,26 @@ export default function RecoverPasswordPage() {
             <img src={BannerImage} alt="logo-image" className="bannerImage" />
 
             <form onSubmit={handleForgotPassword} className="InputContainer">
-                <div>
-                    <CustomInputWrapper
-                        className="input1"
-                        labelProps={{
-                            label: "Email",
-                            htmlFor: "textfield-normal",
-                            style: { display: "block" },
-                        }}
-                    >
-                        <Input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={handleEmailChange}
-                            required
-                        />
-                    </CustomInputWrapper>
-                </div>
+                <CustomInputWrapper
+                    className="input1"
+                    labelProps={{
+                        label: "Email",
+                        htmlFor: "textfield-normal",
+                        style: { display: "block" },
+                    }}
+                >
+                    <Input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={handleEmailChange}
+                        required
+                    />
+                </CustomInputWrapper>
 
-                <div>
-                    <CustomButton id="sendEmail" type="submit">
-                        Send Email
-                    </CustomButton>
-                </div>
+                <CustomButton id="sendEmail" type="submit">
+                    Send Email
+                </CustomButton>
             </form>
 
             {message && <p>{message}</p>}

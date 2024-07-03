@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { auth } from "../firebase/firebase";
+import { auth } from "../../firebase/firebase";
 import { confirmPasswordReset } from "firebase/auth";
 import { Input, InputWrapper, Button } from "@equinor/eds-core-react";
-import { Paths } from "../paths";
-import BannerImage from "../assets/images/Logo.png";
-import Logo from "./Logo/Logo";
+import { Paths } from "../../paths";
+import BannerImage from "../../assets/images/Logo.png";
+import Logo from "../../components/Logo/Logo";
+import "./ResetPasswordPage.modules.css";
 
-export default function ResetPassword() {
+export default function ResetPasswordPage() {
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [message, setMessage] = useState<string>("");
@@ -49,33 +50,18 @@ export default function ResetPassword() {
     };
 
     return (
-        <div
-            className="pageWrapper"
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "left",
-                justifyContent: "left",
-                minHeight: "100vh",
-                padding: "10px",
-            }}
-        >
+        <div className="pageWrapper">
             <div className="heading">
                 <Logo size={"70px"} color={"var(--blue)"} />
             </div>
 
             <img src={BannerImage} alt="logo-image" className="bannerImage" />
-            <div
-                className="formContainer"
-                style={{
-                    width: "100%",
-                }}
-            >
+            <div className="formContainer">
                 <form onSubmit={handleResetPassword}>
                     <InputWrapper
                         className="input"
                         labelProps={{
-                            label: "New-Password",
+                            label: "New password",
                             htmlFor: "textfield-password",
                             style: { display: "block" },
                         }}
@@ -91,7 +77,7 @@ export default function ResetPassword() {
                     <InputWrapper
                         className="input"
                         labelProps={{
-                            label: "Confirm New-Password",
+                            label: "Confirm new password",
                             htmlFor: "textfield-password",
                             style: { display: "block" },
                         }}
@@ -104,10 +90,7 @@ export default function ResetPassword() {
                             required
                         />
                     </InputWrapper>
-                    <Button
-                        type="submit"
-                        style={{ width: "95%", marginLeft: "0.5rem" }}
-                    >
+                    <Button type="submit" style={{ marginLeft: "0.5rem" }}>
                         Reset Password
                     </Button>
                 </form>
