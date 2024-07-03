@@ -1,6 +1,7 @@
 .checkboxAndToDoTileWrapper {
 	display: flex;
 	margin-top: 8px;
+	align-items: center;
 }
 
 .checkboxWrapper {
