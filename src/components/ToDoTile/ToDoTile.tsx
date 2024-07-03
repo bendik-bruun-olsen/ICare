@@ -40,7 +40,7 @@ export default function ToDoTile({
 
 	useEffect(() => {
 		updateToDoStatusInDatabase(toDoId, currentTaskStatus);
-	}, [currentTaskStatus]);
+	}, [currentTaskStatus, toDoId]);
 
 	return (
 		<div className={styles.fullWrapper}>
