@@ -24,7 +24,7 @@ interface TodoInterface {
 	selectedDays: string[];
 }
 
-const EditTodoPage: React.FC = () => {
+const EditToDoPage: React.FC = () => {
 	// const todoId = useParams<{ id: string }>().id;
 	const todoId = "pwdKTNJarLQzuMkbLqDI";
 	const [todo, setToDo] = useState<TodoInterface | null>(null);
@@ -59,7 +59,7 @@ const EditTodoPage: React.FC = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (todo && checkIfDateIsInPast(todo.startDate)) {
+		if (todo && validateDate(todo.startDate)) {
 			setNotificationMessage("Start date cannot be in the past.");
 			return;
 		}
@@ -93,6 +93,15 @@ const EditTodoPage: React.FC = () => {
 	const formatDate = (timestamp: Timestamp): string => {
 		const date = timestamp.toDate();
 		return date.toISOString().substring(0, 10);
+	};
+
+	const validateDate = (date: Timestamp): boolean => {
+		if (todo?.repeat && todo?.endDate) {
+			if (date.toMillis() < todo?.endDate.toMillis()) return false;
+		}
+		if (todo?.startDate.toMillis() > date.toMillis()) return false;
+
+		return true;
 	};
 
 	if (isLoading) return <h1>Loading....</h1>;
@@ -193,4 +202,4 @@ const EditTodoPage: React.FC = () => {
 	);
 };
 
-export default EditTodoPage;
+export default EditToDoPage;

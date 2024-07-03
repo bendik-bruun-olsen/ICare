@@ -2,7 +2,7 @@ import { Icon } from "@equinor/eds-core-react";
 import { home } from "@equinor/eds-icons";
 import { useNavigate } from "react-router-dom";
 import { Paths } from "../../paths";
-import styles from "./Homebutton.module.css";
+import styles from "./HomeButton.module.css";
 
 export default function HomeButton() {
 	const navigate = useNavigate();
@@ -11,6 +11,11 @@ export default function HomeButton() {
 	};
 
 	return (
-		<Icon className={styles.icon} data={home} size={40} onClick={handleClick} />
+		<Icon
+			className={styles.icon}
+			data={home}
+			size={40}
+			onClick={handleClick}
+		/>
 	);
 }
