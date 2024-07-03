@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DatePickerComponent from "../../components/DatePicker/DatePickerComponent";
+import DateSelector from "../../components/DateSelector/DateSelector";
 import ToDoTile from "../../components/ToDoTile/ToDoTile";
 import styles from "./ToDoPage.module.css";
 import { db } from "../../firebase/firebase";
@@ -99,6 +99,7 @@ const ToDoPage: React.FC = () => {
     if (loading) {
         return <div>Loading...</div>;
     }
+
 
     return (
         <>
