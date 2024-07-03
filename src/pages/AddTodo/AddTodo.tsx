@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
@@ -73,6 +73,13 @@ const AddToDo: React.FC = () => {
 				: [...prevSelectedDays, day]
 		);
 	};
+
+	useEffect(() => {
+		const logTime = () => {
+			console.log("Time: ", time);
+		};
+		logTime();
+	}, [time]);
 
 	return (
 		<>

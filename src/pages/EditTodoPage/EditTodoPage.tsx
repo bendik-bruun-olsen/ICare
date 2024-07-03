@@ -24,7 +24,7 @@ interface TodoInterface {
 	selectedDays: string[];
 }
 
-const EditToDoPage: React.FC = () => {
+function EditToDoPage() {
 	// const todoId = useParams<{ id: string }>().id;
 	const todoId = "pwdKTNJarLQzuMkbLqDI";
 	const [todo, setToDo] = useState<TodoInterface | null>(null);
@@ -48,7 +48,9 @@ const EditToDoPage: React.FC = () => {
 		fetchTodoById();
 	}, [todoId]);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLElement>
+	) => {
 		const { name, value } = e.target;
 		setToDo((prev) => (prev ? { ...prev, [name]: value } : null));
 	};
@@ -59,8 +61,8 @@ const EditToDoPage: React.FC = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (todo && validateDate(todo.startDate)) {
-			setNotificationMessage("Start date cannot be in the past.");
+		if (!validateDate(todo.startDate, todo.repeat ? todo.endDate : null)) {
+			setNotificationMessage("Invalid date range. Please try again.");
 			return;
 		}
 		try {
@@ -75,16 +77,6 @@ const EditToDoPage: React.FC = () => {
 		}
 	};
 
-	const checkIfDateIsInPast = (date: Timestamp) => {
-		// const convertedDate = date.toDate();
-		const currentDate = Timestamp.now();
-		console.log("date: ", date);
-		console.log("dateType: ", typeof date);
-		console.log("currentDate: ", currentDate);
-
-		return date.toMillis() < currentDate.toMillis();
-	};
-
 	const handleDateChange = (field: string, dateString: string) => {
 		const newTimestamp = Timestamp.fromDate(new Date(dateString));
 		setToDo((prev) => ({ ...prev, [field]: newTimestamp }));
@@ -95,14 +87,18 @@ const EditToDoPage: React.FC = () => {
 		return date.toISOString().substring(0, 10);
 	};
 
-	const validateDate = (date: Timestamp): boolean => {
-		if (todo?.repeat && todo?.endDate) {
-			if (date.toMillis() < todo?.endDate.toMillis()) return false;
-		}
-		if (todo?.startDate.toMillis() > date.toMillis()) return false;
+	const validateDate = (
+		startDate: Timestamp,
+		endDate: Timestamp | null
+	): boolean => {
+		const currentDate = new Date().getTime();
+		if (startDate.toMillis() < currentDate) return false;
+		if (endDate && startDate.toMillis() >= endDate.toMillis()) return false;
 
 		return true;
 	};
+
+	console.log("ToDoTime: ", todo?.time);
 
 	if (isLoading) return <h1>Loading....</h1>;
 
@@ -137,10 +133,16 @@ const EditToDoPage: React.FC = () => {
 								id="time"
 								label="Select time"
 								type="time"
+								name="time"
 								value={todo.time}
 								className={styles.time}
 								onChange={handleChange}
 								style={{ width: "150px" }}
+							/>
+							<Checkbox
+								label="Repeat"
+								checked={todo?.repeat || false}
+								onChange={handleCheckboxChange}
 							/>
 							{todo?.repeat && (
 								<>
@@ -185,11 +187,6 @@ const EditToDoPage: React.FC = () => {
 									setToDo((prev) => ({ ...prev, category }))
 								}
 							/>
-							<Checkbox
-								label="Repeat"
-								checked={todo?.repeat || false}
-								onChange={handleCheckboxChange}
-							/>
 							<AddButton label="Save" onClick={handleSubmit} />
 							{notificationMessage && (
 								<h3>{notificationMessage}</h3>
@@ -200,6 +197,6 @@ const EditToDoPage: React.FC = () => {
 			</div>
 		</>
 	);
-};
+}
 
 export default EditToDoPage;
