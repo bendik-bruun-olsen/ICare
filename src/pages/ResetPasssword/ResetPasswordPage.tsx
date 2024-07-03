@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
     };
 
     return (
-        <div className="pageWrapper">
+        <div className="pageWrapper " id="resetWrapper">
             <div className="heading">
                 <Logo size={"70px"} color={"var(--blue)"} />
             </div>
