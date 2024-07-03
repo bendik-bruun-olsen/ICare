@@ -40,30 +40,27 @@ export default function ToDoTile({
 
 	useEffect(() => {
 		updateToDoStatusInDatabase(toDoId, currentTaskStatus);
-	}, [currentTaskStatus]);
+	}, [currentTaskStatus, toDoId]);
 
 	return (
-		<div className={styles.fullWrapper}>
-			<div className={styles.checkBoxWrapper}>
-				<Checkbox
-					className={styles.checkBox}
-					checked={currentTaskStatus === ToDoStatus.Checked}
-					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-						setCurrentTaskStatus(
-							e.target.checked ? ToDoStatus.Checked : ToDoStatus.Unchecked
-						)
-					}
-				/>
-			</div>
+		<div className={styles.checkboxAndToDoTileWrapper}>
+			<Checkbox
+				checked={currentTaskStatus === ToDoStatus.Checked}
+				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+					setCurrentTaskStatus(
+						e.target.checked ? ToDoStatus.Checked : ToDoStatus.Unchecked
+					)
+				}
+			/>
 			<div
 				className={`${styles.toDoWrapper} ${chooseTileStyle(
 					currentTaskStatus
 				)}`}
 			>
 				<div className={styles.titleText}>
-					<h3>
+					<h2>
 						{time} - {toDoTitle}
-					</h3>
+					</h2>
 				</div>
 				<div className={styles.descriptionSection}>
 					<p>{toDoDescription}</p>
