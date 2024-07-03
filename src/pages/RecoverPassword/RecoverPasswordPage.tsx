@@ -6,10 +6,11 @@ import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
 import "./RecoverPasswordPage.module.css";
 import styled from "styled-components";
+import checkUserExistence from "../../components/checkUserExistence";
 
 const CustomButton = styled(Button)`
     margin-top: 1rem;
-    margin-left: 0.6rem;
+
     width: 100%;
 
     background-color: var(--blue);
@@ -18,6 +19,7 @@ const CustomButton = styled(Button)`
 const CustomInputWrapper = styled(InputWrapper)`
     margin-top: 1rem;
     width: 100%;
+    color: var(--black);
 `;
 
 export default function RecoverPasswordPage() {
@@ -27,14 +29,15 @@ export default function RecoverPasswordPage() {
     const handleForgotPassword = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await sendPasswordResetEmail(auth, email);
-        } catch (error) {
-            setMessage("Password reset email sent!");
-            if (error.code === "auth/user-not-found") {
-                setMessage("User does not exist");
+            const userExists = await checkUserExistence(email);
+            if (userExists) {
+                await sendPasswordResetEmail(auth, email);
+                setMessage("Password reset email sent!");
             } else {
-                setMessage(`Error: ${error.message}`);
+                setMessage("User does not exist");
             }
+        } catch (error) {
+            setMessage(`Error sending Email.}`);
         }
     };
 
@@ -52,7 +55,7 @@ export default function RecoverPasswordPage() {
             <form onSubmit={handleForgotPassword} className="InputContainer">
                 <div>
                     <CustomInputWrapper
-                        className="input"
+                        className="input1"
                         labelProps={{
                             label: "Email",
                             htmlFor: "textfield-normal",
