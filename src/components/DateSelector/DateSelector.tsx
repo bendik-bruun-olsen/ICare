@@ -3,6 +3,8 @@ import { I18nProvider } from "@react-aria/i18n";
 import { DatePicker } from "@equinor/eds-core-react";
 import { FC } from "react";
 import styles from "./DateSelector.module.css";
+import { Icon } from "@equinor/eds-core-react";
+import { arrow_back_ios, arrow_forward_ios } from "@equinor/eds-icons";
 
 interface DatesSelectorProps {
 	selectedDate: Date;
@@ -32,7 +34,12 @@ const DateSelector: FC<DatesSelectorProps> = ({
 	return (
 		<I18nProvider locale="nb-NO">
 			<div className={styles.datePickerWrapper}>
-				<button onClick={handlePrevDate}>&lt;</button>
+				<Icon
+					data={arrow_back_ios}
+					onClick={handlePrevDate}
+					color={"#1c7b82"}
+					size={48}
+				/>
 				<div style={{ width: "10px" }} />
 				<DatePicker
 					value={selectedDate}
@@ -44,7 +51,12 @@ const DateSelector: FC<DatesSelectorProps> = ({
 					}}
 				/>
 				<div style={{ width: "10px" }} />
-				<button onClick={handleNextDate}>&gt;</button>
+				<Icon
+					data={arrow_forward_ios}
+					onClick={handleNextDate}
+					color={"#1c7b82"}
+					size={48}
+				/>
 			</div>
 		</I18nProvider>
 	);
