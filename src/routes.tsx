@@ -4,7 +4,7 @@ import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
-import TodoPage from "./pages/TodoPage";
+import ToDoPage from "./pages/ToDoPage/ToDoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
 import EditTodoPage from "./pages/EditTodoPage/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
@@ -19,9 +19,27 @@ import { Navigate } from "react-router-dom";
 const RequireAuthWrapper = () => {
 	const { isUserLoggedIn } = useAuth();
 	return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
+	const { isUserLoggedIn } = useAuth();
+	return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
 };
 
 const unprotectedRoutes = [
+	{
+		path: Paths.LOGIN,
+		element: <Login />,
+	},
+	{
+		path: Paths.SIGNUP,
+		element: <Signup />,
+	},
+	{
+		path: Paths.RECOVER_PASSWORD,
+		element: <RecoverPasswordPage />,
+	},
+	{
+		path: Paths.ERROR,
+		element: <ErrorPage />,
+	},
 	{
 		path: Paths.LOGIN,
 		element: <Login />,
@@ -80,6 +98,11 @@ const protectedRoutes = [
 ];
 
 const router = createBrowserRouter([
+	{
+		element: <RequireAuthWrapper />,
+		children: protectedRoutes,
+	},
+	...unprotectedRoutes,
 	{
 		element: <RequireAuthWrapper />,
 		children: protectedRoutes,
