@@ -1,5 +1,6 @@
 .remainingTodosOuterWrapper {
 	width: fit-content;
+	margin: 0 auto;
 }
 
 .remainingTodosInnerWrapper {
@@ -15,7 +16,7 @@
 
 .arrowIconWrapper {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: end;
 	color: var(--lightblue);
 }
 

@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import Logo from "../../components/Logo/Logo";
 import { Paths } from "../../paths";
 import PatientDetails from "../../components/PatientDetails/PatientDetails";
+import AppointmentsQuickView from "../../components/AppointmentsQuickView/AppointmentsQuickView";
 
 const HomePage = () => {
 	return (
@@ -20,6 +21,12 @@ const HomePage = () => {
 			<Navbar leftContent={<Logo />} centerContent="Home" />
 			<div className="pageWrapper">
 				<PatientDetails patientName="Gjertrud" age="99" />
+				<AppointmentsQuickView
+					firstAppointment="Doctor's appointment"
+					firstAppointmentTime="09:30"
+					secondAppointment="Chiropractor appointment"
+					secondAppointmentTime="12:00"
+				/>
 				<div className={styles.remainingTodosOuterWrapper}>
 					<h2>ToDo</h2>
 					<div className={styles.remainingTodosInnerWrapper}>
