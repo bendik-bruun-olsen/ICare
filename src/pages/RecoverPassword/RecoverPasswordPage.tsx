@@ -29,15 +29,11 @@ export default function RecoverPasswordPage() {
     const handleForgotPassword = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const handleCheckUser = async () => {
-            console.log(email);
-            const exists = await checkUserExists(email);
-            setUserExists(exists);
-        };
+        const exists = await checkUserExists(email);
+        setUserExists(exists);
 
         try {
-            await handleCheckUser();
-            if (userExists) {
+            if (exists) {
                 await sendResetEmail(email);
                 setMessage("Password reset email sent!");
             } else {
