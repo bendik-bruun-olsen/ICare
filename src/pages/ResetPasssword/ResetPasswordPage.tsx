@@ -7,6 +7,7 @@ import { Paths } from "../../paths";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
 import "./ResetPasswordPage.modules.css";
+import { useNotification } from "../../context/NotificationContext";
 
 export default function ResetPasswordPage() {
     const [password, setPassword] = useState<string>("");
@@ -14,6 +15,7 @@ export default function ResetPasswordPage() {
     const [message, setMessage] = useState<string>("");
     const location = useLocation();
     const navigate = useNavigate();
+    const { addNotification } = useNotification();
 
     const handleResetPassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,20 +23,20 @@ export default function ResetPasswordPage() {
         const oobCode = queryParams.get("oobCode");
 
         if (!oobCode) {
-            setMessage("Invalid or expired token");
+            addNotification("Invalid or expired token", "error");
             return;
         }
 
         if (password !== confirmPassword) {
-            setMessage("Passwords do not match");
+            addNotification("Passwords do not match", "error");
             return;
         }
 
         try {
             await confirmPasswordReset(auth, oobCode, password);
-            setMessage("Password has been reset!");
+            addNotification("Password has been reset!", "success");
         } catch (error) {
-            setMessage(`Error: ${error.message}`);
+            addNotification(`Error: ${error.message}`, "error");
         }
         navigate(Paths.LOGIN);
     };

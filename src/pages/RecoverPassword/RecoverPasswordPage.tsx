@@ -6,6 +6,7 @@ import "./RecoverPasswordPage.modules.css";
 import styled from "styled-components";
 import { sendResetEmail } from "../../utils";
 import { checkUserExists } from "../../utils";
+import { useNotification } from "../../context/NotificationContext";
 
 const CustomButton = styled(Button)`
     margin-top: 1rem;
@@ -25,6 +26,7 @@ export default function RecoverPasswordPage() {
     const [email, setEmail] = useState<string>("");
     const [message, setMessage] = useState<string>("");
     const [userExists, setUserExists] = useState<boolean | null>(null);
+    const { addNotification } = useNotification();
 
     const handleForgotPassword = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,12 +37,12 @@ export default function RecoverPasswordPage() {
         try {
             if (exists) {
                 await sendResetEmail(email);
-                setMessage("Password reset email sent!");
+                addNotification("Password reset email sent!", "success");
             } else {
-                setMessage("User does not exist");
+                addNotification("User does not exist", "info");
             }
         } catch (error) {
-            setMessage(`Error sending Email.}`);
+            addNotification("Error sending Email.", "error");
         }
     };
 
