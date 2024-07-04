@@ -12,5 +12,6 @@ export enum Paths {
 	CONTACT = "/contact",
 	ABOUT = "/about-us",
 	RECOVER_PASSWORD = "/recover-password",
+	RESET_PASSWORD = "/reset-password",
 	ERROR = "*",
 }

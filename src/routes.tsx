@@ -4,7 +4,7 @@ import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
-import ToDoPage from "./pages/ToDoPage/ToDoPage";
+import ToDoPage from "./pages/ToDo/ToDoPage";
 import AddTodo from "./pages/AddTodo/AddTodo";
 import EditToDoPage from "./pages/EditTodoPage/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
@@ -13,7 +13,8 @@ import EditAppointment from "./pages/EditAppointmentPage";
 import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
-import RecoverPasswordPage from "./pages/RecoverPasswordPage/RecoverPasswordPage";
+import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasssword/ResetPasswordPage";
 import { Navigate } from "react-router-dom";
 
 const RequireAuthWrapper = () => {
@@ -33,6 +34,10 @@ const unprotectedRoutes = [
 	{
 		path: Paths.RECOVER_PASSWORD,
 		element: <RecoverPasswordPage />,
+	},
+	{
+		path: Paths.RESET_PASSWORD,
+		element: <ResetPasswordPage />,
 	},
 	{
 		path: Paths.ERROR,

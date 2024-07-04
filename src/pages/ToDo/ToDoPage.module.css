@@ -1,0 +1,17 @@
+.fullPage {
+	max-width: 960px;
+	margin: 0 auto;
+	margin-top: 15px;
+}
+
+.toDoTile {
+	margin-bottom: 16px;
+}
+
+.categoryStyle {
+	margin-top: 16px;
+}
+
+.categoryStyle h3 {
+	margin-left: 48px;
+}
