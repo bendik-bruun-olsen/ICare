@@ -3,7 +3,7 @@ import { Icon, Checkbox } from "@equinor/eds-core-react";
 import { comment, more_horizontal } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { ToDoStatus } from "../../types";
-import { updateToDoStatusInDatabase } from "../../pages/ToDo/ToDoPage";
+import { updateToDoStatusInDatabase } from "../../pages/ToDoPage/ToDoPage";
 
 interface ToDoTileProps {
 	toDoTitle: string;
@@ -48,7 +48,9 @@ export default function ToDoTile({
 				checked={currentTaskStatus === ToDoStatus.Checked}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 					setCurrentTaskStatus(
-						e.target.checked ? ToDoStatus.Checked : ToDoStatus.Unchecked
+						e.target.checked
+							? ToDoStatus.Checked
+							: ToDoStatus.Unchecked
 					)
 				}
 			/>
@@ -85,7 +87,8 @@ export default function ToDoTile({
 										className={styles.modalItem}
 										onClick={() => {
 											setCurrentTaskStatus((prev) =>
-												prev === ToDoStatus.NotApplicable
+												prev ===
+												ToDoStatus.NotApplicable
 													? ToDoStatus.Unchecked
 													: ToDoStatus.NotApplicable
 											);
@@ -93,7 +96,8 @@ export default function ToDoTile({
 										}}
 									>
 										<p>
-											{currentTaskStatus === ToDoStatus.NotApplicable
+											{currentTaskStatus ===
+											ToDoStatus.NotApplicable
 												? "Mark as applicable"
 												: "Mark as N/A"}
 										</p>

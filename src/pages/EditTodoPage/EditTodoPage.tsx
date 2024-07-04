@@ -5,13 +5,14 @@ import Navbar from "../../components/Navbar/Navbar";
 import HomeButton from "../../components/HomeButton/HomeButton";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
-import DaysComponent from "../../components/DaysComponent";
+import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
 import { editTodo } from "../../firebase/todoServices/editTodo";
 import { getTodo } from "../../firebase/todoServices/getTodo";
 import styles from "./EditTodoPage.module.css";
 import { formatTimestampToDate } from "../../utils";
+import { useNotification } from "../../context/NotificationContext";
 
 interface TodoInterface {
 	title: string;
@@ -39,11 +40,11 @@ const EditToDoPage = () => {
 	const todoId = "F167KVtgHBGehgXzdEth";
 	const [todo, setTodo] = useState<TodoInterface>(defaultTodo);
 	const [isLoading, setIsLoading] = useState(true);
-	const [notificationMessage, setNotificationMessage] = useState<string>("");
 	const [initialDates, setInitialDates] = useState<{
 		startDate: Timestamp;
 		endDate: Timestamp | null;
 	}>({ startDate: Timestamp.now(), endDate: null });
+	const { addNotification } = useNotification();
 
 	useEffect(() => {
 		const fetchTodoById = async () => {
@@ -56,15 +57,16 @@ const EditToDoPage = () => {
 					endDate: fetchedTodo.endDate,
 				});
 			} catch {
-				setNotificationMessage(
-					"Error fetching data. Please try again later."
+				addNotification(
+					"Error fetching todo. Please try again later.",
+					"info"
 				);
 			} finally {
 				setIsLoading(false);
 			}
 		};
 		fetchTodoById();
-	}, [todoId]);
+	}, []);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -94,18 +96,19 @@ const EditToDoPage = () => {
 		e.preventDefault();
 
 		if (!validateDateRange(todo)) {
-			setNotificationMessage("Invalid date range. Please try again.");
+			addNotification("Invalid date range. Please try again.", "error");
 			resetDateToInitial();
 			return;
 		}
 
 		try {
 			await editTodo(todoId, todo);
-			setNotificationMessage("Todo edited successfully!");
+			addNotification("Todo edited successfully!", "success");
 			setInitialDatesToCurrent();
 		} catch {
-			setNotificationMessage(
-				"Error editing todo. Please try again later."
+			addNotification(
+				"Error editing todo. Please try again later.",
+				"error"
 			);
 		}
 	};
@@ -245,7 +248,6 @@ const EditToDoPage = () => {
 							)}
 						</div>
 						<AddButton label="Save" onClick={handleSubmit} />
-						{notificationMessage && <h3>{notificationMessage}</h3>}
 					</div>
 				</form>
 			</div>

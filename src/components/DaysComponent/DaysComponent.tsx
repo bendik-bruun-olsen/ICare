@@ -1,5 +1,5 @@
 import { Button } from "@equinor/eds-core-react";
-import "./DaysComponent.css";
+import styles from "./DaysComponent.module.css";
 
 const buttons = [
 	{ label: "monday", text: "M" },
@@ -33,7 +33,7 @@ const DaysComponent: React.FC<DaysComponentProps> = ({
 		.map((button) => button.index);
 
 	return (
-		<div className="button-container">
+		<div className={styles.buttonContainer}>
 			<span style={{ color: "#6F6F6F", fontWeight: 500 }}>Frequency</span>
 			<Button.Toggle
 				multiple
