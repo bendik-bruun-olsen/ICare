@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
 import { Timestamp } from "firebase/firestore";
 import Navbar from "../../components/Navbar/Navbar";
@@ -66,7 +66,7 @@ const EditToDoPage = () => {
 		fetchTodoById();
 	}, [todoId]);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setTodo((prev) => ({ ...prev, [name]: value }));
 	};
@@ -200,7 +200,7 @@ const EditToDoPage = () => {
 										}
 									/>
 								</div>
-								<div>
+								<div className={styles.timeAndRepeatControls}>
 									<TextField
 										id="time"
 										label="Select time"
@@ -208,7 +208,7 @@ const EditToDoPage = () => {
 										name="time"
 										value={todo.time}
 										className={styles.time}
-										onChange={handleChange}
+										onChange={handleTimeChange}
 										style={{ width: "150px" }}
 									/>
 
