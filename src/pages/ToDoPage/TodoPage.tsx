@@ -100,13 +100,12 @@ const ToDoPage: React.FC = () => {
         return <div>Loading...</div>;
     }
 
-
     return (
         <>
             <Navbar leftContent={<HomeButton />} centerContent="ToDo" />
             <div className="pageWrapper">
                 <div className={styles.fullWrapper}>
-                    <DatePickerComponent
+                    <DateSelector
                         selectedDate={selectedDate}
                         setSelectedDate={setSelectedDate}
                     />
