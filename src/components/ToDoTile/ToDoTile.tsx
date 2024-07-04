@@ -3,7 +3,7 @@ import { Icon, Checkbox } from "@equinor/eds-core-react";
 import { comment, more_horizontal } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { ToDoStatus } from "../../types";
-import { updateToDoStatusInDatabase } from "../../pages/ToDoPage/ToDoPage";
+import { updateToDoStatusInDatabase } from "../../pages/ToDo/ToDoPage";
 
 interface ToDoTileProps {
 	toDoTitle: string;
