@@ -1,17 +1,17 @@
-// import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
+import { Timestamp } from "firebase/firestore";
+import Navbar from "../../components/Navbar/Navbar";
+import HomeButton from "../../components/HomeButton/HomeButton";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
 import DaysComponent from "../../components/DaysComponent";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
-import styles from "./EditTodoPage.module.css";
-import Navbar from "../../components/Navbar/Navbar";
-import HomeButton from "../../components/HomeButton/HomeButton";
 import { editTodo } from "../../firebase/todoServices/editTodo";
 import { getTodo } from "../../firebase/todoServices/getTodo";
-import { Timestamp } from "firebase/firestore";
+import styles from "./EditTodoPage.module.css";
+import { formatTimestampToDate } from "../../utils";
 
 interface TodoInterface {
 	title: string;
@@ -24,10 +24,20 @@ interface TodoInterface {
 	selectedDays: string[];
 }
 
-function EditToDoPage() {
-	// const todoId = useParams<{ id: string }>().id;
+const defaultTodo: TodoInterface = {
+	title: "",
+	description: "",
+	repeat: false,
+	startDate: Timestamp.now(),
+	endDate: null,
+	time: "00:00",
+	category: null,
+	selectedDays: [],
+};
+
+const EditToDoPage = () => {
 	const todoId = "F167KVtgHBGehgXzdEth";
-	const [todo, setToDo] = useState<TodoInterface | null>(null);
+	const [todo, setTodo] = useState<TodoInterface>(defaultTodo);
 	const [isLoading, setIsLoading] = useState(true);
 	const [notificationMessage, setNotificationMessage] = useState<string>("");
 	const [initialDates, setInitialDates] = useState<{
@@ -39,13 +49,13 @@ function EditToDoPage() {
 		const fetchTodoById = async () => {
 			setIsLoading(true);
 			try {
-				const fetchedTodo = await getTodo(todoId);
-				setToDo(fetchedTodo as TodoInterface);
+				const fetchedTodo = (await getTodo(todoId)) as TodoInterface;
+				setTodo(fetchedTodo);
 				setInitialDates({
-					startDate: fetchedTodo?.startDate,
-					endDate: fetchedTodo?.endDate,
+					startDate: fetchedTodo.startDate,
+					endDate: fetchedTodo.endDate,
 				});
-			} catch (e) {
+			} catch {
 				setNotificationMessage(
 					"Error fetching data. Please try again later."
 				);
@@ -56,159 +66,170 @@ function EditToDoPage() {
 		fetchTodoById();
 	}, [todoId]);
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLElement>
-	) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
-		setToDo((prev) => (prev ? { ...prev, [name]: value } : null));
+		setTodo((prev) => ({ ...prev, [name]: value }));
 	};
 
 	const handleCheckboxChange = () => {
-		setToDo((prev) => (prev ? { ...prev, repeat: !prev.repeat } : null));
+		setTodo((prev) => ({ ...prev, repeat: !prev.repeat }));
+	};
+
+	const handleDateChange = (field: string, dateString: string) => {
+		const newTimestamp = Timestamp.fromDate(new Date(dateString));
+		setTodo((prev) => ({ ...prev, [field]: newTimestamp }));
+	};
+
+	const handleDayToggle = (day: string) => {
+		setTodo((prev) => {
+			const isSelected = prev.selectedDays.includes(day);
+			const selectedDays = isSelected
+				? prev.selectedDays.filter((d) => d !== day)
+				: [...prev.selectedDays, day];
+			return { ...prev, selectedDays };
+		});
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!todo) {
-			setNotificationMessage(
-				"Error editing todo. Please try again later."
-			);
+
+		if (!validateDateRange(todo)) {
+			setNotificationMessage("Invalid date range. Please try again.");
+			resetDateToInitial();
 			return;
-		}
-
-		const { startDate, endDate, time, repeat } = todo;
-
-		const hasStartDateChanged = !startDate.isEqual(initialDates.startDate);
-		const hasEndDateChanged = !endDate.isEqual(initialDates.endDate);
-
-		if (repeat) {
-			if (hasStartDateChanged || hasEndDateChanged) {
-				if (!validateDate(startDate, endDate, time)) {
-					setNotificationMessage(
-						"Invalid date range. Please try again."
-					);
-					resetDateToInitial();
-					return;
-				}
-			}
-		} else {
-			if (hasStartDateChanged) {
-				if (!validateDate(startDate, null, time)) {
-					setNotificationMessage(
-						"Invalid date range. Please try again."
-					);
-					resetDateToInitial();
-					return;
-				}
-			}
 		}
 
 		try {
 			await editTodo(todoId, todo);
 			setNotificationMessage("Todo edited successfully!");
-		} catch (e) {
+			setInitialDatesToCurrent();
+		} catch {
 			setNotificationMessage(
 				"Error editing todo. Please try again later."
 			);
 		}
 	};
 
-	const handleDateChange = (field: string, dateString: string) => {
-		const newTimestamp = Timestamp.fromDate(new Date(dateString));
-		setToDo((prev) => ({ ...prev, [field]: newTimestamp }));
+	const setInitialDatesToCurrent = () => {
+		setInitialDates({
+			startDate: todo.startDate,
+			endDate: todo.endDate,
+		});
 	};
 
-	const formatDate = (timestamp: Timestamp): string => {
-		const date = timestamp.toDate();
-		return date.toISOString().substring(0, 10);
+	const resetDateToInitial = () => {
+		setTodo((prev) => ({
+			...prev,
+			startDate: initialDates.startDate,
+			endDate: prev.repeat ? initialDates.endDate : null,
+		}));
 	};
 
-	const validateDate = (
-		startDate: Timestamp,
-		endDate: Timestamp | null,
-		time: string
-	): boolean => {
+	const validateDateRange = ({
+		startDate,
+		endDate,
+		time,
+		repeat,
+	}: TodoInterface): boolean => {
 		const currentDate = new Date().getTime();
-
 		const [hours, minutes] = time.split(":");
-		const hoursAsMillis = parseInt(hours) * 60 * 60 * 1000;
-		const minutesAsMillis = parseInt(minutes) * 60 * 1000;
-
-		const startDateWithHoursAndMinutes =
-			startDate.toMillis() + hoursAsMillis + minutesAsMillis;
+		const startDateWithTime =
+			startDate.toMillis() +
+			parseInt(hours) * 3600000 +
+			parseInt(minutes) * 60000;
 
 		const hasStartDateChanged = !startDate.isEqual(initialDates.startDate);
 
-		if (hasStartDateChanged) {
-			if (startDateWithHoursAndMinutes < currentDate) return false;
+		if (repeat && endDate && initialDates.endDate) {
+			const hasEndDateChanged = !endDate.isEqual(initialDates.endDate);
+			if (hasStartDateChanged || hasEndDateChanged) {
+				if (startDateWithTime >= endDate.toMillis()) return false;
+			}
 		}
-
-		if (endDate && startDate.toMillis() >= endDate.toMillis()) return false;
+		if (hasStartDateChanged) {
+			if (startDateWithTime < currentDate) return false;
+		}
 
 		return true;
 	};
 
 	if (isLoading) return <h1>Loading....</h1>;
 
-	const resetDateToInitial = () => {
-		setToDo((prev) => {
-			if (prev) {
-				return {
-					...prev,
-					startDate: initialDates.startDate,
-					endDate: prev.repeat ? initialDates.endDate : null,
-				};
-			}
-			return prev;
-		});
-	};
 	return (
 		<>
 			<Navbar leftContent={<HomeButton />} centerContent="Edit ToDo" />
 			<div className="pageWrapper">
-				<div className={styles.mainContainer}>
-					<form onSubmit={handleSubmit}>
-						<div className={styles.formContainer}>
+				<form onSubmit={handleSubmit}>
+					<div className={styles.formContainer}>
+						<div className={styles.mainContentContainer}>
 							<TitleDescription
-								title={todo?.title || ""}
+								title={todo.title}
 								setTitle={(title) =>
-									setToDo((prev) => ({ ...prev, title }))
+									setTodo((prev) => ({ ...prev, title }))
 								}
-								description={todo?.description || ""}
+								description={todo.description}
 								setDescription={(description) =>
-									setToDo((prev) => ({
+									setTodo((prev) => ({
 										...prev,
 										description,
 									}))
 								}
 							/>
-							<StartAndEndDate
-								label="Start date"
-								value={formatDate(todo?.startDate)}
-								onChange={(dateString) =>
-									handleDateChange("startDate", dateString)
-								}
-							/>
-							<TextField
-								id="time"
-								label="Select time"
-								type="time"
-								name="time"
-								value={todo?.time}
-								className={styles.time}
-								onChange={handleChange}
-								style={{ width: "150px" }}
-							/>
-							<Checkbox
-								label="Repeat"
-								checked={todo?.repeat || false}
-								onChange={handleCheckboxChange}
-							/>
-							{todo?.repeat && (
+							<div className={styles.scheduleControlsContainer}>
+								<div>
+									<SelectCategory
+										selectedOption={todo.category}
+										onSelectionChange={(category) =>
+											setTodo((prev) => ({
+												...prev,
+												category,
+											}))
+										}
+									/>
+
+									<StartAndEndDate
+										label="Start date"
+										value={formatTimestampToDate(
+											todo.startDate
+										)}
+										onChange={(dateString) =>
+											handleDateChange(
+												"startDate",
+												dateString
+											)
+										}
+									/>
+								</div>
+								<div>
+									<TextField
+										id="time"
+										label="Select time"
+										type="time"
+										name="time"
+										value={todo.time}
+										className={styles.time}
+										onChange={handleChange}
+										style={{ width: "150px" }}
+									/>
+
+									<Checkbox
+										label="Repeat"
+										checked={todo.repeat}
+										onChange={handleCheckboxChange}
+									/>
+								</div>
+							</div>
+							{todo.repeat && (
 								<>
 									<StartAndEndDate
 										label="End date"
-										value={formatDate(todo.endDate)}
+										value={
+											todo.endDate
+												? formatTimestampToDate(
+														todo.endDate
+												  )
+												: ""
+										}
 										onChange={(dateString) =>
 											handleDateChange(
 												"endDate",
@@ -217,46 +238,19 @@ function EditToDoPage() {
 										}
 									/>
 									<DaysComponent
-										selectedDays={todo?.selectedDays || []}
-										onDayToggle={(day) =>
-											setToDo((prev) => {
-												const isDaySelected =
-													prev?.selectedDays?.includes(
-														day
-													);
-												return {
-													...prev,
-													selectedDays: isDaySelected
-														? prev?.selectedDays.filter(
-																(d) => d !== day
-														  )
-														: [
-																...(prev?.selectedDays ||
-																	[]),
-																day,
-														  ],
-												};
-											})
-										}
+										selectedDays={todo.selectedDays}
+										onDayToggle={handleDayToggle}
 									/>
 								</>
 							)}
-							<SelectCategory
-								selectedOption={todo?.category || null}
-								onSelectionChange={(category) =>
-									setToDo((prev) => ({ ...prev, category }))
-								}
-							/>
-							<AddButton label="Save" onClick={handleSubmit} />
-							{notificationMessage && (
-								<h3>{notificationMessage}</h3>
-							)}
 						</div>
-					</form>
-				</div>
+						<AddButton label="Save" onClick={handleSubmit} />
+						{notificationMessage && <h3>{notificationMessage}</h3>}
+					</div>
+				</form>
 			</div>
 		</>
 	);
-}
+};
 
 export default EditToDoPage;

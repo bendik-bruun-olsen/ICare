@@ -1,79 +1,33 @@
-.mainContainer {
-	display: flex;
-	flex-direction: column;
-	justify-content: auto;
-	padding: 20px;
-	height: 100vh;
-	background-color: #a5cdcf;
-}
-
 .formContainer {
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
-	width: 100%;
+	max-width: 500px;
+	margin: 0 auto;
+	min-height: calc(100vh - 50px - 20px);
+	justify-content: space-between;
 }
 
-.fieldContainer {
-	margin-bottom: 15px;
+.mainContentContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
-@media (max-width: 480px) {
-	.mainContainer {
-		padding: 10px;
-	}
-	.formContainer {
-		width: 90%;
-	}
-	.fieldContainer {
-		margin-bottom: 10px;
-	}
+.scheduleControlsContainer > div {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
-	.mainContainer {
-		padding: 15px;
-	}
-	.formContainer {
-		width: 80%;
-	}
-	.fieldContainer {
-		margin-bottom: 12px;
-	}
+.scheduleControlsContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-	.mainContainer {
-		padding: 20px;
-	}
-	.formContainer {
-		width: 70%;
-	}
-	.fieldContainer {
-		margin-bottom: 14px;
-	}
-}
-
-@media (min-width: 1025px) and (max-width: 1200px) {
-	.mainContainer {
-		padding: 25px;
-	}
-	.formContainer {
-		width: 60%;
-	}
-	.fieldContainer {
-		margin-bottom: 16px;
-	}
-}
-
-@media (min-width: 1201px) {
-	.mainContainer {
-		padding: 30px;
-	}
-	.formContainer {
-		width: 50%;
-	}
-	.fieldContainer {
-		margin-bottom: 18px;
+@media (min-width: 425px) {
+	.scheduleControlsContainer {
+		flex-direction: row;
+		justify-content: space-between;
 	}
 }

@@ -25,12 +25,18 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 	}, [value]);
 
 	const handleDateChange = (newDate: Date) => {
+		if (newDate === null) {
+			return;
+		}
+
 		const localDate = new Date(
 			newDate.getFullYear(),
 			newDate.getMonth(),
 			newDate.getDate(),
 			12
 		);
+		console.log("localDate: ", localDate);
+
 		setSelectedDate(localDate);
 		onChange(localDate.toISOString().substring(0, 10));
 	};
