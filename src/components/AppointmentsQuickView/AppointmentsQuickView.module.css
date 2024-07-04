@@ -1,23 +1,29 @@
 .appointmentsOuterWrapper {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	margin-top: 50px;
-	margin-bottom: 50px;
+	align-items: start;
+	gap: 8px;
+	width: 100%;
 }
 
 .appointmentsOuterWrapper h2 {
 	text-align: start;
 }
 
+.titleWrapper {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
 .appointmentsWrapper {
-	position: relative;
 	display: flex;
 	background-color: var(--white);
 	height: 6rem;
 	align-items: center;
 	border-radius: 10px;
 	justify-content: space-between;
+	width: 100%;
 }
 
 .textWrapper {
@@ -51,17 +57,10 @@
 }
 
 .arrowIconWrapper {
-	top: 105%;
-	right: 0;
 	display: flex;
 	cursor: pointer;
-	position: absolute;
 	user-select: none;
 	flex-direction: row;
-}
-
-.arrowIconWrapper span {
-	color: var(--blue);
 }
 
 .arrowIconWrapper a,
@@ -69,8 +68,15 @@
 	text-decoration: none;
 	color: inherit;
 }
-@media screen and (min-width: 1024px) {
-	.appointmentsWrapper {
-		width: 960px;
-	}
+
+.linkButton {
+	gap: 4px;
+	padding: 4px;
+	color: var(--blue);
+	display: flex;
+	align-items: center;
+}
+
+.linkButton:hover {
+	color: black;
 }

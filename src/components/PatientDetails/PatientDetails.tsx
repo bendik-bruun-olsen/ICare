@@ -1,5 +1,3 @@
-import { Icon } from "@equinor/eds-core-react";
-import { arrow_forward } from "@equinor/eds-icons";
 import styles from "./PatientDetails.module.css";
 interface PatientDetailsProps {
 	patientName: string;
@@ -24,8 +22,7 @@ export default function PatientDetails({
 					</div>
 				</div>
 				<div className={styles.morePatientDetails}>
-					<p>Patient details </p>
-					<Icon data={arrow_forward} size={18}></Icon>
+					<p>Patient details</p>
 				</div>
 			</div>
 		</>
