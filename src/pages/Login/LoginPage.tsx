@@ -8,6 +8,7 @@ import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
 import { useNavigate } from "react-router-dom";
 import { FirestoreError } from "firebase/firestore";
+import { useNotification } from "../../context/NotificationContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -17,6 +18,7 @@ export default function LoginPage() {
     >("");
     const [hasError, setHasError] = useState(false);
     const navigate = useNavigate();
+    const { addNotification } = useNotification();
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
@@ -31,6 +33,7 @@ export default function LoginPage() {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
+            addNotification("Login successful!", "info");
             navigate(Paths.HOME);
         } catch (err) {
             const error = err as FirestoreError;
@@ -38,8 +41,9 @@ export default function LoginPage() {
                 error.message.includes("auth/invalid-email") ||
                 error.message.includes("auth/invalid-credential")
             ) {
-                setNotificationMessage(
-                    "Invalid login credentials. Please try again."
+                addNotification(
+                    "Invalid login credentials. Please try again.",
+                    "error"
                 );
             } else {
                 setHasError(true);
