@@ -30,8 +30,15 @@
 	color: inherit;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
+	.remainingTodosOuterWrapper {
+		width: 960px;
+	}
 	.remainingTodosContainer {
 		flex-direction: row;
+		gap: 125px;
+	}
+	.remainingTodosInnerWrapper {
+		gap: 125px;
 	}
 }

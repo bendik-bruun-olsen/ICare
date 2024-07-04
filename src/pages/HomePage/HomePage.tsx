@@ -24,7 +24,7 @@ const HomePage = () => {
 				<AppointmentsQuickView
 					firstAppointment="Doctor's appointment"
 					firstAppointmentTime="09:30"
-					secondAppointment="Chiropractor appointment"
+					secondAppointment="Physical therapy"
 					secondAppointmentTime="12:00"
 				/>
 				<div className={styles.remainingTodosOuterWrapper}>
