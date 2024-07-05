@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { CircularProgress } from "@equinor/eds-core-react";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import ToDoTile from "../../components/ToDoTile/ToDoTile";
 import styles from "./ToDoPage.module.css";
@@ -34,9 +35,7 @@ const ToDoPage: React.FC = () => {
 		const startOfDay = getStartOfDay(selectedDate);
 		const endOfDay = getEndOfDay(selectedDate);
 		const todoStartDate = todo.startDate.toDate();
-		const todoEndDate = todo.endDate
-			? todo.endDate.toDate()
-			: todoStartDate;
+		const todoEndDate = todo.endDate ? todo.endDate.toDate() : todoStartDate;
 		const isWithinDateRange =
 			startOfDay <= todoEndDate && endOfDay >= todoStartDate;
 
@@ -97,7 +96,7 @@ const ToDoPage: React.FC = () => {
 	}, [selectedDate]);
 
 	if (loading) {
-		return <div>Loading...</div>;
+		return <CircularProgress />;
 	}
 
 	return (
@@ -112,23 +111,15 @@ const ToDoPage: React.FC = () => {
 					<div>
 						<h2>Todos for {selectedDate.toDateString()}</h2>
 						{Object.keys(groupedTodos).map((category) => (
-							<div
-								key={category}
-								className={styles.categoryStyle}
-							>
+							<div key={category} className={styles.categoryStyle}>
 								<h3>{category}</h3>
 								<div className={styles.toDoTileMargin}>
 									{groupedTodos[category].map((todo) => (
-										<div
-											className={styles.toDoTile}
-											key={todo.id}
-										>
+										<div className={styles.toDoTile} key={todo.id}>
 											<ToDoTile
 												toDoId={todo.id}
 												toDoTitle={todo.title}
-												toDoDescription={
-													todo.description
-												}
+												toDoDescription={todo.description}
 												toDoComment={""}
 												taskStatus={todo.toDoStatus}
 												time={todo.time || ""}
