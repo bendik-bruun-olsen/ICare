@@ -1,10 +1,10 @@
-import HomeButton from "../components/HomeButton/HomeButton";
+import BackHomeButton from "../components/BackHomeButton";
 import Navbar from "../components/Navbar/Navbar";
 
 const ContactDetailsPage = () => {
 	return (
 		<>
-			<Navbar leftContent={<HomeButton />} centerContent="Contact" />
+			<Navbar leftContent={<BackHomeButton />} centerContent="Contact" />
 			<div className="pageWrapper">
 				<h2>ContactPage</h2>
 			</div>

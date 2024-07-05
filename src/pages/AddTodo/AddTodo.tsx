@@ -9,7 +9,7 @@ import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodo.module.css";
 import Navbar from "../../components/Navbar/Navbar";
-import HomeButton from "../../components/HomeButton/HomeButton";
+import BackHomeButton from "../../components/BackHomeButton";
 
 const AddToDo: React.FC = () => {
 	const [title, setTitle] = useState("");
@@ -80,7 +80,10 @@ const AddToDo: React.FC = () => {
 
 	return (
 		<>
-			<Navbar leftContent={<HomeButton />} centerContent="Add To Do" />
+			<Navbar
+				leftContent={<BackHomeButton />}
+				centerContent="Add To Do"
+			/>
 			<div className="pageWrapper">
 				<div className={styles.mainContainer}>
 					<h1>Add To Do</h1>
