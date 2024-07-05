@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
 import { Timestamp } from "firebase/firestore";
 import Navbar from "../../components/Navbar/Navbar";
-import HomeButton from "../../components/HomeButton/HomeButton";
+import BackHomeButton from "../../components/BackHomeButton";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
@@ -47,10 +47,7 @@ const EditToDoPage = () => {
 					endDate: fetchedTodo.endDate,
 				});
 			} catch {
-				addNotification(
-					"Error fetching ToDo. Please try again later.",
-					"info"
-				);
+				addNotification("Error fetching ToDo. Please try again later.", "info");
 			} finally {
 				setIsLoading(false);
 			}
@@ -96,10 +93,7 @@ const EditToDoPage = () => {
 			addNotification("ToDo edited successfully!", "success");
 			setInitialDatesToCurrent();
 		} catch {
-			addNotification(
-				"Error editing ToDo. Please try again later.",
-				"error"
-			);
+			addNotification("Error editing ToDo. Please try again later.", "error");
 		}
 	};
 
@@ -149,16 +143,14 @@ const EditToDoPage = () => {
 
 	return (
 		<>
-			<Navbar leftContent={<HomeButton />} centerContent="Edit ToDo" />
+			<Navbar leftContent={<BackHomeButton />} centerContent="Edit ToDo" />
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
 					<div className={styles.formContainer}>
 						<div className={styles.mainContentContainer}>
 							<TitleDescription
 								title={todo.title}
-								setTitle={(title) =>
-									setTodo((prev) => ({ ...prev, title }))
-								}
+								setTitle={(title) => setTodo((prev) => ({ ...prev, title }))}
 								description={todo.description}
 								setDescription={(description) =>
 									setTodo((prev) => ({
@@ -180,14 +172,9 @@ const EditToDoPage = () => {
 									/>
 									<StartAndEndDate
 										label="Start date"
-										value={formatTimestampToDate(
-											todo.startDate
-										)}
+										value={formatTimestampToDate(todo.startDate)}
 										onChange={(dateString) =>
-											handleDateChange(
-												"startDate",
-												dateString
-											)
+											handleDateChange("startDate", dateString)
 										}
 									/>
 								</div>
@@ -214,17 +201,10 @@ const EditToDoPage = () => {
 									<StartAndEndDate
 										label="End date"
 										value={
-											todo.endDate
-												? formatTimestampToDate(
-														todo.endDate
-												  )
-												: ""
+											todo.endDate ? formatTimestampToDate(todo.endDate) : ""
 										}
 										onChange={(dateString) =>
-											handleDateChange(
-												"endDate",
-												dateString
-											)
+											handleDateChange("endDate", dateString)
 										}
 									/>
 									<DaysComponent
