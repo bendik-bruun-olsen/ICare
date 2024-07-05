@@ -13,8 +13,8 @@
 
 .toDoWrapper {
 	padding: 0.5rem;
-	border-radius: 3px;
 	width: 100%;
+	border-radius: 3px;
 	margin-right: 16px;
 	background-color: var(--white);
 	box-shadow: var(--fadedblue) 0px 1px 3px, var(--blue) 0px 1px 2px;
@@ -113,15 +113,6 @@
 .badgeIcon {
 	margin: 0 0.5rem 0.5rem 0;
 	opacity: 0.3;
-}
-
-@media (max-width: 320px) {
-	.commentSection p {
-		font-size: 0.9rem;
-	}
-	.descriptionSection p {
-		font-size: 0.8rem;
-	}
 }
 
 .notApplicable {
