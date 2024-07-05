@@ -35,7 +35,6 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 			newDate.getDate(),
 			12
 		);
-		console.log("localDate: ", localDate);
 
 		setSelectedDate(localDate);
 		onChange(localDate.toISOString().substring(0, 10));

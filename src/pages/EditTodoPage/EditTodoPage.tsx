@@ -58,7 +58,7 @@ const EditToDoPage = () => {
 				});
 			} catch {
 				addNotification(
-					"Error fetching todo. Please try again later.",
+					"Error fetching ToDo. Please try again later.",
 					"info"
 				);
 			} finally {
@@ -103,11 +103,11 @@ const EditToDoPage = () => {
 
 		try {
 			await editTodo(todoId, todo);
-			addNotification("Todo edited successfully!", "success");
+			addNotification("ToDo edited successfully!", "success");
 			setInitialDatesToCurrent();
 		} catch {
 			addNotification(
-				"Error editing todo. Please try again later.",
+				"Error editing ToDo. Please try again later.",
 				"error"
 			);
 		}

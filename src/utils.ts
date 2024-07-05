@@ -38,8 +38,7 @@ export const checkUserExists = async (email: string): Promise<boolean> => {
 		);
 		const querySnapshot = await getDocs(userQuery);
 		return !querySnapshot.empty;
-	} catch (error) {
-		console.error("Error checking user existence: ", error);
+	} catch {
 		return false;
 	}
 };

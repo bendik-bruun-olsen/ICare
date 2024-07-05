@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
@@ -9,6 +9,7 @@ import styles from "./AddTodo.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import HomeButton from "../../components/HomeButton/HomeButton";
 import { addNewTodo } from "../../firebase/todoServices/addNewTodo";
+import { useNotification } from "../../context/NotificationContext";
 
 const AddToDo: React.FC = () => {
 	const [title, setTitle] = useState("");
@@ -23,6 +24,7 @@ const AddToDo: React.FC = () => {
 	const [time, setTime] = useState("");
 	const [selectCategory, setSelectCategory] = useState<string | null>(null);
 	const [selectedDays, setSelectedDays] = useState<string[]>([]);
+	const { addNotification } = useNotification();
 
 	const handleCheckboxChange = () => {
 		setRepeat((prev) => !prev);
@@ -44,9 +46,12 @@ const AddToDo: React.FC = () => {
 
 		try {
 			await addNewTodo(newTodo);
-			console.log("Todo added successfully");
-		} catch (e) {
-			console.error("Error adding document: ", e);
+			addNotification("ToDo added successfully!", "success");
+		} catch {
+			addNotification(
+				"Error adding ToDo. Please try again later",
+				"error"
+			);
 		}
 	};
 
@@ -74,89 +79,74 @@ const AddToDo: React.FC = () => {
 		);
 	};
 
-	useEffect(() => {
-		const logTime = () => {
-			console.log("Time: ", time);
-		};
-		logTime();
-	}, [time]);
-
 	return (
 		<>
 			<Navbar leftContent={<HomeButton />} centerContent="Add To Do" />
 			<div className="pageWrapper">
-				<div className={styles.mainContainer}>
-					<h1>Add To Do</h1>
-					<form onSubmit={handleSubmit}>
-						<div className={styles.formContainer}>
-							<div className={styles.fieldContainer}>
-								<TitleDescription
-									title={title}
-									setTitle={setTitle}
-									description={description}
-									setDescription={setDescription}
-								/>
-							</div>
-							<div className={styles.fieldContainer}>
-								<StartAndEndDate
-									label="Start date"
-									value={startDate}
-									onChange={(date: string) =>
-										setStartDate(date)
-									}
-								/>
-							</div>
-							<div className={styles.fieldContainer}>
-								<TextField
-									id="time"
-									label="Select time"
-									type="time"
-									value={time}
-									className={styles.time}
-									onChange={(
-										e: React.ChangeEvent<HTMLInputElement>
-									) => setTime(e.target.value)}
-									style={{ width: "150px" }}
-								/>
-							</div>
-							<div className={styles.fieldContainer}>
-								<Checkbox
-									label="Repeat"
-									checked={repeat}
-									onChange={handleCheckboxChange}
-								/>
+				<form onSubmit={handleSubmit}>
+					<div className={styles.formContainer}>
+						<div className={styles.mainContentContainer}>
+							<TitleDescription
+								title={title}
+								setTitle={setTitle}
+								description={description}
+								setDescription={setDescription}
+							/>
+							<div className={styles.scheduleControlsContainer}>
+								<div>
+									<SelectCategory
+										selectedOption={selectCategory}
+										onSelectionChange={
+											handleCategorySelectionChange
+										}
+									/>
+									<StartAndEndDate
+										label="Start date"
+										value={startDate}
+										onChange={(date: string) =>
+											setStartDate(date)
+										}
+									/>
+								</div>
+
+								<div className={styles.timeAndRepeatControls}>
+									<TextField
+										id="time"
+										label="Select time"
+										type="time"
+										value={time}
+										className={styles.time}
+										onChange={(
+											e: React.ChangeEvent<HTMLInputElement>
+										) => setTime(e.target.value)}
+										style={{ width: "150px" }}
+									/>
+									<Checkbox
+										label="Repeat"
+										checked={repeat}
+										onChange={handleCheckboxChange}
+									/>
+								</div>
 							</div>
 							{repeat && (
 								<>
-									<div className={styles.fieldContainer}>
-										<StartAndEndDate
-											label="End date"
-											value={endDate}
-											onChange={(date: string) =>
-												setEndDate(date)
-											}
-										/>
-									</div>
-									<div className={styles.fieldContainer}>
-										<DaysComponent
-											selectedDays={selectedDays}
-											onDayToggle={handleDayToggle}
-										/>
-									</div>
+									<StartAndEndDate
+										label="End date"
+										value={endDate}
+										onChange={(date: string) =>
+											setEndDate(date)
+										}
+									/>
+									<DaysComponent
+										selectedDays={selectedDays}
+										onDayToggle={handleDayToggle}
+									/>
 								</>
 							)}
-							<div className={styles.fieldContainer}>
-								<SelectCategory
-									selectedOption={selectCategory}
-									onSelectionChange={
-										handleCategorySelectionChange
-									}
-								/>
-							</div>
-							<AddButton label="Add" onClick={onclickAddButton} />
 						</div>
-					</form>
-				</div>
+						<AddButton label="Add" onClick={onclickAddButton} />
+					</div>
+				</form>
 			</div>
 		</>
 	);
