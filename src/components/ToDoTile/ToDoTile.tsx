@@ -110,12 +110,12 @@ export default function ToDoTile({
 					)}
 				</div>
 				<div className={styles.commentWrapper}>
-					<div className={styles.commentSection}>
+					{/* <div className={styles.commentSection}>
 						<div className={styles.iconContainer}>
 							<Icon data={comment} size={16} />
 						</div>
 						<p>{toDoComment}</p>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>
