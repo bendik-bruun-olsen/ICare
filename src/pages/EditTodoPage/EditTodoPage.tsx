@@ -14,6 +14,7 @@ import styles from "./EditTodoPage.module.css";
 import { formatTimestampToDate } from "../../utils";
 import { useNotification } from "../../context/NotificationContext";
 import { TodoInterface } from "../../types";
+import { useParams } from "react-router-dom";
 
 const defaultTodo: TodoInterface = {
 	title: "",
@@ -27,7 +28,6 @@ const defaultTodo: TodoInterface = {
 };
 
 const EditToDoPage = () => {
-	const todoId = "F167KVtgHBGehgXzdEth";
 	const [todo, setTodo] = useState<TodoInterface>(defaultTodo);
 	const [isLoading, setIsLoading] = useState(true);
 	const [initialDates, setInitialDates] = useState<{
@@ -35,12 +35,18 @@ const EditToDoPage = () => {
 		endDate: Timestamp | null;
 	}>({ startDate: Timestamp.now(), endDate: null });
 	const { addNotification } = useNotification();
+	const { todoId } = useParams<{ todoId: string }>();
 
 	useEffect(() => {
+		if (!todoId) return;
 		const fetchTodoById = async () => {
 			setIsLoading(true);
 			try {
-				const fetchedTodo = (await getTodo(todoId)) as TodoInterface;
+				const fetchedTodo = await getTodo(todoId);
+				if (!fetchedTodo) {
+					addNotification("ToDo not found. Please try again.", "info");
+					return;
+				}
 				setTodo(fetchedTodo);
 				setInitialDates({
 					startDate: fetchedTodo.startDate,
@@ -53,7 +59,7 @@ const EditToDoPage = () => {
 			}
 		};
 		fetchTodoById();
-	}, []);
+	}, [todoId, addNotification]);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -81,7 +87,7 @@ const EditToDoPage = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
+		if (!todoId) return;
 		if (!validateDateRange(todo)) {
 			addNotification("Invalid date range. Please try again.", "error");
 			resetDateToInitial();
