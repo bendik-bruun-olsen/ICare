@@ -1,7 +1,9 @@
 .fullPage {
-	max-width: 960px;
+	width: 100%;
 	margin: 0 auto;
 	margin-top: 15px;
+	padding-inline: 0 !important;
+	position: relative;
 }
 
 .toDoTile {
@@ -14,4 +16,20 @@
 
 .categoryStyle h3 {
 	margin-left: 48px;
+}
+
+.addIcon {
+	position: fixed;
+	bottom: 30px;
+	right: 16px;
+}
+
+@media screen and (min-width: 1024px) {
+	.addIcon {
+		position: absolute;
+		bottom: auto;
+	}
+	.fullPage {
+		max-width: 1024px;
+	}
 }

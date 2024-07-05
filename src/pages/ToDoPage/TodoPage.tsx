@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Button, CircularProgress } from "@equinor/eds-core-react";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import ToDoTile from "../../components/ToDoTile/ToDoTile";
 import styles from "./ToDoPage.module.css";
+import { useNotification } from "../../context/NotificationContext";
+import { Icon } from "@equinor/eds-core-react";
+import { add } from "@equinor/eds-icons";
 import { db } from "../../firebase/firebase";
 import {
 	collection,
@@ -15,6 +19,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 import { getEndOfDay, getStartOfDay } from "../../utils";
 import { ToDo } from "../../types";
+import { Link } from "react-router-dom";
 
 export async function updateToDoStatusInDatabase(
 	todoId: string,
@@ -29,14 +34,13 @@ const ToDoPage: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [todos, setTodos] = useState<ToDo[]>([]);
 	const [loading, setLoading] = useState(true);
+	const { addNotification } = useNotification();
 
 	function getTodosForSelectedDate(todo: ToDo) {
 		const startOfDay = getStartOfDay(selectedDate);
 		const endOfDay = getEndOfDay(selectedDate);
 		const todoStartDate = todo.startDate.toDate();
-		const todoEndDate = todo.endDate
-			? todo.endDate.toDate()
-			: todoStartDate;
+		const todoEndDate = todo.endDate ? todo.endDate.toDate() : todoStartDate;
 		const isWithinDateRange =
 			startOfDay <= todoEndDate && endOfDay >= todoStartDate;
 
@@ -89,7 +93,7 @@ const ToDoPage: React.FC = () => {
 
 				setTodos(fetchedTodos);
 			} catch (error) {
-				console.error("Error fetching appointments: ", error);
+				addNotification("Error fetching todos", "error");
 			}
 			setLoading(false);
 		}
@@ -97,38 +101,29 @@ const ToDoPage: React.FC = () => {
 	}, [selectedDate]);
 
 	if (loading) {
-		return <div>Loading...</div>;
+		return <CircularProgress />;
 	}
 
 	return (
 		<>
 			<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
-			<div className="pageWrapper">
-				<div className={styles.fullWrapper}>
+			<div className={"pageWrapper " + styles.fullPage}>
+				<div className={styles.fullPage}>
 					<DateSelector
 						selectedDate={selectedDate}
 						setSelectedDate={setSelectedDate}
 					/>
 					<div>
-						<h2>Todos for {selectedDate.toDateString()}</h2>
 						{Object.keys(groupedTodos).map((category) => (
-							<div
-								key={category}
-								className={styles.categoryStyle}
-							>
+							<div key={category} className={styles.categoryStyle}>
 								<h3>{category}</h3>
 								<div className={styles.toDoTileMargin}>
 									{groupedTodos[category].map((todo) => (
-										<div
-											className={styles.toDoTile}
-											key={todo.id}
-										>
+										<div className={styles.toDoTile} key={todo.id}>
 											<ToDoTile
 												toDoId={todo.id}
 												toDoTitle={todo.title}
-												toDoDescription={
-													todo.description
-												}
+												toDoDescription={todo.description}
 												toDoComment={""}
 												taskStatus={todo.toDoStatus}
 												time={todo.time || ""}
@@ -138,6 +133,13 @@ const ToDoPage: React.FC = () => {
 								</div>
 							</div>
 						))}
+						<Link to="/add-todo">
+							<div className={styles.addIcon}>
+								<Button variant="contained_icon">
+									<Icon data={add} size={32} />
+								</Button>
+							</div>
+						</Link>
 					</div>
 				</div>
 			</div>
