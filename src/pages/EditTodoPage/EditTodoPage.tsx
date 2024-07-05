@@ -152,7 +152,6 @@ const EditToDoPage = () => {
 		if (hasStartDateChanged) {
 			if (startDateWithTime < currentDate) return false;
 		}
-
 		return true;
 	};
 
@@ -189,7 +188,6 @@ const EditToDoPage = () => {
 											}))
 										}
 									/>
-
 									<StartAndEndDate
 										label="Start date"
 										value={formatTimestampToDate(
@@ -214,7 +212,6 @@ const EditToDoPage = () => {
 										onChange={handleTimeChange}
 										style={{ width: "150px" }}
 									/>
-
 									<Checkbox
 										label="Repeat"
 										checked={todo.repeat}
