@@ -47,11 +47,12 @@ const AddToDo: React.FC = () => {
 		try {
 			await addNewTodo(newTodo);
 			addNotification("ToDo added successfully!", "success");
-		} catch {
+		} catch (e) {
 			addNotification(
 				"Error adding ToDo. Please try again later",
 				"error"
 			);
+			console.error("Error: ", e);
 		}
 	};
 

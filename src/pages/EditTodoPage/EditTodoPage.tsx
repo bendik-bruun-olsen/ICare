@@ -13,17 +13,7 @@ import { getTodo } from "../../firebase/todoServices/getTodo";
 import styles from "./EditTodoPage.module.css";
 import { formatTimestampToDate } from "../../utils";
 import { useNotification } from "../../context/NotificationContext";
-
-interface TodoInterface {
-	title: string;
-	description: string;
-	repeat: boolean;
-	startDate: Timestamp;
-	endDate: Timestamp | null;
-	time: string;
-	category: string | null;
-	selectedDays: string[];
-}
+import { TodoInterface } from "../../types";
 
 const defaultTodo: TodoInterface = {
 	title: "",
