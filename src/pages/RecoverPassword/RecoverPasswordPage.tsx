@@ -24,16 +24,13 @@ const CustomInputWrapper = styled(InputWrapper)`
 
 export default function RecoverPasswordPage() {
 	const [email, setEmail] = useState<string>("");
-	const [message, setMessage] = useState<string>("");
-	const [userExists, setUserExists] = useState<boolean | null>(null);
+	const [message] = useState<string>("");
 	const { addNotification } = useNotification();
 
 	const handleForgotPassword = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		const exists = await checkUserExists(email);
-		setUserExists(exists);
-
 		try {
 			if (exists) {
 				await sendResetEmail(email);

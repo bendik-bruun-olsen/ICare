@@ -10,6 +10,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 import { addNewTodo } from "../../firebase/todoServices/addNewTodo";
 import { useNotification } from "../../context/NotificationContext";
+import { Timestamp } from "firebase/firestore";
 
 const AddToDo: React.FC = () => {
 	const [title, setTitle] = useState("");
@@ -32,13 +33,14 @@ const AddToDo: React.FC = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
+		const startDateAsTimestamp = Timestamp.fromDate(new Date(startDate));
+		const endDateAsTimestamp = Timestamp.fromDate(new Date(endDate));
 		const newTodo = {
 			title,
 			description,
 			repeat,
-			startDate,
-			endDate: repeat ? endDate : null,
+			startDate: startDateAsTimestamp,
+			endDate: endDateAsTimestamp,
 			time,
 			category: selectCategory,
 			selectedDays: repeat ? selectedDays : [],
@@ -48,10 +50,7 @@ const AddToDo: React.FC = () => {
 			await addNewTodo(newTodo);
 			addNotification("ToDo added successfully!", "success");
 		} catch (e) {
-			addNotification(
-				"Error adding ToDo. Please try again later",
-				"error"
-			);
+			addNotification("Error adding ToDo. Please try again later", "error");
 			console.error("Error: ", e);
 		}
 	};
@@ -82,10 +81,7 @@ const AddToDo: React.FC = () => {
 
 	return (
 		<>
-			<Navbar
-				leftContent={<BackHomeButton />}
-				centerContent="Add To Do"
-			/>
+			<Navbar leftContent={<BackHomeButton />} centerContent="Add To Do" />
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
 					<div className={styles.formContainer}>
@@ -100,16 +96,12 @@ const AddToDo: React.FC = () => {
 								<div>
 									<SelectCategory
 										selectedOption={selectCategory}
-										onSelectionChange={
-											handleCategorySelectionChange
-										}
+										onSelectionChange={handleCategorySelectionChange}
 									/>
 									<StartAndEndDate
 										label="Start date"
 										value={startDate}
-										onChange={(date: string) =>
-											setStartDate(date)
-										}
+										onChange={(date: string) => setStartDate(date)}
 									/>
 								</div>
 
@@ -120,9 +112,9 @@ const AddToDo: React.FC = () => {
 										type="time"
 										value={time}
 										className={styles.time}
-										onChange={(
-											e: React.ChangeEvent<HTMLInputElement>
-										) => setTime(e.target.value)}
+										onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+											setTime(e.target.value)
+										}
 										style={{ width: "150px" }}
 									/>
 									<Checkbox
@@ -137,9 +129,7 @@ const AddToDo: React.FC = () => {
 									<StartAndEndDate
 										label="End date"
 										value={endDate}
-										onChange={(date: string) =>
-											setEndDate(date)
-										}
+										onChange={(date: string) => setEndDate(date)}
 									/>
 									<DaysComponent
 										selectedDays={selectedDays}

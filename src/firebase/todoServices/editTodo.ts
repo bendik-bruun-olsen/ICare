@@ -6,5 +6,5 @@ export const editTodo = async (todoId: string, updatedTodo: TodoInterface) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
 	const todoRef = doc(patientRef, "todos", todoId);
 
-	await updateDoc(todoRef, updatedTodo);
+	await updateDoc(todoRef, { ...updatedTodo });
 };

@@ -13,9 +13,7 @@ import { useNotification } from "../../context/NotificationContext";
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [notificationMessage, setNotificationMessage] = useState<
-		string | undefined
-	>("");
+	const [notificationMessage] = useState<string | undefined>("");
 	const [hasError, setHasError] = useState(false);
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();

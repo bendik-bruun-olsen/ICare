@@ -3,7 +3,6 @@ import { Button, CircularProgress } from "@equinor/eds-core-react";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import ToDoTile from "../../components/ToDoTile/ToDoTile";
 import styles from "./ToDoPage.module.css";
-import { useNotification } from "../../context/NotificationContext";
 import { Icon } from "@equinor/eds-core-react";
 import { add } from "@equinor/eds-icons";
 import { db } from "../../firebase/firebase";
@@ -34,7 +33,6 @@ const ToDoPage: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [todos, setTodos] = useState<ToDo[]>([]);
 	const [loading, setLoading] = useState(true);
-	const { addNotification } = useNotification();
 
 	function getTodosForSelectedDate(todo: ToDo) {
 		const startOfDay = getStartOfDay(selectedDate);
@@ -93,7 +91,7 @@ const ToDoPage: React.FC = () => {
 
 				setTodos(fetchedTodos);
 			} catch (error) {
-				addNotification("Error fetching todos", "error");
+				console.error("Error fetching todos: ", error);
 			}
 			setLoading(false);
 		}

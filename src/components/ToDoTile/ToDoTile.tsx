@@ -35,8 +35,7 @@ export default function ToDoTile({
 
 	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
 		if (currentToDoStatus === ToDoStatus.Checked) return styles.checked;
-		if (currentToDoStatus === ToDoStatus.NotApplicable)
-			return styles.notApplicable;
+		if (currentToDoStatus === ToDoStatus.Ignore) return styles.notApplicable;
 		return styles.default;
 	}
 
@@ -50,9 +49,7 @@ export default function ToDoTile({
 				checked={currentTaskStatus === ToDoStatus.Checked}
 				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 					setCurrentTaskStatus(
-						e.target.checked
-							? ToDoStatus.Checked
-							: ToDoStatus.Unchecked
+						e.target.checked ? ToDoStatus.Checked : ToDoStatus.Unchecked
 					)
 				}
 			/>
@@ -89,28 +86,21 @@ export default function ToDoTile({
 										className={styles.modalItem}
 										onClick={() => {
 											setCurrentTaskStatus((prev) =>
-												prev ===
-												ToDoStatus.NotApplicable
+												prev === ToDoStatus.Ignore
 													? ToDoStatus.Unchecked
-													: ToDoStatus.NotApplicable
+													: ToDoStatus.Ignore
 											);
 											toggleModalVisibility();
 										}}
 									>
 										<p>
-											{currentTaskStatus ===
-											ToDoStatus.NotApplicable
+											{currentTaskStatus === ToDoStatus.Ignore
 												? "Mark as applicable"
 												: "Mark as N/A"}
 										</p>
 									</li>
 									<li className={styles.modalItem}>
-										<Link
-											to={Paths.EDIT_TODO.replace(
-												":todoId",
-												toDoId
-											)}
-										>
+										<Link to={Paths.EDIT_TODO.replace(":todoId", toDoId)}>
 											<p>Edit/Delete</p>
 										</Link>
 									</li>

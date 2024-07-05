@@ -17,7 +17,7 @@
 	border-radius: 3px;
 	margin-right: 16px;
 	background-color: var(--white);
-	box-shadow: var(--fadedblue) 0px 1px 3px, var(--blue) 0px 1px 2px;
+	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .descriptionSection {

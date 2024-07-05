@@ -3,7 +3,7 @@ import { Timestamp } from "firebase/firestore";
 export enum ToDoStatus {
 	Checked = "checked",
 	Unchecked = "unchecked",
-	NotApplicable = "not-applicable",
+	Ignore = "ignore",
 }
 
 export interface ToDo {
