@@ -13,6 +13,7 @@ import { doc, setDoc } from "firebase/firestore";
 import "./SignupPage.modules.css";
 import { FirebaseError } from "firebase/app";
 import Logo from "../../components/Logo/Logo";
+import { useNotification } from "../../context/NotificationContext";
 
 export default function SignupPage() {
     const [name, setName] = useState("");
@@ -28,6 +29,8 @@ export default function SignupPage() {
         password: false,
         confirmPassword: false,
     });
+
+    const { addNotification } = useNotification();
 
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setName(e.target.value);
@@ -70,7 +73,7 @@ export default function SignupPage() {
         }
 
         if (password !== confirmPassword) {
-            setNotificationMessage("Passwords do not match");
+            addNotification("Passwords do not match", "error");
             return;
         }
         if (Object.values(newErrors).some((error) => error)) {
@@ -84,7 +87,7 @@ export default function SignupPage() {
                 name: name,
                 email: email,
             });
-
+            addNotification("You have successfully signed up!", "success");
             navigate(Paths.LOGIN);
         } catch (err) {
             const error = err as FirebaseError;
@@ -94,11 +97,11 @@ export default function SignupPage() {
             const weakPassword = error.message.includes("auth/weak-password");
 
             if (emailAlreadyInUse) {
-                setNotificationMessage("Email already in use");
+                addNotification("Email already in use", "info");
                 return;
             }
             if (weakPassword) {
-                setNotificationMessage("Password is too weak");
+                addNotification("Password is too weak", "error");
                 return;
             }
             setHasError(true);

@@ -12,7 +12,7 @@ import {
 	updateDoc,
 } from "firebase/firestore";
 import Navbar from "../../components/Navbar/Navbar";
-import HomeButton from "../../components/HomeButton/HomeButton";
+import BackHomeButton from "../../components/BackHomeButton";
 import { getEndOfDay, getStartOfDay } from "../../utils";
 import { ToDo } from "../../types";
 
@@ -25,7 +25,7 @@ export async function updateToDoStatusInDatabase(
 	await updateDoc(todoRef, { toDoStatus: newStatus });
 }
 
-const TodoPage: React.FC = () => {
+const ToDoPage: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [todos, setTodos] = useState<ToDo[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -34,7 +34,9 @@ const TodoPage: React.FC = () => {
 		const startOfDay = getStartOfDay(selectedDate);
 		const endOfDay = getEndOfDay(selectedDate);
 		const todoStartDate = todo.startDate.toDate();
-		const todoEndDate = todo.endDate ? todo.endDate.toDate() : todoStartDate;
+		const todoEndDate = todo.endDate
+			? todo.endDate.toDate()
+			: todoStartDate;
 		const isWithinDateRange =
 			startOfDay <= todoEndDate && endOfDay >= todoStartDate;
 
@@ -100,30 +102,47 @@ const TodoPage: React.FC = () => {
 
 	return (
 		<>
-			<Navbar leftContent={<HomeButton />} centerContent="ToDo" />
-			<div className={styles.fullPage}>
-				<DateSelector
-					selectedDate={selectedDate}
-					setSelectedDate={setSelectedDate}
-				/>
-				{Object.keys(groupedTodos).map((category) => (
-					<div key={category} className={styles.categoryStyle}>
-						<h3>{category}</h3>
-						{groupedTodos[category].map((todo) => (
-							<ToDoTile
-								toDoId={todo.id}
-								toDoTitle={todo.title}
-								toDoDescription={todo.description}
-								toDoComment={""}
-								taskStatus={todo.toDoStatus}
-								time={todo.time || ""}
-							/>
+			<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
+			<div className="pageWrapper">
+				<div className={styles.fullWrapper}>
+					<DateSelector
+						selectedDate={selectedDate}
+						setSelectedDate={setSelectedDate}
+					/>
+					<div>
+						<h2>Todos for {selectedDate.toDateString()}</h2>
+						{Object.keys(groupedTodos).map((category) => (
+							<div
+								key={category}
+								className={styles.categoryStyle}
+							>
+								<h3>{category}</h3>
+								<div className={styles.toDoTileMargin}>
+									{groupedTodos[category].map((todo) => (
+										<div
+											className={styles.toDoTile}
+											key={todo.id}
+										>
+											<ToDoTile
+												toDoId={todo.id}
+												toDoTitle={todo.title}
+												toDoDescription={
+													todo.description
+												}
+												toDoComment={""}
+												taskStatus={todo.toDoStatus}
+												time={todo.time || ""}
+											/>
+										</div>
+									))}
+								</div>
+							</div>
 						))}
 					</div>
-				))}
+				</div>
 			</div>
 		</>
 	);
 };
 
-export default TodoPage;
+export default ToDoPage;
