@@ -1,5 +1,6 @@
 .remainingTodosOuterWrapper {
 	width: fit-content;
+	margin: 0 auto;
 }
 
 .remainingTodosInnerWrapper {
@@ -15,7 +16,7 @@
 
 .arrowIconWrapper {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: end;
 	color: var(--lightblue);
 }
 
@@ -29,8 +30,15 @@
 	color: inherit;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
+	.remainingTodosOuterWrapper {
+		width: 960px;
+	}
 	.remainingTodosContainer {
 		flex-direction: row;
+		gap: 125px;
+	}
+	.remainingTodosInnerWrapper {
+		gap: 125px;
 	}
 }

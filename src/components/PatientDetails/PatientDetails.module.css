@@ -8,7 +8,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: start;
-	margin-left: 1rem;
 }
 
 .PatientInfo {
@@ -21,7 +20,7 @@
 
 .morePatientDetails {
 	display: flex;
-	justify-content: end;
+	justify-content: start;
 	align-items: center;
 	width: 100%;
 	padding-right: 0.5rem;
@@ -34,4 +33,5 @@
 .morePatientDetails > p {
 	font-size: 0.8rem;
 	margin: 0 0 2px 0;
+	color: var(--blue);
 }

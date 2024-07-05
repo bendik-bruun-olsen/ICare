@@ -60,7 +60,16 @@ a {
 }
 
 .pageWrapper {
+	width: 100%;
+	padding-inline: 24px;
+	display: flex;
+	justify-content: center;
+}
+
+.pageContent {
+	width: 100%;
 	max-width: 960px;
-	margin: 0 auto;
-	padding: 10px 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
 }
