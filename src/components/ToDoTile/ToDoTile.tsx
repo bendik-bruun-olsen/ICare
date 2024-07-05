@@ -4,6 +4,8 @@ import { more_horizontal } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../pages/ToDoPage/ToDoPage";
+import { Link } from "react-router-dom";
+import { Paths } from "../../paths";
 
 interface ToDoTileProps {
 	toDoTitle: string;
@@ -103,7 +105,14 @@ export default function ToDoTile({
 										</p>
 									</li>
 									<li className={styles.modalItem}>
-										<p>Edit/Delete</p>
+										<Link
+											to={Paths.EDIT_TODO.replace(
+												":todoId",
+												toDoId
+											)}
+										>
+											<p>Edit/Delete</p>
+										</Link>
 									</li>
 									<li className={styles.modalItem}>
 										<p>Add Comment</p>

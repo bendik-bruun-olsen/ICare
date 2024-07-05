@@ -5,7 +5,7 @@ export enum Paths {
 	SIGNUP = "/signup",
 	TODO = "/todo",
 	ADD_TODO = "/add-todo",
-	EDIT_TODO = "/edit-todo/:id",
+	EDIT_TODO = "/todo/edit/:todoId",
 	APPOINTMENT = "/appointment",
 	ADD_APPOINTMENT = "/add-appointment",
 	EDIT_APPOINTMENT = "/edit-appointment",
