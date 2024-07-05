@@ -17,3 +17,14 @@ export interface ToDo {
 	category: string | null;
 	toDoStatus: ToDoStatus;
 }
+
+export interface TodoInterface {
+	title: string;
+	description: string;
+	repeat: boolean;
+	startDate: Timestamp;
+	endDate: Timestamp | null;
+	time: string;
+	category: string | null;
+	selectedDays: string[];
+}
