@@ -1,81 +1,89 @@
 nav {
 	background-color: var(--blue);
 	display: flex;
-	/* justify-content: space-between; */
-	/* padding: 10px; */
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 10px 0 10px;
 	user-select: none;
 	height: 50px;
 }
 
-nav ul li {
+.userIcon {
 	display: flex;
-	list-style-type: none;
+	justify-content: flex-end;
+	cursor: pointer;
+	color: inherit;
+}
+
+.centerContent {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	color: white;
+}
+
+.rightContent {
+	display: flex;
+	flex-direction: column;
 	align-items: center;
-}
-
-nav ul :hover {
-	background-color: var(--black);
 	cursor: pointer;
+	color: white;
 }
 
-.backdrop {
+.rightContent span {
+	margin-top: -5px;
+}
+
+.modalOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.modalList {
 	position: absolute;
-	background-color: var(--black);
+	background-color: var(--white);
+	padding: 10px 10px;
+	border-radius: 5px;
+	max-width: 200px;
 	top: 50px;
-	min-width: 100%;
-	height: calc(100% - 50px);
+	right: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	list-style: none;
 }
 
-.hamburgerMenuIcon {
-	position: absolute;
-	right: 2%;
+.modalItem {
+	color: var(--black);
+	text-decoration: none;
 	cursor: pointer;
+	display: flex;
 }
 
-.desktopMenu {
-	display: none;
+/* NavLink */
+.modalItem a {
+	color: inherit;
+	text-decoration: inherit;
+	display: flex;
+	align-items: center;
+	gap: 5px;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-	nav ul {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		position: absolute;
-		top: 50px;
-		right: 0;
-		/* height: calc(100% - 50px); */
-		width: 100%;
-	}
-
-	.hamburgerMenuIcon {
-		display: block;
-	}
+.signOutContainer {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	gap: 5px;
 }
 
-/* Desktop */
-@media (min-width: 768px) {
-	.navbar {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	nav ul {
-		display: flex !important;
-		flex-direction: row;
-		gap: 20px;
-		margin: 0 30px;
-	}
-	.hamburgerMenuIcon {
-		display: none;
-	}
-
-	nav ul li {
-		display: flex;
-	}
-
-	.desktopMenu {
-		display: block;
-	}
+.modalItem button {
+	color: inherit;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font: inherit;
+	cursor: inherit;
 }

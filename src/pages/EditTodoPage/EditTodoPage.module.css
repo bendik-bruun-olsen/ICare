@@ -1,0 +1,41 @@
+.formContainer {
+	display: flex;
+	flex-direction: column;
+	max-width: 500px;
+	margin: 0 auto;
+	min-height: calc(100vh - var(--navbar-height) - 30px);
+	justify-content: space-between;
+}
+
+.formContainer label {
+	margin: 0 0 2px 0;
+}
+
+.mainContentContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.scheduleControlsContainer > div {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.scheduleControlsContainer {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+@media (max-width: 425px) {
+	.scheduleControlsContainer {
+		flex-direction: column;
+	}
+}
+
+.timeAndRepeatControls span {
+	padding: 2px 5px 0 0;
+}

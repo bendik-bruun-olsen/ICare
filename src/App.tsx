@@ -1,15 +1,19 @@
 import React from "react";
-import { RouterProvider } from "react-router-dom";
 import router from "./routes";
-import { CircularProgress } from "@equinor/eds-core-react";
+import { RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./hooks/useAuth/useAuth";
+import { NotificationProvider } from "./context/NotificationContext";
+import SnackBar from "./components/SnackBar";
 
 const App: React.FC = () => {
-	return (
-		<RouterProvider
-			router={router}
-			fallbackElement={<CircularProgress />}
-		/>
-	);
+    return (
+        <AuthProvider>
+            <NotificationProvider>
+                <RouterProvider router={router} />
+                <SnackBar />
+            </NotificationProvider>
+        </AuthProvider>
+    );
 };
 
 export default App;

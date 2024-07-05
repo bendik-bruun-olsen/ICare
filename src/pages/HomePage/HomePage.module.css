@@ -1,0 +1,44 @@
+.remainingTodosOuterWrapper {
+	width: fit-content;
+	margin: 0 auto;
+}
+
+.remainingTodosInnerWrapper {
+	display: flex;
+	gap: 10px;
+}
+
+.remainingTodosContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.arrowIconWrapper {
+	display: flex;
+	justify-content: end;
+	color: var(--lightblue);
+}
+
+.arrowIconWrapper a {
+	display: flex;
+	color: var(--blue);
+}
+
+.arrowIconWrapper span {
+	padding-top: 2px;
+	color: inherit;
+}
+
+@media (min-width: 1024px) {
+	.remainingTodosOuterWrapper {
+		width: 960px;
+	}
+	.remainingTodosContainer {
+		flex-direction: row;
+		gap: 125px;
+	}
+	.remainingTodosInnerWrapper {
+		gap: 125px;
+	}
+}

@@ -1,0 +1,49 @@
+.heading {
+    margin: 10px;
+    text-align: center;
+}
+.inputContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.inputContainer label {
+    color: var(--black);
+}
+.input {
+    margin: 10px;
+
+    color: var(--black);
+}
+.bannerImage {
+    width: 40%;
+    height: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#signInButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--blue);
+    max-width: 100px;
+    margin: 10px;
+    color: var(--white);
+}
+
+.links {
+    color: var(--blue);
+    margin: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+@media (min-width: 501px) {
+    .inputContainer {
+        width: 500px;
+    }
+}

@@ -1,9 +1,24 @@
-import style from "./Logo.module.css";
+interface LogoProps {
+	size?: string;
+	color?: string;
+}
 
-export default function Logo() {
+export default function Logo({
+	size = "32px",
+	color = "var(--white)",
+}: LogoProps) {
 	return (
-		<div className={style.container}>
-			<h1 className={style.text}>iCare</h1>
-		</div>
+		<span
+			style={{
+				color: color,
+				textAlign: "center",
+				fontSize: size,
+				fontFamily: "'Lora', serif",
+				fontWeight: "500",
+				fontStyle: "italic",
+			}}
+		>
+			iCare
+		</span>
 	);
 }

@@ -1,0 +1,51 @@
+.toDoWrapper {
+	display: flex;
+	background-color: var(--white);
+	padding: 1rem;
+	width: 100%;
+	justify-content: center;
+	border-radius: 8px;
+}
+
+.titleWrapper {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	margin-bottom: 8px;
+}
+
+.remainingTodosInnerWrapper {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.arrowIconWrapper {
+	color: var(--blue);
+	display: flex;
+	align-items: center;
+}
+
+.arrowIconWrapper:hover {
+	color: black;
+}
+
+.flexContainer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.toDoText {
+	margin-bottom: 0.5rem;
+	font-weight: 300;
+}
+
+.icon {
+	margin-left: 1rem;
+}
+
+.iconOpacity {
+	opacity: 0.5;
+}
