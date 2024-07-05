@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon, Checkbox } from "@equinor/eds-core-react";
-import { comment, more_horizontal } from "@equinor/eds-icons";
+import { more_horizontal } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../pages/ToDoPage/ToDoPage";
@@ -18,7 +18,7 @@ export default function ToDoTile({
 	toDoId,
 	toDoTitle,
 	toDoDescription,
-	toDoComment,
+	// toDoComment,
 	taskStatus,
 	time,
 }: ToDoTileProps) {
@@ -114,12 +114,12 @@ export default function ToDoTile({
 					)}
 				</div>
 				<div className={styles.commentWrapper}>
-					<div className={styles.commentSection}>
+					{/* <div className={styles.commentSection}>
 						<div className={styles.iconContainer}>
 							<Icon data={comment} size={16} />
 						</div>
 						<p>{toDoComment}</p>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>

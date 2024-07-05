@@ -7,7 +7,7 @@ import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodo.module.css";
 import Navbar from "../../components/Navbar/Navbar";
-import HomeButton from "../../components/HomeButton/HomeButton";
+import BackHomeButton from "../../components/BackHomeButton";
 import { addNewTodo } from "../../firebase/todoServices/addNewTodo";
 import { useNotification } from "../../context/NotificationContext";
 
@@ -82,7 +82,10 @@ const AddToDo: React.FC = () => {
 
 	return (
 		<>
-			<Navbar leftContent={<HomeButton />} centerContent="Add To Do" />
+			<Navbar
+				leftContent={<BackHomeButton />}
+				centerContent="Add To Do"
+			/>
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
 					<div className={styles.formContainer}>

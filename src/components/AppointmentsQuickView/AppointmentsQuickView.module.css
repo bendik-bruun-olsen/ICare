@@ -1,26 +1,38 @@
-.fullWrapper {
+.appointmentsOuterWrapper {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	margin-top: 50px;
-	margin-bottom: 50px;
+	align-items: start;
+	gap: 8px;
+	width: 100%;
+}
+
+.appointmentsOuterWrapper h2 {
+	text-align: start;
+}
+
+.titleWrapper {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
 }
 
 .appointmentsWrapper {
-	position: relative;
 	display: flex;
-	background-color: #d7d7d7;
-	max-width: 19rem;
+	background-color: var(--white);
 	height: 6rem;
 	align-items: center;
 	border-radius: 10px;
-	cursor: pointer;
+	justify-content: space-between;
+	width: 100%;
 }
 
 .textWrapper {
 	display: flex;
 	justify-content: start;
 	flex-direction: column;
+	padding: 10px;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .textWrapper p {
@@ -29,14 +41,15 @@
 }
 
 .firstAppointment {
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 }
 
 .appointmentIconWrapper {
+	margin-right: 10px;
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	margin-left: 0.5rem;
+	margin-left: 40px;
 }
 
 .calendarIcon {
@@ -44,23 +57,24 @@
 }
 
 .arrowIconWrapper {
-	top: 105%;
-	left: 54%;
 	display: flex;
-	text-decoration: none;
-	text-align: center;
 	cursor: pointer;
-	position: absolute;
 	user-select: none;
-}
-
-.arrowIconWrapper p {
-	color: var(--blue);
-	font-size: 0.9rem;
+	flex-direction: row;
 }
 
 .arrowIconWrapper a,
 .arrowIconWrapper a:visited {
 	text-decoration: none;
 	color: inherit;
+}
+
+.linkButton {
+	color: var(--blue);
+	display: flex;
+	align-items: center;
+}
+
+.linkButton:hover {
+	color: black;
 }

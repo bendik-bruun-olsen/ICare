@@ -12,7 +12,7 @@ import {
 	updateDoc,
 } from "firebase/firestore";
 import Navbar from "../../components/Navbar/Navbar";
-import HomeButton from "../../components/HomeButton/HomeButton";
+import BackHomeButton from "../../components/BackHomeButton";
 import { getEndOfDay, getStartOfDay } from "../../utils";
 import { ToDo } from "../../types";
 
@@ -102,7 +102,7 @@ const ToDoPage: React.FC = () => {
 
 	return (
 		<>
-			<Navbar leftContent={<HomeButton />} centerContent="ToDo" />
+			<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
 			<div className="pageWrapper">
 				<div className={styles.fullWrapper}>
 					<DateSelector
