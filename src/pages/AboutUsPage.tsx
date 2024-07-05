@@ -1,10 +1,10 @@
 import Navbar from "../components/Navbar/Navbar";
-import HomeButton from "../components/HomeButton/HomeButton";
+import BackHomeButton from "../components/BackHomeButton";
 
 const AboutUsPage = () => {
 	return (
 		<>
-			<Navbar leftContent={<HomeButton />} centerContent="About Us" />
+			<Navbar leftContent={<BackHomeButton />} centerContent="About Us" />
 			<div className="pageWrapper">
 				<h2>About Us</h2>
 			</div>

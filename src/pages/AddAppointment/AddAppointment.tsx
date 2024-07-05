@@ -7,7 +7,7 @@ import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "../AddTodo/AddTodo.module.css";
 import Navbar from "../../components/Navbar/Navbar";
-import HomeButton from "../../components/HomeButton/HomeButton";
+import BackHomeButton from "../../components/BackHomeButton";
 
 const AddAppointment: React.FC = () => {
 	const [title, setTitle] = useState("");
@@ -49,7 +49,7 @@ const AddAppointment: React.FC = () => {
 	return (
 		<>
 			<Navbar
-				leftContent={<HomeButton />}
+				leftContent={<BackHomeButton />}
 				centerContent="Add Appointments"
 			/>
 			<div className="pageWrapper">
