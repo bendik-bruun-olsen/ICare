@@ -22,8 +22,6 @@
 
 .arrowIconWrapper {
 	color: var(--blue);
-	padding: 4px;
-	gap: 4px;
 	display: flex;
 	align-items: center;
 }

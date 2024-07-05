@@ -70,8 +70,6 @@
 }
 
 .linkButton {
-	gap: 4px;
-	padding: 4px;
 	color: var(--blue);
 	display: flex;
 	align-items: center;

@@ -23,7 +23,7 @@ export default function AppointmentsQuickView({
 				<div className={styles.arrowIconWrapper}>
 					<Link to="/appointment">
 						<div className={styles.linkButton}>
-							<span>All appointments</span>
+							<span>All Appointments</span>
 							<Icon data={arrow_forward} />
 						</div>
 					</Link>
