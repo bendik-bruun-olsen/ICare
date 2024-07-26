@@ -70,38 +70,41 @@ export function getToDosForSelectedDate(selectedDate: Date, todo: ToDo) {
   const todoStartDate = todo.startDate.toDate();
   const todoEndDate = todo.endDate ? todo.endDate.toDate() : todoStartDate;
 
-  if (todo.startDate && !todo.endDate && !todo.selectedDays) {
+  const hasOnlyStartDate =
+    todo.startDate && !todo.endDate && !todo.selectedDays;
+
+  if (hasOnlyStartDate) {
     const isStartDateOnlyMatch =
       !todo.endDate &&
       todoStartDate.toDateString() === selectedDate.toDateString();
     return isStartDateOnlyMatch;
   }
 
-  if (
+  const hasBothStartDateEndDate =
     todo.startDate &&
     todo.endDate &&
-    (!todo.selectedDays || todo.selectedDays.length === 0)
-  ) {
+    (!todo.selectedDays || todo.selectedDays.length === 0);
+  if (hasBothStartDateEndDate) {
     const startOfDay = getStartOfDay(selectedDate);
     const endOfDay = getEndOfDay(selectedDate);
     const isWithinDateRange =
       startOfDay <= todoEndDate && endOfDay >= todoStartDate;
     return isWithinDateRange;
   }
-
-  if (
+  const hasStartDateEndDateFrequency =
     todo.startDate &&
     todo.endDate &&
     todo.selectedDays &&
-    todo.selectedDays.length > 0
-  ) {
+    todo.selectedDays.length > 0;
+
+  if (hasStartDateEndDateFrequency) {
     const selectedWeekday = selectedDate
       .toLocaleString("en-us", {
         weekday: "long",
       })
       .toLowerCase();
     const repeatsOnDay =
-      todo.selectedDays.includes(selectedWeekday) &&
+      todo.selectedDays?.includes(selectedWeekday) &&
       selectedDate >= todoStartDate &&
       selectedDate <= todoEndDate;
     return repeatsOnDay;
