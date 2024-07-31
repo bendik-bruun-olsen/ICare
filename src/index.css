@@ -63,7 +63,7 @@ a {
 .pageWrapper {
 	max-width: 960px;
 	margin: 0 auto;
-	padding: 20px;
+	padding: calc(20px + var(--navbar-height)) 20px 20px 20px;
 }
 
 .pageContainer {
