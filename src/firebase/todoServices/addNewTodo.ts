@@ -1,11 +1,35 @@
 import { db } from "../../firebase/firebase";
-import { addDoc, doc, collection } from "firebase/firestore";
-import { TodoInterface } from "../../types";
+import { addDoc, collection } from "firebase/firestore";
+import { TodoInterface, seriesInfoInterface } from "../../types";
 
-export const addNewTodo = async (newTodo: TodoInterface) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoRef = collection(patientRef, "todos");
+export const addSingleNewTodo = async (todo: TodoInterface) => {
+	const patientRef = collection(
+		db,
+		"patientdetails",
+		"patient@patient.com",
+		"test"
+	);
 
-	const todoDocRef = await addDoc(todoRef, newTodo);
+	const todoDocRef = await addDoc(patientRef, {
+		todos: todo,
+	});
+	return todoDocRef.id;
+};
+
+export const addMultipleNewTodos = async (
+	todos: TodoInterface[],
+	seriesInfo: seriesInfoInterface
+) => {
+	const patientRef = collection(
+		db,
+		"patientdetails",
+		"patient@patient.com",
+		"test"
+	);
+
+	const todoDocRef = await addDoc(patientRef, {
+		seriesInfo: seriesInfo,
+		todos: todos,
+	});
 	return todoDocRef.id;
 };
