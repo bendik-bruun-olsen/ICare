@@ -15,6 +15,7 @@ import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasssword/ResetPasswordPage";
+import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";
 import { Navigate } from "react-router-dom";
 
 const RequireAuthWrapper = () => {
@@ -81,6 +82,10 @@ const protectedRoutes = [
   {
     path: Paths.ABOUT,
     element: <AboutUsPage />,
+  },
+  {
+    path: Paths.USER_PROFILE,
+    element: <UserProfilePage />,
   },
 ];
 
