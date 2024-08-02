@@ -1,3 +1,21 @@
 .personalInfoSection {
-	background-color: var(--lightblue);
+	background-color: var(--fadedblue);
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.healthInfoSection {
+	background-color: var(--fadedblue);
+	padding: 5px;
+	margin: 20px 0 0 0;
+	border-radius: 5px;
+}
+
+.healthInfoSection span,
+.personalInfoSection span {
+	color: var(--white);
+}
+
+#createPatientButton {
+	margin-top: 20px;
 }

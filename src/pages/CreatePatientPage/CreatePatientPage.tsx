@@ -6,30 +6,55 @@ import { InputWrapper, Input, Button } from "@equinor/eds-core-react";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 
+type FormFieldProps = {
+	label: string;
+	name: string;
+	value: string;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	required?: boolean;
+};
+
+const FormField = ({
+	label,
+	name,
+	value,
+	onChange,
+	required = false,
+}: FormFieldProps) => (
+	<InputWrapper
+		className="input"
+		labelProps={{
+			label: label,
+			htmlFor: "textfield-normal",
+			style: { display: "block" },
+		}}
+	>
+		<Input required={required} name={name} value={value} onChange={onChange} />
+	</InputWrapper>
+);
+
 export default function CreatePatientPage() {
-	const [personalInfo, setPersonalInfo] = useState({
+	const [formData, setFormData] = useState<{
+		name: string;
+		age: string;
+		phone: string;
+		address: string;
+		diagnoses: string;
+		allergies: string;
+		[key: string]: string;
+	}>({
 		name: "",
 		age: "",
 		phone: "",
 		address: "",
-	});
-	const [healthInfo, setHealthInfo] = useState({
 		diagnoses: "",
 		allergies: "",
 	});
 	const [error, setError] = useState<string | null>(null);
 
-	const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
-		setPersonalInfo((prevData) => ({
-			...prevData,
-			[name]: value,
-		}));
-	};
-
-	const handleHealthInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setHealthInfo((prevData) => ({
+		setFormData((prevData) => ({
 			...prevData,
 			[name]: value,
 		}));
@@ -40,17 +65,12 @@ export default function CreatePatientPage() {
 		setError(null);
 		try {
 			const patientRef = collection(db, "patientdetails");
-			await addDoc(patientRef, {
-				personalInfo,
-				healthInfo,
-			});
-			setPersonalInfo({
+			await addDoc(patientRef, formData);
+			setFormData({
 				name: "",
 				age: "",
 				phone: "",
 				address: "",
-			});
-			setHealthInfo({
 				diagnoses: "",
 				allergies: "",
 			});
@@ -59,104 +79,48 @@ export default function CreatePatientPage() {
 		}
 	};
 
+	const personalInfoFields = [
+		{ label: "Name*", name: "name", required: true },
+		{ label: "Age", name: "age" },
+		{ label: "Phone*", name: "phone", required: true },
+		{ label: "Address*", name: "address", required: true },
+	];
+
+	const healthInfoFields = [
+		{ label: "Diagnoses", name: "diagnoses" },
+		{ label: "Allergies", name: "allergies" },
+	];
+
 	return (
 		<>
 			<Navbar centerContent="Create Patient" leftContent={<Logo />} />
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
-					<div className="personalInfoSection">
-						<InputWrapper
-							className="input"
-							labelProps={{
-								label: "Name*",
-								htmlFor: "textfield-normal",
-								style: { display: "block" },
-							}}
-						>
-							<Input
-								required
-								name="name"
-								value={personalInfo.name}
-								onChange={handlePersonalInfoChange}
+					<div className={styles.personalInfoSection}>
+						{personalInfoFields.map((field) => (
+							<FormField
+								key={field.name}
+								label={field.label}
+								name={field.name}
+								value={formData[field.name] as string}
+								onChange={handleChange}
+								required={field.required}
 							/>
-						</InputWrapper>
-						<InputWrapper
-							className="input"
-							labelProps={{
-								label: "Age",
-								htmlFor: "textfield-normal",
-								style: { display: "block" },
-							}}
-						>
-							<Input
-								name="age"
-								value={personalInfo.age}
-								onChange={handlePersonalInfoChange}
-							/>
-						</InputWrapper>
-						<InputWrapper
-							className="input"
-							labelProps={{
-								label: "Phone*",
-								htmlFor: "textfield-normal",
-								style: { display: "block" },
-							}}
-						>
-							<Input
-								required
-								name="phone"
-								value={personalInfo.phone}
-								onChange={handlePersonalInfoChange}
-							/>
-						</InputWrapper>
-						<InputWrapper
-							className="input"
-							labelProps={{
-								label: "Address*",
-								htmlFor: "textfield-normal",
-								style: { display: "block" },
-							}}
-						>
-							<Input
-								required
-								name="address"
-								value={personalInfo.address}
-								onChange={handlePersonalInfoChange}
-							/>
-						</InputWrapper>
+						))}
 					</div>
-					<div className="healthInfoSection">
-						<InputWrapper
-							className="input"
-							labelProps={{
-								label: "Diagnoses",
-								htmlFor: "textfield-normal",
-								style: { display: "block" },
-							}}
-						>
-							<Input
-								name="diagnoses"
-								value={healthInfo.diagnoses}
-								onChange={handleHealthInfoChange}
+					<div className={styles.healthInfoSection}>
+						{healthInfoFields.map((field) => (
+							<FormField
+								key={field.name}
+								label={field.label}
+								name={field.name}
+								value={formData[field.name]}
+								onChange={handleChange}
 							/>
-						</InputWrapper>
-						<InputWrapper
-							className="input"
-							labelProps={{
-								label: "Allergies",
-								htmlFor: "textfield-normal",
-								style: { display: "block" },
-							}}
-						>
-							<Input
-								name="allergies"
-								value={healthInfo.allergies}
-								onChange={handleHealthInfoChange}
-							/>
-						</InputWrapper>
+						))}
 					</div>
 					{error && <p style={{ color: "red" }}>{error}</p>}
-					<Button id="createPatientButton" type="submit">
+					<Button id={styles.createPatientButton} type="submit">
 						Create Patient
 					</Button>
 				</form>

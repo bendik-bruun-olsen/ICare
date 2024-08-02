@@ -15,6 +15,7 @@ import { formatTimestampToDate } from "../../utils";
 import { useNotification } from "../../context/NotificationContext";
 import { TodoInterface } from "../../types";
 import { useParams } from "react-router-dom";
+import LoadingPage from "../LoadingPage";
 
 const defaultTodo: TodoInterface = {
 	title: "",
@@ -145,7 +146,7 @@ const EditToDoPage = () => {
 		return true;
 	};
 
-	if (isLoading) return <h1>Loading....</h1>;
+	if (isLoading) return <LoadingPage />;
 
 	return (
 		<>
