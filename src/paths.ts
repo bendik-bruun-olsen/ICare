@@ -13,5 +13,6 @@ export enum Paths {
 	ABOUT = "/about-us",
 	RECOVER_PASSWORD = "/recover-password",
 	RESET_PASSWORD = "/reset-password",
+	CREATE_PATIENT = "/create-patient",
 	ERROR = "*",
 }
