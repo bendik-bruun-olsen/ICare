@@ -15,6 +15,7 @@ import {
 import { useNotification } from "../../context/NotificationContext";
 import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { ToDoStatus } from "../../types";
 
 const AddToDo: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -44,12 +45,11 @@ const AddToDo: React.FC = () => {
 		const newTodo = {
 			title,
 			description,
-			// repeat,
-			startDate: startDateAsTimestamp,
-			// endDate: endDateAsTimestamp,
+			date: startDateAsTimestamp,
 			time,
 			category: selectCategory,
-			// selectedDays: repeat ? selectedDays : [],
+			status: ToDoStatus.unchecked,
+			comment: "",
 		};
 
 		try {
@@ -57,7 +57,6 @@ const AddToDo: React.FC = () => {
 			setIsLoading(true);
 
 			if (repeat) {
-				console.log("Repeat is true, processing selectedDays");
 				const selectedDaysNumbers = selectedDays.map((day) => {
 					switch (day) {
 						case "sunday":
@@ -75,30 +74,25 @@ const AddToDo: React.FC = () => {
 						case "saturday":
 							return 6;
 						default:
-							return -1;
+							addNotification("Invalid date", "error");
+							return;
 					}
 				});
-				console.log(
-					"Selected days converted to numbers:",
-					selectedDaysNumbers
-				);
 
 				const currentDate = new Date(startDate);
-
-				console.log("Entering while loop");
 				while (currentDate <= new Date(endDate)) {
-					if (selectedDaysNumbers.includes(currentDate.getDay())) {
-						console.log("Adding todo for date:", currentDate);
+					if (
+						selectedDaysNumbers.includes(
+							currentDate.getDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6
+						)
+					) {
 						const todoForDay = {
 							...newTodo,
-							startDate: Timestamp.fromDate(currentDate),
-							endDate: null,
-							repeat: false,
+							date: Timestamp.fromDate(currentDate),
 						};
 						newTodos.push(todoForDay);
 					}
 
-					console.log("Incrementing date");
 					currentDate.setDate(currentDate.getDate() + 1);
 				}
 				const seriesInfo = {
@@ -111,7 +105,6 @@ const AddToDo: React.FC = () => {
 			}
 
 			if (!repeat) {
-				console.log("Repeat is false, adding single todo");
 				addSingleNewTodo(newTodo);
 			}
 

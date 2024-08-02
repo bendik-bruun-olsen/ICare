@@ -1,9 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 
 export enum ToDoStatus {
-	Checked = "checked",
-	Unchecked = "unchecked",
-	Ignore = "ignore",
+	unchecked = "unchecked",
+	checked = "checked",
+	ignore = "ignore",
 }
 
 export interface ToDo {
@@ -22,14 +22,14 @@ export interface TodoInterface {
 	title: string;
 	description: string;
 	// repeat: boolean;
-	startDate: Timestamp;
+	date: Timestamp;
 	// endDate: Timestamp | null;
 	time: string;
 	category: string | null;
 	// selectedDays: string[];
 }
 
-export interface seriesInfoInterface {
+export interface TodoSeriesInfoInterface {
 	startDate: Timestamp;
 	endDate: Timestamp;
 	selectedDays: string[];

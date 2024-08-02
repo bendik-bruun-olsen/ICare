@@ -1,6 +1,6 @@
 import { db } from "../../firebase/firebase";
 import { addDoc, collection } from "firebase/firestore";
-import { TodoInterface, seriesInfoInterface } from "../../types";
+import { TodoInterface, TodoSeriesInfoInterface } from "../../types";
 
 export const addSingleNewTodo = async (todo: TodoInterface) => {
 	const patientRef = collection(
@@ -18,7 +18,7 @@ export const addSingleNewTodo = async (todo: TodoInterface) => {
 
 export const addMultipleNewTodos = async (
 	todos: TodoInterface[],
-	seriesInfo: seriesInfoInterface
+	seriesInfo: TodoSeriesInfoInterface
 ) => {
 	const patientRef = collection(
 		db,
