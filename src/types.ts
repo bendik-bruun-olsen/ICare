@@ -21,12 +21,11 @@ export interface ToDo {
 export interface TodoInterface {
 	title: string;
 	description: string;
-	// repeat: boolean;
 	date: Timestamp;
-	// endDate: Timestamp | null;
 	time: string;
 	category: string | null;
-	// selectedDays: string[];
+	status: ToDoStatus;
+	comment: string;
 }
 
 export interface TodoSeriesInfoInterface {

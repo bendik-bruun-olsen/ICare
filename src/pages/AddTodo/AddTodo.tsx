@@ -16,6 +16,7 @@ import { useNotification } from "../../context/NotificationContext";
 import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { ToDoStatus } from "../../types";
+import { generateNewTodos, mapSelectedDaysToNumbers } from "../../utils";
 
 const AddToDo: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -50,62 +51,40 @@ const AddToDo: React.FC = () => {
 			category: selectCategory,
 			status: ToDoStatus.unchecked,
 			comment: "",
+			seriesID: null,
 		};
 
 		try {
-			const newTodos = [];
 			setIsLoading(true);
 
 			if (repeat) {
-				const selectedDaysNumbers = selectedDays.map((day) => {
-					switch (day) {
-						case "sunday":
-							return 0;
-						case "monday":
-							return 1;
-						case "tuesday":
-							return 2;
-						case "wednesday":
-							return 3;
-						case "thursday":
-							return 4;
-						case "friday":
-							return 5;
-						case "saturday":
-							return 6;
-						default:
-							addNotification("Invalid date", "error");
-							return;
-					}
-				});
+				const selectedDaysNumbers =
+					mapSelectedDaysToNumbers(selectedDays);
 
-				const currentDate = new Date(startDate);
-				while (currentDate <= new Date(endDate)) {
-					if (
-						selectedDaysNumbers.includes(
-							currentDate.getDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6
-						)
-					) {
-						const todoForDay = {
-							...newTodo,
-							date: Timestamp.fromDate(currentDate),
-						};
-						newTodos.push(todoForDay);
-					}
-
-					currentDate.setDate(currentDate.getDate() + 1);
+				if (selectedDaysNumbers.includes(-1)) {
+					addNotification("Invalid day selected", "error");
+					setIsLoading(false);
+					return;
 				}
+
+				const newTodos = generateNewTodos(
+					newTodo,
+					startDate,
+					endDate,
+					selectedDaysNumbers
+				);
+
 				const seriesInfo = {
 					startDate: startDateAsTimestamp,
 					endDate: endDateAsTimestamp,
 					selectedDays: selectedDays,
 				};
 
-				addMultipleNewTodos(newTodos, seriesInfo);
+				await addMultipleNewTodos(newTodos, seriesInfo);
 			}
 
 			if (!repeat) {
-				addSingleNewTodo(newTodo);
+				await addSingleNewTodo(newTodo);
 			}
 
 			addNotification("ToDo added successfully!", "success");
