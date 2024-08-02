@@ -1,19 +1,44 @@
-import { TodoInterface } from "../../types";
 import { db } from "../firebase";
-import { doc, collection, getDoc, getDocs } from "firebase/firestore";
+import {
+	doc,
+	collection,
+	getDoc,
+	getDocs,
+	query,
+	where,
+	Timestamp,
+} from "firebase/firestore";
 
 export const getTodo = async (todoId: string) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoRef = doc(patientRef, "test", todoId);
+	const todoRef = doc(patientRef, "todos", todoId);
 
 	const todoSnap = await getDoc(todoRef);
-	return todoSnap.data() as TodoInterface | undefined;
+	const todoWithId = { ...todoSnap.data(), id: todoSnap.id };
+	return todoWithId;
 };
 
-export const getAllTodos = async () => {
+export const getTodosBySelectedDate = async (selectedDate: Date) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoCollection = collection(patientRef, "test");
+	const todoCollection = collection(patientRef, "todos");
 
-	const todoSnap = await getDocs(todoCollection);
-	return todoSnap.docs.map((doc) => doc.data() as TodoInterface);
+	const startOfDay = Timestamp.fromDate(
+		new Date(selectedDate.setHours(0, 0, 0, 0))
+	);
+	const endOfDay = Timestamp.fromDate(
+		new Date(selectedDate.setHours(23, 59, 59, 999))
+	);
+
+	const q = query(
+		todoCollection,
+		where("date", ">=", startOfDay),
+		where("date", "<=", endOfDay)
+	);
+
+	const querySnap = await getDocs(q);
+	const todosWithId = querySnap.docs.map((doc) => ({
+		...doc.data(),
+		id: doc.id,
+	}));
+	return todosWithId;
 };

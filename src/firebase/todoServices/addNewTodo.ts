@@ -4,7 +4,7 @@ import { TodoInterface, TodoSeriesInfoInterface } from "../../types";
 
 export const addSingleNewTodo = async (todo: TodoInterface) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoCollection = collection(patientRef, "test");
+	const todoCollection = collection(patientRef, "todos");
 
 	await addDoc(todoCollection, todo);
 
@@ -17,7 +17,7 @@ export const addMultipleNewTodos = async (
 ) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
 
-	const todoCollection = collection(patientRef, "test");
+	const todoCollection = collection(patientRef, "todos");
 	const seriesInfoCollection = collection(patientRef, "seriesInfo");
 
 	const seriesInfoCollectionRef = await addDoc(

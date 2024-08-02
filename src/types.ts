@@ -26,6 +26,11 @@ export interface TodoInterface {
 	category: string | null;
 	status: ToDoStatus;
 	comment: string;
+	seriesID: string | null;
+}
+
+export interface TodoWithIdInterface extends TodoInterface {
+	id: string;
 }
 
 export interface TodoSeriesInfoInterface {

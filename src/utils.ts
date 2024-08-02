@@ -8,7 +8,7 @@ import {
 	getDocs,
 } from "firebase/firestore";
 import { db } from "./firebase/firebase";
-import { ToDo } from "./types";
+import { ToDo, TodoWithIdInterface } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import { TodoInterface } from "./types";
@@ -54,9 +54,9 @@ export const formatTimestampToDate = (timestamp: Timestamp): string => {
 };
 
 export const groupTodosByCategory = (
-	todos: ToDo[]
-): { [key: string]: ToDo[] } => {
-	const grouped: { [key: string]: ToDo[] } = {};
+	todos: TodoWithIdInterface[]
+): { [key: string]: TodoWithIdInterface[] } => {
+	const grouped: { [key: string]: TodoWithIdInterface[] } = {};
 	todos.forEach((todo) => {
 		const category = todo.category || "Others";
 		if (!grouped[category]) {
@@ -137,7 +137,7 @@ export const mapSelectedDaysToNumbers = (selectedDays: string[]) => {
 	});
 };
 
-export const generateNewTodos = (
+export const generateTodosForSeries = (
 	newTodo: TodoInterface,
 	startDate: string,
 	endDate: string,

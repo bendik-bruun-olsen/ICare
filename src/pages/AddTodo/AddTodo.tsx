@@ -16,7 +16,7 @@ import { useNotification } from "../../context/NotificationContext";
 import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { ToDoStatus } from "../../types";
-import { generateNewTodos, mapSelectedDaysToNumbers } from "../../utils";
+import { generateTodosForSeries, mapSelectedDaysToNumbers } from "../../utils";
 
 const AddToDo: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +67,7 @@ const AddToDo: React.FC = () => {
 					return;
 				}
 
-				const newTodos = generateNewTodos(
+				const newTodos = generateTodosForSeries(
 					newTodo,
 					startDate,
 					endDate,

@@ -8,119 +8,133 @@ import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
 
 interface ToDoTileProps {
-  toDoTitle: string;
-  toDoDescription: string;
-  toDoComment: string;
-  time: string;
-  taskStatus: ToDoStatus;
-  toDoId: string;
+	toDoTitle: string;
+	toDoDescription: string;
+	toDoComment: string;
+	time: string;
+	taskStatus: ToDoStatus;
+	todoId: string;
 }
 
 export default function ToDoTile({
-  toDoId,
-  toDoTitle,
-  toDoDescription,
-  // toDoComment,
-  taskStatus,
-  time,
+	todoId,
+	toDoTitle,
+	toDoDescription,
+	// toDoComment,
+	taskStatus,
+	time,
 }: ToDoTileProps) {
-  const [currentTaskStatus, setCurrentTaskStatus] =
-    useState<ToDoStatus>(taskStatus);
+	const [currentTaskStatus, setCurrentTaskStatus] =
+		useState<ToDoStatus>(taskStatus);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const toggleModalVisibility = () => {
+		setIsModalOpen((prev) => !prev);
+	};
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
+		if (currentToDoStatus === ToDoStatus.checked) return styles.checked;
+		if (currentToDoStatus === ToDoStatus.ignore)
+			return styles.notApplicable;
+		return styles.default;
+	}
 
-  const toggleModalVisibility = () => {
-    setIsModalOpen((prev) => !prev);
-  };
+	useEffect(() => {
+		const updateStatus = async () => {
+			try {
+				await updateToDoStatusInDatabase(todoId, currentTaskStatus);
+			} catch (error) {
+				console.error("Error updating status: ", error);
+			}
+		};
+		updateStatus();
+	}, [currentTaskStatus, todoId]);
 
-  function chooseTileStyle(currentToDoStatus: ToDoStatus) {
-    if (currentToDoStatus === ToDoStatus.Checked) return styles.checked;
-    if (currentToDoStatus === ToDoStatus.Ignore) return styles.notApplicable;
-    return styles.default;
-  }
-
-  useEffect(() => {
-    updateToDoStatusInDatabase(toDoId, currentTaskStatus);
-  }, [currentTaskStatus, toDoId]);
-
-  return (
-    <div className={styles.checkboxAndToDoTileWrapper}>
-      <Checkbox
-        checked={currentTaskStatus === ToDoStatus.Checked}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setCurrentTaskStatus(
-            e.target.checked ? ToDoStatus.Checked : ToDoStatus.Unchecked
-          )
-        }
-      />
-      <div
-        className={`${styles.toDoWrapper} ${chooseTileStyle(
-          currentTaskStatus
-        )}`}
-      >
-        <div className={styles.titleText}>
-          <h2>
-            {time} - {toDoTitle}
-          </h2>
-        </div>
-        <div className={styles.descriptionSection}>
-          <p>{toDoDescription}</p>
-          <Icon
-            data={more_horizontal}
-            size={40}
-            className={styles.moreIcon}
-            onClick={toggleModalVisibility}
-          />
-          {isModalOpen && (
-            <>
-              <div
-                className={styles.modalOverlay}
-                onClick={toggleModalVisibility}
-              ></div>
-              <div
-                className={styles.modalContainer}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ul className={styles.modalList}>
-                  <li
-                    className={styles.modalItem}
-                    onClick={() => {
-                      setCurrentTaskStatus((prev) =>
-                        prev === ToDoStatus.Ignore
-                          ? ToDoStatus.Unchecked
-                          : ToDoStatus.Ignore
-                      );
-                      toggleModalVisibility();
-                    }}
-                  >
-                    <p>
-                      {currentTaskStatus === ToDoStatus.Ignore
-                        ? "Mark as applicable"
-                        : "Mark as N/A"}
-                    </p>
-                  </li>
-                  <li className={styles.modalItem}>
-                    <Link to={Paths.EDIT_TODO.replace(":todoId", toDoId)}>
-                      <p>Edit/Delete</p>
-                    </Link>
-                  </li>
-                  <li className={styles.modalItem}>
-                    <p>Add Comment</p>
-                  </li>
-                </ul>
-              </div>
-            </>
-          )}
-        </div>
-        <div className={styles.commentWrapper}>
-          {/* <div className={styles.commentSection}>
+	return (
+		<div className={styles.checkboxAndToDoTileWrapper}>
+			<Checkbox
+				checked={currentTaskStatus === ToDoStatus.checked}
+				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+					setCurrentTaskStatus(
+						e.target.checked
+							? ToDoStatus.checked
+							: ToDoStatus.unchecked
+					)
+				}
+			/>
+			<div
+				className={`${styles.toDoWrapper} ${chooseTileStyle(
+					currentTaskStatus
+				)}`}
+			>
+				<div className={styles.titleText}>
+					<h2>
+						{time} - {toDoTitle}
+					</h2>
+				</div>
+				<div className={styles.descriptionSection}>
+					<p>{toDoDescription}</p>
+					<Icon
+						data={more_horizontal}
+						size={40}
+						className={styles.moreIcon}
+						onClick={toggleModalVisibility}
+					/>
+					{isModalOpen && (
+						<>
+							<div
+								className={styles.modalOverlay}
+								onClick={toggleModalVisibility}
+							></div>
+							<div
+								className={styles.modalContainer}
+								onClick={(e) => e.stopPropagation()}
+							>
+								<ul className={styles.modalList}>
+									<li
+										className={styles.modalItem}
+										onClick={() => {
+											setCurrentTaskStatus((prev) =>
+												prev === ToDoStatus.ignore
+													? ToDoStatus.unchecked
+													: ToDoStatus.ignore
+											);
+											toggleModalVisibility();
+										}}
+									>
+										<p>
+											{currentTaskStatus ===
+											ToDoStatus.ignore
+												? "Mark as applicable"
+												: "Mark as N/A"}
+										</p>
+									</li>
+									<li className={styles.modalItem}>
+										<Link
+											to={Paths.EDIT_TODO.replace(
+												":todoId",
+												todoId
+											)}
+										>
+											<p>Edit/Delete</p>
+										</Link>
+									</li>
+									<li className={styles.modalItem}>
+										<p>Add Comment</p>
+									</li>
+								</ul>
+							</div>
+						</>
+					)}
+				</div>
+				<div className={styles.commentWrapper}>
+					{/* <div className={styles.commentSection}>
 						<div className={styles.iconContainer}>
 							<Icon data={comment} size={16} />
 						</div>
 						<p>{toDoComment}</p>
 					</div> */}
-        </div>
-      </div>
-    </div>
-  );
+				</div>
+			</div>
+		</div>
+	);
 }
