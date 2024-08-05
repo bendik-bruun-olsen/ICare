@@ -1,14 +1,20 @@
 .personalInfoSection {
 	background-color: var(--fadedblue);
-	padding: 5px;
+	padding: 10px;
 	border-radius: 5px;
 }
 
 .healthInfoSection {
 	background-color: var(--fadedblue);
-	padding: 5px;
+	padding: 10px;
 	margin: 20px 0 0 0;
 	border-radius: 5px;
+}
+
+.inputWrapper {
+	width: 100%;
+	box-sizing: border-box;
+	margin-top: 10px;
 }
 
 .healthInfoSection span,
@@ -18,4 +24,18 @@
 
 #createPatientButton {
 	margin-top: 20px;
+}
+
+.required {
+	color: var(--coral) !important;
+}
+
+label {
+	padding-bottom: 5px;
+	margin: 0 !important;
+}
+
+.headlineText {
+	color: var(--white);
+	margin-bottom: 15px;
 }

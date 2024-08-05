@@ -5,6 +5,7 @@ import styles from "./CreatePatientPage.module.css";
 import { InputWrapper, Input, Button } from "@equinor/eds-core-react";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
+import { useNotification } from "../../context/NotificationContext";
 
 type FormFieldProps = {
 	label: string;
@@ -22,18 +23,30 @@ const FormField = ({
 	required = false,
 }: FormFieldProps) => (
 	<InputWrapper
-		className="input"
+		className={`${styles.inputWrapper} inputWrapper`}
 		labelProps={{
-			label: label,
-			htmlFor: "textfield-normal",
-			style: { display: "block" },
+			label: (
+				<>
+					{label}
+					{required && <span className={styles.required}>*</span>}
+				</>
+			),
+			htmlFor: name,
 		}}
 	>
-		<Input required={required} name={name} value={value} onChange={onChange} />
+		<Input
+			required={required}
+			name={name}
+			id={name}
+			value={value}
+			onChange={onChange}
+		/>
 	</InputWrapper>
 );
 
 export default function CreatePatientPage() {
+	const { addNotification } = useNotification();
+	const [isLoading, setIsLoading] = useState(false);
 	const [formData, setFormData] = useState<{
 		name: string;
 		age: string;
@@ -50,7 +63,6 @@ export default function CreatePatientPage() {
 		diagnoses: "",
 		allergies: "",
 	});
-	const [error, setError] = useState<string | null>(null);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -62,7 +74,7 @@ export default function CreatePatientPage() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setError(null);
+		setIsLoading(true);
 		try {
 			const patientRef = collection(db, "patientdetails");
 			await addDoc(patientRef, formData);
@@ -75,15 +87,17 @@ export default function CreatePatientPage() {
 				allergies: "",
 			});
 		} catch (err) {
-			setError("Failed to create patient. Please try again.");
+			addNotification("Failed to create patient", "error");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const personalInfoFields = [
-		{ label: "Name*", name: "name", required: true },
+		{ label: "Name", name: "name", required: true },
 		{ label: "Age", name: "age" },
-		{ label: "Phone*", name: "phone", required: true },
-		{ label: "Address*", name: "address", required: true },
+		{ label: "Phone", name: "phone", required: true },
+		{ label: "Address", name: "address", required: true },
 	];
 
 	const healthInfoFields = [
@@ -97,6 +111,7 @@ export default function CreatePatientPage() {
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
 					<div className={styles.personalInfoSection}>
+						<h2 className={styles.headlineText}>Personal Information</h2>
 						{personalInfoFields.map((field) => (
 							<FormField
 								key={field.name}
@@ -109,6 +124,7 @@ export default function CreatePatientPage() {
 						))}
 					</div>
 					<div className={styles.healthInfoSection}>
+						<h2 className={styles.headlineText}>Health Information</h2>
 						{healthInfoFields.map((field) => (
 							<FormField
 								key={field.name}
@@ -119,9 +135,8 @@ export default function CreatePatientPage() {
 							/>
 						))}
 					</div>
-					{error && <p style={{ color: "red" }}>{error}</p>}
 					<Button id={styles.createPatientButton} type="submit">
-						Create Patient
+						Register Patient
 					</Button>
 				</form>
 			</div>
