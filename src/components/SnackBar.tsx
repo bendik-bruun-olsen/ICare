@@ -14,11 +14,11 @@ const SnackBar: React.FC = () => {
                     style={{
                         background:
                             notification.type === "success"
-                                ? "green"
+                                ? "#1c7b82"
                                 : notification.type === "error"
-                                ? "red"
-                                : "blue",
-                        color: "white",
+                                ? "#e7372b"
+                                : "#153c86",
+                        color: "#e9e9e9",
                         padding: "10px 20px",
                         margin: "5px 0",
                         borderRadius: "5px",
