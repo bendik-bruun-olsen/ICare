@@ -17,8 +17,8 @@ export const addMultipleNewTodos = async (
 ) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
 
-	const todoCollection = collection(patientRef, "todos");
 	const seriesInfoCollection = collection(patientRef, "seriesInfo");
+	const todoCollection = collection(patientRef, "todos");
 
 	const seriesInfoCollectionRef = await addDoc(
 		seriesInfoCollection,
@@ -26,7 +26,7 @@ export const addMultipleNewTodos = async (
 	);
 
 	for (const todo of todos) {
-		const updatedTodo = { ...todo, seriesID: seriesInfoCollectionRef.id };
+		const updatedTodo = { ...todo, seriesId: seriesInfoCollectionRef.id };
 		await addDoc(todoCollection, updatedTodo);
 	}
 

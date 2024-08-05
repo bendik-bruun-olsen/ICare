@@ -67,7 +67,7 @@ const ToDoPage: React.FC = () => {
 												toDoComment={""}
 												taskStatus={todo.status}
 												time={todo.time || ""}
-												seriesID={todo.seriesID}
+												seriesId={todo.seriesId}
 											/>
 										</div>
 									))}

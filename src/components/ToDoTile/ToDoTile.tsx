@@ -14,7 +14,7 @@ interface ToDoTileProps {
 	time: string;
 	taskStatus: ToDoStatus;
 	todoId: string;
-	seriesID: string | null;
+	seriesId: string | null;
 }
 
 export default function ToDoTile({
@@ -24,7 +24,7 @@ export default function ToDoTile({
 	// toDoComment,
 	taskStatus,
 	time,
-	seriesID,
+	seriesId,
 }: ToDoTileProps) {
 	const [currentTaskStatus, setCurrentTaskStatus] =
 		useState<ToDoStatus>(taskStatus);
@@ -39,8 +39,6 @@ export default function ToDoTile({
 			return styles.notApplicable;
 		return styles.default;
 	}
-
-	console.log("seriesID: ", seriesID);
 
 	useEffect(() => {
 		const updateStatus = async () => {
@@ -122,12 +120,12 @@ export default function ToDoTile({
 											<p>Edit/Delete This Task</p>
 										</Link>
 									</li>
-									{seriesID && (
+									{seriesId && (
 										<li className={styles.modalItem}>
 											<Link
-												to={Paths.EDIT_TODO.replace(
-													":todoId",
-													seriesID
+												to={Paths.EDIT_TODO_SERIES.replace(
+													":seriesId",
+													seriesId
 												)}
 											>
 												<p>

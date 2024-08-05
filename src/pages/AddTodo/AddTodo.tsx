@@ -51,7 +51,7 @@ const AddToDo: React.FC = () => {
 			category: selectCategory,
 			status: ToDoStatus.unchecked,
 			comment: "",
-			seriesID: null,
+			seriesId: null,
 		};
 
 		try {
@@ -75,6 +75,10 @@ const AddToDo: React.FC = () => {
 				);
 
 				const seriesInfo = {
+					title: title,
+					description: description,
+					time: time,
+					category: selectCategory,
 					startDate: startDateAsTimestamp,
 					endDate: endDateAsTimestamp,
 					selectedDays: selectedDays,
@@ -150,7 +154,7 @@ const AddToDo: React.FC = () => {
 										}
 									/>
 									<StartAndEndDate
-										label="Start date"
+										label={repeat ? "Start date" : "Date"}
 										value={startDate}
 										onChange={(date: string) =>
 											setStartDate(date)

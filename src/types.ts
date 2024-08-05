@@ -34,6 +34,10 @@ export interface TodoWithIdInterface extends TodoInterface {
 }
 
 export interface TodoSeriesInfoInterface {
+	title: string;
+	description: string;
+	time: string;
+	category: string | null;
 	startDate: Timestamp;
 	endDate: Timestamp;
 	selectedDays: string[];

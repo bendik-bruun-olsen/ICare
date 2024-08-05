@@ -42,3 +42,11 @@ export const getTodosBySelectedDate = async (selectedDate: Date) => {
 	}));
 	return todosWithId;
 };
+
+export const getTodoSeriesInfo = async (seriesId: string) => {
+	const patientRef = doc(db, "patientdetails", "patient@patient.com");
+	const seriesInfoRef = doc(patientRef, "seriesInfo", seriesId);
+
+	const seriesInfoSnap = await getDoc(seriesInfoRef);
+	return seriesInfoSnap.data();
+};
