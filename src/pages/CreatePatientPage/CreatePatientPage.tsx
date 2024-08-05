@@ -6,6 +6,7 @@ import { InputWrapper, Input, Button } from "@equinor/eds-core-react";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { useNotification } from "../../context/NotificationContext";
+import LoadingPage from "../LoadingPage";
 
 type FormFieldProps = {
 	label: string;
@@ -104,6 +105,10 @@ export default function CreatePatientPage() {
 		{ label: "Diagnoses", name: "diagnoses" },
 		{ label: "Allergies", name: "allergies" },
 	];
+
+	if (isLoading) {
+		return <LoadingPage />;
+	}
 
 	return (
 		<>
