@@ -18,7 +18,7 @@ export interface ToDo {
 	toDoStatus: ToDoStatus;
 }
 
-export interface TodoInterface {
+export interface TodoItemInterface {
 	title: string;
 	description: string;
 	date: Timestamp;
@@ -26,10 +26,10 @@ export interface TodoInterface {
 	category: string | null;
 	status: ToDoStatus;
 	comment: string;
-	seriesID: string | null;
+	seriesId: string | null;
 }
 
-export interface TodoWithIdInterface extends TodoInterface {
+export interface TodoWithIdInterface extends TodoItemInterface {
 	id: string;
 }
 

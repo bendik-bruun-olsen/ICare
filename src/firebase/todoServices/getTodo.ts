@@ -11,7 +11,7 @@ import {
 
 export const getTodo = async (todoId: string) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoRef = doc(patientRef, "todos", todoId);
+	const todoRef = doc(patientRef, "todoItems", todoId);
 
 	const todoSnap = await getDoc(todoRef);
 	const todoWithId = { ...todoSnap.data(), id: todoSnap.id };
@@ -20,7 +20,7 @@ export const getTodo = async (todoId: string) => {
 
 export const getTodosBySelectedDate = async (selectedDate: Date) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoCollection = collection(patientRef, "todos");
+	const todoCollection = collection(patientRef, "todoItems");
 
 	const startOfDay = Timestamp.fromDate(
 		new Date(selectedDate.setHours(0, 0, 0, 0))
@@ -45,7 +45,7 @@ export const getTodosBySelectedDate = async (selectedDate: Date) => {
 
 export const getTodoSeriesInfo = async (seriesId: string) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const seriesInfoRef = doc(patientRef, "seriesInfo", seriesId);
+	const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
 
 	const seriesInfoSnap = await getDoc(seriesInfoRef);
 	return seriesInfoSnap.data();

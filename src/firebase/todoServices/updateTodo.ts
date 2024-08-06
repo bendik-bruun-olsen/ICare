@@ -6,6 +6,6 @@ export async function updateToDoStatusInDatabase(
 	newStatus: string
 ) {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoRef = doc(patientRef, "todos", todoId);
+	const todoRef = doc(patientRef, "todoItems", todoId);
 	await updateDoc(todoRef, { status: newStatus });
 }

@@ -8,22 +8,24 @@ import SelectCategory from "../../components/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
-import { editTodo } from "../../firebase/todoServices/editTodo";
+import {
+	editTodoItem,
+	editTodoSeries,
+} from "../../firebase/todoServices/editTodo";
 import {
 	getTodo,
 	getTodoSeriesInfo,
 } from "../../firebase/todoServices/getTodo";
 import styles from "./EditTodoPage.module.css";
-import { formatTimestampToDate } from "../../utils";
+import { formatTimestampToDateString } from "../../utils";
 import { useNotification } from "../../context/NotificationContext";
 import {
 	TodoWithIdInterface,
 	ToDoStatus,
 	TodoSeriesInfoInterface,
 } from "../../types";
-import { Link, useParams } from "react-router-dom";
 import ErrorPage from "../ErrorPage/ErrorPage";
-import { Paths } from "../../paths";
+import { useParams } from "react-router-dom";
 
 const defaultTodo: TodoWithIdInterface = {
 	title: "",
@@ -37,13 +39,24 @@ const defaultTodo: TodoWithIdInterface = {
 	id: "",
 };
 
+const defaultSeries: TodoSeriesInfoInterface = {
+	title: "",
+	description: "",
+	time: "00:00",
+	category: null,
+	startDate: Timestamp.now(),
+	endDate: Timestamp.now(),
+	selectedDays: [],
+};
+
 const EditToDoPage = () => {
-	const [todo, setTodo] = useState<
-		TodoWithIdInterface | TodoSeriesInfoInterface
-	>(defaultTodo);
+	const [todoItem, setTodoItem] = useState<TodoWithIdInterface>(defaultTodo);
+	const [todoSeriesInfo, setTodoSeriesInfo] =
+		useState<TodoSeriesInfoInterface>(defaultSeries);
 	const [isLoading, setIsLoading] = useState(true);
 	const [hasError, setHasError] = useState(false);
 	const [isRepeating, setIsRepeating] = useState(false);
+	const [editSeries, setEditSeries] = useState(false);
 	const { addNotification } = useNotification();
 	const { todoId: todoIdFromParams, seriesId: seriesIdFromParams } =
 		useParams<{
@@ -55,6 +68,8 @@ const EditToDoPage = () => {
 	console.log("seriesId: ", seriesIdFromParams);
 
 	useEffect(() => {
+		console.log("useEffect");
+
 		if (!todoIdFromParams && !seriesIdFromParams) {
 			setIsLoading(false);
 			setHasError(true);
@@ -62,16 +77,18 @@ const EditToDoPage = () => {
 		}
 
 		const fetchTodoById = async (todoId: string) => {
+			setIsLoading(true);
 			try {
 				const result = await getTodo(todoId);
-				if (result) {
-					setTodo(result as TodoWithIdInterface);
-				} else {
+				if (!result) {
 					addNotification(
 						"Error fetching ToDo. Please try again later.",
 						"error"
 					);
+					setHasError(true);
+					return;
 				}
+				setTodoItem(result as TodoWithIdInterface);
 			} catch {
 				addNotification(
 					"Error fetching ToDo. Please try again later.",
@@ -83,17 +100,20 @@ const EditToDoPage = () => {
 		};
 
 		const fetchSeriesById = async (seriesId: string) => {
+			setIsLoading(true);
 			try {
 				const result = await getTodoSeriesInfo(seriesId);
-				if (result) {
-					setTodo(result as TodoSeriesInfoInterface);
-					setIsRepeating(true);
-				} else {
+				if (!result) {
 					addNotification(
 						"Error fetching series data. Please try again later.",
 						"error"
 					);
+					setHasError(true);
+					return;
 				}
+				setTodoSeriesInfo(result as TodoSeriesInfoInterface);
+
+				setIsRepeating(true);
 			} catch {
 				addNotification(
 					"Error fetching series data. Please try again later.",
@@ -104,56 +124,80 @@ const EditToDoPage = () => {
 			}
 		};
 
-		setIsLoading(true);
-		if (todoIdFromParams) {
-			console.log("fetching todo by id");
+		if (editSeries && todoItem.seriesId) {
+			fetchSeriesById(todoItem.seriesId);
+		} else if (todoIdFromParams) {
 			fetchTodoById(todoIdFromParams);
-			console.log(
-				"Fetched TodoseriesID: ",
-				(todo as TodoWithIdInterface).seriesId
-			);
 		} else if (seriesIdFromParams) {
-			console.log("fetching series by id");
 			fetchSeriesById(seriesIdFromParams);
+			setEditSeries(true);
 		}
-	}, [todoIdFromParams, seriesIdFromParams]);
+	}, [todoIdFromParams, seriesIdFromParams, editSeries]);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setTodo((prev) => ({ ...prev, time: e.target.value }));
+		setTodoItem((prev) => ({ ...prev, time: e.target.value }));
 	};
 
 	const handleDateChange = (field: string, dateString: string) => {
 		const newTimestamp = Timestamp.fromDate(new Date(dateString));
-		setTodo((prev) => ({ ...prev, [field]: newTimestamp }));
+		setTodoItem((prev) => ({ ...prev, [field]: newTimestamp }));
 	};
 
 	const handleDayToggle = (day: string) => {
-		setTodo((prev) => {
-			const isSelected = (
-				prev as TodoSeriesInfoInterface
-			).selectedDays.includes(day);
+		setTodoSeriesInfo((prev) => {
+			const isSelected = prev.selectedDays.includes(day);
 			const selectedDays = isSelected
-				? (prev as TodoSeriesInfoInterface).selectedDays.filter(
-						(d) => d !== day
-				  )
-				: [...(prev as TodoSeriesInfoInterface).selectedDays, day];
+				? prev.selectedDays.filter((d) => d !== day)
+				: [...prev.selectedDays, day];
 			return { ...prev, selectedDays };
 		});
 	};
 
+	const handleEditSeriesChange = () => {
+		setEditSeries((prev) => !prev);
+		if (editSeries) {
+			setIsRepeating(false);
+		}
+	};
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!todoIdFromParams) return;
 
-		try {
-			await editTodo(todoId, todo);
-			addNotification("ToDo edited successfully!", "success");
-			// setInitialDatesToCurrent();
-		} catch {
-			addNotification(
-				"Error editing ToDo. Please try again later.",
-				"error"
-			);
+		if (editSeries) {
+			const seriesId = seriesIdFromParams || todoItem.seriesId;
+			if (!seriesId) {
+				addNotification(
+					"Error updating series. Please try again later.",
+					"error"
+				);
+				return;
+			}
+
+			try {
+				await editTodoSeries(seriesId, todoSeriesInfo);
+				addNotification("Series updated successfully!", "success");
+				return;
+			} catch {
+				addNotification(
+					"Error updating series. Please try again later.",
+					"error"
+				);
+			}
+		}
+		if (!isRepeating) {
+			try {
+				await editTodoItem(todoItem.id, todoItem);
+				addNotification("ToDo updated successfully!", "success");
+				return;
+			} catch {
+				addNotification(
+					"Error updating ToDo. Please try again later.",
+					"error"
+				);
+			}
+		}
+
+		if (isRepeating) {
 		}
 	};
 
@@ -171,40 +215,67 @@ const EditToDoPage = () => {
 					<div className={styles.formContainer}>
 						<div className={styles.mainContentContainer}>
 							<TitleDescription
-								title={todo.title}
-								setTitle={(title) =>
-									setTodo((prev) => ({ ...prev, title }))
+								title={
+									editSeries
+										? todoSeriesInfo.title
+										: todoItem.title
 								}
-								description={todo.description}
+								setTitle={(title) =>
+									editSeries
+										? setTodoSeriesInfo((prev) => ({
+												...prev,
+												title,
+										  }))
+										: setTodoItem((prev) => ({
+												...prev,
+												title,
+										  }))
+								}
+								description={
+									editSeries
+										? todoSeriesInfo.description
+										: todoItem.description
+								}
 								setDescription={(description) =>
-									setTodo((prev) => ({
-										...prev,
-										description,
-									}))
+									editSeries
+										? setTodoSeriesInfo((prev) => ({
+												...prev,
+												description,
+										  }))
+										: setTodoItem((prev) => ({
+												...prev,
+												description,
+										  }))
 								}
 							/>
 							<div className={styles.scheduleControlsContainer}>
 								<div>
 									<SelectCategory
-										selectedOption={todo.category}
+										selectedOption={
+											editSeries
+												? todoSeriesInfo.category
+												: todoItem.category
+										}
 										onSelectionChange={(category) =>
-											setTodo((prev) => ({
-												...prev,
-												category,
-											}))
+											editSeries
+												? setTodoSeriesInfo((prev) => ({
+														...prev,
+														category,
+												  }))
+												: setTodoItem((prev) => ({
+														...prev,
+														category,
+												  }))
 										}
 									/>
 									<StartAndEndDate
 										label={
 											isRepeating ? "Start date" : "Date"
 										}
-										value={formatTimestampToDate(
+										value={formatTimestampToDateString(
 											isRepeating
-												? (
-														todo as TodoSeriesInfoInterface
-												  ).startDate
-												: (todo as TodoWithIdInterface)
-														.date
+												? todoSeriesInfo.startDate
+												: todoItem.date
 										)}
 										onChange={(dateString) =>
 											handleDateChange(
@@ -222,34 +293,44 @@ const EditToDoPage = () => {
 										label="Select time"
 										type="time"
 										name="time"
-										value={todo.time}
+										value={
+											editSeries
+												? todoSeriesInfo.time
+												: todoItem.time
+										}
 										className={styles.time}
 										onChange={handleTimeChange}
 										style={{ width: "150px" }}
 									/>
-									<Checkbox
-										label="Repeat"
-										checked={isRepeating}
-										disabled={
-											seriesIdFromParams ||
-											(todo as TodoWithIdInterface)
-												.seriesId
-												? true
-												: false
-										}
-										onChange={(isRepeating) =>
-											setIsRepeating(!isRepeating)
-										}
-									/>
+									{todoItem.seriesId ? (
+										<Checkbox
+											label="Edit Series"
+											checked={editSeries}
+											onChange={handleEditSeriesChange}
+										/>
+									) : (
+										<Checkbox
+											label="Repeat"
+											checked={isRepeating}
+											disabled={
+												seriesIdFromParams ||
+												todoItem.seriesId
+													? true
+													: false
+											}
+											onChange={() =>
+												setIsRepeating((prev) => !prev)
+											}
+										/>
+									)}
 								</div>
 							</div>
 							{isRepeating && (
 								<>
 									<StartAndEndDate
 										label="End date"
-										value={formatTimestampToDate(
-											(todo as TodoSeriesInfoInterface)
-												.endDate
+										value={formatTimestampToDateString(
+											todoSeriesInfo.endDate
 										)}
 										onChange={(dateString) =>
 											handleDateChange(
@@ -260,27 +341,15 @@ const EditToDoPage = () => {
 									/>
 									<DaysComponent
 										selectedDays={
-											(todo as TodoSeriesInfoInterface)
-												.selectedDays
+											todoSeriesInfo.selectedDays
 										}
 										onDayToggle={handleDayToggle}
 									/>
 								</>
 							)}
 						</div>
-						<div className={styles.actionButtonsContainer}>
-							<AddButton label="Save" onClick={handleSubmit} />
-							{(todo as TodoWithIdInterface).seriesId && (
-								<Link
-									to={Paths.EDIT_TODO_SERIES.replace(
-										":seriesId",
-										(todo as TodoWithIdInterface).seriesId
-									)}
-								>
-									<h3>Edit entire series</h3>
-								</Link>
-							)}
-						</div>
+
+						<AddButton label="Save" onClick={handleSubmit} />
 					</div>
 				</form>
 			</div>

@@ -1,34 +1,38 @@
 import { db } from "../../firebase/firebase";
-import { addDoc, collection, doc } from "firebase/firestore";
-import { TodoInterface, TodoSeriesInfoInterface } from "../../types";
+import { addDoc, collection, doc, writeBatch } from "firebase/firestore";
+import { TodoItemInterface, TodoSeriesInfoInterface } from "../../types";
 
-export const addSingleNewTodo = async (todo: TodoInterface) => {
+export const addSingleNewTodo = async (todo: TodoItemInterface) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoCollection = collection(patientRef, "todos");
+	const todoCollection = collection(patientRef, "todoItems");
 
 	await addDoc(todoCollection, todo);
-
-	return;
 };
 
 export const addMultipleNewTodos = async (
-	todos: TodoInterface[],
+	todos: TodoItemInterface[],
 	seriesInfo: TodoSeriesInfoInterface
 ) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
 
-	const seriesInfoCollection = collection(patientRef, "seriesInfo");
-	const todoCollection = collection(patientRef, "todos");
+	const todoSeriesInfoCollection = collection(patientRef, "todoSeriesInfo");
+	const todoCollection = collection(patientRef, "todoItems");
 
-	const seriesInfoCollectionRef = await addDoc(
-		seriesInfoCollection,
+	const todoSeriesInfoCollectionRef = await addDoc(
+		todoSeriesInfoCollection,
 		seriesInfo
 	);
 
-	for (const todo of todos) {
-		const updatedTodo = { ...todo, seriesId: seriesInfoCollectionRef.id };
-		await addDoc(todoCollection, updatedTodo);
-	}
+	const batch = writeBatch(db);
 
-	return;
+	todos.forEach((todo) => {
+		const updatedTodo = {
+			...todo,
+			seriesId: todoSeriesInfoCollectionRef.id,
+		};
+		const todoDocRef = doc(todoCollection);
+		batch.set(todoDocRef, updatedTodo);
+	});
+
+	await batch.commit();
 };

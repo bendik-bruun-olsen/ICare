@@ -11,7 +11,7 @@ import { db } from "./firebase/firebase";
 import { ToDo, TodoWithIdInterface } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
-import { TodoInterface } from "./types";
+import { TodoItemInterface } from "./types";
 
 export function getStartOfDay(selectedDate: Date) {
 	const startOfDay = new Date(selectedDate);
@@ -49,7 +49,7 @@ export const sendResetEmail = async (email: string): Promise<void> => {
 	await sendPasswordResetEmail(auth, email);
 };
 
-export const formatTimestampToDate = (timestamp: Timestamp): string => {
+export const formatTimestampToDateString = (timestamp: Timestamp): string => {
 	return timestamp.toDate().toISOString().substring(0, 10);
 };
 
@@ -138,7 +138,7 @@ export const mapSelectedDaysToNumbers = (selectedDays: string[]) => {
 };
 
 export const generateTodosForSeries = (
-	newTodo: TodoInterface,
+	newTodo: TodoItemInterface,
 	startDate: string,
 	endDate: string,
 	selectedDaysNumbers: number[]
