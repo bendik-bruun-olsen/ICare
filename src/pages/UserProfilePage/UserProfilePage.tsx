@@ -188,7 +188,7 @@ const UserProfilePage: React.FC = () => {
 
   return (
     <div>
-      <Navbar leftContent={<BackHomeButton />} centerContent="Home" />
+      <Navbar leftContent={<BackHomeButton />} centerContent="User Profile" />
       <div className="profile-container">
         <div className="profile-picture-container" ref={profileContainerRef}>
           <div className="imageContainer">
