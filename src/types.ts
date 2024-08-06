@@ -28,3 +28,12 @@ export interface TodoInterface {
   category: string | null;
   selectedDays: string[];
 }
+
+export interface UserData {
+  name: string;
+  age?: number;
+  gender?: "Male" | "Female" | "Others";
+  phone?: string;
+  email: string;
+  profilePictureUrl?: string;
+}
