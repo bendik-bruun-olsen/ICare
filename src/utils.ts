@@ -8,10 +8,9 @@ import {
 	getDocs,
 } from "firebase/firestore";
 import { db } from "./firebase/firebase";
-import { ToDo, TodoWithIdInterface } from "./types";
+import { ToDo, TodoItemInterface } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
-import { TodoItemInterface } from "./types";
 
 export function getStartOfDay(selectedDate: Date) {
 	const startOfDay = new Date(selectedDate);
@@ -54,9 +53,9 @@ export const formatTimestampToDateString = (timestamp: Timestamp): string => {
 };
 
 export const groupTodosByCategory = (
-	todos: TodoWithIdInterface[]
-): { [key: string]: TodoWithIdInterface[] } => {
-	const grouped: { [key: string]: TodoWithIdInterface[] } = {};
+	todos: TodoItemInterface[]
+): { [key: string]: TodoItemInterface[] } => {
+	const grouped: { [key: string]: TodoItemInterface[] } = {};
 	todos.forEach((todo) => {
 		const category = todo.category || "Others";
 		if (!grouped[category]) {
@@ -143,14 +142,23 @@ export const generateTodosForSeries = (
 	endDate: string,
 	selectedDaysNumbers: number[]
 ) => {
+	console.log("newTodo: ", newTodo);
+	console.log("startDate: ", startDate);
+	console.log("endDate: ", endDate);
+	console.log("selectedDaysNumbers: ", selectedDaysNumbers);
+
 	const newTodos = [];
 	const currentDate = new Date(startDate);
 	while (currentDate <= new Date(endDate)) {
+		console.log("Entering while loop");
+
 		if (
 			selectedDaysNumbers.includes(
 				currentDate.getDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6
 			)
 		) {
+			console.log("Day matches selectedDaysNumbers");
+
 			const todoForDay = {
 				...newTodo,
 				date: Timestamp.fromDate(currentDate),
@@ -159,5 +167,7 @@ export const generateTodosForSeries = (
 		}
 		currentDate.setDate(currentDate.getDate() + 1);
 	}
+	console.log("Returning newTodos from generateTodosForSeries: ", newTodos);
+
 	return newTodos;
 };

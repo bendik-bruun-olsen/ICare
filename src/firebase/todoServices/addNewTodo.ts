@@ -14,24 +14,22 @@ export const addMultipleNewTodos = async (
 	seriesInfo: TodoSeriesInfoInterface
 ) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-
 	const todoSeriesInfoCollection = collection(patientRef, "todoSeriesInfo");
 	const todoCollection = collection(patientRef, "todoItems");
 
-	const todoSeriesInfoCollectionRef = await addDoc(
-		todoSeriesInfoCollection,
-		seriesInfo
-	);
-
 	const batch = writeBatch(db);
 
+	const todoSeriesInfoRef = doc(todoSeriesInfoCollection);
+	batch.set(todoSeriesInfoRef, seriesInfo);
+
 	todos.forEach((todo) => {
+		const todoItemRef = doc(todoCollection);
 		const updatedTodo = {
 			...todo,
-			seriesId: todoSeriesInfoCollectionRef.id,
+			seriesId: todoSeriesInfoRef.id,
+			id: todoItemRef.id,
 		};
-		const todoDocRef = doc(todoCollection);
-		batch.set(todoDocRef, updatedTodo);
+		batch.set(todoItemRef, updatedTodo);
 	});
 
 	await batch.commit();

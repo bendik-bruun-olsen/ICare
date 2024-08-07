@@ -52,6 +52,7 @@ const AddToDo: React.FC = () => {
 			status: ToDoStatus.unchecked,
 			comment: "",
 			seriesId: null,
+			id: "",
 		};
 
 		try {

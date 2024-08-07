@@ -8,13 +8,13 @@ import { add } from "@equinor/eds-icons";
 import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 import { groupTodosByCategory } from "../../utils";
-import { TodoWithIdInterface } from "../../types";
+import { TodoItemInterface } from "../../types";
 import { Link } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
 
 const ToDoPage: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [todos, setTodos] = useState<TodoWithIdInterface[]>([]);
+	const [todos, setTodos] = useState<TodoItemInterface[]>([]);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -22,7 +22,7 @@ const ToDoPage: React.FC = () => {
 			setLoading(true);
 			try {
 				const fetchedTodos = await getTodosBySelectedDate(selectedDate);
-				setTodos(fetchedTodos as TodoWithIdInterface[]);
+				setTodos(fetchedTodos as TodoItemInterface[]);
 			} catch (error) {
 				console.error("Error fetching todos: ", error);
 			} finally {
@@ -64,9 +64,9 @@ const ToDoPage: React.FC = () => {
 												toDoDescription={
 													todo.description
 												}
-												toDoComment={""}
+												toDoComment={todo.comment}
 												taskStatus={todo.status}
-												time={todo.time || ""}
+												time={todo.time}
 												seriesId={todo.seriesId}
 											/>
 										</div>

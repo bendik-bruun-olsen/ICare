@@ -27,11 +27,12 @@ export interface TodoItemInterface {
 	status: ToDoStatus;
 	comment: string;
 	seriesId: string | null;
-}
-
-export interface TodoWithIdInterface extends TodoItemInterface {
 	id: string;
 }
+
+// export interface TodoWithIdInterface extends TodoItemInterface {
+// 	id: string;
+// }
 
 export interface TodoSeriesInfoInterface {
 	title: string;
