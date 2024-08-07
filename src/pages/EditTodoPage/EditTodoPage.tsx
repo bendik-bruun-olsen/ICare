@@ -21,7 +21,6 @@ import styles from "./EditTodoPage.module.css";
 import { formatTimestampToDateString } from "../../utils";
 import { useNotification } from "../../context/NotificationContext";
 import {
-	TodoWithIdInterface,
 	ToDoStatus,
 	TodoSeriesInfoInterface,
 	TodoItemInterface,
@@ -38,6 +37,7 @@ const defaultTodoItem: TodoItemInterface = {
 	status: ToDoStatus.unchecked,
 	comment: "",
 	seriesId: null,
+	id: "",
 };
 
 const defaultSeries: TodoSeriesInfoInterface = {
@@ -66,11 +66,8 @@ const EditToDoPage = () => {
 			seriesId: string;
 		}>();
 
-	// console.log("todoIdFromParams", todoItemIdFromParams);
-	// console.log("seriesIdFromParams", seriesIdFromParams);
-
 	useEffect(() => {
-		console.log("useEffect");
+		console.log("useEffect: fetching data");
 
 		if (!todoItemIdFromParams && !seriesIdFromParams) {
 			setIsLoading(false);
@@ -345,7 +342,7 @@ const EditToDoPage = () => {
 											isRepeating ? "Start date" : "Date"
 										}
 										value={formatTimestampToDateString(
-											isRepeating
+											editSeries
 												? todoSeriesInfo.startDate
 												: todoItem.date
 										)}
@@ -400,7 +397,9 @@ const EditToDoPage = () => {
 									<StartAndEndDate
 										label="End date"
 										value={formatTimestampToDateString(
-											todoSeriesInfo.endDate
+											editSeries
+												? todoSeriesInfo.endDate
+												: todoItem.date
 										)}
 										onChange={(dateString) =>
 											handleDateChange(
