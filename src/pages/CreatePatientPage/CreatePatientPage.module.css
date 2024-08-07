@@ -1,25 +1,93 @@
+.fullWrapper {
+	max-width: 750px;
+	margin: 0 auto;
+	padding: calc(20px + var(--navbar-height)) 20px 20px 20px;
+}
+
 .personalInfoSection {
 	background-color: var(--fadedblue);
-	padding: 10px;
+	padding: 20px;
 	border-radius: 5px;
 }
 
 .healthInfoSection {
 	background-color: var(--fadedblue);
-	padding: 10px;
+	padding: 20px;
 	margin: 20px 0 0 0;
 	border-radius: 5px;
+}
+
+.caretakerInfoSection {
+	background-color: var(--fadedblue);
+	padding: 20px;
+	margin: 20px 0 0 0;
+	border-radius: 5px;
+}
+
+.caretakerAndButton {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.caretakerAndButton button {
+	margin: 0;
+	border-radius: 0 5px 5px 0;
 }
 
 .inputWrapper {
 	width: 100%;
 	box-sizing: border-box;
-	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .healthInfoSection span,
 .personalInfoSection span {
 	color: var(--white);
+}
+
+.caretakerList {
+	display: flex;
+	flex-direction: column;
+	color: var(--white);
+	border-radius: 5px;
+	list-style: none;
+}
+
+.caretakerListItem {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: var(--blue);
+	margin: 5px 0;
+	padding: 15px 20px;
+	border-radius: 5px;
+}
+
+.picNameAndEmail {
+	display: flex;
+	align-items: center;
+}
+
+.picNameAndEmail img {
+	margin-right: 10px;
+	max-width: 50px;
+	max-height: 50px;
+}
+
+.nameAndEmail {
+	display: flex;
+	flex-direction: column;
+}
+
+.nameAndEmail h3 {
+	color: var(--white);
+}
+
+.nameAndEmail span {
+	color: var(--grey);
+	max-width: 15ch;
+	text-overflow: ellipsis;
 }
 
 #createPatientButton {
@@ -31,7 +99,7 @@
 }
 
 label {
-	padding-bottom: 5px;
+	padding-bottom: 10px;
 	margin: 0 !important;
 }
 

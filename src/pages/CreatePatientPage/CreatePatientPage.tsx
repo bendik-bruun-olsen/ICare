@@ -1,15 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../../components/Logo/Logo";
 import Navbar from "../../components/Navbar/Navbar";
 import styles from "./CreatePatientPage.module.css";
-import { InputWrapper, Input, Button } from "@equinor/eds-core-react";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "../../firebase/firebase";
+import { InputWrapper, Input, Button, Icon } from "@equinor/eds-core-react";
+import { add, delete_to_trash } from "@equinor/eds-icons";
 import { useNotification } from "../../context/NotificationContext";
 import LoadingPage from "../LoadingPage";
+import {
+	CaretakerInformationInterface,
+	PatientFormDataInterface,
+} from "../../types";
+import { addPatient } from "../../firebase/patientServices/addPatient";
+import { getDefaultPictureUrl } from "../../firebase/imageServices/defaultImage";
+import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 
 type FormFieldProps = {
-	label: string;
+	label?: string;
 	name: string;
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -48,15 +54,11 @@ const FormField = ({
 export default function CreatePatientPage() {
 	const { addNotification } = useNotification();
 	const [isLoading, setIsLoading] = useState(false);
-	const [formData, setFormData] = useState<{
-		name: string;
-		age: string;
-		phone: string;
-		address: string;
-		diagnoses: string;
-		allergies: string;
-		[key: string]: string;
-	}>({
+	const [caretakerEmail, setCaretakerEmail] = useState("");
+	const [caretakers, setCaretakers] = useState<CaretakerInformationInterface[]>(
+		[]
+	);
+	const [formData, setFormData] = useState<PatientFormDataInterface>({
 		name: "",
 		age: "",
 		phone: "",
@@ -64,6 +66,15 @@ export default function CreatePatientPage() {
 		diagnoses: "",
 		allergies: "",
 	});
+	const [pictureUrl, setPictureUrl] = useState("");
+
+	useEffect(() => {
+		const fetchDefaultPictureUrl = async () => {
+			const url = await getDefaultPictureUrl();
+			setPictureUrl(url);
+		};
+		fetchDefaultPictureUrl();
+	}, []);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -73,12 +84,56 @@ export default function CreatePatientPage() {
 		}));
 	};
 
+	const addCaretaker = async (e: React.FormEvent) => {
+		e.preventDefault();
+		const { exists, name } = await checkEmailExists(caretakerEmail);
+		if (!exists) {
+			addNotification("Email does not exist", "error");
+			return;
+		}
+
+		const emailAlreadyAdded = caretakers.some(
+			(caretaker) => caretaker.email === caretakerEmail
+		);
+
+		if (emailAlreadyAdded) {
+			addNotification("Caretaker already added", "error");
+			return;
+		}
+
+		setCaretakers((prevCaretakers) => [
+			...prevCaretakers,
+			{ name, email: caretakerEmail },
+		]);
+		setCaretakerEmail("");
+	};
+
+	const deleteCaretaker = (email: string) => {
+		setCaretakers((prevCaretakers) =>
+			prevCaretakers.filter((caretaker) => caretaker.email !== email)
+		);
+		addNotification("Caretaker removed successfully", "success");
+	};
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsLoading(true);
+
+		if (isNaN(Number(formData.age))) {
+			addNotification("Age must be a number", "error");
+			return;
+		}
+		if (isNaN(Number(formData.phone))) {
+			addNotification("Phone number must be a number", "error");
+			return;
+		}
+
+		if (caretakers.length === 0) {
+			addNotification("Please add at least one caretaker", "error");
+			return;
+		}
+
 		try {
-			const patientRef = collection(db, "patientdetails");
-			await addDoc(patientRef, formData);
+			await addPatient(formData, caretakers);
 			setFormData({
 				name: "",
 				age: "",
@@ -87,10 +142,9 @@ export default function CreatePatientPage() {
 				diagnoses: "",
 				allergies: "",
 			});
+			addNotification("Patient created successfully", "success");
 		} catch (err) {
 			addNotification("Failed to create patient", "error");
-		} finally {
-			setIsLoading(false);
 		}
 	};
 
@@ -113,7 +167,7 @@ export default function CreatePatientPage() {
 	return (
 		<>
 			<Navbar centerContent="Create Patient" leftContent={<Logo />} />
-			<div className="pageWrapper">
+			<div className={styles.fullWrapper}>
 				<form onSubmit={handleSubmit}>
 					<div className={styles.personalInfoSection}>
 						<h2 className={styles.headlineText}>Personal Information</h2>
@@ -135,10 +189,43 @@ export default function CreatePatientPage() {
 								key={field.name}
 								label={field.label}
 								name={field.name}
-								value={formData[field.name]}
+								value={formData[field.name] as string}
 								onChange={handleChange}
 							/>
 						))}
+					</div>
+					<div className={styles.caretakerInfoSection}>
+						<h2 className={styles.headlineText}>Assign caretakers</h2>
+						<div className={styles.caretakerAndButton}>
+							<FormField
+								name="caretakerEmail"
+								value={caretakerEmail}
+								onChange={(e) => setCaretakerEmail(e.target.value)}
+							/>
+							<Button type="button" onClick={addCaretaker}>
+								<Icon data={add} />
+							</Button>
+						</div>
+						<ul className={styles.caretakerList}>
+							{caretakers.map((caretaker, index) => (
+								<li key={index} className={styles.caretakerListItem}>
+									<div className={styles.picNameAndEmail}>
+										<img src={pictureUrl} alt="Default profile picture" />
+										<div className={styles.nameAndEmail}>
+											<h3>{caretaker.name}</h3>
+											<span>{caretaker.email}</span>
+										</div>
+									</div>
+									<Button
+										type="button"
+										variant="ghost_icon"
+										onClick={() => deleteCaretaker(caretaker.email)}
+									>
+										<Icon data={delete_to_trash} color="var(--lightblue)" />
+									</Button>
+								</li>
+							))}
+						</ul>
 					</div>
 					<Button id={styles.createPatientButton} type="submit">
 						Register Patient
