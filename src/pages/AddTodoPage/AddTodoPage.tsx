@@ -5,7 +5,7 @@ import SelectCategory from "../../components/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
-import styles from "./AddTodo.module.css";
+import styles from "./AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 import {
@@ -17,9 +17,11 @@ import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { ToDoStatus } from "../../types";
 import { generateTodosForSeries, mapSelectedDaysToNumbers } from "../../utils";
+import ErrorPage from "../ErrorPage/ErrorPage";
 
-const AddToDo: React.FC = () => {
+const AddToDoPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
+	const [hasError, setHasError] = useState(false);
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [repeat, setRepeat] = useState(false);
@@ -55,16 +57,15 @@ const AddToDo: React.FC = () => {
 			id: "",
 		};
 
+		setIsLoading(true);
 		try {
-			setIsLoading(true);
-
 			if (repeat) {
 				const selectedDaysNumbers =
 					mapSelectedDaysToNumbers(selectedDays);
 
 				if (selectedDaysNumbers.includes(-1)) {
 					addNotification("Invalid day selected", "error");
-					setIsLoading(false);
+					setHasError(true);
 					return;
 				}
 
@@ -85,19 +86,16 @@ const AddToDo: React.FC = () => {
 					selectedDays: selectedDays,
 				};
 
-				await addMultipleNewTodos(newTodos, seriesInfo);
+				await addMultipleNewTodos(
+					newTodos,
+					seriesInfo,
+					addNotification
+				);
 			}
 
 			if (!repeat) {
-				await addSingleNewTodo(newTodo);
+				await addSingleNewTodo(newTodo, addNotification);
 			}
-
-			addNotification("ToDo added successfully!", "success");
-		} catch (e) {
-			addNotification(
-				"Error adding ToDo. Please try again later",
-				"error"
-			);
 		} finally {
 			setIsLoading(false);
 		}
@@ -129,6 +127,7 @@ const AddToDo: React.FC = () => {
 	};
 
 	if (isLoading) return <div>Loading...</div>;
+	if (hasError) return <ErrorPage />;
 
 	return (
 		<>
@@ -205,4 +204,4 @@ const AddToDo: React.FC = () => {
 		</>
 	);
 };
-export default AddToDo;
+export default AddToDoPage;

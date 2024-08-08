@@ -17,28 +17,30 @@ import ErrorPage from "../ErrorPage/ErrorPage";
 const ToDoPage: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [todos, setTodos] = useState<TodoItemInterface[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const { addNotification } = useNotification();
 
 	useEffect(() => {
 		if (!selectedDate) {
-			setIsLoading(false);
 			setHasError(true);
 			return;
 		}
 		async function fetchData() {
 			setIsLoading(true);
-			const data = await getTodosBySelectedDate(
-				selectedDate,
-				addNotification
-			);
-			if (data) {
-				setTodos(data as TodoItemInterface[]);
+			try {
+				const data = await getTodosBySelectedDate(
+					selectedDate,
+					addNotification
+				);
+				if (data) {
+					setTodos(data as TodoItemInterface[]);
+				}
+			} finally {
+				setIsLoading(false);
 			}
 		}
 		fetchData();
-		setIsLoading(false);
 	}, [selectedDate]);
 
 	const groupedTodos = groupTodosByCategory(todos);

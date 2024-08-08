@@ -55,7 +55,7 @@ const EditToDoPage = () => {
 		useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultSeries);
-	const [isLoading, setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isRepeating, setIsRepeating] = useState(false);
 	const [editSeries, setEditSeries] = useState(false);
@@ -67,46 +67,73 @@ const EditToDoPage = () => {
 		}>();
 
 	useEffect(() => {
-		setIsLoading(true);
-		if (!todoItemIdFromParams && !seriesIdFromParams) {
-			setIsLoading(false);
-			setHasError(true);
-			return;
-		}
 		async function fetchData() {
-			if (editSeries && todoItem.seriesId) {
-				const data = await getTodoSeriesInfo(
-					todoItem.seriesId,
-					addNotification
-				);
-				if (data) {
-					setTodoSeriesInfo(data as TodoSeriesInfoInterface);
-					setIsRepeating(true);
-				}
+			if (!todoItemIdFromParams && !seriesIdFromParams) {
+				setHasError(true);
+				return;
 			}
-			if (todoItemIdFromParams) {
-				const data = await getTodo(
-					todoItemIdFromParams,
-					addNotification
-				);
-				if (data) {
-					setTodoItem(data as TodoItemInterface);
+			setIsLoading(true);
+			try {
+				if (editSeries && todoItem.seriesId) {
+					const data = await getTodoSeriesInfo(
+						todoItem.seriesId,
+						addNotification
+					);
+					if (data) {
+						setTodoSeriesInfo(data as TodoSeriesInfoInterface);
+						setIsRepeating(true);
+					}
 				}
-			}
-			if (seriesIdFromParams) {
-				const data = await getTodoSeriesInfo(
-					seriesIdFromParams,
-					addNotification
-				);
-				if (data) {
-					setTodoSeriesInfo(data as TodoSeriesInfoInterface);
-					setEditSeries(true);
+				if (todoItemIdFromParams) {
+					const data = await getTodo(
+						todoItemIdFromParams,
+						addNotification
+					);
+					if (data) {
+						setTodoItem(data as TodoItemInterface);
+					}
 				}
+				if (seriesIdFromParams) {
+					const data = await getTodoSeriesInfo(
+						seriesIdFromParams,
+						addNotification
+					);
+					if (data) {
+						setTodoSeriesInfo(data as TodoSeriesInfoInterface);
+						setEditSeries(true);
+					}
+				}
+			} finally {
+				setIsLoading(false);
 			}
 		}
 		fetchData();
-		setIsLoading(false);
 	}, [todoItemIdFromParams, seriesIdFromParams, editSeries]);
+
+	useEffect(() => {
+		if (isRepeating) {
+			const daysOfTheWeek = [
+				"sunday",
+				"monday",
+				"tuesday",
+				"wednesday",
+				"thursday",
+				"friday",
+				"saturday",
+			];
+			const currentDay = daysOfTheWeek[todoItem.date.toDate().getDay()];
+
+			setTodoSeriesInfo((prev) => {
+				if (!prev.selectedDays.includes(currentDay)) {
+					return {
+						...prev,
+						selectedDays: [...prev.selectedDays, currentDay],
+					};
+				}
+				return prev;
+			});
+		}
+	}, [isRepeating]);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTodoItem((prev) => ({ ...prev, time: e.target.value }));
@@ -142,111 +169,71 @@ const EditToDoPage = () => {
 		setIsRepeating((prev) => !prev);
 	};
 
-	useEffect(() => {
-		if (isRepeating) {
-			const daysOfTheWeek = [
-				"sunday",
-				"monday",
-				"tuesday",
-				"wednesday",
-				"thursday",
-				"friday",
-				"saturday",
-			];
-
-			setTodoSeriesInfo((prev) => ({
-				...prev,
-				selectedDays: [
-					...prev.selectedDays,
-					daysOfTheWeek[todoItem.date.toDate().getDay()],
-				],
-			}));
-		}
-	}, [isRepeating]);
-
 	const handleSeriesEdit = async () => {
-		console.log("handleSeriesEdit");
-
 		const seriesId = seriesIdFromParams || todoItem.seriesId;
 		if (!seriesId) {
 			setHasError(true);
 			return;
 		}
+		setIsLoading(true);
 		try {
-			await editTodoSeries(seriesId, todoSeriesInfo);
-			addNotification("Series updated successfully!", "success");
-		} catch {
-			addNotification(
-				"Error updating series. Please try again later.",
-				"error"
-			);
+			await editTodoSeries(seriesId, todoSeriesInfo, addNotification);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleSingleTodoEdit = async () => {
-		console.log("handleSingleTodoEdit");
-
-		const todoItemId = todoItemIdFromParams;
+		const todoItemId = todoItemIdFromParams || todoItem.id;
 		if (!todoItemId) {
 			setHasError(true);
 			return;
 		}
+		setIsLoading(true);
 		try {
-			await editTodoItem(todoItemIdFromParams, todoItem);
-			addNotification("ToDo updated successfully!", "success");
-		} catch {
-			addNotification(
-				"Error updating ToDo. Please try again later.",
-				"error"
-			);
+			await editTodoItem(todoItemId, todoItem);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const createNewSeriesFromSingleTodo = async () => {
-		console.log("createNewSeriesFromSingleTodo");
-
-		const todoItemId = todoItemIdFromParams;
+		const todoItemId = todoItemIdFromParams || todoItem.id;
 		if (!todoItemId) {
 			setHasError(true);
 			return;
 		}
-
+		setIsLoading(true);
 		try {
-			console.log(
-				"todoItem sent from CreateNewSeriesFromSingleTodo: ",
-				todoItem
+			await editSingleTodoToSeries(
+				todoItemId,
+				todoItem,
+				todoSeriesInfo,
+				addNotification
 			);
-			await editSingleTodoToSeries(todoItemId, todoItem, todoSeriesInfo);
-			addNotification("Series added successfully!", "success");
-		} catch {
-			addNotification(
-				"Error creating series. Please try again later.",
-				"error"
-			);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
 		if (editSeries) {
 			await handleSeriesEdit();
 			return;
 		}
-
 		if (!isRepeating) {
 			await handleSingleTodoEdit();
 			return;
 		}
-
 		if (isRepeating) {
 			await createNewSeriesFromSingleTodo();
 			return;
 		}
 	};
 
-	if (isLoading) return <h1>Loading....</h1>;
 	if (hasError) return <ErrorPage />;
+	if (isLoading) return <h1>Loading....</h1>;
 
 	return (
 		<>

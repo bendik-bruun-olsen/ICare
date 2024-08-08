@@ -10,6 +10,7 @@ import {
 	writeBatch,
 } from "firebase/firestore";
 import {
+	NotificationContextType,
 	TodoItemInterface,
 	TodoSeriesInfoInterface,
 	ToDoStatus,
@@ -32,113 +33,117 @@ export const editTodoItem = async (
 
 export const editTodoSeries = async (
 	seriesId: string,
-	updatedSeriesInfo: TodoSeriesInfoInterface
+	updatedSeriesInfo: TodoSeriesInfoInterface,
+	addNotification: NotificationContextType["addNotification"]
 ) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoCollection = collection(patientRef, "todoItems");
-	const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const todoCollection = collection(patientRef, "todoItems");
+		const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
 
-	const now = Timestamp.now();
-	const q = query(
-		todoCollection,
-		where("seriesId", "==", seriesId),
-		where("date", ">=", now)
-	);
+		const now = Timestamp.now();
+		const q = query(
+			todoCollection,
+			where("seriesId", "==", seriesId),
+			where("date", ">=", now)
+		);
 
-	const querySnap = await getDocs(q);
+		const querySnap = await getDocs(q);
 
-	const batch = writeBatch(db);
-	querySnap.docs.forEach((doc) => {
-		batch.delete(doc.ref);
-	});
+		if (querySnap.empty) {
+			addNotification("No todos found for series", "error");
+			return;
+		}
 
-	const selectedDaysNumbers = mapSelectedDaysToNumbers(
-		updatedSeriesInfo.selectedDays
-	);
+		const batch = writeBatch(db);
+		querySnap.docs.forEach((doc) => {
+			batch.delete(doc.ref);
+		});
 
-	const newTodos = generateTodosForSeries(
-		{
-			title: updatedSeriesInfo.title,
-			description: updatedSeriesInfo.description,
-			time: updatedSeriesInfo.time,
-			category: updatedSeriesInfo.category,
-			status: ToDoStatus.unchecked,
-			comment: "",
-			seriesId: seriesId,
-			date: updatedSeriesInfo.startDate,
-			id: "",
-		},
-		formatTimestampToDateString(now),
-		formatTimestampToDateString(updatedSeriesInfo.endDate),
-		selectedDaysNumbers
-	);
+		const selectedDaysNumbers = mapSelectedDaysToNumbers(
+			updatedSeriesInfo.selectedDays
+		);
 
-	newTodos.forEach((todo) => {
-		const todoItemRef = doc(todoCollection);
-		const updatedTodo = {
-			...todo,
-			id: todoItemRef.id,
-		};
-		batch.set(todoItemRef, updatedTodo);
-	});
+		const newTodos = generateTodosForSeries(
+			{
+				title: updatedSeriesInfo.title,
+				description: updatedSeriesInfo.description,
+				time: updatedSeriesInfo.time,
+				category: updatedSeriesInfo.category,
+				status: ToDoStatus.unchecked,
+				comment: "",
+				seriesId: seriesId,
+				date: updatedSeriesInfo.startDate,
+				id: "",
+			},
+			formatTimestampToDateString(now),
+			formatTimestampToDateString(updatedSeriesInfo.endDate),
+			selectedDaysNumbers
+		);
 
-	batch.update(seriesInfoRef, { ...updatedSeriesInfo });
+		newTodos.forEach((todo) => {
+			const todoItemRef = doc(todoCollection);
+			const updatedTodo = {
+				...todo,
+				id: todoItemRef.id,
+			};
+			batch.set(todoItemRef, updatedTodo);
+		});
 
-	await batch.commit();
+		batch.update(seriesInfoRef, { ...updatedSeriesInfo });
+
+		await batch.commit();
+		addNotification("Series edited successfully", "success");
+	} catch {
+		addNotification("Error editing series", "error");
+	}
 };
 
 export const editSingleTodoToSeries = async (
 	todoId: string,
 	todoItem: TodoItemInterface,
-	seriesInfo: TodoSeriesInfoInterface
+	seriesInfo: TodoSeriesInfoInterface,
+	addNotification: NotificationContextType["addNotification"]
 ) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const seriesCollection = collection(patientRef, "todoSeriesInfo");
-	const todoCollection = collection(patientRef, "todoItems");
-	const todoRef = doc(todoCollection, todoId);
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const seriesCollection = collection(patientRef, "todoSeriesInfo");
+		const todoCollection = collection(patientRef, "todoItems");
+		const todoRef = doc(todoCollection, todoId);
 
-	console.log("TodoItem received in editSingleTodoToSeries: ", todoItem);
-	console.log("SeriesInfo received in editSingleTodoToSeries: ", seriesInfo);
+		const now = Timestamp.now();
+		const batch = writeBatch(db);
 
-	const now = Timestamp.now();
-	const batch = writeBatch(db);
+		if (todoItem.date >= now) {
+			batch.delete(todoRef);
+		}
 
-	console.log("Editing single todo to series");
+		const selectedDaysNumbers = mapSelectedDaysToNumbers(
+			seriesInfo.selectedDays
+		);
 
-	if (todoItem.date >= now) {
-		batch.delete(todoRef);
-		console.log("Deleted original todo");
+		const newSeriesRef = doc(seriesCollection);
+
+		const updatedTodoItem = {
+			...todoItem,
+			seriesId: newSeriesRef.id,
+		};
+
+		const newTodos = generateTodosForSeries(
+			updatedTodoItem,
+			formatTimestampToDateString(now),
+			formatTimestampToDateString(seriesInfo.endDate),
+			selectedDaysNumbers
+		);
+
+		newTodos.forEach((todo) => {
+			const todoDocRef = doc(todoCollection);
+			batch.set(todoDocRef, todo);
+		});
+
+		await batch.commit();
+		addNotification("Todo successfully created into series", "success");
+	} catch {
+		addNotification("Error creating series for todo", "error");
 	}
-
-	const selectedDaysNumbers = mapSelectedDaysToNumbers(
-		seriesInfo.selectedDays
-	);
-
-	const newSeriesRef = doc(seriesCollection);
-	console.log("newSeriesRef: ", newSeriesRef.id);
-
-	const updatedTodoItem = {
-		...todoItem,
-		seriesId: newSeriesRef.id,
-	};
-
-	console.log("TodoItem sent to generateTodosForSeries: ", updatedTodoItem);
-
-	const newTodos = generateTodosForSeries(
-		updatedTodoItem,
-		formatTimestampToDateString(now),
-		formatTimestampToDateString(seriesInfo.endDate),
-		selectedDaysNumbers
-	);
-
-	console.log("Generated new todos: ", newTodos);
-
-	newTodos.forEach((todo) => {
-		const todoDocRef = doc(todoCollection);
-		batch.set(todoDocRef, todo);
-		console.log("Added new todo");
-	});
-
-	await batch.commit();
-	console.log("Done!");
 };

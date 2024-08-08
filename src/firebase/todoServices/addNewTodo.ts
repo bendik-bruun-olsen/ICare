@@ -1,42 +1,63 @@
 import { db } from "../../firebase/firebase";
 import { addDoc, collection, doc, writeBatch } from "firebase/firestore";
-import { TodoItemInterface, TodoSeriesInfoInterface } from "../../types";
+import {
+	NotificationContextType,
+	TodoItemInterface,
+	TodoSeriesInfoInterface,
+} from "../../types";
 
-export const addSingleNewTodo = async (todo: TodoItemInterface) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoCollection = collection(patientRef, "todoItems");
-	const todoItemRef = doc(todoCollection);
+export const addSingleNewTodo = async (
+	todo: TodoItemInterface,
+	addNotification: NotificationContextType["addNotification"]
+) => {
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const todoCollection = collection(patientRef, "todoItems");
+		const todoItemRef = doc(todoCollection);
 
-	const todoWithId = {
-		...todo,
-		id: todoItemRef.id,
-	};
+		const todoWithId = {
+			...todo,
+			id: todoItemRef.id,
+		};
 
-	await addDoc(todoCollection, todoWithId);
+		await addDoc(todoCollection, todoWithId);
+		addNotification("Todo added successfully", "success");
+	} catch {
+		addNotification("Error adding todo", "error");
+	}
 };
 
 export const addMultipleNewTodos = async (
 	todos: TodoItemInterface[],
-	seriesInfo: TodoSeriesInfoInterface
+	seriesInfo: TodoSeriesInfoInterface,
+	addNotification: NotificationContextType["addNotification"]
 ) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoSeriesInfoCollection = collection(patientRef, "todoSeriesInfo");
-	const todoCollection = collection(patientRef, "todoItems");
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const todoSeriesInfoCollection = collection(
+			patientRef,
+			"todoSeriesInfo"
+		);
+		const todoCollection = collection(patientRef, "todoItems");
 
-	const batch = writeBatch(db);
+		const batch = writeBatch(db);
 
-	const todoSeriesInfoRef = doc(todoSeriesInfoCollection);
-	batch.set(todoSeriesInfoRef, seriesInfo);
+		const todoSeriesInfoRef = doc(todoSeriesInfoCollection);
+		batch.set(todoSeriesInfoRef, seriesInfo);
 
-	todos.forEach((todo) => {
-		const todoItemRef = doc(todoCollection);
-		const todoWithId = {
-			...todo,
-			seriesId: todoSeriesInfoRef.id,
-			id: todoItemRef.id,
-		};
-		batch.set(todoItemRef, todoWithId);
-	});
+		todos.forEach((todo) => {
+			const todoItemRef = doc(todoCollection);
+			const todoWithId = {
+				...todo,
+				seriesId: todoSeriesInfoRef.id,
+				id: todoItemRef.id,
+			};
+			batch.set(todoItemRef, todoWithId);
+		});
 
-	await batch.commit();
+		await batch.commit();
+		addNotification("Series added successfully", "success");
+	} catch {
+		addNotification("Error adding series", "error");
+	}
 };
