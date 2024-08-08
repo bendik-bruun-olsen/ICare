@@ -67,70 +67,45 @@ const EditToDoPage = () => {
 		}>();
 
 	useEffect(() => {
-		console.log("useEffect: fetching data");
-
+		setIsLoading(true);
 		if (!todoItemIdFromParams && !seriesIdFromParams) {
 			setIsLoading(false);
 			setHasError(true);
 			return;
 		}
-
-		const fetchTodoById = async (todoId: string) => {
-			setIsLoading(true);
-			try {
-				const result = await getTodo(todoId);
-				if (!result) {
-					addNotification(
-						"Error fetching ToDo. Please try again later.",
-						"error"
-					);
-					setHasError(true);
-					return;
-				}
-				setTodoItem(result as TodoItemInterface);
-			} catch {
-				addNotification(
-					"Error fetching ToDo. Please try again later.",
-					"info"
+		async function fetchData() {
+			if (editSeries && todoItem.seriesId) {
+				const data = await getTodoSeriesInfo(
+					todoItem.seriesId,
+					addNotification
 				);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		const fetchSeriesById = async (seriesId: string) => {
-			setIsLoading(true);
-			try {
-				const result = await getTodoSeriesInfo(seriesId);
-				if (!result) {
-					addNotification(
-						"Error fetching series data. Please try again later.",
-						"error"
-					);
-					setHasError(true);
-					return;
+				if (data) {
+					setTodoSeriesInfo(data as TodoSeriesInfoInterface);
+					setIsRepeating(true);
 				}
-				setTodoSeriesInfo(result as TodoSeriesInfoInterface);
-
-				setIsRepeating(true);
-			} catch {
-				addNotification(
-					"Error fetching series data. Please try again later.",
-					"info"
-				);
-			} finally {
-				setIsLoading(false);
 			}
-		};
-
-		if (editSeries && todoItem.seriesId) {
-			fetchSeriesById(todoItem.seriesId);
-		} else if (todoItemIdFromParams) {
-			fetchTodoById(todoItemIdFromParams);
-		} else if (seriesIdFromParams) {
-			fetchSeriesById(seriesIdFromParams);
-			setEditSeries(true);
+			if (todoItemIdFromParams) {
+				const data = await getTodo(
+					todoItemIdFromParams,
+					addNotification
+				);
+				if (data) {
+					setTodoItem(data as TodoItemInterface);
+				}
+			}
+			if (seriesIdFromParams) {
+				const data = await getTodoSeriesInfo(
+					seriesIdFromParams,
+					addNotification
+				);
+				if (data) {
+					setTodoSeriesInfo(data as TodoSeriesInfoInterface);
+					setEditSeries(true);
+				}
+			}
 		}
+		fetchData();
+		setIsLoading(false);
 	}, [todoItemIdFromParams, seriesIdFromParams, editSeries]);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {

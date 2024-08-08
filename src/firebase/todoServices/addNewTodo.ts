@@ -5,8 +5,14 @@ import { TodoItemInterface, TodoSeriesInfoInterface } from "../../types";
 export const addSingleNewTodo = async (todo: TodoItemInterface) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
 	const todoCollection = collection(patientRef, "todoItems");
+	const todoItemRef = doc(todoCollection);
 
-	await addDoc(todoCollection, todo);
+	const todoWithId = {
+		...todo,
+		id: todoItemRef.id,
+	};
+
+	await addDoc(todoCollection, todoWithId);
 };
 
 export const addMultipleNewTodos = async (
@@ -24,12 +30,12 @@ export const addMultipleNewTodos = async (
 
 	todos.forEach((todo) => {
 		const todoItemRef = doc(todoCollection);
-		const updatedTodo = {
+		const todoWithId = {
 			...todo,
 			seriesId: todoSeriesInfoRef.id,
 			id: todoItemRef.id,
 		};
-		batch.set(todoItemRef, updatedTodo);
+		batch.set(todoItemRef, todoWithId);
 	});
 
 	await batch.commit();

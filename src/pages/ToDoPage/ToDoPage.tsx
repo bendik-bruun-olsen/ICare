@@ -11,31 +11,40 @@ import { groupTodosByCategory } from "../../utils";
 import { TodoItemInterface } from "../../types";
 import { Link } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
+import { useNotification } from "../../context/NotificationContext";
+import ErrorPage from "../ErrorPage/ErrorPage";
 
 const ToDoPage: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [todos, setTodos] = useState<TodoItemInterface[]>([]);
-	const [loading, setLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
+	const [hasError, setHasError] = useState(false);
+	const { addNotification } = useNotification();
 
 	useEffect(() => {
-		const fetchTodos = async () => {
-			setLoading(true);
-			try {
-				const fetchedTodos = await getTodosBySelectedDate(selectedDate);
-				setTodos(fetchedTodos as TodoItemInterface[]);
-			} catch (error) {
-				console.error("Error fetching todos: ", error);
-			} finally {
-				setLoading(false);
+		if (!selectedDate) {
+			setIsLoading(false);
+			setHasError(true);
+			return;
+		}
+		async function fetchData() {
+			setIsLoading(true);
+			const data = await getTodosBySelectedDate(
+				selectedDate,
+				addNotification
+			);
+			if (data) {
+				setTodos(data as TodoItemInterface[]);
 			}
-		};
-		fetchTodos();
+		}
+		fetchData();
+		setIsLoading(false);
 	}, [selectedDate]);
 
-	if (loading) {
-		return <CircularProgress />;
-	}
 	const groupedTodos = groupTodosByCategory(todos);
+
+	if (isLoading) return <CircularProgress />;
+	if (hasError) return <ErrorPage />;
 	return (
 		<>
 			<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />

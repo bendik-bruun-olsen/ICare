@@ -1,3 +1,4 @@
+import { NotificationContextType } from "../../types";
 import { db } from "../firebase";
 import {
 	doc,
@@ -9,44 +10,80 @@ import {
 	Timestamp,
 } from "firebase/firestore";
 
-export const getTodo = async (todoId: string) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoRef = doc(patientRef, "todoItems", todoId);
+export const getTodo = async (
+	todoId: string,
+	addNotification: NotificationContextType["addNotification"]
+) => {
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const todoRef = doc(patientRef, "todoItems", todoId);
+		const todoSnap = await getDoc(todoRef);
 
-	const todoSnap = await getDoc(todoRef);
-	const todoWithId = { ...todoSnap.data(), id: todoSnap.id };
-	return todoWithId;
+		if (!todoSnap.exists()) {
+			addNotification("Todo not found", "error");
+			return null;
+		}
+
+		return todoSnap.data();
+	} catch {
+		addNotification("Error fetching todo", "error");
+		return null;
+	}
 };
 
-export const getTodosBySelectedDate = async (selectedDate: Date) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoCollection = collection(patientRef, "todoItems");
+export const getTodoSeriesInfo = async (
+	seriesId: string,
+	addNotification: NotificationContextType["addNotification"]
+) => {
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
 
-	const startOfDay = Timestamp.fromDate(
-		new Date(selectedDate.setHours(0, 0, 0, 0))
-	);
-	const endOfDay = Timestamp.fromDate(
-		new Date(selectedDate.setHours(23, 59, 59, 999))
-	);
-
-	const q = query(
-		todoCollection,
-		where("date", ">=", startOfDay),
-		where("date", "<=", endOfDay)
-	);
-
-	const querySnap = await getDocs(q);
-	const todosWithId = querySnap.docs.map((doc) => ({
-		...doc.data(),
-		id: doc.id,
-	}));
-	return todosWithId;
+		const seriesInfoSnap = await getDoc(seriesInfoRef);
+		if (!seriesInfoSnap.exists()) {
+			addNotification("Series not found", "error");
+			return null;
+		}
+		return seriesInfoSnap.data();
+	} catch {
+		addNotification("Error fetching series", "error");
+		return null;
+	}
 };
 
-export const getTodoSeriesInfo = async (seriesId: string) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
+export const getTodosBySelectedDate = async (
+	selectedDate: Date,
+	addNotification: NotificationContextType["addNotification"]
+) => {
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const todoCollection = collection(patientRef, "todoItems");
 
-	const seriesInfoSnap = await getDoc(seriesInfoRef);
-	return seriesInfoSnap.data();
+		const startOfDay = Timestamp.fromDate(
+			new Date(selectedDate.setHours(0, 0, 0, 0))
+		);
+		const endOfDay = Timestamp.fromDate(
+			new Date(selectedDate.setHours(23, 59, 59, 999))
+		);
+
+		const q = query(
+			todoCollection,
+			where("date", ">=", startOfDay),
+			where("date", "<=", endOfDay)
+		);
+
+		const querySnap = await getDocs(q);
+		if (querySnap.empty) {
+			return [];
+		}
+
+		const todosWithId = querySnap.docs.map((doc) => ({
+			...doc.data(),
+			id: doc.id,
+		}));
+		return todosWithId;
+	} catch {
+		addNotification("Error fetching todos", "error");
+		return [];
+	}
 };

@@ -39,3 +39,18 @@ export interface TodoSeriesInfoInterface {
 	endDate: Timestamp;
 	selectedDays: string[];
 }
+
+export type NotificationType = {
+	id: number;
+	message: string;
+	type: "success" | "error" | "info";
+};
+
+export type NotificationContextType = {
+	notifications: NotificationType[];
+	addNotification: (
+		message: string,
+		type: "success" | "error" | "info"
+	) => void;
+	removeNotification: (id: number) => void;
+};
