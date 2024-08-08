@@ -120,9 +120,10 @@ export const editSingleTodoToSeries = async (
 		const now = Timestamp.now();
 		const batch = writeBatch(db);
 
-		if (todoItem.date >= now) {
-			batch.delete(todoRef);
-		}
+		// if (todoItem.date >= now) {
+		// 	batch.delete(todoRef);
+		// }
+		batch.delete(todoRef);
 
 		const updatedSeriesInfo = {
 			...seriesInfo,

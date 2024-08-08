@@ -142,23 +142,14 @@ export const generateTodosForSeries = (
 	endDate: string,
 	selectedDaysNumbers: number[]
 ) => {
-	console.log("newTodo: ", newTodo);
-	console.log("startDate: ", startDate);
-	console.log("endDate: ", endDate);
-	console.log("selectedDaysNumbers: ", selectedDaysNumbers);
-
 	const newTodos = [];
 	const currentDate = new Date(startDate);
 	while (currentDate <= new Date(endDate)) {
-		console.log("Entering while loop");
-
 		if (
 			selectedDaysNumbers.includes(
 				currentDate.getDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6
 			)
 		) {
-			console.log("Day matches selectedDaysNumbers");
-
 			const todoForDay = {
 				...newTodo,
 				date: Timestamp.fromDate(currentDate),
@@ -167,7 +158,6 @@ export const generateTodosForSeries = (
 		}
 		currentDate.setDate(currentDate.getDate() + 1);
 	}
-	console.log("Returning newTodos from generateTodosForSeries: ", newTodos);
 
 	return newTodos;
 };

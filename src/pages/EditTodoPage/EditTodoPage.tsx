@@ -20,45 +20,23 @@ import {
 import styles from "./EditTodoPage.module.css";
 import { formatTimestampToDateString } from "../../utils";
 import { useNotification } from "../../context/NotificationContext";
-import {
-	ToDoStatus,
-	TodoSeriesInfoInterface,
-	TodoItemInterface,
-} from "../../types";
+import { TodoSeriesInfoInterface, TodoItemInterface } from "../../types";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import { useParams } from "react-router-dom";
-
-const defaultTodoItem: TodoItemInterface = {
-	title: "",
-	description: "",
-	date: Timestamp.now(),
-	time: "00:00",
-	category: null,
-	status: ToDoStatus.unchecked,
-	comment: "",
-	seriesId: null,
-	id: "",
-};
-
-const defaultSeries: TodoSeriesInfoInterface = {
-	title: "",
-	description: "",
-	time: "00:00",
-	category: null,
-	startDate: Timestamp.now(),
-	endDate: Timestamp.now(),
-	selectedDays: [],
-};
+import {
+	defaultTodoItem,
+	defaultTodoSeries,
+} from "../../constants/defaultTodoValues";
 
 const EditToDoPage = () => {
+	const [isLoading, setIsLoading] = useState(false);
+	const [hasError, setHasError] = useState(false);
 	const [todoItem, setTodoItem] =
 		useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
-		useState<TodoSeriesInfoInterface>(defaultSeries);
-	const [isLoading, setIsLoading] = useState(false);
-	const [hasError, setHasError] = useState(false);
-	const [isRepeating, setIsRepeating] = useState(false);
-	const [editSeries, setEditSeries] = useState(false);
+		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
+	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
+	const [isEditingSeries, setIsEditingSeries] = useState(false);
 	const { addNotification } = useNotification();
 	const { todoId: todoItemIdFromParams, seriesId: seriesIdFromParams } =
 		useParams<{
@@ -67,24 +45,32 @@ const EditToDoPage = () => {
 		}>();
 
 	useEffect(() => {
-		console.log("Entered useEffect");
+		if (seriesIdFromParams) {
+			setIsEditingSeries(true);
+		}
+	}, [seriesIdFromParams]);
 
+	useEffect(() => {
 		async function fetchData() {
+			console.log("Entering useEffect");
+
 			if (!todoItemIdFromParams && !seriesIdFromParams) {
 				setHasError(true);
 				return;
 			}
 			setIsLoading(true);
 			try {
-				if (editSeries && todoItem.seriesId) {
+				if (isEditingSeries) {
+					const seriesId = seriesIdFromParams || todoItem.seriesId;
+					if (!seriesId) return;
 					const data = await getTodoSeriesInfo(
-						todoItem.seriesId,
+						seriesId,
 						addNotification
 					);
 					if (data) {
 						setTodoSeriesInfo(data as TodoSeriesInfoInterface);
-						setIsRepeating(true);
 					}
+					return;
 				}
 				if (todoItemIdFromParams) {
 					const data = await getTodo(
@@ -94,6 +80,7 @@ const EditToDoPage = () => {
 					if (data) {
 						setTodoItem(data as TodoItemInterface);
 					}
+					return;
 				}
 				if (seriesIdFromParams) {
 					const data = await getTodoSeriesInfo(
@@ -102,19 +89,18 @@ const EditToDoPage = () => {
 					);
 					if (data) {
 						setTodoSeriesInfo(data as TodoSeriesInfoInterface);
-						setEditSeries(true);
 					}
+					return;
 				}
 			} finally {
 				setIsLoading(false);
 			}
 		}
 		fetchData();
-		console.log("Exited useEffect");
-	}, [todoItemIdFromParams, seriesIdFromParams]);
+	}, [isEditingSeries, isCreatingNewSeries]);
 
 	useEffect(() => {
-		if (isRepeating) {
+		if (isCreatingNewSeries) {
 			const daysOfTheWeek = [
 				"sunday",
 				"monday",
@@ -136,15 +122,15 @@ const EditToDoPage = () => {
 				return prev;
 			});
 		}
-	}, [isRepeating]);
+	}, [isCreatingNewSeries]);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTodoItem((prev) => ({ ...prev, time: e.target.value }));
 	};
 
-	const handleDateChange = (field: string, dateString: string) => {
-		const newTimestamp = Timestamp.fromDate(new Date(dateString));
-		if (editSeries || isRepeating) {
+	const handleDateChange = (field: string, date: string) => {
+		const newTimestamp = Timestamp.fromDate(new Date(date));
+		if (isEditingSeries || isCreatingNewSeries) {
 			setTodoSeriesInfo((prev) => ({ ...prev, [field]: newTimestamp }));
 			return;
 		}
@@ -161,15 +147,18 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const handleEditSeriesChange = () => {
-		setEditSeries((prev) => {
-			if (editSeries) setIsRepeating(false);
+	const toggleIsEditingSeries = () => {
+		setIsEditingSeries((prev) => {
+			if (isEditingSeries) setIsCreatingNewSeries(false);
 			return !prev;
 		});
 	};
 
-	const handleIsRepeatingChange = () => {
-		setIsRepeating((prev) => !prev);
+	const toggleIsCreatingNewSeries = () => {
+		setIsCreatingNewSeries((prev) => {
+			if (isCreatingNewSeries) setIsEditingSeries(false);
+			return !prev;
+		});
 	};
 
 	const handleSeriesEdit = async () => {
@@ -200,7 +189,7 @@ const EditToDoPage = () => {
 		}
 	};
 
-	const createNewSeriesFromSingleTodo = async () => {
+	const handleCreateNewSeriesFromSingleTodo = async () => {
 		const todoItemId = todoItemIdFromParams || todoItem.id;
 		if (!todoItemId) {
 			setHasError(true);
@@ -221,16 +210,16 @@ const EditToDoPage = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (editSeries) {
+		if (isEditingSeries) {
 			await handleSeriesEdit();
 			return;
 		}
-		if (!isRepeating) {
+		if (!isCreatingNewSeries) {
 			await handleSingleTodoEdit();
 			return;
 		}
-		if (isRepeating) {
-			await createNewSeriesFromSingleTodo();
+		if (isCreatingNewSeries) {
+			await handleCreateNewSeriesFromSingleTodo();
 			return;
 		}
 	};
@@ -242,7 +231,9 @@ const EditToDoPage = () => {
 		<>
 			<Navbar
 				leftContent={<BackHomeButton />}
-				centerContent="Edit ToDo"
+				centerContent={
+					isEditingSeries ? "Edit ToDo Series" : "Edit ToDo"
+				}
 			/>
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
@@ -250,12 +241,12 @@ const EditToDoPage = () => {
 						<div className={styles.mainContentContainer}>
 							<TitleDescription
 								title={
-									editSeries
+									isEditingSeries
 										? todoSeriesInfo.title
 										: todoItem.title
 								}
 								setTitle={(title) =>
-									editSeries
+									isEditingSeries
 										? setTodoSeriesInfo((prev) => ({
 												...prev,
 												title,
@@ -266,12 +257,12 @@ const EditToDoPage = () => {
 										  }))
 								}
 								description={
-									editSeries
+									isEditingSeries
 										? todoSeriesInfo.description
 										: todoItem.description
 								}
 								setDescription={(description) =>
-									editSeries
+									isEditingSeries
 										? setTodoSeriesInfo((prev) => ({
 												...prev,
 												description,
@@ -286,12 +277,12 @@ const EditToDoPage = () => {
 								<div>
 									<SelectCategory
 										selectedOption={
-											editSeries
+											isEditingSeries
 												? todoSeriesInfo.category
 												: todoItem.category
 										}
 										onSelectionChange={(category) =>
-											editSeries
+											isEditingSeries
 												? setTodoSeriesInfo((prev) => ({
 														...prev,
 														category,
@@ -304,19 +295,22 @@ const EditToDoPage = () => {
 									/>
 									<StartAndEndDate
 										label={
-											isRepeating ? "Start date" : "Date"
+											isCreatingNewSeries ||
+											isEditingSeries
+												? "Start date"
+												: "Date"
 										}
 										value={formatTimestampToDateString(
-											editSeries
+											isEditingSeries
 												? todoSeriesInfo.startDate
 												: todoItem.date
 										)}
-										onChange={(dateString) =>
+										onChange={(date) =>
 											handleDateChange(
 												seriesIdFromParams
 													? "startDate"
 													: "date",
-												dateString
+												date
 											)
 										}
 									/>
@@ -328,7 +322,7 @@ const EditToDoPage = () => {
 										type="time"
 										name="time"
 										value={
-											editSeries
+											isEditingSeries
 												? todoSeriesInfo.time
 												: todoItem.time
 										}
@@ -339,38 +333,37 @@ const EditToDoPage = () => {
 									{todoItem.seriesId ? (
 										<Checkbox
 											label="Edit Series"
-											checked={editSeries}
-											onChange={handleEditSeriesChange}
+											checked={isEditingSeries}
+											onChange={toggleIsEditingSeries}
 										/>
 									) : (
 										<Checkbox
 											label="Repeat"
-											checked={isRepeating}
+											checked={
+												isCreatingNewSeries ||
+												isEditingSeries
+											}
 											disabled={
-												seriesIdFromParams ||
-												todoItem.seriesId
+												seriesIdFromParams
 													? true
 													: false
 											}
-											onChange={handleIsRepeatingChange}
+											onChange={toggleIsCreatingNewSeries}
 										/>
 									)}
 								</div>
 							</div>
-							{isRepeating && (
+							{(isCreatingNewSeries || isEditingSeries) && (
 								<>
 									<StartAndEndDate
 										label="End date"
 										value={formatTimestampToDateString(
-											editSeries
+											isEditingSeries
 												? todoSeriesInfo.endDate
 												: todoItem.date
 										)}
-										onChange={(dateString) =>
-											handleDateChange(
-												"endDate",
-												dateString
-											)
+										onChange={(date) =>
+											handleDateChange("endDate", date)
 										}
 									/>
 									<DaysComponent
