@@ -52,8 +52,6 @@ const EditToDoPage = () => {
 
 	useEffect(() => {
 		async function fetchData() {
-			console.log("Entering useEffect");
-
 			if (!todoItemIdFromParams && !seriesIdFromParams) {
 				setHasError(true);
 				return;
