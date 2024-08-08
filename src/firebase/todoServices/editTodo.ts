@@ -23,12 +23,18 @@ import {
 
 export const editTodoItem = async (
 	todoId: string,
-	updatedTodo: TodoItemInterface
+	updatedTodo: TodoItemInterface,
+	addNotification: NotificationContextType["addNotification"]
 ) => {
-	const patientRef = doc(db, "patientdetails", "patient@patient.com");
-	const todoRef = doc(patientRef, "todoItems", todoId);
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const todoRef = doc(patientRef, "todoItems", todoId);
 
-	await updateDoc(todoRef, { ...updatedTodo });
+		await updateDoc(todoRef, { ...updatedTodo });
+		addNotification("Todo edited successfully", "success");
+	} catch {
+		addNotification("Error editing todo", "error");
+	}
 };
 
 export const editTodoSeries = async (
@@ -118,11 +124,20 @@ export const editSingleTodoToSeries = async (
 			batch.delete(todoRef);
 		}
 
+		const updatedSeriesInfo = {
+			...seriesInfo,
+			title: todoItem.title,
+			description: todoItem.description,
+			time: todoItem.time,
+			category: todoItem.category,
+		};
+
 		const selectedDaysNumbers = mapSelectedDaysToNumbers(
-			seriesInfo.selectedDays
+			updatedSeriesInfo.selectedDays
 		);
 
 		const newSeriesRef = doc(seriesCollection);
+		batch.set(newSeriesRef, updatedSeriesInfo);
 
 		const updatedTodoItem = {
 			...todoItem,
@@ -132,13 +147,17 @@ export const editSingleTodoToSeries = async (
 		const newTodos = generateTodosForSeries(
 			updatedTodoItem,
 			formatTimestampToDateString(now),
-			formatTimestampToDateString(seriesInfo.endDate),
+			formatTimestampToDateString(updatedSeriesInfo.endDate),
 			selectedDaysNumbers
 		);
 
 		newTodos.forEach((todo) => {
 			const todoDocRef = doc(todoCollection);
-			batch.set(todoDocRef, todo);
+			const updatedTodo = {
+				...todo,
+				id: todoDocRef.id,
+			};
+			batch.set(todoDocRef, updatedTodo);
 		});
 
 		await batch.commit();

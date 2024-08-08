@@ -67,6 +67,8 @@ const EditToDoPage = () => {
 		}>();
 
 	useEffect(() => {
+		console.log("Entered useEffect");
+
 		async function fetchData() {
 			if (!todoItemIdFromParams && !seriesIdFromParams) {
 				setHasError(true);
@@ -108,7 +110,8 @@ const EditToDoPage = () => {
 			}
 		}
 		fetchData();
-	}, [todoItemIdFromParams, seriesIdFromParams, editSeries]);
+		console.log("Exited useEffect");
+	}, [todoItemIdFromParams, seriesIdFromParams]);
 
 	useEffect(() => {
 		if (isRepeating) {
@@ -159,10 +162,10 @@ const EditToDoPage = () => {
 	};
 
 	const handleEditSeriesChange = () => {
-		setEditSeries((prev) => !prev);
-		if (editSeries) {
-			setIsRepeating(false);
-		}
+		setEditSeries((prev) => {
+			if (editSeries) setIsRepeating(false);
+			return !prev;
+		});
 	};
 
 	const handleIsRepeatingChange = () => {
@@ -191,7 +194,7 @@ const EditToDoPage = () => {
 		}
 		setIsLoading(true);
 		try {
-			await editTodoItem(todoItemId, todoItem);
+			await editTodoItem(todoItemId, todoItem, addNotification);
 		} finally {
 			setIsLoading(false);
 		}

@@ -6,6 +6,7 @@ import { ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTodo";
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
+import { useNotification } from "../../context/NotificationContext";
 
 interface ToDoTileProps {
 	toDoTitle: string;
@@ -32,6 +33,7 @@ export default function ToDoTile({
 	const toggleModalVisibility = () => {
 		setIsModalOpen((prev) => !prev);
 	};
+	const { addNotification } = useNotification();
 
 	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
 		if (currentToDoStatus === ToDoStatus.checked) return styles.checked;
@@ -42,11 +44,11 @@ export default function ToDoTile({
 
 	useEffect(() => {
 		const updateStatus = async () => {
-			try {
-				await updateToDoStatusInDatabase(todoId, currentTaskStatus);
-			} catch (error) {
-				console.error("Error updating status: ", error);
-			}
+			await updateToDoStatusInDatabase(
+				todoId,
+				currentTaskStatus,
+				addNotification
+			);
 		};
 		updateStatus();
 	}, [currentTaskStatus, todoId]);

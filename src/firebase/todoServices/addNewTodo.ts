@@ -1,5 +1,5 @@
 import { db } from "../../firebase/firebase";
-import { addDoc, collection, doc, writeBatch } from "firebase/firestore";
+import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
 import {
 	NotificationContextType,
 	TodoItemInterface,
@@ -20,7 +20,7 @@ export const addSingleNewTodo = async (
 			id: todoItemRef.id,
 		};
 
-		await addDoc(todoCollection, todoWithId);
+		await setDoc(todoItemRef, todoWithId);
 		addNotification("Todo added successfully", "success");
 	} catch {
 		addNotification("Error adding todo", "error");
