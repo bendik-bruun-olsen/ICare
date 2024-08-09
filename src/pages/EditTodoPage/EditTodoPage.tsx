@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Checkbox, TextField } from "@equinor/eds-core-react";
+import { Button, Checkbox, TextField } from "@equinor/eds-core-react";
 import { Timestamp } from "firebase/firestore";
 import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
@@ -28,6 +28,11 @@ import {
 	defaultTodoItem,
 	defaultTodoSeries,
 } from "../../constants/defaultTodoValues";
+import {
+	deleteTodoItem,
+	deleteTodoSeries,
+} from "../../firebase/todoServices/deleteTodo";
+import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfimModal";
 
 const EditToDoPage = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +49,7 @@ const EditToDoPage = () => {
 			todoId: string;
 			seriesId: string;
 		}>();
+	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
 	useEffect(() => {
 		if (seriesIdFromParams) {
@@ -57,8 +63,9 @@ const EditToDoPage = () => {
 				setHasError(true);
 				return;
 			}
-			setIsLoading(true);
 			try {
+				setIsLoading(true);
+
 				if (isEditingSeries) {
 					const seriesId = seriesIdFromParams || todoItem.seriesId;
 					if (!seriesId) return;
@@ -157,8 +164,8 @@ const EditToDoPage = () => {
 			setHasError(true);
 			return;
 		}
-		setIsLoading(true);
 		try {
+			setIsLoading(true);
 			await editTodoSeries(seriesId, todoSeriesInfo, addNotification);
 		} finally {
 			setIsLoading(false);
@@ -171,8 +178,8 @@ const EditToDoPage = () => {
 			setHasError(true);
 			return;
 		}
-		setIsLoading(true);
 		try {
+			setIsLoading(true);
 			await editTodoItem(todoItemId, todoItem, addNotification);
 		} finally {
 			setIsLoading(false);
@@ -185,8 +192,8 @@ const EditToDoPage = () => {
 			setHasError(true);
 			return;
 		}
-		setIsLoading(true);
 		try {
+			setIsLoading(true);
 			await editSingleTodoToSeries(
 				todoItemId,
 				todoItem,
@@ -196,6 +203,33 @@ const EditToDoPage = () => {
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	const handleDelete = async () => {
+		if (isEditingSeries) {
+			const seriesId = seriesIdFromParams || todoItem.seriesId;
+			if (!seriesId) {
+				setHasError(true);
+				return;
+			}
+			try {
+				setIsLoading(true);
+				await deleteTodoSeries(seriesId, addNotification);
+			} finally {
+				setIsLoading(false);
+			}
+			return;
+		}
+		if (todoItemIdFromParams) {
+			try {
+				setIsLoading(true);
+				await deleteTodoItem(todoItemIdFromParams, addNotification);
+			} finally {
+				setIsLoading(false);
+			}
+			return;
+		}
+		setHasError(true);
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -365,15 +399,21 @@ const EditToDoPage = () => {
 								</>
 							)}
 						</div>
-
-						<AddButton label="Save" onClick={handleSubmit} />
-						{/* <AddButton
-							label={isEditingSeries ? "Delete" : "Delete Series"}
-							onClick={handleDelete}
-						/> */}
+						<div className={styles.buttonContainer}>
+							<Button onClick={handleSubmit}>Add</Button>
+							<Button onClick={() => setIsConfirmModalOpen(true)}>
+								Delete
+							</Button>
+						</div>
 					</div>
 				</form>
 			</div>
+			<DeleteConfirmModal
+				isOpen={isConfirmModalOpen}
+				onClose={() => setIsConfirmModalOpen(false)}
+				onConfirm={handleDelete}
+				type={isEditingSeries ? "series" : "item"}
+			/>
 		</>
 	);
 };

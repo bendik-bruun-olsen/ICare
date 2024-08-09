@@ -54,3 +54,10 @@ export type NotificationContextType = {
 	) => void;
 	removeNotification: (id: number) => void;
 };
+
+export interface DeleteConfirmModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+	type: "item" | "series";
+}

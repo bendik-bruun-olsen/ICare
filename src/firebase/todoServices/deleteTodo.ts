@@ -4,7 +4,6 @@ import {
 	doc,
 	getDocs,
 	query,
-	Timestamp,
 	where,
 	writeBatch,
 } from "firebase/firestore";
@@ -38,6 +37,7 @@ export const deleteTodoSeries = async (
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");
+		const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
 
 		const q = query(todoCollection, where("seriesId", "==", seriesId));
 		const querySnap = await getDocs(q);
@@ -50,6 +50,8 @@ export const deleteTodoSeries = async (
 		querySnap.docs.forEach((doc) => {
 			batch.delete(doc.ref);
 		});
+
+		batch.delete(seriesInfoRef);
 
 		await batch.commit();
 		addNotification("Series deleted successfully", "success");

@@ -39,3 +39,8 @@
 .timeAndRepeatControls span {
 	padding: 2px 5px 0 0;
 }
+
+.buttonContainer {
+	display: flex;
+	justify-content: space-between;
+}
