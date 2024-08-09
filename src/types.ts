@@ -30,7 +30,7 @@ export interface TodoInterface {
 }
 
 export interface PatientFormDataInterface {
-	[key: string]: string | string[];
+	[key: string]: string;
 	name: string;
 	age: string;
 	phone: string;
