@@ -114,7 +114,7 @@ export default function ToDoTile({
 									</li>
 									<li className={styles.modalItem}>
 										<Link
-											to={Paths.EDIT_TODO.replace(
+											to={Paths.EDIT_TODO_ITEM.replace(
 												":todoId",
 												todoId
 											)}
