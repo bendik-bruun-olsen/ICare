@@ -3,24 +3,19 @@ import Logo from "../../components/Logo/Logo";
 import Navbar from "../../components/Navbar/Navbar";
 import styles from "./CreatePatientPage.module.css";
 import { InputWrapper, Input, Button, Icon } from "@equinor/eds-core-react";
-import { add, delete_to_trash } from "@equinor/eds-icons";
+import { add, remove_outlined } from "@equinor/eds-icons";
 import { useNotification } from "../../context/NotificationContext";
 import LoadingPage from "../LoadingPage";
 import {
 	CaretakerInformationInterface,
+	FormFieldProps,
 	PatientFormDataInterface,
 } from "../../types";
 import { addPatient } from "../../firebase/patientServices/addPatient";
 import { getDefaultPictureUrl } from "../../firebase/imageServices/defaultImage";
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
-
-type FormFieldProps = {
-	label?: string;
-	name: string;
-	value: string;
-	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	required?: boolean;
-};
+import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
+import { set } from "date-fns";
 
 const FormField = ({
 	label,
@@ -58,14 +53,9 @@ export default function CreatePatientPage() {
 	const [caretakers, setCaretakers] = useState<CaretakerInformationInterface[]>(
 		[]
 	);
-	const [formData, setFormData] = useState<PatientFormDataInterface>({
-		name: "",
-		age: "",
-		phone: "",
-		address: "",
-		diagnoses: "",
-		allergies: "",
-	});
+	const [formData, setFormData] = useState<PatientFormDataInterface>(
+		defaultPatientFormData
+	);
 	const [pictureUrl, setPictureUrl] = useState("");
 
 	useEffect(() => {
@@ -133,18 +123,14 @@ export default function CreatePatientPage() {
 		}
 
 		try {
+			setIsLoading(true);
 			await addPatient(formData, caretakers);
-			setFormData({
-				name: "",
-				age: "",
-				phone: "",
-				address: "",
-				diagnoses: "",
-				allergies: "",
-			});
+			setFormData(defaultPatientFormData);
 			addNotification("Patient created successfully", "success");
 		} catch (err) {
 			addNotification("Failed to create patient", "error");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -221,7 +207,7 @@ export default function CreatePatientPage() {
 										variant="ghost_icon"
 										onClick={() => deleteCaretaker(caretaker.email)}
 									>
-										<Icon data={delete_to_trash} color="var(--lightblue)" />
+										<Icon data={remove_outlined} color="var(--lightblue)" />
 									</Button>
 								</li>
 							))}
