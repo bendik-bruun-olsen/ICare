@@ -124,7 +124,6 @@ export default function CreatePatientPage() {
 		try {
 			setIsLoading(true);
 			await addPatient(formData, caretakers);
-			setFormData(defaultPatientFormData);
 			addNotification("Patient created successfully", "success");
 		} catch (err) {
 			addNotification("Failed to create patient", "error");
