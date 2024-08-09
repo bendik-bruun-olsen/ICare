@@ -1,4 +1,6 @@
-export const defaultPatientFormData = {
+import { PatientFormDataInterface } from "../types";
+
+export const defaultPatientFormData: PatientFormDataInterface = {
 	name: "",
 	age: "",
 	phone: "",
