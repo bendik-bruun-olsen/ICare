@@ -367,10 +367,10 @@ const EditToDoPage = () => {
 						</div>
 
 						<AddButton label="Save" onClick={handleSubmit} />
-						<AddButton
+						{/* <AddButton
 							label={isEditingSeries ? "Delete" : "Delete Series"}
 							onClick={handleDelete}
-						/>
+						/> */}
 					</div>
 				</form>
 			</div>
