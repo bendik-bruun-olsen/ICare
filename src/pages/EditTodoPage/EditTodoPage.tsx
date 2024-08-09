@@ -48,7 +48,6 @@ const EditToDoPage = () => {
 	useEffect(() => {
 		if (seriesIdFromParams) {
 			setIsEditingSeries(true);
-			console.log("useEffect setting editing series to true");
 		}
 	}, [seriesIdFromParams]);
 
@@ -97,7 +96,7 @@ const EditToDoPage = () => {
 			}
 		}
 		fetchData();
-	}, [isEditingSeries, isCreatingNewSeries]);
+	}, [isEditingSeries]);
 
 	useEffect(() => {
 		if (isCreatingNewSeries) {

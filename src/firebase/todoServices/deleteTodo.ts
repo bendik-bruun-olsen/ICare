@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 
-export const deleteTodo = async (todoId: string) => {
+export const deleteTodoItem = async (todoId: string) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
 	const todoCollection = collection(patientRef, "todoItems");
 	const todoRef = doc(todoCollection, todoId);
@@ -18,14 +18,14 @@ export const deleteTodo = async (todoId: string) => {
 	await deleteDoc(todoRef);
 };
 
-export const deleteTodoSeries = async (todoSeriesId: string) => {
+export const deleteTodoSeries = async (seriesId: string) => {
 	const patientRef = doc(db, "patientdetails", "patient@patient.com");
 	const todoCollection = collection(patientRef, "todoItems");
 
 	const now = Timestamp.now();
 	const q = query(
 		todoCollection,
-		where("seriesId", "==", todoSeriesId),
+		where("seriesId", "==", seriesId),
 		where("date", ">=", now)
 	);
 
