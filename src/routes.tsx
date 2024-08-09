@@ -59,7 +59,7 @@ const protectedRoutes = [
 		element: <AddTodoPage />,
 	},
 	{
-		path: Paths.EDIT_TODO,
+		path: Paths.EDIT_TODO_ITEM,
 		element: <EditToDoPage />,
 	},
 	{

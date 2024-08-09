@@ -24,6 +24,7 @@ import { TodoSeriesInfoInterface, TodoItemInterface } from "../../types";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import { useParams } from "react-router-dom";
 import {
+	daysOfTheWeek,
 	defaultTodoItem,
 	defaultTodoSeries,
 } from "../../constants/defaultTodoValues";
@@ -47,6 +48,7 @@ const EditToDoPage = () => {
 	useEffect(() => {
 		if (seriesIdFromParams) {
 			setIsEditingSeries(true);
+			console.log("useEffect setting editing series to true");
 		}
 	}, [seriesIdFromParams]);
 
@@ -99,15 +101,6 @@ const EditToDoPage = () => {
 
 	useEffect(() => {
 		if (isCreatingNewSeries) {
-			const daysOfTheWeek = [
-				"sunday",
-				"monday",
-				"tuesday",
-				"wednesday",
-				"thursday",
-				"friday",
-				"saturday",
-			];
 			const currentDay = daysOfTheWeek[todoItem.date.toDate().getDay()];
 
 			setTodoSeriesInfo((prev) => {
