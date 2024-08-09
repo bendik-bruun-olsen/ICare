@@ -55,7 +55,6 @@ export const editTodoSeries = async (
 		);
 
 		const querySnap = await getDocs(q);
-
 		if (querySnap.empty) {
 			addNotification("No todos found for series", "error");
 			return;
