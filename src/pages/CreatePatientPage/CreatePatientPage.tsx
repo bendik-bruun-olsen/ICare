@@ -15,6 +15,7 @@ import { addPatient } from "../../firebase/patientServices/addPatient";
 import { getDefaultPictureUrl } from "../../firebase/imageServices/defaultImage";
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
+import UploadProfilePicture from "../../components/uploadProfilePicture";
 
 const FormField = ({
 	label,
@@ -152,6 +153,7 @@ export default function CreatePatientPage() {
 		<>
 			<Navbar centerContent="Create Patient" leftContent={<Logo />} />
 			<div className={styles.fullWrapper}>
+				<UploadProfilePicture />
 				<form onSubmit={handleSubmit}>
 					<div className={styles.personalInfoSection}>
 						<h2 className={styles.headlineText}>Personal Information</h2>
