@@ -4,15 +4,15 @@ type Notification = {
     id: number;
     message: string;
     type: "success" | "error" | "info";
-};
+} | null;
 
 type NotificationContextType = {
-    notifications: Notification[];
+    notifications: Notification;
     addNotification: (
         message: string,
         type: "success" | "error" | "info"
     ) => void;
-    removeNotification: (id: number) => void;
+    removeNotification: () => void;
 };
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
@@ -22,21 +22,21 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
-    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [notifications, setNotifications] = useState<Notification>(null);
 
     const addNotification = (
         message: string,
         type: "success" | "error" | "info"
     ) => {
         const id = Date.now();
-        setNotifications([...notifications, { id, message, type }]);
-        setTimeout(() => removeNotification(id), 3000); // Auto-remove after 3 seconds
+        setNotifications({ id, message, type });
+        setTimeout(() => {
+            removeNotification();
+        }, 3000); // Auto-remove after 3 seconds
     };
 
-    const removeNotification = (id: number) => {
-        setNotifications(
-            notifications.filter((notification) => notification.id !== id)
-        );
+    const removeNotification = () => {
+        setNotifications(null);
     };
 
     return (
