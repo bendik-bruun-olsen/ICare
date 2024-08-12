@@ -25,7 +25,6 @@ export interface TodoItemInterface {
 	time: string;
 	category: string | null;
 	status: ToDoStatus;
-	comment: string;
 	seriesId: string | null;
 	id: string;
 }

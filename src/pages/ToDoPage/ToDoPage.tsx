@@ -75,7 +75,6 @@ const ToDoPage: React.FC = () => {
 												toDoDescription={
 													todo.description
 												}
-												toDoComment={todo.comment}
 												taskStatus={todo.status}
 												time={todo.time}
 												seriesId={todo.seriesId}

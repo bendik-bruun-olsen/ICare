@@ -11,7 +11,6 @@ import { useNotification } from "../../context/NotificationContext";
 interface ToDoTileProps {
 	toDoTitle: string;
 	toDoDescription: string;
-	toDoComment: string;
 	time: string;
 	taskStatus: ToDoStatus;
 	todoId: string;
@@ -22,7 +21,6 @@ export default function ToDoTile({
 	todoId,
 	toDoTitle,
 	toDoDescription,
-	// toDoComment,
 	taskStatus,
 	time,
 	seriesId,
@@ -137,21 +135,10 @@ export default function ToDoTile({
 											</Link>
 										</li>
 									)}
-									<li className={styles.modalItem}>
-										<p>Add Comment</p>
-									</li>
 								</ul>
 							</div>
 						</>
 					)}
-				</div>
-				<div className={styles.commentWrapper}>
-					{/* <div className={styles.commentSection}>
-						<div className={styles.iconContainer}>
-							<Icon data={comment} size={16} />
-						</div>
-						<p>{toDoComment}</p>
-					</div> */}
 				</div>
 			</div>
 		</div>

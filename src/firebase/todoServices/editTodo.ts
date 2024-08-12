@@ -76,7 +76,6 @@ export const editTodoSeries = async (
 				time: updatedSeriesInfo.time,
 				category: updatedSeriesInfo.category,
 				status: ToDoStatus.unchecked,
-				comment: "",
 				seriesId: seriesId,
 				date: updatedSeriesInfo.startDate,
 				id: "",
