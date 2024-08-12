@@ -217,6 +217,7 @@ const EditToDoPage = () => {
 				await deleteTodoSeries(seriesId, addNotification);
 			} finally {
 				setIsLoading(false);
+				setIsConfirmModalOpen(false);
 			}
 			return;
 		}
@@ -400,7 +401,7 @@ const EditToDoPage = () => {
 							)}
 						</div>
 						<div className={styles.buttonContainer}>
-							<Button onClick={handleSubmit}>Add</Button>
+							<Button onClick={handleSubmit}>Save</Button>
 							<Button onClick={() => setIsConfirmModalOpen(true)}>
 								Delete
 							</Button>
