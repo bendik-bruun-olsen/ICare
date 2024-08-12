@@ -227,6 +227,7 @@ const EditToDoPage = () => {
 				await deleteTodoItem(todoItemIdFromParams, addNotification);
 			} finally {
 				setIsLoading(false);
+				setIsConfirmModalOpen(false);
 			}
 			return;
 		}
