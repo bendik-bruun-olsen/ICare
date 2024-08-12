@@ -10,7 +10,6 @@ import {
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useNotification } from "../context/NotificationContext";
-import { add } from "date-fns";
 
 const UserProfilePage: React.FC = () => {
 	const { currentUser } = useAuth();
