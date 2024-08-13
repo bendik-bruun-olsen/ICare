@@ -1,11 +1,30 @@
-.buttonContainer {
+.buttonsContainer {
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
 	justify-content: space-around;
+	/* outline: 2px solid transparent; */
+	border: 2px solid red;
+	border-radius: 2px;
 }
 
-.buttonContainer button {
+.buttonsContainer button {
 	width: 100%;
 	padding: 10px;
+}
+
+.errorOutline {
+	border-color: red;
+}
+
+.warningOutline {
+	border-color: orange;
+}
+
+.successOutline {
+	border-color: green;
+}
+
+.transparentOutline {
+	border-color: transparent;
 }

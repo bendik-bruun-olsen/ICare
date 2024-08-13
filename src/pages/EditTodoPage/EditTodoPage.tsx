@@ -7,7 +7,6 @@ import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription";
-import AddButton from "../../components/AddButton";
 import {
 	editSingleTodoToSeries,
 	editTodoItem,
@@ -33,6 +32,24 @@ import {
 	deleteTodoSeries,
 } from "../../firebase/todoServices/deleteTodo";
 import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfimModal";
+import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
+interface TodoItemInputVariantProps {
+	title: Variants | undefined;
+	description: Variants | undefined;
+	category: Variants | undefined;
+	date: Variants | undefined;
+	time: Variants | undefined;
+}
+
+interface TodoSeriesInputVariantProps {
+	title: Variants | undefined;
+	description: Variants | undefined;
+	category: Variants | undefined;
+	startDate: Variants | undefined;
+	endDate: Variants | undefined;
+	time: Variants | undefined;
+	selectedDays: Variants | undefined;
+}
 
 const EditToDoPage = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +67,24 @@ const EditToDoPage = () => {
 			seriesId: string;
 		}>();
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+	const [todoItemVariants, setTodoItemVariants] =
+		useState<TodoItemInputVariantProps>({
+			title: undefined,
+			description: undefined,
+			category: undefined,
+			date: undefined,
+			time: undefined,
+		});
+	const [todoSeriesVariants, setTodoSeriesVariants] =
+		useState<TodoSeriesInputVariantProps>({
+			title: "error",
+			description: "error",
+			category: "error",
+			startDate: "error",
+			endDate: "error",
+			time: "error",
+			selectedDays: "error",
+		});
 
 	useEffect(() => {
 		if (seriesIdFromParams) {
@@ -250,6 +285,30 @@ const EditToDoPage = () => {
 		}
 	};
 
+	// const validateTodoItemInput = () => {
+	// 	const { title, description, category, date, time } = todoItem;
+	// 	if (title && description && category && date && time) {
+	// 		addNotification("Please fill out all fields", "error");
+	// 		return "empty-title";
+	// 	}
+	// 	if (!description) {
+	// 		addNotification("Please fill out all fields", "error");
+	// 		return "empty-description";
+	// 	}
+	// 	if (!category) {
+	// 		addNotification("Please fill out all fields", "error");
+	// 		return "empty-category";
+	// 	}
+	// 	if (!date) {
+	// 		addNotification("Please fill out all fields", "error");
+	// 		return "empty-date";
+	// 	}
+	// 	if (!time) {
+	// 		addNotification("Please fill out all fields", "error");
+	// 		return "empty-time";
+	// 	}
+	// };
+
 	if (hasError) return <ErrorPage />;
 	if (isLoading) return <h1>Loading....</h1>;
 
@@ -282,6 +341,11 @@ const EditToDoPage = () => {
 												title,
 										  }))
 								}
+								titleVariant={
+									isEditingSeries || isCreatingNewSeries
+										? todoSeriesVariants.title
+										: todoItemVariants.title
+								}
 								description={
 									isEditingSeries
 										? todoSeriesInfo.description
@@ -297,6 +361,11 @@ const EditToDoPage = () => {
 												...prev,
 												description,
 										  }))
+								}
+								descriptionVariant={
+									isEditingSeries || isCreatingNewSeries
+										? todoSeriesVariants.description
+										: todoItemVariants.description
 								}
 							/>
 							<div className={styles.scheduleControlsContainer}>
@@ -317,6 +386,12 @@ const EditToDoPage = () => {
 														...prev,
 														category,
 												  }))
+										}
+										variant={
+											isEditingSeries ||
+											isCreatingNewSeries
+												? todoSeriesVariants.category
+												: todoItemVariants.category
 										}
 									/>
 									<StartAndEndDate
@@ -339,6 +414,12 @@ const EditToDoPage = () => {
 												date
 											)
 										}
+										variant={
+											isEditingSeries ||
+											isCreatingNewSeries
+												? todoSeriesVariants.startDate
+												: todoItemVariants.date
+										}
 									/>
 								</div>
 								<div className={styles.timeAndRepeatControls}>
@@ -355,6 +436,12 @@ const EditToDoPage = () => {
 										className={styles.time}
 										onChange={handleTimeChange}
 										style={{ width: "150px" }}
+										variant={
+											isEditingSeries ||
+											isCreatingNewSeries
+												? todoSeriesVariants.time
+												: todoItemVariants.time
+										}
 									/>
 									{todoItem.seriesId ? (
 										<Checkbox
@@ -391,12 +478,16 @@ const EditToDoPage = () => {
 										onChange={(date) =>
 											handleDateChange("endDate", date)
 										}
+										variant={"error"}
 									/>
 									<DaysComponent
 										selectedDays={
 											todoSeriesInfo.selectedDays
 										}
 										onDayToggle={handleDayToggle}
+										variant={
+											todoSeriesVariants.selectedDays
+										}
 									/>
 								</>
 							)}
