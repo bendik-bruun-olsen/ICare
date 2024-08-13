@@ -1,3 +1,4 @@
+import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
 import { Timestamp } from "firebase/firestore";
 
 export enum ToDoStatus {
@@ -59,4 +60,22 @@ export interface DeleteConfirmModalProps {
 	onClose: () => void;
 	onConfirm: () => void;
 	type: "item" | "series";
+}
+
+export interface TodoItemInputVariantProps {
+	title: Variants | undefined;
+	description: Variants | undefined;
+	category: Variants | undefined;
+	date: Variants | undefined;
+	time: Variants | undefined;
+}
+
+export interface TodoSeriesInputVariantProps {
+	title: Variants | undefined;
+	description: Variants | undefined;
+	category: Variants | undefined;
+	startDate: Variants | undefined;
+	endDate: Variants | undefined;
+	time: Variants | undefined;
+	selectedDays: Variants | undefined;
 }

@@ -2,7 +2,6 @@ import styled from "styled-components";
 import React from "react";
 import { Autocomplete } from "@equinor/eds-core-react";
 import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
-import { category } from "@equinor/eds-icons";
 
 const StyledCategory = styled.div`
 	width: 150px;

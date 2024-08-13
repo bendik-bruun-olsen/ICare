@@ -17,39 +17,34 @@ import {
 	getTodoSeriesInfo,
 } from "../../firebase/todoServices/getTodo";
 import styles from "./EditTodoPage.module.css";
-import { formatTimestampToDateString } from "../../utils";
+import {
+	formatTimestampToDateString,
+	resetTodoItemVariants,
+	resetTodoSeriesVariants,
+	validateTodoItemInput,
+	validateTodoSeriesInput,
+} from "../../utils";
 import { useNotification } from "../../context/NotificationContext";
-import { TodoSeriesInfoInterface, TodoItemInterface } from "../../types";
+import {
+	TodoSeriesInfoInterface,
+	TodoItemInterface,
+	TodoItemInputVariantProps,
+	TodoSeriesInputVariantProps,
+} from "../../types";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import { useParams } from "react-router-dom";
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
+	defaultTodoItemInputVariants,
 	defaultTodoSeries,
+	defaultTodoSeriesInputVariants,
 } from "../../constants/defaultTodoValues";
 import {
 	deleteTodoItem,
 	deleteTodoSeries,
 } from "../../firebase/todoServices/deleteTodo";
 import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfimModal";
-import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
-interface TodoItemInputVariantProps {
-	title: Variants | undefined;
-	description: Variants | undefined;
-	category: Variants | undefined;
-	date: Variants | undefined;
-	time: Variants | undefined;
-}
-
-interface TodoSeriesInputVariantProps {
-	title: Variants | undefined;
-	description: Variants | undefined;
-	category: Variants | undefined;
-	startDate: Variants | undefined;
-	endDate: Variants | undefined;
-	time: Variants | undefined;
-	selectedDays: Variants | undefined;
-}
 
 const EditToDoPage = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -67,24 +62,10 @@ const EditToDoPage = () => {
 			seriesId: string;
 		}>();
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-	const [todoItemVariants, setTodoItemVariants] =
-		useState<TodoItemInputVariantProps>({
-			title: undefined,
-			description: undefined,
-			category: undefined,
-			date: undefined,
-			time: undefined,
-		});
-	const [todoSeriesVariants, setTodoSeriesVariants] =
-		useState<TodoSeriesInputVariantProps>({
-			title: "error",
-			description: "error",
-			category: "error",
-			startDate: "error",
-			endDate: "error",
-			time: "error",
-			selectedDays: "error",
-		});
+	const [todoItemInputVariants, setTodoItemInputVariants] =
+		useState<TodoItemInputVariantProps>(defaultTodoItemInputVariants);
+	const [todoSeriesInputVariants, setTodoSeriesInputVariants] =
+		useState<TodoSeriesInputVariantProps>(defaultTodoSeriesInputVariants);
 
 	useEffect(() => {
 		if (seriesIdFromParams) {
@@ -153,10 +134,28 @@ const EditToDoPage = () => {
 				}
 				return prev;
 			});
+			setTodoSeriesInfo((prev) => ({
+				...prev,
+				title: todoItem.title,
+				description: todoItem.description,
+				category: todoItem.category,
+			}));
 		}
 	}, [isCreatingNewSeries]);
 
+	useEffect(() => {
+		if (isEditingSeries || isCreatingNewSeries) {
+			resetTodoSeriesVariants(todoSeriesInfo, setTodoSeriesInputVariants);
+			return;
+		}
+		resetTodoItemVariants(todoItem, setTodoItemInputVariants);
+	}, [todoItem, todoSeriesInfo]);
+
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (isEditingSeries || isCreatingNewSeries) {
+			setTodoSeriesInfo((prev) => ({ ...prev, time: e.target.value }));
+			return;
+		}
 		setTodoItem((prev) => ({ ...prev, time: e.target.value }));
 	};
 
@@ -271,43 +270,42 @@ const EditToDoPage = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
 		if (isEditingSeries) {
+			if (
+				!validateTodoSeriesInput(
+					todoSeriesInfo,
+					setTodoSeriesInputVariants
+				)
+			) {
+				addNotification("Please fill in all required fields", "error");
+				return;
+			}
 			await handleSeriesEdit();
 			return;
 		}
 		if (!isCreatingNewSeries) {
+			if (!validateTodoItemInput(todoItem, setTodoItemInputVariants)) {
+				addNotification("Please fill in all required fields", "error");
+				return;
+			}
 			await handleSingleTodoEdit();
 			return;
 		}
 		if (isCreatingNewSeries) {
+			if (
+				!validateTodoSeriesInput(
+					todoSeriesInfo,
+					setTodoSeriesInputVariants
+				)
+			) {
+				addNotification("Please fill in all required fields", "error");
+				return;
+			}
 			await handleCreateNewSeriesFromSingleTodo();
 			return;
 		}
 	};
-
-	// const validateTodoItemInput = () => {
-	// 	const { title, description, category, date, time } = todoItem;
-	// 	if (title && description && category && date && time) {
-	// 		addNotification("Please fill out all fields", "error");
-	// 		return "empty-title";
-	// 	}
-	// 	if (!description) {
-	// 		addNotification("Please fill out all fields", "error");
-	// 		return "empty-description";
-	// 	}
-	// 	if (!category) {
-	// 		addNotification("Please fill out all fields", "error");
-	// 		return "empty-category";
-	// 	}
-	// 	if (!date) {
-	// 		addNotification("Please fill out all fields", "error");
-	// 		return "empty-date";
-	// 	}
-	// 	if (!time) {
-	// 		addNotification("Please fill out all fields", "error");
-	// 		return "empty-time";
-	// 	}
-	// };
 
 	if (hasError) return <ErrorPage />;
 	if (isLoading) return <h1>Loading....</h1>;
@@ -326,12 +324,12 @@ const EditToDoPage = () => {
 						<div className={styles.mainContentContainer}>
 							<TitleDescription
 								title={
-									isEditingSeries
+									isEditingSeries || isCreatingNewSeries
 										? todoSeriesInfo.title
 										: todoItem.title
 								}
 								setTitle={(title) =>
-									isEditingSeries
+									isEditingSeries || isCreatingNewSeries
 										? setTodoSeriesInfo((prev) => ({
 												...prev,
 												title,
@@ -343,16 +341,16 @@ const EditToDoPage = () => {
 								}
 								titleVariant={
 									isEditingSeries || isCreatingNewSeries
-										? todoSeriesVariants.title
-										: todoItemVariants.title
+										? todoSeriesInputVariants.title
+										: todoItemInputVariants.title
 								}
 								description={
-									isEditingSeries
+									isEditingSeries || isCreatingNewSeries
 										? todoSeriesInfo.description
 										: todoItem.description
 								}
 								setDescription={(description) =>
-									isEditingSeries
+									isEditingSeries || isCreatingNewSeries
 										? setTodoSeriesInfo((prev) => ({
 												...prev,
 												description,
@@ -364,8 +362,8 @@ const EditToDoPage = () => {
 								}
 								descriptionVariant={
 									isEditingSeries || isCreatingNewSeries
-										? todoSeriesVariants.description
-										: todoItemVariants.description
+										? todoSeriesInputVariants.description
+										: todoItemInputVariants.description
 								}
 							/>
 							<div className={styles.scheduleControlsContainer}>
@@ -377,7 +375,8 @@ const EditToDoPage = () => {
 												: todoItem.category
 										}
 										onSelectionChange={(category) =>
-											isEditingSeries
+											isEditingSeries ||
+											isCreatingNewSeries
 												? setTodoSeriesInfo((prev) => ({
 														...prev,
 														category,
@@ -390,8 +389,8 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesVariants.category
-												: todoItemVariants.category
+												? todoSeriesInputVariants.category
+												: todoItemInputVariants.category
 										}
 									/>
 									<StartAndEndDate
@@ -417,8 +416,8 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesVariants.startDate
-												: todoItemVariants.date
+												? todoSeriesInputVariants.startDate
+												: todoItemInputVariants.date
 										}
 									/>
 								</div>
@@ -439,8 +438,8 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesVariants.time
-												: todoItemVariants.time
+												? todoSeriesInputVariants.time
+												: todoItemInputVariants.time
 										}
 									/>
 									{todoItem.seriesId ? (
@@ -478,7 +477,9 @@ const EditToDoPage = () => {
 										onChange={(date) =>
 											handleDateChange("endDate", date)
 										}
-										variant={"error"}
+										variant={
+											todoSeriesInputVariants.endDate
+										}
 									/>
 									<DaysComponent
 										selectedDays={
@@ -486,7 +487,7 @@ const EditToDoPage = () => {
 										}
 										onDayToggle={handleDayToggle}
 										variant={
-											todoSeriesVariants.selectedDays
+											todoSeriesInputVariants.selectedDays
 										}
 									/>
 								</>
