@@ -19,6 +19,7 @@ body {
 	--lightblue: #aacccf;
 	--fadedblue: #1c7b8285;
 	--navbar-height: 50px;
+	--confirmModalOverlay: #00000080;
 }
 
 .container {

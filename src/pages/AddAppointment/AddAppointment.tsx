@@ -5,7 +5,7 @@ import { db } from "../../firebase/firebase";
 import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
 import TitleDescription from "../../components/TitleDescription";
 import AddButton from "../../components/AddButton";
-import styles from "../AddTodo/AddTodo.module.css";
+import styles from "../AddTodoPage/AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 
