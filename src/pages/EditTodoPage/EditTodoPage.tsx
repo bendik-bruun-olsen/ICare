@@ -21,6 +21,7 @@ import {
 	formatTimestampToDateString,
 	resetTodoItemVariants,
 	resetTodoSeriesVariants,
+	validateDateRange,
 	validateTodoItemInput,
 	validateTodoSeriesInput,
 } from "../../utils";
@@ -44,7 +45,7 @@ import {
 	deleteTodoItem,
 	deleteTodoSeries,
 } from "../../firebase/todoServices/deleteTodo";
-import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfimModal";
+import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
 
 const EditToDoPage = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +67,10 @@ const EditToDoPage = () => {
 		useState<TodoItemInputVariantProps>(defaultTodoItemInputVariants);
 	const [todoSeriesInputVariants, setTodoSeriesInputVariants] =
 		useState<TodoSeriesInputVariantProps>(defaultTodoSeriesInputVariants);
+
+	const [minDateValue, setMinDateValue] = useState<Date | undefined>(
+		undefined
+	);
 
 	useEffect(() => {
 		if (seriesIdFromParams) {
@@ -162,9 +167,14 @@ const EditToDoPage = () => {
 	const handleDateChange = (field: string, date: string) => {
 		const newTimestamp = Timestamp.fromDate(new Date(date));
 		if (isEditingSeries || isCreatingNewSeries) {
+			setMinDateValue(new Date(date));
+			console.log("Setting series date: ", field, "value:", date);
 			setTodoSeriesInfo((prev) => ({ ...prev, [field]: newTimestamp }));
+
 			return;
 		}
+		console.log("Setting todo date: ", field, "value:", date);
+
 		setTodoItem((prev) => ({ ...prev, [field]: newTimestamp }));
 	};
 
@@ -273,6 +283,22 @@ const EditToDoPage = () => {
 
 		if (isEditingSeries) {
 			if (
+				!validateDateRange(
+					todoSeriesInfo.startDate,
+					todoSeriesInfo.endDate
+				)
+			) {
+				addNotification(
+					"End date cannot be before start date",
+					"error"
+				);
+				setTodoSeriesInputVariants((prev) => ({
+					...prev,
+					endDate: "error",
+				}));
+				return;
+			}
+			if (
 				!validateTodoSeriesInput(
 					todoSeriesInfo,
 					setTodoSeriesInputVariants
@@ -294,6 +320,23 @@ const EditToDoPage = () => {
 		}
 		if (isCreatingNewSeries) {
 			if (
+				!validateDateRange(
+					todoSeriesInfo.startDate,
+					todoSeriesInfo.endDate
+				)
+			) {
+				addNotification(
+					"End date cannot be before start date",
+					"error"
+				);
+				setTodoSeriesInputVariants((prev) => ({
+					...prev,
+					endDate: "error",
+				}));
+				return;
+			}
+
+			if (
 				!validateTodoSeriesInput(
 					todoSeriesInfo,
 					setTodoSeriesInputVariants
@@ -306,7 +349,6 @@ const EditToDoPage = () => {
 			return;
 		}
 	};
-
 	if (hasError) return <ErrorPage />;
 	if (isLoading) return <h1>Loading....</h1>;
 
@@ -419,6 +461,7 @@ const EditToDoPage = () => {
 												? todoSeriesInputVariants.startDate
 												: todoItemInputVariants.date
 										}
+										minValue={undefined}
 									/>
 								</div>
 								<div className={styles.timeAndRepeatControls}>
@@ -480,6 +523,7 @@ const EditToDoPage = () => {
 										variant={
 											todoSeriesInputVariants.endDate
 										}
+										minValue={minDateValue}
 									/>
 									<DaysComponent
 										selectedDays={

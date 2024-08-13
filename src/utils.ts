@@ -224,3 +224,8 @@ export const resetTodoSeriesVariants = (
 				: prev.selectedDays,
 	}));
 };
+
+export const validateDateRange = (startDate: Timestamp, endDate: Timestamp) => {
+	if (startDate.seconds > endDate.seconds) return false;
+	return true;
+};

@@ -5,7 +5,8 @@ import styled from "styled-components";
 import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
 
 const StyledDatePickerWrapper = styled.div`
-	width: 200px;
+	min-width: 150px;
+	width: fit-content;
 `;
 
 type StartAndEndDateProps = {
@@ -13,6 +14,7 @@ type StartAndEndDateProps = {
 	value: string;
 	onChange: (date: string) => void;
 	variant: Variants | undefined;
+	minValue: Date | undefined;
 };
 
 const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
@@ -20,6 +22,7 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 	value,
 	onChange,
 	variant,
+	minValue,
 }) => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date(value));
 
@@ -57,6 +60,7 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 							year: "numeric",
 						}}
 						variant={variant}
+						minValue={minValue}
 					/>
 				</StyledDatePickerWrapper>
 			</I18nProvider>
