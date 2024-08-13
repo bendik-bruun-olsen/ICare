@@ -146,14 +146,14 @@ const EditToDoPage = () => {
 
 	const toggleIsEditingSeries = () => {
 		setIsEditingSeries((prev) => {
-			if (isEditingSeries) setIsCreatingNewSeries(false);
+			if (prev) setIsCreatingNewSeries(false);
 			return !prev;
 		});
 	};
 
 	const toggleIsCreatingNewSeries = () => {
 		setIsCreatingNewSeries((prev) => {
-			if (isCreatingNewSeries) setIsEditingSeries(false);
+			if (prev) setIsEditingSeries(false);
 			return !prev;
 		});
 	};

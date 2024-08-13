@@ -52,7 +52,6 @@ const AddToDoPage: React.FC = () => {
 			time,
 			category: selectCategory,
 			status: ToDoStatus.unchecked,
-			comment: "",
 			seriesId: null,
 			id: "",
 		};
