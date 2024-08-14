@@ -26,7 +26,6 @@ const UserProfilePage: React.FC = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { currentUser } = useAuth();
   const fullInfoContainerRef = useRef<HTMLDivElement>(null);
-  const profileContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -53,16 +52,6 @@ const UserProfilePage: React.FC = () => {
         !fullInfoContainerRef.current.contains(event.target as Node)
       ) {
         setIsEditing(false);
-      }
-
-      if (
-        profileContainerRef.current &&
-        !profileContainerRef.current.contains(event.target as Node)
-      ) {
-        setIsOptionsVisible(false);
-        setIsGalleryVisible(false);
-        setPreviewUrl(null);
-        setImageToSelect(null);
       }
     };
 
@@ -199,14 +188,12 @@ const UserProfilePage: React.FC = () => {
           handleSaveSelectedImage={handleSaveSelectedImage}
           setIsOptionsVisible={setIsOptionsVisible}
           setIsGalleryVisible={setIsGalleryVisible}
-          profileContainerRef={profileContainerRef}
         />
         <UserProfileForm
           userData={userData}
           isEditing={isEditing}
           handleEditClick={handleEditClick}
           handleChange={handleChange}
-          fullInfoContainerRef={fullInfoContainerRef}
         />
       </div>
     </div>
