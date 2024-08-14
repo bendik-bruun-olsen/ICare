@@ -9,11 +9,12 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase/firebase";
 import {
+	NotificationContextType,
 	ToDo,
-	TodoItemInputVariantProps,
+	TodoItemInputVariantProps as TodoItemFieldStatusProps,
 	TodoItemInterface,
 	TodoSeriesInfoInterface,
-	TodoSeriesInputVariantProps,
+	TodoSeriesInputVariantProps as TodoSeriesFieldStatusProps,
 } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
@@ -122,14 +123,13 @@ export const generateTodosForSeries = (
 	return newTodos;
 };
 
-export const validateTodoItemInput = (
+export const validateTodoItemFields = (
 	todoItem: TodoItemInterface,
 	setTodoItemInputVariants: Dispatch<
-		SetStateAction<TodoItemInputVariantProps>
-	>
+		SetStateAction<TodoItemFieldStatusProps>
+	>,
+	addNotification: NotificationContextType["addNotification"]
 ) => {
-	console.log("Validating todo item input");
-
 	const fields = [
 		{ key: "title", value: todoItem.title },
 		{ key: "description", value: todoItem.description },
@@ -149,18 +149,20 @@ export const validateTodoItemInput = (
 		}
 	});
 
+	if (!isValid) {
+		addNotification("Please fill in all required fields", "error");
+	}
+
 	return isValid;
 };
 
-export const validateTodoSeriesInput = (
+export const validateTodoSeriesFields = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
 	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesInputVariantProps>
-	>
+		SetStateAction<TodoSeriesFieldStatusProps>
+	>,
+	addNotification: NotificationContextType["addNotification"]
 ) => {
-	console.log("Validating todo series input");
-	console.log("Selected days: ", todoSeriesInfo.selectedDays);
-
 	const fields = [
 		{ key: "title", value: todoSeriesInfo.title },
 		{ key: "description", value: todoSeriesInfo.description },
@@ -188,14 +190,16 @@ export const validateTodoSeriesInput = (
 		}
 	});
 
+	if (!isValid) {
+		addNotification("Please fill in all required fields", "error");
+	}
+
 	return isValid;
 };
 
 export const resetTodoItemVariants = (
 	todoItem: TodoItemInterface,
-	setTodoItemInputVariants: Dispatch<
-		SetStateAction<TodoItemInputVariantProps>
-	>
+	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemFieldStatusProps>>
 ) => {
 	setTodoItemInputVariants((prev) => ({
 		title: todoItem.title ? undefined : prev.title,
@@ -208,7 +212,7 @@ export const resetTodoItemVariants = (
 export const resetTodoSeriesVariants = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
 	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesInputVariantProps>
+		SetStateAction<TodoSeriesFieldStatusProps>
 	>
 ) => {
 	setTodoSeriesInputVariants((prev) => ({
@@ -225,7 +229,14 @@ export const resetTodoSeriesVariants = (
 	}));
 };
 
-export const validateDateRange = (startDate: Timestamp, endDate: Timestamp) => {
-	if (startDate.seconds > endDate.seconds) return false;
+export const validateDateRange = (
+	startDate: Timestamp,
+	endDate: Timestamp,
+	addNotification: NotificationContextType["addNotification"]
+) => {
+	if (startDate.seconds > endDate.seconds) {
+		addNotification("End date cannot be before start date", "error");
+		return false;
+	}
 	return true;
 };

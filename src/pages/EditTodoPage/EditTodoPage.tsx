@@ -22,8 +22,8 @@ import {
 	resetTodoItemVariants,
 	resetTodoSeriesVariants,
 	validateDateRange,
-	validateTodoItemInput,
-	validateTodoSeriesInput,
+	validateTodoItemFields,
+	validateTodoSeriesFields,
 } from "../../utils";
 import { useNotification } from "../../context/NotificationContext";
 import {
@@ -54,106 +54,94 @@ const EditToDoPage = () => {
 		useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
-	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
-	const [isEditingSeries, setIsEditingSeries] = useState(false);
-	const { addNotification } = useNotification();
 	const { todoId: todoItemIdFromParams, seriesId: seriesIdFromParams } =
 		useParams<{
 			todoId: string;
 			seriesId: string;
 		}>();
+	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
+	const [isEditingSeries, setIsEditingSeries] = useState(
+		!!seriesIdFromParams
+	);
+	const { addNotification } = useNotification();
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-	const [todoItemInputVariants, setTodoItemInputVariants] =
+	const [todoItemFieldStatus, setTodoItemFieldStatus] =
 		useState<TodoItemInputVariantProps>(defaultTodoItemInputVariants);
-	const [todoSeriesInputVariants, setTodoSeriesInputVariants] =
+	const [todoSeriesFieldStatus, setTodoSeriesFieldStatus] =
 		useState<TodoSeriesInputVariantProps>(defaultTodoSeriesInputVariants);
 
-	const [minDateValue, setMinDateValue] = useState<Date | undefined>(
+	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
 		undefined
 	);
 
-	useEffect(() => {
-		if (seriesIdFromParams) {
-			setIsEditingSeries(true);
+	async function fetchSeriesInfo() {
+		const id = seriesIdFromParams || todoItem.seriesId;
+		if (!id) return setHasError(true);
+		try {
+			setIsLoading(true);
+			const result = await getTodoSeriesInfo(id, addNotification);
+			if (result) {
+				setTodoSeriesInfo(result as TodoSeriesInfoInterface);
+				setEndDateMinValue(result.startDate.toDate());
+			}
+		} finally {
+			setIsLoading(false);
 		}
-	}, [seriesIdFromParams]);
+	}
+
+	async function fetchTodoItem() {
+		const id = todoItemIdFromParams;
+		if (!id) return setHasError(true);
+		try {
+			setIsLoading(true);
+			const result = await getTodo(id, addNotification);
+			if (result) {
+				setTodoItem(result as TodoItemInterface);
+			}
+		} finally {
+			setIsLoading(false);
+		}
+	}
 
 	useEffect(() => {
-		async function fetchData() {
-			if (!todoItemIdFromParams && !seriesIdFromParams) {
-				setHasError(true);
+		const fetchData = async () => {
+			if (isEditingSeries) {
+				await fetchSeriesInfo();
 				return;
 			}
-			try {
-				setIsLoading(true);
-
-				if (isEditingSeries) {
-					const seriesId = seriesIdFromParams || todoItem.seriesId;
-					if (!seriesId) return;
-					const data = await getTodoSeriesInfo(
-						seriesId,
-						addNotification
-					);
-					if (data) {
-						setTodoSeriesInfo(data as TodoSeriesInfoInterface);
-					}
-					return;
-				}
-				if (todoItemIdFromParams) {
-					const data = await getTodo(
-						todoItemIdFromParams,
-						addNotification
-					);
-					if (data) {
-						setTodoItem(data as TodoItemInterface);
-					}
-					return;
-				}
-				if (seriesIdFromParams) {
-					const data = await getTodoSeriesInfo(
-						seriesIdFromParams,
-						addNotification
-					);
-					if (data) {
-						setTodoSeriesInfo(data as TodoSeriesInfoInterface);
-					}
-					return;
-				}
-			} finally {
-				setIsLoading(false);
-			}
-		}
+			await fetchTodoItem();
+		};
 		fetchData();
-	}, [isEditingSeries]);
+	}, [isEditingSeries, todoItemIdFromParams, seriesIdFromParams]);
 
-	useEffect(() => {
-		if (isCreatingNewSeries) {
-			const currentDay = daysOfTheWeek[todoItem.date.toDate().getDay()];
-
-			setTodoSeriesInfo((prev) => {
-				if (!prev.selectedDays.includes(currentDay)) {
-					return {
-						...prev,
-						selectedDays: [...prev.selectedDays, currentDay],
-					};
-				}
-				return prev;
-			});
-			setTodoSeriesInfo((prev) => ({
-				...prev,
-				title: todoItem.title,
-				description: todoItem.description,
-				category: todoItem.category,
-			}));
+	const handleSeriesEdit = async () => {
+		const seriesId = seriesIdFromParams || todoItem.seriesId;
+		if (!seriesId) return setHasError(true);
+		try {
+			setIsLoading(true);
+			await editTodoSeries(seriesId, todoSeriesInfo, addNotification);
+		} finally {
+			setIsLoading(false);
 		}
-	}, [isCreatingNewSeries]);
+	};
+
+	const handleSingleTodoEdit = async () => {
+		const todoItemId = todoItemIdFromParams || todoItem.id;
+		if (!todoItemId) return setHasError(true);
+		try {
+			setIsLoading(true);
+			await editTodoItem(todoItemId, todoItem, addNotification);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	useEffect(() => {
 		if (isEditingSeries || isCreatingNewSeries) {
-			resetTodoSeriesVariants(todoSeriesInfo, setTodoSeriesInputVariants);
+			resetTodoSeriesVariants(todoSeriesInfo, setTodoSeriesFieldStatus);
 			return;
 		}
-		resetTodoItemVariants(todoItem, setTodoItemInputVariants);
+		resetTodoItemVariants(todoItem, setTodoItemFieldStatus);
 	}, [todoItem, todoSeriesInfo]);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -167,14 +155,10 @@ const EditToDoPage = () => {
 	const handleDateChange = (field: string, date: string) => {
 		const newTimestamp = Timestamp.fromDate(new Date(date));
 		if (isEditingSeries || isCreatingNewSeries) {
-			setMinDateValue(new Date(date));
-			console.log("Setting series date: ", field, "value:", date);
+			if (field === "startDate") setEndDateMinValue(new Date(date));
 			setTodoSeriesInfo((prev) => ({ ...prev, [field]: newTimestamp }));
-
 			return;
 		}
-		console.log("Setting todo date: ", field, "value:", date);
-
 		setTodoItem((prev) => ({ ...prev, [field]: newTimestamp }));
 	};
 
@@ -188,46 +172,37 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const toggleIsEditingSeries = () => {
+	const handleToggleEditSeries = () => {
 		setIsEditingSeries((prev) => {
-			if (prev) setIsCreatingNewSeries(false);
+			if (!prev) {
+				setIsCreatingNewSeries(false);
+			}
 			return !prev;
 		});
 	};
 
-	const toggleIsCreatingNewSeries = () => {
+	const handleToggleRepeat = () => {
 		setIsCreatingNewSeries((prev) => {
-			if (prev) setIsEditingSeries(false);
+			if (!prev) {
+				setIsEditingSeries(false);
+
+				const currentDay =
+					daysOfTheWeek[todoItem.date.toDate().getDay()];
+				setTodoSeriesInfo((prev) => ({
+					title: todoItem.title,
+					description: todoItem.description,
+					time: todoItem.time,
+					category: todoItem.category,
+					startDate: todoItem.date,
+					endDate: todoItem.date,
+					selectedDays: prev.selectedDays.includes(currentDay)
+						? prev.selectedDays
+						: [...prev.selectedDays, currentDay],
+				}));
+				setEndDateMinValue(todoItem.date.toDate());
+			}
 			return !prev;
 		});
-	};
-
-	const handleSeriesEdit = async () => {
-		const seriesId = seriesIdFromParams || todoItem.seriesId;
-		if (!seriesId) {
-			setHasError(true);
-			return;
-		}
-		try {
-			setIsLoading(true);
-			await editTodoSeries(seriesId, todoSeriesInfo, addNotification);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	const handleSingleTodoEdit = async () => {
-		const todoItemId = todoItemIdFromParams || todoItem.id;
-		if (!todoItemId) {
-			setHasError(true);
-			return;
-		}
-		try {
-			setIsLoading(true);
-			await editTodoItem(todoItemId, todoItem, addNotification);
-		} finally {
-			setIsLoading(false);
-		}
 	};
 
 	const handleCreateNewSeriesFromSingleTodo = async () => {
@@ -252,69 +227,66 @@ const EditToDoPage = () => {
 	const handleDelete = async () => {
 		if (isEditingSeries) {
 			const seriesId = seriesIdFromParams || todoItem.seriesId;
-			if (!seriesId) {
-				setHasError(true);
-				return;
-			}
+			if (!seriesId) return setHasError(true);
 			try {
+				setIsConfirmModalOpen(false);
 				setIsLoading(true);
 				await deleteTodoSeries(seriesId, addNotification);
 			} finally {
 				setIsLoading(false);
-				setIsConfirmModalOpen(false);
 			}
 			return;
 		}
-		if (todoItemIdFromParams) {
-			try {
-				setIsLoading(true);
-				await deleteTodoItem(todoItemIdFromParams, addNotification);
-			} finally {
-				setIsLoading(false);
-				setIsConfirmModalOpen(false);
-			}
-			return;
+		const todoItemId = todoItemIdFromParams;
+		if (!todoItemId) return setHasError(true);
+		try {
+			setIsLoading(true);
+			await deleteTodoItem(todoItemId, addNotification);
+		} finally {
+			setIsLoading(false);
+			setIsConfirmModalOpen(false);
 		}
-		setHasError(true);
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
 		if (isEditingSeries) {
 			if (
 				!validateDateRange(
 					todoSeriesInfo.startDate,
-					todoSeriesInfo.endDate
+					todoSeriesInfo.endDate,
+					addNotification
 				)
 			) {
-				addNotification(
-					"End date cannot be before start date",
-					"error"
-				);
-				setTodoSeriesInputVariants((prev) => ({
+				setTodoSeriesFieldStatus((prev) => ({
 					...prev,
 					endDate: "error",
 				}));
+
 				return;
 			}
 			if (
-				!validateTodoSeriesInput(
+				!validateTodoSeriesFields(
 					todoSeriesInfo,
-					setTodoSeriesInputVariants
+					setTodoSeriesFieldStatus,
+					addNotification
 				)
-			) {
-				addNotification("Please fill in all required fields", "error");
+			)
 				return;
-			}
+
 			await handleSeriesEdit();
 			return;
 		}
 		if (!isCreatingNewSeries) {
-			if (!validateTodoItemInput(todoItem, setTodoItemInputVariants)) {
-				addNotification("Please fill in all required fields", "error");
+			if (
+				!validateTodoItemFields(
+					todoItem,
+					setTodoItemFieldStatus,
+					addNotification
+				)
+			)
 				return;
-			}
+
 			await handleSingleTodoEdit();
 			return;
 		}
@@ -322,29 +294,25 @@ const EditToDoPage = () => {
 			if (
 				!validateDateRange(
 					todoSeriesInfo.startDate,
-					todoSeriesInfo.endDate
+					todoSeriesInfo.endDate,
+					addNotification
 				)
 			) {
-				addNotification(
-					"End date cannot be before start date",
-					"error"
-				);
-				setTodoSeriesInputVariants((prev) => ({
+				setTodoSeriesFieldStatus((prev) => ({
 					...prev,
 					endDate: "error",
 				}));
 				return;
 			}
-
 			if (
-				!validateTodoSeriesInput(
+				!validateTodoSeriesFields(
 					todoSeriesInfo,
-					setTodoSeriesInputVariants
+					setTodoSeriesFieldStatus,
+					addNotification
 				)
-			) {
-				addNotification("Please fill in all required fields", "error");
+			)
 				return;
-			}
+
 			await handleCreateNewSeriesFromSingleTodo();
 			return;
 		}
@@ -383,8 +351,8 @@ const EditToDoPage = () => {
 								}
 								titleVariant={
 									isEditingSeries || isCreatingNewSeries
-										? todoSeriesInputVariants.title
-										: todoItemInputVariants.title
+										? todoSeriesFieldStatus.title
+										: todoItemFieldStatus.title
 								}
 								description={
 									isEditingSeries || isCreatingNewSeries
@@ -404,8 +372,8 @@ const EditToDoPage = () => {
 								}
 								descriptionVariant={
 									isEditingSeries || isCreatingNewSeries
-										? todoSeriesInputVariants.description
-										: todoItemInputVariants.description
+										? todoSeriesFieldStatus.description
+										: todoItemFieldStatus.description
 								}
 							/>
 							<div className={styles.scheduleControlsContainer}>
@@ -431,8 +399,8 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesInputVariants.category
-												: todoItemInputVariants.category
+												? todoSeriesFieldStatus.category
+												: todoItemFieldStatus.category
 										}
 									/>
 									<StartAndEndDate
@@ -449,7 +417,7 @@ const EditToDoPage = () => {
 										)}
 										onChange={(date) =>
 											handleDateChange(
-												seriesIdFromParams
+												isEditingSeries
 													? "startDate"
 													: "date",
 												date
@@ -458,8 +426,8 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesInputVariants.startDate
-												: todoItemInputVariants.date
+												? todoSeriesFieldStatus.startDate
+												: todoItemFieldStatus.date
 										}
 										minValue={undefined}
 									/>
@@ -481,15 +449,15 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesInputVariants.time
-												: todoItemInputVariants.time
+												? todoSeriesFieldStatus.time
+												: todoItemFieldStatus.time
 										}
 									/>
 									{todoItem.seriesId ? (
 										<Checkbox
 											label="Edit Series"
 											checked={isEditingSeries}
-											onChange={toggleIsEditingSeries}
+											onChange={handleToggleEditSeries}
 										/>
 									) : (
 										<Checkbox
@@ -503,7 +471,7 @@ const EditToDoPage = () => {
 													? true
 													: false
 											}
-											onChange={toggleIsCreatingNewSeries}
+											onChange={handleToggleRepeat}
 										/>
 									)}
 								</div>
@@ -520,10 +488,8 @@ const EditToDoPage = () => {
 										onChange={(date) =>
 											handleDateChange("endDate", date)
 										}
-										variant={
-											todoSeriesInputVariants.endDate
-										}
-										minValue={minDateValue}
+										variant={todoSeriesFieldStatus.endDate}
+										minValue={endDateMinValue}
 									/>
 									<DaysComponent
 										selectedDays={
@@ -531,7 +497,7 @@ const EditToDoPage = () => {
 										}
 										onDayToggle={handleDayToggle}
 										variant={
-											todoSeriesInputVariants.selectedDays
+											todoSeriesFieldStatus.selectedDays
 										}
 									/>
 								</>
