@@ -9,23 +9,25 @@ import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 import { groupTodosByCategory } from "../../utils";
 import { TodoItemInterface } from "../../types";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
 import { useNotification } from "../../context/NotificationContext";
 import ErrorPage from "../ErrorPage/ErrorPage";
 
 const ToDoPage: React.FC = () => {
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const location = useLocation();
+	const initialDate = location.state
+		? new Date(location.state.selectedDate)
+		: new Date();
+	const [selectedDate, setSelectedDate] = useState(initialDate);
 	const [todos, setTodos] = useState<TodoItemInterface[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const { addNotification } = useNotification();
 
 	useEffect(() => {
-		if (!selectedDate) {
-			setHasError(true);
-			return;
-		}
+		if (!selectedDate) return setHasError(true);
+
 		async function fetchData() {
 			setIsLoading(true);
 			try {
@@ -78,6 +80,7 @@ const ToDoPage: React.FC = () => {
 												taskStatus={todo.status}
 												time={todo.time}
 												seriesId={todo.seriesId}
+												selectedDate={selectedDate}
 											/>
 										</div>
 									))}

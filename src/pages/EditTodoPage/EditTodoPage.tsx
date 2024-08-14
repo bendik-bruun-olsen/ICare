@@ -33,7 +33,7 @@ import {
 	TodoSeriesInputVariantProps,
 } from "../../types";
 import ErrorPage from "../ErrorPage/ErrorPage";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
@@ -46,8 +46,12 @@ import {
 	deleteTodoSeries,
 } from "../../firebase/todoServices/deleteTodo";
 import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
+import { Paths } from "../../paths";
 
 const EditToDoPage = () => {
+	const location = useLocation();
+	const navigate = useNavigate();
+	const { selectedDate: DateSelectedInTodoPage } = location.state;
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [todoItem, setTodoItem] =
@@ -235,7 +239,9 @@ const EditToDoPage = () => {
 			} finally {
 				setIsLoading(false);
 			}
-			return;
+			return navigate(Paths.TODO, {
+				state: { selectedDate: DateSelectedInTodoPage },
+			});
 		}
 		const todoItemId = todoItemIdFromParams;
 		if (!todoItemId) return setHasError(true);
@@ -246,6 +252,9 @@ const EditToDoPage = () => {
 			setIsLoading(false);
 			setIsConfirmModalOpen(false);
 		}
+		return navigate(Paths.TODO, {
+			state: { selectedDate: DateSelectedInTodoPage },
+		});
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -275,7 +284,9 @@ const EditToDoPage = () => {
 				return;
 
 			await handleSeriesEdit();
-			return;
+			return navigate(Paths.TODO, {
+				state: { selectedDate: DateSelectedInTodoPage },
+			});
 		}
 		if (!isCreatingNewSeries) {
 			if (
@@ -288,7 +299,9 @@ const EditToDoPage = () => {
 				return;
 
 			await handleSingleTodoEdit();
-			return;
+			return navigate(Paths.TODO, {
+				state: { selectedDate: DateSelectedInTodoPage },
+			});
 		}
 		if (isCreatingNewSeries) {
 			if (
@@ -314,7 +327,9 @@ const EditToDoPage = () => {
 				return;
 
 			await handleCreateNewSeriesFromSingleTodo();
-			return;
+			return navigate(Paths.TODO, {
+				state: { selectedDate: DateSelectedInTodoPage },
+			});
 		}
 	};
 	if (hasError) return <ErrorPage />;

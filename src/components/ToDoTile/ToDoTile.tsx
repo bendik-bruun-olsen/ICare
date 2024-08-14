@@ -15,6 +15,7 @@ interface ToDoTileProps {
 	taskStatus: ToDoStatus;
 	todoId: string;
 	seriesId: string | null;
+	selectedDate: Date;
 }
 
 export default function ToDoTile({
@@ -24,6 +25,7 @@ export default function ToDoTile({
 	taskStatus,
 	time,
 	seriesId,
+	selectedDate,
 }: ToDoTileProps) {
 	const [currentTaskStatus, setCurrentTaskStatus] =
 		useState<ToDoStatus>(taskStatus);
@@ -116,6 +118,7 @@ export default function ToDoTile({
 												":todoId",
 												todoId
 											)}
+											state={{ selectedDate }}
 										>
 											<p>Edit/Delete This Task</p>
 										</Link>
@@ -127,6 +130,7 @@ export default function ToDoTile({
 													":seriesId",
 													seriesId
 												)}
+												state={{ selectedDate }}
 											>
 												<p>
 													Edit/Delete All Tasks In
