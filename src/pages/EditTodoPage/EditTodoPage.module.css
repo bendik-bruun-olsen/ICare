@@ -25,15 +25,9 @@
 
 .scheduleControlsContainer {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: space-between;
 	gap: 10px;
-}
-
-@media (max-width: 425px) {
-	.scheduleControlsContainer {
-		flex-direction: column;
-	}
 }
 
 .timeAndRepeatControls span {
@@ -43,4 +37,16 @@
 .buttonContainer {
 	display: flex;
 	justify-content: space-between;
+}
+
+@media (min-width: 426px) {
+	.scheduleControlsContainer {
+		flex-direction: row;
+	}
+	.formContainer {
+		justify-content: initial;
+	}
+	.buttonContainer {
+		margin-top: 20px;
+	}
 }

@@ -47,11 +47,13 @@ export const editTodoSeries = async (
 		const todoCollection = collection(patientRef, "todoItems");
 		const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
 
-		const now = Timestamp.now();
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		const startOfToday = Timestamp.fromDate(today);
 		const q = query(
 			todoCollection,
 			where("seriesId", "==", seriesId),
-			where("date", ">=", now)
+			where("date", ">=", startOfToday)
 		);
 
 		const querySnap = await getDocs(q);
@@ -80,7 +82,7 @@ export const editTodoSeries = async (
 				date: updatedSeriesInfo.startDate,
 				id: "",
 			},
-			formatTimestampToDateString(now),
+			formatTimestampToDateString(startOfToday),
 			formatTimestampToDateString(updatedSeriesInfo.endDate),
 			selectedDaysNumbers
 		);
@@ -115,9 +117,11 @@ export const editSingleTodoToSeries = async (
 		const todoCollection = collection(patientRef, "todoItems");
 		const todoRef = doc(todoCollection, todoId);
 
-		const now = Timestamp.now();
-		const batch = writeBatch(db);
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		const startOfToday = Timestamp.fromDate(today);
 
+		const batch = writeBatch(db);
 		batch.delete(todoRef);
 
 		const updatedSeriesInfo = {
@@ -142,7 +146,7 @@ export const editSingleTodoToSeries = async (
 
 		const newTodos = generateTodosForSeries(
 			updatedTodoItem,
-			formatTimestampToDateString(now),
+			formatTimestampToDateString(startOfToday),
 			formatTimestampToDateString(updatedSeriesInfo.endDate),
 			selectedDaysNumbers
 		);

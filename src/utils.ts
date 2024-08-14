@@ -8,9 +8,17 @@ import {
 	getDocs,
 } from "firebase/firestore";
 import { db } from "./firebase/firebase";
-import { ToDo, TodoItemInterface } from "./types";
+import {
+	NotificationContextType,
+	ToDo,
+	TodoItemInputVariantProps as TodoItemFieldStatusProps,
+	TodoItemInterface,
+	TodoSeriesInfoInterface,
+	TodoSeriesInputVariantProps as TodoSeriesFieldStatusProps,
+} from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
+import { Dispatch, SetStateAction } from "react";
 
 export function getStartOfDay(selectedDate: Date) {
 	const startOfDay = new Date(selectedDate);
@@ -66,53 +74,6 @@ export const groupTodosByCategory = (
 	return grouped;
 };
 
-// export function getToDosForSelectedDate(selectedDate: Date, todo: ToDo) {
-//   const todoStartDate = todo.startDate.toDate();
-//   const todoEndDate = todo.endDate ? todo.endDate.toDate() : todoStartDate;
-
-//   const hasOnlyStartDate =
-//     todo.startDate && !todo.endDate && !todo.selectedDays;
-
-//   if (hasOnlyStartDate) {
-//     const isStartDateOnlyMatch =
-//       !todo.endDate &&
-//       todoStartDate.toDateString() === selectedDate.toDateString();
-//     return isStartDateOnlyMatch;
-//   }
-
-//   const hasBothStartDateEndDate =
-//     todo.startDate &&
-//     todo.endDate &&
-//     (!todo.selectedDays || todo.selectedDays.length === 0);
-//   if (hasBothStartDateEndDate) {
-//     const startOfDay = getStartOfDay(selectedDate);
-//     const endOfDay = getEndOfDay(selectedDate);
-//     const isWithinDateRange =
-//       startOfDay <= todoEndDate && endOfDay >= todoStartDate;
-//     return isWithinDateRange;
-//   }
-//   const hasStartDateEndDateFrequency =
-//     todo.startDate &&
-//     todo.endDate &&
-//     todo.selectedDays &&
-//     todo.selectedDays.length > 0;
-
-//   if (hasStartDateEndDateFrequency) {
-//     const selectedWeekday = selectedDate
-//       .toLocaleString("en-us", {
-//         weekday: "long",
-//       })
-//       .toLowerCase();
-//     const repeatsOnDay =
-//       todo.selectedDays?.includes(selectedWeekday) &&
-//       selectedDate >= todoStartDate &&
-//       selectedDate <= todoEndDate;
-//     return repeatsOnDay;
-//   }
-
-//   return false;
-// }
-
 export const mapSelectedDaysToNumbers = (selectedDays: string[]) => {
 	return selectedDays.map((day) => {
 		switch (day) {
@@ -160,4 +121,122 @@ export const generateTodosForSeries = (
 	}
 
 	return newTodos;
+};
+
+export const validateTodoItemFields = (
+	todoItem: TodoItemInterface,
+	setTodoItemInputVariants: Dispatch<
+		SetStateAction<TodoItemFieldStatusProps>
+	>,
+	addNotification: NotificationContextType["addNotification"]
+) => {
+	const fields = [
+		{ key: "title", value: todoItem.title },
+		{ key: "description", value: todoItem.description },
+		{ key: "category", value: todoItem.category },
+		{ key: "date", value: todoItem.date },
+		{ key: "time", value: todoItem.time },
+	];
+	let isValid = true;
+
+	fields.forEach((field) => {
+		if (!field.value) {
+			setTodoItemInputVariants((prev) => ({
+				...prev,
+				[field.key]: "error",
+			}));
+			isValid = false;
+		}
+	});
+
+	if (!isValid) {
+		addNotification("Please fill in all required fields", "error");
+	}
+
+	return isValid;
+};
+
+export const validateTodoSeriesFields = (
+	todoSeriesInfo: TodoSeriesInfoInterface,
+	setTodoSeriesInputVariants: Dispatch<
+		SetStateAction<TodoSeriesFieldStatusProps>
+	>,
+	addNotification: NotificationContextType["addNotification"]
+) => {
+	const fields = [
+		{ key: "title", value: todoSeriesInfo.title },
+		{ key: "description", value: todoSeriesInfo.description },
+		{ key: "category", value: todoSeriesInfo.category },
+		{ key: "startDate", value: todoSeriesInfo.startDate },
+		{ key: "endDate", value: todoSeriesInfo.endDate },
+		{ key: "time", value: todoSeriesInfo.time },
+		{
+			key: "selectedDays",
+			value:
+				todoSeriesInfo.selectedDays.length > 0
+					? todoSeriesInfo.selectedDays
+					: null,
+		},
+	];
+	let isValid = true;
+
+	fields.forEach((field) => {
+		if (!field.value) {
+			setTodoSeriesInputVariants((prev) => ({
+				...prev,
+				[field.key]: "error",
+			}));
+			isValid = false;
+		}
+	});
+
+	if (!isValid) {
+		addNotification("Please fill in all required fields", "error");
+	}
+
+	return isValid;
+};
+
+export const resetTodoItemVariants = (
+	todoItem: TodoItemInterface,
+	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemFieldStatusProps>>
+) => {
+	setTodoItemInputVariants((prev) => ({
+		title: todoItem.title ? undefined : prev.title,
+		description: todoItem.description ? undefined : prev.description,
+		category: todoItem.category ? undefined : prev.category,
+		date: todoItem.date ? undefined : prev.date,
+		time: todoItem.time ? undefined : prev.time,
+	}));
+};
+export const resetTodoSeriesVariants = (
+	todoSeriesInfo: TodoSeriesInfoInterface,
+	setTodoSeriesInputVariants: Dispatch<
+		SetStateAction<TodoSeriesFieldStatusProps>
+	>
+) => {
+	setTodoSeriesInputVariants((prev) => ({
+		title: todoSeriesInfo.title ? undefined : prev.title,
+		description: todoSeriesInfo.description ? undefined : prev.description,
+		category: todoSeriesInfo.category ? undefined : prev.category,
+		startDate: todoSeriesInfo.startDate ? undefined : prev.startDate,
+		endDate: todoSeriesInfo.endDate ? undefined : prev.endDate,
+		time: todoSeriesInfo.time ? undefined : prev.time,
+		selectedDays:
+			todoSeriesInfo.selectedDays.length > 0
+				? undefined
+				: prev.selectedDays,
+	}));
+};
+
+export const validateDateRange = (
+	startDate: Timestamp,
+	endDate: Timestamp,
+	addNotification: NotificationContextType["addNotification"]
+) => {
+	if (startDate.seconds > endDate.seconds) {
+		addNotification("End date cannot be before start date", "error");
+		return false;
+	}
+	return true;
 };

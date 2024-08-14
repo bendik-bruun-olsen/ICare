@@ -12,7 +12,6 @@ export const defaultTodoItem: TodoItemInterface = {
 	time: "00:00",
 	category: null,
 	status: ToDoStatus.unchecked,
-	comment: "",
 	seriesId: null,
 	id: "",
 };
@@ -25,6 +24,24 @@ export const defaultTodoSeries: TodoSeriesInfoInterface = {
 	startDate: Timestamp.now(),
 	endDate: Timestamp.now(),
 	selectedDays: [],
+};
+
+export const defaultTodoItemInputVariants = {
+	title: undefined,
+	description: undefined,
+	category: undefined,
+	date: undefined,
+	time: undefined,
+};
+
+export const defaultTodoSeriesInputVariants = {
+	title: undefined,
+	description: undefined,
+	category: undefined,
+	startDate: undefined,
+	endDate: undefined,
+	time: undefined,
+	selectedDays: undefined,
 };
 
 export const daysOfTheWeek = [

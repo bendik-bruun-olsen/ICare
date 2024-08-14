@@ -1,21 +1,26 @@
 import React from "react";
 import { Input, Label, TextField } from "@equinor/eds-core-react";
 import styled from "styled-components";
+import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
 
 const StyledTitleDescription = styled.div``;
 
 type TitleDescriptionProps = {
 	title: string;
 	setTitle: (value: string) => void;
+	titleVariant: Variants | undefined;
 	description: string;
 	setDescription: (value: string) => void;
+	descriptionVariant: Variants | undefined;
 };
 
 const TitleDescription: React.FC<TitleDescriptionProps> = ({
 	title,
 	setTitle,
+	titleVariant,
 	description,
 	setDescription,
+	descriptionVariant,
 }) => {
 	return (
 		<>
@@ -28,6 +33,7 @@ const TitleDescription: React.FC<TitleDescriptionProps> = ({
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 						setTitle(e.target.value)
 					}
+					variant={titleVariant}
 				/>
 			</StyledTitleDescription>
 			<>
@@ -40,6 +46,7 @@ const TitleDescription: React.FC<TitleDescriptionProps> = ({
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 						setDescription(e.target.value)
 					}
+					variant={descriptionVariant}
 				/>
 			</>
 		</>

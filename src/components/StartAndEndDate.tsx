@@ -2,21 +2,27 @@ import { I18nProvider } from "@react-aria/i18n";
 import { useState, useEffect } from "react";
 import { DatePicker } from "@equinor/eds-core-react";
 import styled from "styled-components";
+import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
 
 const StyledDatePickerWrapper = styled.div`
-	width: 200px;
+	min-width: 150px;
+	width: fit-content;
 `;
 
 type StartAndEndDateProps = {
 	label: string;
 	value: string;
 	onChange: (date: string) => void;
+	variant: Variants | undefined;
+	minValue: Date | undefined;
 };
 
 const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 	label,
 	value,
 	onChange,
+	variant,
+	minValue,
 }) => {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date(value));
 
@@ -53,6 +59,8 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 							month: "2-digit",
 							year: "numeric",
 						}}
+						variant={variant}
+						minValue={minValue}
 					/>
 				</StyledDatePickerWrapper>
 			</I18nProvider>
