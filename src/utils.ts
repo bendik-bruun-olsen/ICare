@@ -75,7 +75,7 @@ export const groupTodosByCategory = (
 	return grouped;
 };
 
-export const sortTodoCategoriesByPriority = (groupedTodos: {
+export const sortTodosGroup = (groupedTodos: {
 	[key: string]: TodoItemInterface[];
 }) => {
 	const priorityOrder = ["Medicine", "Food", "Exercise", "Social", "Others"];
@@ -90,7 +90,9 @@ export const sortTodoCategoriesByPriority = (groupedTodos: {
 			);
 		})
 		.forEach((key) => {
-			sortedGroup[key] = groupedTodos[key];
+			sortedGroup[key] = groupedTodos[key].sort((a, b) =>
+				a.time.localeCompare(b.time)
+			);
 		});
 	return sortedGroup;
 };

@@ -9,7 +9,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 import {
 	groupTodosByCategory as groupTodosByCategory,
-	sortTodoCategoriesByPriority,
+	sortTodosGroup,
 } from "../../utils";
 import { TodoItemInterface } from "../../types";
 import { Link, useLocation } from "react-router-dom";
@@ -49,7 +49,7 @@ const ToDoPage: React.FC = () => {
 	}, [selectedDate]);
 
 	const groupedTodos = groupTodosByCategory(todos);
-	const sortedTodosGroup = sortTodoCategoriesByPriority(groupedTodos);
+	const sortedTodosGroup = sortTodosGroup(groupedTodos);
 
 	if (isLoading) return <CircularProgress />;
 	if (hasError) return <ErrorPage />;
