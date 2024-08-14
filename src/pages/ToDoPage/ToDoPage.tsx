@@ -7,10 +7,7 @@ import { Icon } from "@equinor/eds-core-react";
 import { add } from "@equinor/eds-icons";
 import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
-import {
-	groupTodosByCategory as groupTodosByCategory,
-	sortTodosGroup,
-} from "../../utils";
+import { groupTodosByCategory, sortTodosGroup } from "../../utils";
 import { TodoItemInterface } from "../../types";
 import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
@@ -23,7 +20,9 @@ const ToDoPage: React.FC = () => {
 		? new Date(location.state.selectedDate)
 		: new Date();
 	const [selectedDate, setSelectedDate] = useState(initialDate);
-	const [todos, setTodos] = useState<TodoItemInterface[]>([]);
+	const [categorizedTodos, setCategorizedTodos] = useState<{
+		[key: string]: TodoItemInterface[];
+	}>({});
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const { addNotification } = useNotification();
@@ -39,7 +38,11 @@ const ToDoPage: React.FC = () => {
 					addNotification
 				);
 				if (data) {
-					setTodos(data as TodoItemInterface[]);
+					const groupedTodos = groupTodosByCategory(
+						data as TodoItemInterface[]
+					);
+					const sortedTodosGroup = sortTodosGroup(groupedTodos);
+					setCategorizedTodos(sortedTodosGroup);
 				}
 			} finally {
 				setIsLoading(false);
@@ -48,8 +51,13 @@ const ToDoPage: React.FC = () => {
 		fetchData();
 	}, [selectedDate]);
 
-	const groupedTodos = groupTodosByCategory(todos);
-	const sortedTodosGroup = sortTodosGroup(groupedTodos);
+	const handleStatusChange = () => {
+		if (!categorizedTodos) return;
+		const flattenedTodos = Object.values(categorizedTodos).flat();
+		const updatedGroupedTodos = groupTodosByCategory(flattenedTodos);
+		const updatedSortedTodosGroup = sortTodosGroup(updatedGroupedTodos);
+		setCategorizedTodos(updatedSortedTodosGroup);
+	};
 
 	if (isLoading) return <CircularProgress />;
 	if (hasError) return <ErrorPage />;
@@ -63,14 +71,14 @@ const ToDoPage: React.FC = () => {
 						setSelectedDate={setSelectedDate}
 					/>
 					<div>
-						{Object.keys(sortedTodosGroup).map((category) => (
+						{Object.keys(categorizedTodos).map((category) => (
 							<div
 								key={category}
 								className={styles.categoryStyle}
 							>
 								<h3>{category}</h3>
 								<div className={styles.toDoTileMargin}>
-									{sortedTodosGroup[category].map((todo) => (
+									{categorizedTodos[category].map((todo) => (
 										<div
 											className={styles.toDoTile}
 											key={todo.id}
@@ -85,6 +93,9 @@ const ToDoPage: React.FC = () => {
 												time={todo.time}
 												seriesId={todo.seriesId}
 												selectedDate={selectedDate}
+												onStatusChange={
+													handleStatusChange
+												}
 											/>
 										</div>
 									))}

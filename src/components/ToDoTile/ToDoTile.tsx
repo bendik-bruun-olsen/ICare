@@ -16,6 +16,7 @@ interface ToDoTileProps {
 	todoId: string;
 	seriesId: string | null;
 	selectedDate: Date;
+	onStatusChange: () => void;
 }
 
 export default function ToDoTile({
@@ -26,6 +27,7 @@ export default function ToDoTile({
 	time,
 	seriesId,
 	selectedDate,
+	onStatusChange,
 }: ToDoTileProps) {
 	const [currentTaskStatus, setCurrentTaskStatus] =
 		useState<ToDoStatus>(taskStatus);
@@ -49,6 +51,7 @@ export default function ToDoTile({
 				currentTaskStatus,
 				addNotification
 			);
+			onStatusChange();
 		};
 		updateStatus();
 	}, [currentTaskStatus, todoId]);

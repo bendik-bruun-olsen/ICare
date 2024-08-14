@@ -60,17 +60,24 @@ export const formatTimestampToDateString = (timestamp: Timestamp): string => {
 	return timestamp.toDate().toISOString().substring(0, 10);
 };
 
-export const groupTodosByCategory = (
-	todos: TodoItemInterface[]
-): { [key: string]: TodoItemInterface[] } => {
+export const groupTodosByCategory = (todos: TodoItemInterface[]) => {
 	const grouped: { [key: string]: TodoItemInterface[] } = {};
 	todos.forEach((todo) => {
-		const category = todo.category || "Others";
-		if (!grouped[category]) {
-			grouped[category] = [];
+		if (todo.status === "ignore") {
+			if (!grouped["Ignored"]) {
+				grouped["Ignored"] = [];
+			}
+			grouped["Ignored"].push(todo);
+		} else {
+			const category = todo.category || "Others";
+			if (!grouped[category]) {
+				grouped[category] = [];
+			}
+			grouped[category].push(todo);
 		}
-		grouped[category].push(todo);
 	});
+
+	console.log("grouped: ", grouped);
 
 	return grouped;
 };
@@ -94,6 +101,9 @@ export const sortTodosGroup = (groupedTodos: {
 				a.time.localeCompare(b.time)
 			);
 		});
+
+	console.log("sortedGroup: ", sortedGroup);
+
 	return sortedGroup;
 };
 
