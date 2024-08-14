@@ -7,7 +7,10 @@ import { Icon } from "@equinor/eds-core-react";
 import { add } from "@equinor/eds-icons";
 import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
-import { groupTodosByCategory } from "../../utils";
+import {
+	groupTodosByCategory as groupTodosByCategory,
+	sortTodoCategoriesByPriority,
+} from "../../utils";
 import { TodoItemInterface } from "../../types";
 import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
@@ -46,6 +49,7 @@ const ToDoPage: React.FC = () => {
 	}, [selectedDate]);
 
 	const groupedTodos = groupTodosByCategory(todos);
+	const sortedTodosGroup = sortTodoCategoriesByPriority(groupedTodos);
 
 	if (isLoading) return <CircularProgress />;
 	if (hasError) return <ErrorPage />;
@@ -59,14 +63,14 @@ const ToDoPage: React.FC = () => {
 						setSelectedDate={setSelectedDate}
 					/>
 					<div>
-						{Object.keys(groupedTodos).map((category) => (
+						{Object.keys(sortedTodosGroup).map((category) => (
 							<div
 								key={category}
 								className={styles.categoryStyle}
 							>
 								<h3>{category}</h3>
 								<div className={styles.toDoTileMargin}>
-									{groupedTodos[category].map((todo) => (
+									{sortedTodosGroup[category].map((todo) => (
 										<div
 											className={styles.toDoTile}
 											key={todo.id}

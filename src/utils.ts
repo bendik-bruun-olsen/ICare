@@ -71,7 +71,28 @@ export const groupTodosByCategory = (
 		}
 		grouped[category].push(todo);
 	});
+
 	return grouped;
+};
+
+export const sortTodoCategoriesByPriority = (groupedTodos: {
+	[key: string]: TodoItemInterface[];
+}) => {
+	const priorityOrder = ["Medicine", "Food", "Exercise", "Social", "Others"];
+	const sortedGroup: { [key: string]: TodoItemInterface[] } = {};
+	Object.keys(groupedTodos)
+		.sort((a, b) => {
+			const indexA = priorityOrder.indexOf(a);
+			const indexB = priorityOrder.indexOf(b);
+			return (
+				(indexA === -1 ? Infinity : indexA) -
+				(indexB === -1 ? Infinity : indexB)
+			);
+		})
+		.forEach((key) => {
+			sortedGroup[key] = groupedTodos[key];
+		});
+	return sortedGroup;
 };
 
 export const mapSelectedDaysToNumbers = (selectedDays: string[]) => {
