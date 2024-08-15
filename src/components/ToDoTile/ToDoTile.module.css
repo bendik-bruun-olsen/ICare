@@ -28,7 +28,16 @@
 	justify-content: space-between;
 }
 
-.titleText h2 {
+.titleSection {
+	display: flex;
+	justify-content: space-between;
+}
+
+.titleContainer {
+	display: flex;
+}
+
+.titleContainer h2 {
 	font-weight: 300;
 }
 
@@ -116,7 +125,7 @@
 }
 
 .notApplicable {
-	background-color: #eea88e;
+	background-color: var(--coral);
 }
 
 .checked {

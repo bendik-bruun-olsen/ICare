@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Icon, Checkbox } from "@equinor/eds-core-react";
+import { Icon, Checkbox, Chip } from "@equinor/eds-core-react";
 import { more_horizontal } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { ToDoStatus } from "../../types";
@@ -50,6 +50,13 @@ export default function ToDoTile({
 		await updateToDoStatusInDatabase(todoId, newStatus, addNotification);
 	};
 
+	const chipMapping = {
+		[ToDoStatus.checked]: { variant: "active", label: "Completed" },
+		[ToDoStatus.unchecked]: { variant: "default", label: "Active" },
+		[ToDoStatus.ignore]: { variant: "error", label: "Ignored" },
+	};
+	const currentChip = chipMapping[currentTaskStatus];
+
 	return (
 		<div className={styles.checkboxAndToDoTileWrapper}>
 			<Checkbox
@@ -68,10 +75,21 @@ export default function ToDoTile({
 					currentTaskStatus
 				)}`}
 			>
-				<div className={styles.titleText}>
-					<h2>
-						{time} - {toDoTitle}
-					</h2>
+				<div className={styles.titleSection}>
+					<div className={styles.titleContainer}>
+						<h2 className={styles.timeText}>{time}</h2>
+						<h2>&nbsp;-&nbsp;{toDoTitle}</h2>
+					</div>
+					<Chip
+						variant={
+							currentChip.variant as
+								| "default"
+								| "active"
+								| "error"
+						}
+					>
+						{currentChip.label}
+					</Chip>
 				</div>
 				<div className={styles.descriptionSection}>
 					<p>{toDoDescription}</p>
