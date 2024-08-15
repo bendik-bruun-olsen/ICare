@@ -1,5 +1,5 @@
 import React from "react";
-import { useNotification } from "../../hooks/useNotifications";
+import { useNotification } from "../../hooks/useNotification";
 import { Icon, Button } from "@equinor/eds-core-react";
 import { close } from "@equinor/eds-icons";
 import "./SnackBar.css";

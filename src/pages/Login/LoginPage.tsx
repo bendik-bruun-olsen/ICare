@@ -8,7 +8,7 @@ import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
 import { useNavigate } from "react-router-dom";
 import { FirestoreError } from "firebase/firestore";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");

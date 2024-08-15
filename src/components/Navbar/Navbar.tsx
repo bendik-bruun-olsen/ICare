@@ -8,7 +8,7 @@ import { NavLink } from "react-router-dom";
 import { Paths } from "../../paths";
 import { auth } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
 
 interface NavbarProps {
     leftContent: ReactNode;

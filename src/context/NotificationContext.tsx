@@ -32,7 +32,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
         setNotifications({ id, message, type });
         setTimeout(() => {
             removeNotification();
-        }, 5000); // Auto-remove after 5 seconds
+        }, 50000); // Auto-remove after 5 seconds
     };
 
     const removeNotification = () => {

@@ -22,7 +22,7 @@
 .snackbar-error {
     background-color: #b9331bf6;
 }
-s .snackbar-button {
+.snackbar-button {
     background-color: transparent !important;
     box-shadow: none !important;
 }

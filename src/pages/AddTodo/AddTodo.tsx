@@ -9,143 +9,155 @@ import styles from "./AddTodo.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 import { addNewTodo } from "../../firebase/todoServices/addNewTodo";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
 import { Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const AddToDo: React.FC = () => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [repeat, setRepeat] = useState(false);
-  const [startDate, setStartDate] = useState(
-    new Date().toISOString().substring(0, 10)
-  );
-  const [endDate, setEndDate] = useState(
-    new Date().toISOString().substring(0, 10)
-  );
-  const [time, setTime] = useState("");
-  const [selectCategory, setSelectCategory] = useState<string | null>(null);
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const { addNotification } = useNotification();
-  const Navigate = useNavigate();
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [repeat, setRepeat] = useState(false);
+    const [startDate, setStartDate] = useState(
+        new Date().toISOString().substring(0, 10)
+    );
+    const [endDate, setEndDate] = useState(
+        new Date().toISOString().substring(0, 10)
+    );
+    const [time, setTime] = useState("");
+    const [selectCategory, setSelectCategory] = useState<string | null>(null);
+    const [selectedDays, setSelectedDays] = useState<string[]>([]);
+    const { addNotification } = useNotification();
+    const Navigate = useNavigate();
 
-  const handleCheckboxChange = () => {
-    setRepeat((prev) => !prev);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const startDateAsTimestamp = Timestamp.fromDate(new Date(startDate));
-    const endDateAsTimestamp = Timestamp.fromDate(new Date(endDate));
-    const newTodo = {
-      title,
-      description,
-      repeat,
-      startDate: startDateAsTimestamp,
-      endDate: endDateAsTimestamp,
-      time,
-      category: selectCategory,
-      selectedDays: repeat ? selectedDays : [],
+    const handleCheckboxChange = () => {
+        setRepeat((prev) => !prev);
     };
 
-    try {
-      await addNewTodo(newTodo);
-      addNotification("ToDo added successfully!", "success");
-    } catch (e) {
-      addNotification("Error adding ToDo. Please try again later", "error");
-      console.error("Error: ", e);
-    }
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const startDateAsTimestamp = Timestamp.fromDate(new Date(startDate));
+        const endDateAsTimestamp = Timestamp.fromDate(new Date(endDate));
+        const newTodo = {
+            title,
+            description,
+            repeat,
+            startDate: startDateAsTimestamp,
+            endDate: endDateAsTimestamp,
+            time,
+            category: selectCategory,
+            selectedDays: repeat ? selectedDays : [],
+        };
 
-  const handleCategorySelectionChange = (value: string | null) => {
-    setSelectCategory(value);
-  };
+        try {
+            await addNewTodo(newTodo);
+            addNotification("ToDo added successfully!", "success");
+        } catch (e) {
+            addNotification(
+                "Error adding ToDo. Please try again later",
+                "error"
+            );
+            console.error("Error: ", e);
+        }
+    };
 
-  const onclickAddButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    await handleSubmit(e);
-    setTitle("");
-    setDescription("");
-    setRepeat(false);
-    setStartDate(new Date().toISOString().substring(0, 10));
-    setEndDate(new Date().toISOString().substring(0, 10));
-    setTime("");
-    setSelectCategory(null);
-    setSelectedDays([]);
-    Navigate("/ToDoPage");
-  };
+    const handleCategorySelectionChange = (value: string | null) => {
+        setSelectCategory(value);
+    };
 
-  const handleDayToggle = (day: string) => {
-    setSelectedDays((prevSelectedDays) =>
-      prevSelectedDays.includes(day)
-        ? prevSelectedDays.filter((d) => d !== day)
-        : [...prevSelectedDays, day]
-    );
-  };
+    const onclickAddButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        await handleSubmit(e);
+        setTitle("");
+        setDescription("");
+        setRepeat(false);
+        setStartDate(new Date().toISOString().substring(0, 10));
+        setEndDate(new Date().toISOString().substring(0, 10));
+        setTime("");
+        setSelectCategory(null);
+        setSelectedDays([]);
+        Navigate("/ToDoPage");
+    };
 
-  return (
-    <>
-      <Navbar leftContent={<BackHomeButton />} centerContent="Add To Do" />
-      <div className="pageWrapper">
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formContainer}>
-            <div className={styles.mainContentContainer}>
-              <TitleDescription
-                title={title}
-                setTitle={setTitle}
-                description={description}
-                setDescription={setDescription}
-              />
-              <div className={styles.scheduleControlsContainer}>
-                <div>
-                  <SelectCategory
-                    selectedOption={selectCategory}
-                    onSelectionChange={handleCategorySelectionChange}
-                  />
-                  <StartAndEndDate
-                    label="Start date"
-                    value={startDate}
-                    onChange={(date: string) => setStartDate(date)}
-                  />
-                </div>
+    const handleDayToggle = (day: string) => {
+        setSelectedDays((prevSelectedDays) =>
+            prevSelectedDays.includes(day)
+                ? prevSelectedDays.filter((d) => d !== day)
+                : [...prevSelectedDays, day]
+        );
+    };
 
-                <div className={styles.timeAndRepeatControls}>
-                  <TextField
-                    id="time"
-                    label="Select time"
-                    type="time"
-                    value={time}
-                    className={styles.time}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setTime(e.target.value)
-                    }
-                    style={{ width: "150px" }}
-                  />
-                  <Checkbox
-                    label="Repeat"
-                    checked={repeat}
-                    onChange={handleCheckboxChange}
-                  />
-                </div>
-              </div>
-              {repeat && (
-                <>
-                  <StartAndEndDate
-                    label="End date"
-                    value={endDate}
-                    onChange={(date: string) => setEndDate(date)}
-                  />
-                  <DaysComponent
-                    selectedDays={selectedDays}
-                    onDayToggle={handleDayToggle}
-                  />
-                </>
-              )}
+    return (
+        <>
+            <Navbar
+                leftContent={<BackHomeButton />}
+                centerContent="Add To Do"
+            />
+            <div className="pageWrapper">
+                <form onSubmit={handleSubmit}>
+                    <div className={styles.formContainer}>
+                        <div className={styles.mainContentContainer}>
+                            <TitleDescription
+                                title={title}
+                                setTitle={setTitle}
+                                description={description}
+                                setDescription={setDescription}
+                            />
+                            <div className={styles.scheduleControlsContainer}>
+                                <div>
+                                    <SelectCategory
+                                        selectedOption={selectCategory}
+                                        onSelectionChange={
+                                            handleCategorySelectionChange
+                                        }
+                                    />
+                                    <StartAndEndDate
+                                        label="Start date"
+                                        value={startDate}
+                                        onChange={(date: string) =>
+                                            setStartDate(date)
+                                        }
+                                    />
+                                </div>
+
+                                <div className={styles.timeAndRepeatControls}>
+                                    <TextField
+                                        id="time"
+                                        label="Select time"
+                                        type="time"
+                                        value={time}
+                                        className={styles.time}
+                                        onChange={(
+                                            e: React.ChangeEvent<HTMLInputElement>
+                                        ) => setTime(e.target.value)}
+                                        style={{ width: "150px" }}
+                                    />
+                                    <Checkbox
+                                        label="Repeat"
+                                        checked={repeat}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                </div>
+                            </div>
+                            {repeat && (
+                                <>
+                                    <StartAndEndDate
+                                        label="End date"
+                                        value={endDate}
+                                        onChange={(date: string) =>
+                                            setEndDate(date)
+                                        }
+                                    />
+                                    <DaysComponent
+                                        selectedDays={selectedDays}
+                                        onDayToggle={handleDayToggle}
+                                    />
+                                </>
+                            )}
+                        </div>
+                        <AddButton label="Add" onClick={onclickAddButton} />
+                    </div>
+                </form>
             </div>
-            <AddButton label="Add" onClick={onclickAddButton} />
-          </div>
-        </form>
-      </div>
-    </>
-  );
+        </>
+    );
 };
 export default AddToDo;
