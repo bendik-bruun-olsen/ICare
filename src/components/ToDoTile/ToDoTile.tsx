@@ -86,8 +86,7 @@ export default function ToDoTile({
 			>
 				<div className={styles.titleSection}>
 					<div className={styles.titleContainer}>
-						<h2 className={styles.timeText}>{time}</h2>
-						<h2>&nbsp;-&nbsp;{toDoTitle}</h2>
+						<h2>{`${time} - ${toDoTitle}`}</h2>
 						{/* <Icon data={library_books} size={24} /> */}
 					</div>
 					<Chip
@@ -102,7 +101,13 @@ export default function ToDoTile({
 					</Chip>
 				</div>
 				<div className={styles.descriptionSection}>
-					<p>{toDoDescription}</p>
+					<p
+						style={{
+							wordBreak: "break-word",
+						}}
+					>
+						{toDoDescription}
+					</p>
 					<Icon
 						data={more_horizontal}
 						size={40}

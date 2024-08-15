@@ -47,9 +47,9 @@
 }
 
 .titleContainer h2,
-.descriptionSection p,
-.commentSection p {
+.descriptionSection p {
 	cursor: pointer;
+	word-break: break-word;
 }
 
 .descriptionSection p {
