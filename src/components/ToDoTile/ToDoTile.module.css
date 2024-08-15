@@ -54,12 +54,12 @@
 
 .descriptionSection p {
 	font-size: 0.9rem;
-	width: 30ch;
 }
 
 .moreIcon {
 	cursor: pointer;
 	margin-right: 0.5rem;
+	position: relative;
 }
 
 .modalOverlay {
@@ -72,14 +72,12 @@
 
 .modalContainer {
 	position: absolute;
-	top: 75%;
-	left: 52%;
-	transform: translateY(10px);
+	top: 100%;
+	right: 0;
 	background-color: var(--white);
 	padding: 10px;
 	border-radius: 3px;
-	/* max-width: 100%; */
-	/* width: 50%; */
+	width: fit-content;
 	outline: 1px solid var(--lightblue);
 	z-index: 2;
 }
