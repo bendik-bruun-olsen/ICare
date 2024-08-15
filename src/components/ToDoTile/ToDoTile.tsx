@@ -46,8 +46,8 @@ export default function ToDoTile({
 
 	const handleStatusChange = async (newStatus: ToDoStatus) => {
 		setCurrentTaskStatus(newStatus);
-		await updateToDoStatusInDatabase(todoId, newStatus, addNotification);
 		onStatusChange(todoId, newStatus);
+		await updateToDoStatusInDatabase(todoId, newStatus, addNotification);
 	};
 
 	return (
@@ -61,6 +61,7 @@ export default function ToDoTile({
 							: ToDoStatus.checked
 					)
 				}
+				disabled={currentTaskStatus === ToDoStatus.ignore}
 			/>
 			<div
 				className={`${styles.toDoWrapper} ${chooseTileStyle(
