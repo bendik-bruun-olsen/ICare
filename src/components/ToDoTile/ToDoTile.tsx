@@ -101,13 +101,7 @@ export default function ToDoTile({
 					</Chip>
 				</div>
 				<div className={styles.descriptionSection}>
-					<p
-						style={{
-							wordBreak: "break-word",
-						}}
-					>
-						{toDoDescription}
-					</p>
+					<p>{toDoDescription}</p>
 					<Icon
 						data={more_horizontal}
 						size={40}
