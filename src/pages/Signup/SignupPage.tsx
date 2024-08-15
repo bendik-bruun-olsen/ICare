@@ -13,7 +13,7 @@ import { doc, setDoc } from "firebase/firestore";
 import "./SignupPage.modules.css";
 import { FirebaseError } from "firebase/app";
 import Logo from "../../components/Logo/Logo";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
 
 export default function SignupPage() {
 	const [name, setName] = useState("");
@@ -162,7 +162,9 @@ export default function SignupPage() {
 						type="password"
 						value={password}
 						onChange={handlePasswordChange}
-						helperText={errors.password ? "Password is required" : ""}
+						helperText={
+							errors.password ? "Password is required" : ""
+						}
 					/>
 				</InputWrapper>
 				<InputWrapper
@@ -178,7 +180,9 @@ export default function SignupPage() {
 						value={confirmPassword}
 						onChange={handleConfirmPasswordChange}
 						helperText={
-							errors.confirmPassword ? "Confirm Password is required" : ""
+							errors.confirmPassword
+								? "Confirm Password is required"
+								: ""
 						}
 					/>
 				</InputWrapper>

@@ -25,7 +25,7 @@ import {
 	validateTodoItemFields,
 	validateTodoSeriesFields,
 } from "../../utils";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
 import {
 	TodoSeriesInfoInterface,
 	TodoItemInterface,

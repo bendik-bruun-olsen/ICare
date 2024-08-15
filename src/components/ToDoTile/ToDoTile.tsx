@@ -15,7 +15,7 @@ import { ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTodo";
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
 
 interface ToDoTileProps {
 	toDoTitle: string;

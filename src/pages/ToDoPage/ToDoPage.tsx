@@ -11,7 +11,7 @@ import { groupTodosByCategory, sortTodosGroup } from "../../utils";
 import { TodoItemInterface, ToDoStatus } from "../../types";
 import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
 import ErrorPage from "../ErrorPage/ErrorPage";
 
 const ToDoPage: React.FC = () => {
