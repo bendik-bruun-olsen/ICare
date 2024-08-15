@@ -1,0 +1,29 @@
+.snackbar-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.snackbar {
+    background-color: #153c86;
+    color: #e9e9e9;
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 7px;
+}
+
+.snackbar-success {
+    background-color: var(--blue);
+}
+
+.snackbar-error {
+    background-color: #b9331bf6;
+}
+.snackbar-button {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
