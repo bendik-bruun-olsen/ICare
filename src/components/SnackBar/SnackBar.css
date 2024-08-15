@@ -16,16 +16,13 @@
 }
 
 .snackbar-success {
-    background-color: #1c7b82;
+    background-color: var(--blue);
 }
 
 .snackbar-error {
     background-color: #b9331bf6;
 }
-
-.snackbar-button {
-    /* margin-left: 10px; */
-
+s .snackbar-button {
     background-color: transparent !important;
     box-shadow: none !important;
 }

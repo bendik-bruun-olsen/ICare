@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { createContext, useState, ReactNode } from "react";
 
 type Notification = {
     id: number;
@@ -15,9 +15,9 @@ type NotificationContextType = {
     removeNotification: () => void;
 };
 
-const NotificationContext = createContext<NotificationContextType | undefined>(
-    undefined
-);
+export const NotificationContext = createContext<
+    NotificationContextType | undefined
+>(undefined);
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
     children,
@@ -32,7 +32,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
         setNotifications({ id, message, type });
         setTimeout(() => {
             removeNotification();
-        }, 3000); // Auto-remove after 3 seconds
+        }, 5000); // Auto-remove after 5 seconds
     };
 
     const removeNotification = () => {
@@ -46,14 +46,4 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
             {children}
         </NotificationContext.Provider>
     );
-};
-
-export const useNotification = () => {
-    const context = useContext(NotificationContext);
-    if (context === undefined) {
-        throw new Error(
-            "useNotification must be used within a NotificationProvider"
-        );
-    }
-    return context;
 };
