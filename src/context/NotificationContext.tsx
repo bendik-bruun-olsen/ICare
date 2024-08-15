@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from "react";
+import React, { createContext, useState, useRef, ReactNode } from "react";
 
 type Notification = {
     id: number;
@@ -23,20 +23,32 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     const [notifications, setNotifications] = useState<Notification>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const addNotification = (
         message: string,
         type: "success" | "error" | "info"
     ) => {
         const id = Date.now();
+
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
         setNotifications({ id, message, type });
-        setTimeout(() => {
+
+        timeoutRef.current = setTimeout(() => {
             removeNotification();
-        }, 50000); // Auto-remove after 5 seconds
+        }, 5000); // Auto-remove after 5 seconds
     };
 
     const removeNotification = () => {
         setNotifications(null);
+
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
     };
 
     return (
