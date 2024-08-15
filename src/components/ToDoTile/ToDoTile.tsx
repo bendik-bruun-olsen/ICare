@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Icon, Checkbox, Chip } from "@equinor/eds-core-react";
+// import {
+// 	layers,
+// 	copy,
+// 	list,
+// 	repeat,
+// 	bookmark_collection,
+// 	library_books,
+// 	receipt,
+// } from "@equinor/eds-icons";
 import { more_horizontal } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { ToDoStatus } from "../../types";
@@ -79,6 +88,7 @@ export default function ToDoTile({
 					<div className={styles.titleContainer}>
 						<h2 className={styles.timeText}>{time}</h2>
 						<h2>&nbsp;-&nbsp;{toDoTitle}</h2>
+						{/* <Icon data={library_books} size={24} /> */}
 					</div>
 					<Chip
 						variant={

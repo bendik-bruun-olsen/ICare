@@ -37,11 +37,16 @@
 	display: flex;
 }
 
+/* .titleContainer svg {
+	margin-left: 5px;
+	color: rgb(145, 145, 145);
+} */
+
 .titleContainer h2 {
 	font-weight: 300;
 }
 
-.titleText h2,
+.titleContainer h2,
 .descriptionSection p,
 .commentSection p {
 	cursor: pointer;
