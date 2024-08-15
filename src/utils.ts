@@ -11,10 +11,10 @@ import { db } from "./firebase/firebase";
 import {
 	NotificationContextType,
 	ToDo,
-	TodoItemInputVariantProps as TodoItemFieldStatusProps,
+	TodoItemInputFieldStatusProps,
 	TodoItemInterface,
 	TodoSeriesInfoInterface,
-	TodoSeriesInputVariantProps as TodoSeriesFieldStatusProps,
+	TodoSeriesInputFieldStatusProps,
 } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
@@ -76,9 +76,6 @@ export const groupTodosByCategory = (todos: TodoItemInterface[]) => {
 			grouped[category].push(todo);
 		}
 	});
-
-	console.log("grouped: ", grouped);
-
 	return grouped;
 };
 
@@ -101,9 +98,6 @@ export const sortTodosGroup = (groupedTodos: {
 				a.time.localeCompare(b.time)
 			);
 		});
-
-	console.log("sortedGroup: ", sortedGroup);
-
 	return sortedGroup;
 };
 
@@ -159,7 +153,7 @@ export const generateTodosForSeries = (
 export const validateTodoItemFields = (
 	todoItem: TodoItemInterface,
 	setTodoItemInputVariants: Dispatch<
-		SetStateAction<TodoItemFieldStatusProps>
+		SetStateAction<TodoItemInputFieldStatusProps>
 	>,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
@@ -192,7 +186,7 @@ export const validateTodoItemFields = (
 export const validateTodoSeriesFields = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
 	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesFieldStatusProps>
+		SetStateAction<TodoSeriesInputFieldStatusProps>
 	>,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
@@ -230,11 +224,13 @@ export const validateTodoSeriesFields = (
 	return isValid;
 };
 
-export const resetTodoItemVariants = (
+export const resetTodoItemInputFieldStatus = (
 	todoItem: TodoItemInterface,
-	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemFieldStatusProps>>
+	setTodoItemInputFieldStatus: Dispatch<
+		SetStateAction<TodoItemInputFieldStatusProps>
+	>
 ) => {
-	setTodoItemInputVariants((prev) => ({
+	setTodoItemInputFieldStatus((prev) => ({
 		title: todoItem.title ? undefined : prev.title,
 		description: todoItem.description ? undefined : prev.description,
 		category: todoItem.category ? undefined : prev.category,
@@ -242,13 +238,13 @@ export const resetTodoItemVariants = (
 		time: todoItem.time ? undefined : prev.time,
 	}));
 };
-export const resetTodoSeriesVariants = (
+export const resetTodoSeriesInputFieldStatus = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
-	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesFieldStatusProps>
+	setTodoSeriesInputFieldStatus: Dispatch<
+		SetStateAction<TodoSeriesInputFieldStatusProps>
 	>
 ) => {
-	setTodoSeriesInputVariants((prev) => ({
+	setTodoSeriesInputFieldStatus((prev) => ({
 		title: todoSeriesInfo.title ? undefined : prev.title,
 		description: todoSeriesInfo.description ? undefined : prev.description,
 		category: todoSeriesInfo.category ? undefined : prev.category,

@@ -8,7 +8,7 @@ import { add } from "@equinor/eds-icons";
 import Navbar from "../../components/Navbar/Navbar";
 import BackHomeButton from "../../components/BackHomeButton";
 import { groupTodosByCategory, sortTodosGroup } from "../../utils";
-import { TodoItemInterface } from "../../types";
+import { TodoItemInterface, ToDoStatus } from "../../types";
 import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
 import { useNotification } from "../../context/NotificationContext";
@@ -51,9 +51,19 @@ const ToDoPage: React.FC = () => {
 		fetchData();
 	}, [selectedDate]);
 
-	const handleStatusChange = () => {
+	const handleStatusChange = async (
+		todoId: string,
+		newStatus: ToDoStatus
+	) => {
 		if (!categorizedTodos) return;
+
 		const flattenedTodos = Object.values(categorizedTodos).flat();
+		const todoIndex = flattenedTodos.findIndex(
+			(todo) => todo.id === todoId
+		);
+		if (todoIndex === -1) return;
+		const updatedTodo = { ...flattenedTodos[todoIndex], status: newStatus };
+		flattenedTodos[todoIndex] = updatedTodo;
 		const updatedGroupedTodos = groupTodosByCategory(flattenedTodos);
 		const updatedSortedTodosGroup = sortTodosGroup(updatedGroupedTodos);
 		setCategorizedTodos(updatedSortedTodosGroup);

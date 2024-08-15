@@ -16,7 +16,7 @@ interface ToDoTileProps {
 	todoId: string;
 	seriesId: string | null;
 	selectedDate: Date;
-	onStatusChange: () => void;
+	onStatusChange: (todoId: string, newStatus: ToDoStatus) => void;
 }
 
 export default function ToDoTile({
@@ -44,27 +44,21 @@ export default function ToDoTile({
 		return styles.default;
 	}
 
-	useEffect(() => {
-		const updateStatus = async () => {
-			await updateToDoStatusInDatabase(
-				todoId,
-				currentTaskStatus,
-				addNotification
-			);
-			onStatusChange();
-		};
-		updateStatus();
-	}, [currentTaskStatus, todoId]);
+	const handleStatusChange = async (newStatus: ToDoStatus) => {
+		setCurrentTaskStatus(newStatus);
+		await updateToDoStatusInDatabase(todoId, newStatus, addNotification);
+		onStatusChange(todoId, newStatus);
+	};
 
 	return (
 		<div className={styles.checkboxAndToDoTileWrapper}>
 			<Checkbox
 				checked={currentTaskStatus === ToDoStatus.checked}
-				onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-					setCurrentTaskStatus(
-						e.target.checked
-							? ToDoStatus.checked
-							: ToDoStatus.unchecked
+				onChange={() =>
+					handleStatusChange(
+						currentTaskStatus === ToDoStatus.checked
+							? ToDoStatus.unchecked
+							: ToDoStatus.checked
 					)
 				}
 			/>
@@ -99,14 +93,15 @@ export default function ToDoTile({
 								<ul className={styles.modalList}>
 									<li
 										className={styles.modalItem}
-										onClick={() => {
-											setCurrentTaskStatus((prev) =>
-												prev === ToDoStatus.ignore
+										onClick={() => (
+											handleStatusChange(
+												currentTaskStatus ===
+													ToDoStatus.ignore
 													? ToDoStatus.unchecked
 													: ToDoStatus.ignore
-											);
-											toggleModalVisibility();
-										}}
+											),
+											toggleModalVisibility()
+										)}
 									>
 										<p>
 											{currentTaskStatus ===

@@ -19,8 +19,8 @@ import {
 import styles from "./EditTodoPage.module.css";
 import {
 	formatTimestampToDateString,
-	resetTodoItemVariants,
-	resetTodoSeriesVariants,
+	resetTodoItemInputFieldStatus,
+	resetTodoSeriesInputFieldStatus,
 	validateDateRange,
 	validateTodoItemFields,
 	validateTodoSeriesFields,
@@ -29,17 +29,17 @@ import { useNotification } from "../../context/NotificationContext";
 import {
 	TodoSeriesInfoInterface,
 	TodoItemInterface,
-	TodoItemInputVariantProps,
-	TodoSeriesInputVariantProps,
+	TodoItemInputFieldStatusProps,
+	TodoSeriesInputFieldStatusProps,
 } from "../../types";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
-	defaultTodoItemInputVariants,
+	defaultTodoItemInputFieldStatus,
 	defaultTodoSeries,
-	defaultTodoSeriesInputVariants,
+	defaultTodoSeriesInputFieldStatus,
 } from "../../constants/defaultTodoValues";
 import {
 	deleteTodoItem,
@@ -69,10 +69,14 @@ const EditToDoPage = () => {
 	);
 	const { addNotification } = useNotification();
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-	const [todoItemFieldStatus, setTodoItemFieldStatus] =
-		useState<TodoItemInputVariantProps>(defaultTodoItemInputVariants);
-	const [todoSeriesFieldStatus, setTodoSeriesFieldStatus] =
-		useState<TodoSeriesInputVariantProps>(defaultTodoSeriesInputVariants);
+	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
+		useState<TodoItemInputFieldStatusProps>(
+			defaultTodoItemInputFieldStatus
+		);
+	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
+		useState<TodoSeriesInputFieldStatusProps>(
+			defaultTodoSeriesInputFieldStatus
+		);
 
 	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
 		undefined
@@ -142,10 +146,13 @@ const EditToDoPage = () => {
 
 	useEffect(() => {
 		if (isEditingSeries || isCreatingNewSeries) {
-			resetTodoSeriesVariants(todoSeriesInfo, setTodoSeriesFieldStatus);
+			resetTodoSeriesInputFieldStatus(
+				todoSeriesInfo,
+				setTodoSeriesInputFieldStatus
+			);
 			return;
 		}
-		resetTodoItemVariants(todoItem, setTodoItemFieldStatus);
+		resetTodoItemInputFieldStatus(todoItem, setTodoItemInputFieldStatus);
 	}, [todoItem, todoSeriesInfo]);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -267,7 +274,7 @@ const EditToDoPage = () => {
 					addNotification
 				)
 			) {
-				setTodoSeriesFieldStatus((prev) => ({
+				setTodoSeriesInputFieldStatus((prev) => ({
 					...prev,
 					endDate: "error",
 				}));
@@ -277,7 +284,7 @@ const EditToDoPage = () => {
 			if (
 				!validateTodoSeriesFields(
 					todoSeriesInfo,
-					setTodoSeriesFieldStatus,
+					setTodoSeriesInputFieldStatus,
 					addNotification
 				)
 			)
@@ -292,7 +299,7 @@ const EditToDoPage = () => {
 			if (
 				!validateTodoItemFields(
 					todoItem,
-					setTodoItemFieldStatus,
+					setTodoItemInputFieldStatus,
 					addNotification
 				)
 			)
@@ -311,7 +318,7 @@ const EditToDoPage = () => {
 					addNotification
 				)
 			) {
-				setTodoSeriesFieldStatus((prev) => ({
+				setTodoSeriesInputFieldStatus((prev) => ({
 					...prev,
 					endDate: "error",
 				}));
@@ -320,7 +327,7 @@ const EditToDoPage = () => {
 			if (
 				!validateTodoSeriesFields(
 					todoSeriesInfo,
-					setTodoSeriesFieldStatus,
+					setTodoSeriesInputFieldStatus,
 					addNotification
 				)
 			)
@@ -366,8 +373,8 @@ const EditToDoPage = () => {
 								}
 								titleVariant={
 									isEditingSeries || isCreatingNewSeries
-										? todoSeriesFieldStatus.title
-										: todoItemFieldStatus.title
+										? todoSeriesInputFieldStatus.title
+										: todoItemInputFieldStatus.title
 								}
 								description={
 									isEditingSeries || isCreatingNewSeries
@@ -387,8 +394,8 @@ const EditToDoPage = () => {
 								}
 								descriptionVariant={
 									isEditingSeries || isCreatingNewSeries
-										? todoSeriesFieldStatus.description
-										: todoItemFieldStatus.description
+										? todoSeriesInputFieldStatus.description
+										: todoItemInputFieldStatus.description
 								}
 							/>
 							<div className={styles.scheduleControlsContainer}>
@@ -414,8 +421,8 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesFieldStatus.category
-												: todoItemFieldStatus.category
+												? todoSeriesInputFieldStatus.category
+												: todoItemInputFieldStatus.category
 										}
 									/>
 									<StartAndEndDate
@@ -441,8 +448,8 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesFieldStatus.startDate
-												: todoItemFieldStatus.date
+												? todoSeriesInputFieldStatus.startDate
+												: todoItemInputFieldStatus.date
 										}
 										minValue={undefined}
 									/>
@@ -464,8 +471,8 @@ const EditToDoPage = () => {
 										variant={
 											isEditingSeries ||
 											isCreatingNewSeries
-												? todoSeriesFieldStatus.time
-												: todoItemFieldStatus.time
+												? todoSeriesInputFieldStatus.time
+												: todoItemInputFieldStatus.time
 										}
 									/>
 									{todoItem.seriesId ? (
@@ -503,7 +510,9 @@ const EditToDoPage = () => {
 										onChange={(date) =>
 											handleDateChange("endDate", date)
 										}
-										variant={todoSeriesFieldStatus.endDate}
+										variant={
+											todoSeriesInputFieldStatus.endDate
+										}
 										minValue={endDateMinValue}
 									/>
 									<DaysComponent
@@ -512,7 +521,7 @@ const EditToDoPage = () => {
 										}
 										onDayToggle={handleDayToggle}
 										variant={
-											todoSeriesFieldStatus.selectedDays
+											todoSeriesInputFieldStatus.selectedDays
 										}
 									/>
 								</>
