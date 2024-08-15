@@ -38,7 +38,7 @@ const DateSelector: FC<DatesSelectorProps> = ({
 					data={arrow_back_ios}
 					onClick={handlePrevDate}
 					color={"#1c7b82"}
-					size={48}
+					size={24}
 				/>
 				<div style={{ width: "10px" }} />
 				<DatePicker
@@ -55,7 +55,7 @@ const DateSelector: FC<DatesSelectorProps> = ({
 					data={arrow_forward_ios}
 					onClick={handleNextDate}
 					color={"#1c7b82"}
-					size={48}
+					size={24}
 				/>
 			</div>
 		</I18nProvider>
