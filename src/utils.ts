@@ -11,10 +11,10 @@ import { db } from "./firebase/firebase";
 import {
 	NotificationContextType,
 	ToDo,
-	TodoItemInputVariantProps as TodoItemFieldStatusProps,
+	TodoItemInputFieldStatusProps,
 	TodoItemInterface,
 	TodoSeriesInfoInterface,
-	TodoSeriesInputVariantProps as TodoSeriesFieldStatusProps,
+	TodoSeriesInputFieldStatusProps,
 } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
@@ -60,18 +60,45 @@ export const formatTimestampToDateString = (timestamp: Timestamp): string => {
 	return timestamp.toDate().toISOString().substring(0, 10);
 };
 
-export const groupTodosByCategory = (
-	todos: TodoItemInterface[]
-): { [key: string]: TodoItemInterface[] } => {
+export const groupTodosByCategory = (todos: TodoItemInterface[]) => {
 	const grouped: { [key: string]: TodoItemInterface[] } = {};
 	todos.forEach((todo) => {
-		const category = todo.category || "Others";
-		if (!grouped[category]) {
-			grouped[category] = [];
+		if (todo.status === "ignore") {
+			if (!grouped["Ignored"]) {
+				grouped["Ignored"] = [];
+			}
+			grouped["Ignored"].push(todo);
+		} else {
+			const category = todo.category || "Others";
+			if (!grouped[category]) {
+				grouped[category] = [];
+			}
+			grouped[category].push(todo);
 		}
-		grouped[category].push(todo);
 	});
 	return grouped;
+};
+
+export const sortTodosGroup = (groupedTodos: {
+	[key: string]: TodoItemInterface[];
+}) => {
+	const priorityOrder = ["Medicine", "Food", "Exercise", "Social", "Others"];
+	const sortedGroup: { [key: string]: TodoItemInterface[] } = {};
+	Object.keys(groupedTodos)
+		.sort((a, b) => {
+			const indexA = priorityOrder.indexOf(a);
+			const indexB = priorityOrder.indexOf(b);
+			return (
+				(indexA === -1 ? Infinity : indexA) -
+				(indexB === -1 ? Infinity : indexB)
+			);
+		})
+		.forEach((key) => {
+			sortedGroup[key] = groupedTodos[key].sort((a, b) =>
+				a.time.localeCompare(b.time)
+			);
+		});
+	return sortedGroup;
 };
 
 export const mapSelectedDaysToNumbers = (selectedDays: string[]) => {
@@ -126,7 +153,7 @@ export const generateTodosForSeries = (
 export const validateTodoItemFields = (
 	todoItem: TodoItemInterface,
 	setTodoItemInputVariants: Dispatch<
-		SetStateAction<TodoItemFieldStatusProps>
+		SetStateAction<TodoItemInputFieldStatusProps>
 	>,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
@@ -159,7 +186,7 @@ export const validateTodoItemFields = (
 export const validateTodoSeriesFields = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
 	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesFieldStatusProps>
+		SetStateAction<TodoSeriesInputFieldStatusProps>
 	>,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
@@ -197,11 +224,13 @@ export const validateTodoSeriesFields = (
 	return isValid;
 };
 
-export const resetTodoItemVariants = (
+export const resetTodoItemInputFieldStatus = (
 	todoItem: TodoItemInterface,
-	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemFieldStatusProps>>
+	setTodoItemInputFieldStatus: Dispatch<
+		SetStateAction<TodoItemInputFieldStatusProps>
+	>
 ) => {
-	setTodoItemInputVariants((prev) => ({
+	setTodoItemInputFieldStatus((prev) => ({
 		title: todoItem.title ? undefined : prev.title,
 		description: todoItem.description ? undefined : prev.description,
 		category: todoItem.category ? undefined : prev.category,
@@ -209,13 +238,13 @@ export const resetTodoItemVariants = (
 		time: todoItem.time ? undefined : prev.time,
 	}));
 };
-export const resetTodoSeriesVariants = (
+export const resetTodoSeriesInputFieldStatus = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
-	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesFieldStatusProps>
+	setTodoSeriesInputFieldStatus: Dispatch<
+		SetStateAction<TodoSeriesInputFieldStatusProps>
 	>
 ) => {
-	setTodoSeriesInputVariants((prev) => ({
+	setTodoSeriesInputFieldStatus((prev) => ({
 		title: todoSeriesInfo.title ? undefined : prev.title,
 		description: todoSeriesInfo.description ? undefined : prev.description,
 		category: todoSeriesInfo.category ? undefined : prev.category,
