@@ -1,7 +1,6 @@
 .fullPage {
 	width: 100%;
-	margin: 0 auto;
-	margin-top: 15px;
+	margin: 15px auto 80px auto;
 	padding-inline: 0 !important;
 	position: relative;
 }
@@ -28,8 +27,5 @@
 	.addIcon {
 		position: absolute;
 		bottom: auto;
-	}
-	.fullPage {
-		max-width: 1024px;
 	}
 }

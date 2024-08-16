@@ -22,30 +22,49 @@
 
 .descriptionSection {
 	display: flex;
-	margin-bottom: 0.5rem;
-	align-items: center;
-	position: relative;
+	margin: 0.5rem 0 0.5rem 0;
+	align-items: flex-end;
 	justify-content: space-between;
 }
 
-.titleText h2 {
+.menuIconContainer {
+	position: relative;
+}
+
+.titleSection {
+	display: flex;
+	justify-content: space-between;
+}
+
+.titleContainer {
+	display: flex;
+}
+
+/* .titleContainer svg {
+	margin-left: 5px;
+	color: rgb(145, 145, 145);
+} */
+
+.titleContainer h2 {
 	font-weight: 300;
 }
 
-.titleText h2,
-.descriptionSection p,
-.commentSection p {
+.titleContainer h2,
+.descriptionSection p {
 	cursor: pointer;
+	word-break: break-word;
 }
 
 .descriptionSection p {
 	font-size: 0.9rem;
-	width: 30ch;
 }
 
 .moreIcon {
 	cursor: pointer;
-	margin-right: 0.5rem;
+	margin: 0 0.5rem 0 0.5rem;
+	position: relative;
+	min-width: 40px;
+	height: 40px;
 }
 
 .modalOverlay {
@@ -54,20 +73,24 @@
 	left: 0;
 	width: 100vw;
 	height: 100vh;
+	z-index: 2;
 }
 
 .modalContainer {
 	position: absolute;
-	top: 75%;
-	left: 52%;
-	transform: translateY(10px);
+	top: 100%;
+	right: 0;
 	background-color: var(--white);
 	padding: 10px;
 	border-radius: 3px;
-	max-width: 100%;
-	width: 50%;
+	white-space: nowrap;
 	outline: 1px solid var(--lightblue);
 	z-index: 2;
+}
+
+.dropdownAbove {
+	top: auto;
+	bottom: 100%;
 }
 
 .modalList {
@@ -116,7 +139,7 @@
 }
 
 .notApplicable {
-	background-color: #eea88e;
+	background-color: var(--coral);
 }
 
 .checked {
