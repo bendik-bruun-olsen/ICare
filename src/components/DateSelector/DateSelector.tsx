@@ -37,7 +37,7 @@ const DateSelector: FC<DatesSelectorProps> = ({
 				<Icon
 					data={arrow_back_ios}
 					onClick={handlePrevDate}
-					color={"#1c7b82"}
+					color={"var(--blue)"}
 					size={24}
 				/>
 				<div style={{ width: "10px" }} />
@@ -54,7 +54,7 @@ const DateSelector: FC<DatesSelectorProps> = ({
 				<Icon
 					data={arrow_forward_ios}
 					onClick={handleNextDate}
-					color={"#1c7b82"}
+					color={"var(--blue)"}
 					size={24}
 				/>
 			</div>
