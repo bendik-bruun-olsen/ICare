@@ -13,6 +13,7 @@ import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
 import { useNotification } from "../../hooks/useNotification";
 import ErrorPage from "../ErrorPage/ErrorPage";
+import { Paths } from "../../paths";
 
 const ToDoPage: React.FC = () => {
 	const location = useLocation();
@@ -112,7 +113,7 @@ const ToDoPage: React.FC = () => {
 								</div>
 							</div>
 						))}
-						<Link to="/add-todo">
+						<Link to={Paths.ADD_TODO}>
 							<div className={styles.addIcon}>
 								<Button variant="contained_icon">
 									<Icon data={add} size={32} />

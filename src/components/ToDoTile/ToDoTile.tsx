@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Icon, Checkbox, Chip } from "@equinor/eds-core-react";
 // import {
 // 	layers,
@@ -41,10 +41,9 @@ export default function ToDoTile({
 	const [currentTaskStatus, setCurrentTaskStatus] =
 		useState<ToDoStatus>(taskStatus);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const toggleModalVisibility = () => {
-		setIsModalOpen((prev) => !prev);
-	};
 	const { addNotification } = useNotification();
+	const moreIconRef = useRef<SVGSVGElement>(null);
+	const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
 
 	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
 		if (currentToDoStatus === ToDoStatus.checked) return styles.checked;
@@ -52,6 +51,15 @@ export default function ToDoTile({
 			return styles.notApplicable;
 		return styles.default;
 	}
+
+	const handleMenuClick = () => {
+		if (moreIconRef.current) {
+			const rect = moreIconRef.current.getBoundingClientRect();
+			const spaceBelow = window.innerHeight - rect.bottom;
+			setDisplayDropdownAbove(spaceBelow < 150);
+		}
+		setIsModalOpen((prev) => !prev);
+	};
 
 	const handleStatusChange = async (newStatus: ToDoStatus) => {
 		setCurrentTaskStatus(newStatus);
@@ -106,30 +114,35 @@ export default function ToDoTile({
 						data={more_horizontal}
 						size={40}
 						className={styles.moreIcon}
-						onClick={toggleModalVisibility}
+						onClick={handleMenuClick}
+						// onClick={handleMenuClick}
+						ref={moreIconRef}
 					/>
 					{isModalOpen && (
 						<>
 							<div
 								className={styles.modalOverlay}
-								onClick={toggleModalVisibility}
+								onClick={handleMenuClick}
 							></div>
 							<div
-								className={styles.modalContainer}
+								className={`${styles.modalContainer} ${
+									displayDropdownAbove
+										? styles.dropdownAbove
+										: ""
+								}`}
 								onClick={(e) => e.stopPropagation()}
 							>
 								<ul className={styles.modalList}>
 									<li
 										className={styles.modalItem}
-										onClick={() => (
+										onClick={() =>
 											handleStatusChange(
 												currentTaskStatus ===
 													ToDoStatus.ignore
 													? ToDoStatus.unchecked
 													: ToDoStatus.ignore
-											),
-											toggleModalVisibility()
-										)}
+											)
+										}
 									>
 										<p>
 											{currentTaskStatus ===
