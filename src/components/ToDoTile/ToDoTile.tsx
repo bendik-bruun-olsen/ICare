@@ -56,7 +56,7 @@ export default function ToDoTile({
 		if (moreIconRef.current) {
 			const rect = moreIconRef.current.getBoundingClientRect();
 			const spaceBelow = window.innerHeight - rect.bottom;
-			setDisplayDropdownAbove(spaceBelow < 150);
+			setDisplayDropdownAbove(spaceBelow < 180);
 		}
 		setIsModalOpen((prev) => !prev);
 	};
@@ -110,78 +110,79 @@ export default function ToDoTile({
 				</div>
 				<div className={styles.descriptionSection}>
 					<p>{toDoDescription}</p>
-					<Icon
-						data={more_horizontal}
-						size={40}
-						className={styles.moreIcon}
-						onClick={handleMenuClick}
-						// onClick={handleMenuClick}
-						ref={moreIconRef}
-					/>
-					{isModalOpen && (
-						<>
-							<div
-								className={styles.modalOverlay}
-								onClick={handleMenuClick}
-							></div>
-							<div
-								className={`${styles.modalContainer} ${
-									displayDropdownAbove
-										? styles.dropdownAbove
-										: ""
-								}`}
-								onClick={(e) => e.stopPropagation()}
-							>
-								<ul className={styles.modalList}>
-									<li
-										className={styles.modalItem}
-										onClick={() =>
-											handleStatusChange(
-												currentTaskStatus ===
-													ToDoStatus.ignore
-													? ToDoStatus.unchecked
-													: ToDoStatus.ignore
-											)
-										}
-									>
-										<p>
-											{currentTaskStatus ===
-											ToDoStatus.ignore
-												? "Mark as applicable"
-												: "Mark as N/A"}
-										</p>
-									</li>
-									<li className={styles.modalItem}>
-										<Link
-											to={Paths.EDIT_TODO_ITEM.replace(
-												":todoId",
-												todoId
-											)}
-											state={{ selectedDate }}
+					<div className={styles.menuIconContainer}>
+						<Icon
+							data={more_horizontal}
+							size={40}
+							className={styles.moreIcon}
+							onClick={handleMenuClick}
+							ref={moreIconRef}
+						/>
+						{isModalOpen && (
+							<>
+								<div
+									className={styles.modalOverlay}
+									onClick={handleMenuClick}
+								></div>
+								<div
+									className={`${styles.modalContainer} ${
+										displayDropdownAbove
+											? styles.dropdownAbove
+											: ""
+									}`}
+									onClick={(e) => e.stopPropagation()}
+								>
+									<ul className={styles.modalList}>
+										<li
+											className={styles.modalItem}
+											onClick={() =>
+												handleStatusChange(
+													currentTaskStatus ===
+														ToDoStatus.ignore
+														? ToDoStatus.unchecked
+														: ToDoStatus.ignore
+												)
+											}
 										>
-											<p>Edit/Delete This Task</p>
-										</Link>
-									</li>
-									{seriesId && (
+											<p>
+												{currentTaskStatus ===
+												ToDoStatus.ignore
+													? "Mark as applicable"
+													: "Mark as N/A"}
+											</p>
+										</li>
 										<li className={styles.modalItem}>
 											<Link
-												to={Paths.EDIT_TODO_SERIES.replace(
-													":seriesId",
-													seriesId
+												to={Paths.EDIT_TODO_ITEM.replace(
+													":todoId",
+													todoId
 												)}
 												state={{ selectedDate }}
 											>
-												<p>
-													Edit/Delete All Tasks In
-													Series
-												</p>
+												<p>Edit/Delete This Task</p>
 											</Link>
 										</li>
-									)}
-								</ul>
-							</div>
-						</>
-					)}
+										{seriesId && (
+											<li className={styles.modalItem}>
+												<Link
+													to={Paths.EDIT_TODO_SERIES.replace(
+														":seriesId",
+														seriesId
+													)}
+													state={{ selectedDate }}
+												>
+													<p>
+														Edit/Delete All Tasks In
+														Series
+													</p>
+												</Link>
+											</li>
+										)}
+									</ul>
+								</div>
+							</>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>
