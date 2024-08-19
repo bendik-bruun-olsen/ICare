@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import Navbar from "../../components/Navbar/Navbar";
-import BackHomeButton from "../../components/BackHomeButton";
 import { db, storage } from "../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import {
@@ -14,6 +13,7 @@ import { UserData } from "../../types";
 import UserProfileForm from "../../components/UserProfile/UserProfileForm";
 import ProfilePicture from "../../components/UserProfile/ProfilePicture";
 import "./UserProfilePage.css";
+import Logo from "../../components/Logo/Logo";
 
 const UserProfilePage: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -184,7 +184,7 @@ const UserProfilePage: React.FC = () => {
 
   return (
     <div>
-      <Navbar leftContent={<BackHomeButton />} centerContent="User Profile" />
+      <Navbar leftContent={<Logo />} centerContent="User Profile" />
       <div className="profile-container">
         <ProfilePicture
           selectedImage={selectedImage}
