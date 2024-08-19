@@ -14,7 +14,7 @@ export const uploadProfilePicture = async (
 	file: File,
 	userEmail: string
 ): Promise<string> => {
-	const storageRef = ref(storage, `profilePictures/${userEmail}/${file.name}`);
+	const storageRef = ref(storage, `patientPictures/${userEmail}/${file.name}`);
 	const uploadTask = uploadBytesResumable(storageRef, file);
 
 	return new Promise((resolve, reject) => {
@@ -38,14 +38,14 @@ export const updateProfilePictureUrl = async (
 	userEmail: string,
 	downloadUrl: string
 ): Promise<void> => {
-	const userDocRef = doc(db, "users", userEmail);
+	const userDocRef = doc(db, "patientdetails", userEmail);
 	await updateDoc(userDocRef, { profilePictureUrl: downloadUrl });
 };
 
 export const listProfilePictures = async (
 	userEmail: string
 ): Promise<string[]> => {
-	const storageRef = ref(storage, `profilePictures/${userEmail}`);
+	const storageRef = ref(storage, `patientPictures/${userEmail}`);
 	const listResult = await listAll(storageRef);
 	return listResult.items.map((item) => item.fullPath);
 };

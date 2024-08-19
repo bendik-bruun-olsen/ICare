@@ -152,7 +152,7 @@ const UserProfilePage: React.FC = () => {
 								<img
 									src={`${url}?t=${new Date().getTime()}`}
 									alt="Gallery"
-									className={styles.galleryimage}
+									className={styles.galleryImage}
 									onClick={() => handleImageSelect(url)}
 									style={{
 										height: "85px",
