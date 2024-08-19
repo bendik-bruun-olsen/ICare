@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, CircularProgress } from "@equinor/eds-core-react";
+import { Button } from "@equinor/eds-core-react";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import ToDoTile from "../../components/ToDoTile/ToDoTile";
 import styles from "./ToDoPage.module.css";
@@ -13,6 +13,7 @@ import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
 import { useNotification } from "../../hooks/useNotification";
 import ErrorPage from "../ErrorPage/ErrorPage";
+import Loading from "../../components/Loading/Loading";
 import { Paths } from "../../paths";
 
 const ToDoPage: React.FC = () => {
@@ -70,7 +71,13 @@ const ToDoPage: React.FC = () => {
 		setCategorizedTodos(updatedSortedTodosGroup);
 	};
 
-	if (isLoading) return <CircularProgress />;
+	if (isLoading)
+		return (
+			<>
+				<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
+				<Loading />
+			</>
+		);
 	if (hasError) return <ErrorPage />;
 	return (
 		<>
