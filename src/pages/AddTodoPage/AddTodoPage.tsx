@@ -41,6 +41,7 @@ import {
 	defaultTodoSeries,
 	defaultTodoSeriesInputFieldStatus,
 } from "../../constants/defaultTodoValues";
+import Loading from "../../components/Loading/Loading";
 
 const AddToDoPage: React.FC = () => {
 	const location = useLocation();
@@ -214,8 +215,17 @@ const AddToDoPage: React.FC = () => {
 		setTodoItem((prev) => ({ ...prev, time: e.target.value }));
 	};
 
-	if (isLoading) return <div>Loading...</div>;
 	if (hasError) return <ErrorPage />;
+	if (isLoading)
+		return (
+			<>
+				<Navbar
+					leftContent={<BackHomeButton />}
+					centerContent="Add ToDo"
+				/>
+				<Loading />
+			</>
+		);
 
 	return (
 		<>
