@@ -15,7 +15,7 @@ import { addPatient } from "../../firebase/patientServices/addPatient";
 import { getDefaultPictureUrl } from "../../firebase/imageServices/defaultImage";
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
-import UploadProfilePicture from "../../components/uploadProfilePicture";
+import UploadProfilePicture from "../../components/UploadProfilePicture/UploadProfilePicture";
 
 const FormField = ({
 	label,

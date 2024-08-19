@@ -1,23 +1,29 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Button, Icon } from "@equinor/eds-core-react";
 import { camera } from "@equinor/eds-icons";
-import { useAuth } from "../hooks/useAuth/useAuth";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 import {
 	uploadProfilePicture,
 	listProfilePictures,
 	updateProfilePictureUrl,
-} from "../firebase/imageServices/profilePictureService";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase";
-import { useNotification } from "../context/NotificationContext";
-import { getDefaultPictureUrl } from "../firebase/imageServices/defaultImage";
+} from "../../firebase/imageServices/profilePictureService";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase/firebase";
+import { useNotification } from "../../context/NotificationContext";
+import { getDefaultPictureUrl } from "../../firebase/imageServices/defaultImage";
+import {
+	getDownloadURL,
+	getStorage,
+	listAll,
+	ref,
+	StorageReference,
+} from "firebase/storage";
+import styles from "./UploadProfilePicture.module.css";
 
 const UserProfilePage: React.FC = () => {
 	const { currentUser } = useAuth();
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const [imageUrls, setImageUrls] = useState<string[]>([]);
-	const [defaultImage, setDefaultImage] = useState<string | null>(null);
-	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 	const [showOptions, setShowOptions] = useState(false);
 	const [showGallery, setShowGallery] = useState(false);
 	const { addNotification } = useNotification();
@@ -28,27 +34,46 @@ const UserProfilePage: React.FC = () => {
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (!currentUser?.email) return;
-			const docSnap = await getDoc(doc(db, "users", currentUser.email));
-			if (docSnap.exists())
-				setSelectedImage(docSnap.data()?.profilePictureUrl || null);
+
+			try {
+				const docSnap = await getDoc(doc(db, "users", currentUser.email));
+				let profilePictureUrl = docSnap.exists()
+					? docSnap.data()?.profilePictureUrl
+					: null;
+
+				if (profilePictureUrl) {
+					const storage = getStorage();
+					const storageRef = ref(storage, profilePictureUrl);
+					try {
+						await getDownloadURL(storageRef);
+					} catch (error) {
+						profilePictureUrl = await getDefaultPictureUrl();
+						await updateDoc(doc(db, "users", currentUser.email), {
+							profilePictureUrl: null,
+						});
+					}
+				}
+
+				if (!profilePictureUrl) {
+					profilePictureUrl = await getDefaultPictureUrl();
+				}
+
+				setSelectedImage(`${profilePictureUrl}?t=${new Date().getTime()}`);
+			} catch (error) {
+				console.error("Error fetching user data or image:", error);
+				const defaultUrl = await getDefaultPictureUrl();
+				setSelectedImage(`${defaultUrl}?t=${new Date().getTime()}`);
+			}
 		};
+
 		fetchUserData();
 	}, [currentUser]);
-
-	useEffect(() => {
-		const fetchDefaultImage = async () => {
-			const url = await getDefaultPictureUrl();
-			setDefaultImage(url);
-		};
-		fetchDefaultImage();
-	}, []);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (!profileContainerRef.current?.contains(event.target as Node)) {
 				setShowOptions(false);
 				setShowGallery(false);
-				setPreviewUrl(null);
 			}
 		};
 		document.addEventListener("mousedown", handleClickOutside);
@@ -62,10 +87,12 @@ const UserProfilePage: React.FC = () => {
 					e.target.files[0],
 					currentUser.email
 				);
-				setSelectedImage(downloadURL);
+				await updateProfilePictureUrl(currentUser.email, downloadURL);
+				setSelectedImage(`${downloadURL}?t=${new Date().getTime()}`);
 				setShowOptions(false);
 				addNotification("Image uploaded successfully", "success");
 			} catch (error) {
+				console.error("Error uploading image:", error);
 				addNotification("Error uploading image", "error");
 			}
 		}
@@ -73,22 +100,32 @@ const UserProfilePage: React.FC = () => {
 
 	const handleChooseImage = async () => {
 		if (!currentUser?.email) return;
+
 		try {
-			const urls = await listProfilePictures(currentUser.email);
+			const storage = getStorage();
+			const storageRef = ref(storage, `profilePictures/${currentUser.email}/`);
+			const listResult = await listAll(storageRef);
+
+			const urls = await Promise.all(
+				listResult.items.map(async (itemRef: StorageReference) => {
+					return await getDownloadURL(itemRef);
+				})
+			);
+
 			setImageUrls(urls);
-			setShowGallery(true);
 			setShowOptions(false);
+			setShowGallery(true);
 		} catch (error) {
-			console.error("Error fetching images:", error);
+			console.error("Error fetching images: ", error);
 		}
 	};
 
 	const handleImageSelect = async (url: string) => {
 		if (!currentUser?.email) return;
+
 		try {
 			await updateProfilePictureUrl(currentUser.email, url);
-			setSelectedImage(url);
-			setPreviewUrl(null);
+			setSelectedImage(`${url}?t=${new Date().getTime()}`);
 			setShowGallery(false);
 		} catch (error) {
 			console.error("Error saving selected image:", error);
@@ -97,37 +134,58 @@ const UserProfilePage: React.FC = () => {
 
 	return (
 		<div className="profile-container" ref={profileContainerRef}>
-			<div className="profile-picture-container">
+			<div className={styles.profilePictureContainer}>
 				<img
-					src={selectedImage || previewUrl || defaultImage || "fallback-url"}
+					src={selectedImage || ""}
 					alt="Profile"
-					className={`profile-pic ${previewUrl ? "blurred" : ""}`}
+					style={{
+						width: "85px",
+						height: "85px",
+						borderRadius: "50%",
+						objectFit: "cover",
+					}}
 				/>
 				{showGallery && (
-					<div className="image-gallery">
+					<div className={styles.imageGallery}>
 						{imageUrls.map((url) => (
 							<div key={url} className="gallery-item">
 								<img
-									src={url}
+									src={`${url}?t=${new Date().getTime()}`}
 									alt="Gallery"
-									className="gallery-image"
+									className={styles.galleryimage}
 									onClick={() => handleImageSelect(url)}
+									style={{
+										height: "85px",
+										width: "85px",
+										borderRadius: "50%",
+										objectFit: "cover",
+									}}
 								/>
 							</div>
 						))}
 					</div>
 				)}
 				<div
-					className="camera-icon"
+					style={{
+						display: "flex",
+						justifyContent: "center",
+						marginTop: "5px",
+					}}
 					onClick={() => setShowOptions(!showOptions)}
 				>
 					<Icon data={camera} />
 				</div>
 				{showOptions && (
-					<div className="hover-options">
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "center",
+						}}
+					>
 						<Button
 							onClick={() => fileInputRef.current?.click()}
 							className="option"
+							style={{ marginRight: "5px" }}
 						>
 							Upload New Picture
 						</Button>
