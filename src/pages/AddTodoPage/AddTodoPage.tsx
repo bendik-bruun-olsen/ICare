@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory";
@@ -14,22 +14,36 @@ import {
 } from "../../firebase/todoServices/addNewTodo";
 import { useNotification } from "../../hooks/useNotification";
 import { Timestamp } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-import { TodoItemInterface, TodoSeriesInfoInterface } from "../../types";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+	TodoItemInputFieldStatusProps,
+	TodoItemInterface,
+	TodoSeriesInfoInterface,
+	TodoSeriesInputFieldStatusProps,
+	ToDoStatus,
+} from "../../types";
 import {
 	formatTimestampToDateString,
 	generateTodosForSeries,
 	mapSelectedDaysToNumbers,
+	resetTodoItemInputFieldStatus,
+	resetTodoSeriesInputFieldStatus,
+	validateDateRange,
+	validateTodoItemFields,
+	validateTodoSeriesFields,
 } from "../../utils";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import { Paths } from "../../paths";
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
+	defaultTodoItemInputFieldStatus,
 	defaultTodoSeries,
+	defaultTodoSeriesInputFieldStatus,
 } from "../../constants/defaultTodoValues";
 
 const AddToDoPage: React.FC = () => {
+	const location = useLocation();
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isRepeating, setIsRepeating] = useState(false);
@@ -37,11 +51,42 @@ const AddToDoPage: React.FC = () => {
 		useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
+	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
+		useState<TodoItemInputFieldStatusProps>(
+			defaultTodoItemInputFieldStatus
+		);
+	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
+		useState<TodoSeriesInputFieldStatusProps>(
+			defaultTodoSeriesInputFieldStatus
+		);
 	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
 		undefined
 	);
 	const { addNotification } = useNotification();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (!location.state.selectedDate) {
+			setHasError(true);
+			return;
+		}
+		const initialDate = new Date(location.state.selectedDate);
+		setTodoItem((prev) => ({
+			...prev,
+			date: Timestamp.fromDate(initialDate),
+		}));
+	}, [location.state.selectedDate]);
+
+	useEffect(() => {
+		if (isRepeating) {
+			resetTodoSeriesInputFieldStatus(
+				todoSeriesInfo,
+				setTodoSeriesInputFieldStatus
+			);
+			return;
+		}
+		resetTodoItemInputFieldStatus(todoItem, setTodoItemInputFieldStatus);
+	}, [todoItem, todoSeriesInfo]);
 
 	const handleToggleRepeat = () => {
 		setIsRepeating((isRepeating) => {
@@ -67,46 +112,77 @@ const AddToDoPage: React.FC = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
 		try {
 			setIsLoading(true);
 			if (isRepeating) {
+				if (
+					!validateDateRange(
+						todoSeriesInfo.startDate,
+						todoSeriesInfo.endDate,
+						addNotification
+					)
+				)
+					return;
+
+				if (
+					!validateTodoSeriesFields(
+						todoSeriesInfo,
+						setTodoSeriesInputFieldStatus,
+						addNotification
+					)
+				)
+					return;
+
 				const selectedDaysNumbers = mapSelectedDaysToNumbers(
 					todoSeriesInfo.selectedDays
 				);
-
 				if (selectedDaysNumbers.includes(-1)) {
 					addNotification("Invalid day selected", "error");
 					setHasError(true);
 					return;
 				}
-
+				const newTodo = {
+					title: todoSeriesInfo.title,
+					description: todoSeriesInfo.description,
+					date: Timestamp.now(),
+					time: todoSeriesInfo.time,
+					category: todoSeriesInfo.category,
+					status: ToDoStatus.unchecked,
+					seriesId: "",
+					id: "",
+				};
 				const newTodos = generateTodosForSeries(
-					todoItem,
+					newTodo,
 					formatTimestampToDateString(todoSeriesInfo.startDate),
 					formatTimestampToDateString(todoSeriesInfo.endDate),
 					selectedDaysNumbers
 				);
-
 				await addMultipleNewTodos(
 					newTodos,
 					todoSeriesInfo,
 					addNotification
 				);
+				return navigate(Paths.TODO, {
+					state: { selectedDate: todoSeriesInfo.startDate.toDate() },
+				});
 			}
-
 			if (!isRepeating) {
+				if (
+					!validateTodoItemFields(
+						todoItem,
+						setTodoItemInputFieldStatus,
+						addNotification
+					)
+				)
+					return;
 				await addSingleNewTodo(todoItem, addNotification);
+				return navigate(Paths.TODO, {
+					state: { selectedDate: todoItem.date.toDate() },
+				});
 			}
+			setHasError(true);
 		} finally {
 			setIsLoading(false);
-			navigate(Paths.TODO, {
-				state: {
-					selectedDate: isRepeating
-						? todoSeriesInfo.startDate
-						: todoItem.date,
-				},
-			});
 		}
 	};
 
@@ -168,7 +244,11 @@ const AddToDoPage: React.FC = () => {
 												title,
 										  }))
 								}
-								titleVariant={undefined}
+								titleVariant={
+									isRepeating
+										? todoSeriesInputFieldStatus.title
+										: todoItemInputFieldStatus.title
+								}
 								description={
 									isRepeating
 										? todoSeriesInfo.description
@@ -185,7 +265,11 @@ const AddToDoPage: React.FC = () => {
 												description,
 										  }))
 								}
-								descriptionVariant={undefined}
+								descriptionVariant={
+									isRepeating
+										? todoSeriesInputFieldStatus.description
+										: todoItemInputFieldStatus.description
+								}
 							/>
 							<div className={styles.scheduleControlsContainer}>
 								<div>
@@ -206,7 +290,11 @@ const AddToDoPage: React.FC = () => {
 														category,
 												  }))
 										}
-										variant={undefined}
+										variant={
+											isRepeating
+												? todoSeriesInputFieldStatus.category
+												: todoItemInputFieldStatus.category
+										}
 									/>
 									<StartAndEndDate
 										label={
@@ -225,7 +313,11 @@ const AddToDoPage: React.FC = () => {
 												date
 											)
 										}
-										variant={undefined}
+										variant={
+											isRepeating
+												? todoSeriesInputFieldStatus.startDate
+												: todoItemInputFieldStatus.date
+										}
 										minValue={undefined}
 									/>
 								</div>
@@ -243,6 +335,11 @@ const AddToDoPage: React.FC = () => {
 										className={styles.time}
 										onChange={handleTimeChange}
 										style={{ width: "150px" }}
+										variant={
+											isRepeating
+												? todoSeriesInputFieldStatus.time
+												: todoItemInputFieldStatus.time
+										}
 									/>
 									<Checkbox
 										label="Repeat"
@@ -261,7 +358,9 @@ const AddToDoPage: React.FC = () => {
 										onChange={(date) =>
 											handleDateChange("endDate", date)
 										}
-										variant={undefined}
+										variant={
+											todoSeriesInputFieldStatus.endDate
+										}
 										minValue={endDateMinValue}
 									/>
 									<DaysComponent
@@ -269,7 +368,9 @@ const AddToDoPage: React.FC = () => {
 											todoSeriesInfo.selectedDays
 										}
 										onDayToggle={handleDayToggle}
-										variant={undefined}
+										variant={
+											todoSeriesInputFieldStatus.selectedDays
+										}
 									/>
 								</>
 							)}
