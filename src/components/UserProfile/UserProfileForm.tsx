@@ -1,26 +1,73 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input, Label, NativeSelect, Icon } from "@equinor/eds-core-react";
 import { edit } from "@equinor/eds-icons";
+import { db } from "../../firebase/firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 import { UserData } from "../../types";
 import "./UserProfileForm.css";
 
-interface UserProfileFormProps {
-  userData: UserData | null;
-  isEditing: boolean;
-  handleEditClick: () => void;
-  handleChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
-  fullInfoContainerRef: React.RefObject<HTMLDivElement>;
-}
+const UserProfileForm: React.FC = () => {
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const { currentUser } = useAuth();
+  const fullInfoContainerRef = useRef<HTMLDivElement>(null);
 
-const UserProfileForm: React.FC<UserProfileFormProps> = ({
-  userData,
-  isEditing,
-  handleEditClick,
-  handleChange,
-  fullInfoContainerRef,
-}) => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser?.email) {
+        const userDocRef = doc(db, "users", currentUser.email);
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data() as UserData;
+          setUserData(data);
+        } else {
+          console.error("No such document!");
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [currentUser]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        fullInfoContainerRef.current &&
+        !fullInfoContainerRef.current.contains(event.target as Node)
+      ) {
+        setIsEditing(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleChange = async (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { id, value } = e.target;
+    const updatedData = { ...userData, [id]: value } as UserData;
+    setUserData(updatedData);
+
+    if (currentUser?.email) {
+      try {
+        const userDocRef = doc(db, "users", currentUser.email);
+        await updateDoc(userDocRef, { [id]: value });
+      } catch (error) {
+        console.error("Error updating document:", error);
+      }
+    }
+  };
+
   return (
     <div className="fullInfoContainer" ref={fullInfoContainerRef}>
       <div className="userInfo">
