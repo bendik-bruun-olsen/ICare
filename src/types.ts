@@ -79,3 +79,12 @@ export interface TodoSeriesInputFieldStatusProps {
 	time: Variants | undefined;
 	selectedDays: Variants | undefined;
 }
+
+export interface UserData {
+  name: string;
+  age?: number;
+  gender?: "Male" | "Female" | "Others";
+  phone?: string;
+  email: string;
+  profilePictureUrl?: string;
+}
