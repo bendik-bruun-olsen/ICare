@@ -60,7 +60,6 @@ export default function LoginPage() {
                 error.message.includes("auth/invalid-email") ||
                 error.message.includes("auth/invalid-credential")
             ) {
-                setEmailError("Invalid email or password.");
                 setPasswordError("Invalid email or password.");
                 addNotification(
                     "Invalid login credentials. Please try again.",
@@ -124,7 +123,7 @@ export default function LoginPage() {
                 </Button>
             </form>
             <div className="links">
-                <a href={Paths.SIGNUP}>Sign Up</a>
+                <a href={Paths.SIGNUP}>Don't have an account? SignUp Here</a>
 
                 <a href={Paths.RECOVER_PASSWORD}>Forgot Password?</a>
             </div>
