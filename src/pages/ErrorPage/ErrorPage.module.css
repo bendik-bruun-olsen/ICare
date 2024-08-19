@@ -1,10 +1,7 @@
-.wrapper {
+.container {
 	display: flex;
 	flex-direction: column;
-	min-height: 100vh;
-	justify-content: center;
 	padding: 20px;
-	gap: 10px;
 }
 
 .title {
@@ -19,25 +16,20 @@
 .paragraph {
 	color: var(--black);
 	margin-top: 10px;
-	font-weight: 450;
-}
-
-.buttonContainer {
-	display: flex;
-	margin: 10px 0;
+	font-weight: 500;
 }
 
 #returnButton {
 	background-color: var(--blue);
-	width: fit-content;
+	position: fixed;
+	bottom: 40px;
+	width: 150px;
+	left: calc(50% - 75px);
 }
 
-@media (max-width: 768px) {
-	.wrapper {
-		justify-content: space-between;
-	}
-
-	.buttonContainer {
-		justify-content: center;
+@media (min-width: 769px) {
+	#returnButton {
+		position: static;
+		margin-left: 20px;
 	}
 }
