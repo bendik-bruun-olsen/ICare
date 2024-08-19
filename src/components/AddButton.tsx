@@ -3,7 +3,7 @@ import { Button } from "@equinor/eds-core-react";
 import styled from "styled-components";
 
 const StyledButton = styled.div`
-	width: 150px;
+	width: fit-content;
 `;
 
 interface AddButtonProps {

@@ -5,7 +5,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/Login/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
 import ToDoPage from "./pages/ToDoPage/ToDoPage";
-import AddTodo from "./pages/AddTodo/AddTodo";
+import AddTodoPage from "./pages/AddTodoPage/AddTodoPage";
 import EditToDoPage from "./pages/EditTodoPage/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
 import AddAppointment from "./pages/AddAppointment/AddAppointment";
@@ -57,10 +57,14 @@ const protectedRoutes = [
   },
   {
     path: Paths.ADD_TODO,
-    element: <AddTodo />,
+    element: <AddTodoPage />,
   },
   {
-    path: Paths.EDIT_TODO,
+    path: Paths.EDIT_TODO_ITEM,
+    element: <EditToDoPage />,
+  },
+  {
+    path: Paths.EDIT_TODO_SERIES,
     element: <EditToDoPage />,
   },
   {
