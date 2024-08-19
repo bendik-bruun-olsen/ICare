@@ -1,7 +1,10 @@
 .datePickerWrapper {
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	margin-top: 20px;
-	width: 194px;
-	margin: 0 auto;
+}
+
+.datePickerWrapper svg {
+	cursor: pointer;
 }

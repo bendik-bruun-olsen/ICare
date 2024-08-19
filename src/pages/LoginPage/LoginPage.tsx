@@ -9,6 +9,7 @@ import "./LoginPage.modules.css";
 import { useNavigate } from "react-router-dom";
 import { FirestoreError } from "firebase/firestore";
 import { useNotification } from "../../hooks/useNotification";
+import Loading from "../../components/Loading/Loading";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ export default function LoginPage() {
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const navigate = useNavigate();
     const { addNotification } = useNotification();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(e.target.value);
@@ -48,6 +50,7 @@ export default function LoginPage() {
         }
 
         try {
+            setIsLoading(true);
             await signInWithEmailAndPassword(auth, email, password);
             addNotification("Login successful!", "success");
             navigate(Paths.HOME);
@@ -66,10 +69,13 @@ export default function LoginPage() {
             } else {
                 setHasError(true);
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     if (hasError) navigate(Paths.ERROR);
+    if (isLoading) return <Loading />;
 
     return (
         <div className="pageWrapper" id="loginPageWrapper">
