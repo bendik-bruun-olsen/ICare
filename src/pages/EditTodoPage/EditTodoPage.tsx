@@ -47,6 +47,7 @@ import {
 } from "../../firebase/todoServices/deleteTodo";
 import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
 import { Paths } from "../../paths";
+import Loading from "../../components/Loading/Loading";
 
 const EditToDoPage = () => {
 	const location = useLocation();
@@ -340,7 +341,18 @@ const EditToDoPage = () => {
 		}
 	};
 	if (hasError) return <ErrorPage />;
-	if (isLoading) return <h1>Loading....</h1>;
+	if (isLoading)
+		return (
+			<>
+				<Navbar
+					leftContent={<BackHomeButton />}
+					centerContent={
+						isEditingSeries ? "Edit ToDo Series" : "Edit ToDo"
+					}
+				/>
+				<Loading />
+			</>
+		);
 
 	return (
 		<>
