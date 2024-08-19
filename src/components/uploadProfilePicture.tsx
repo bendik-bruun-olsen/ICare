@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Icon } from "@equinor/eds-core-react";
+import { Button, Icon } from "@equinor/eds-core-react";
 import { camera } from "@equinor/eds-icons";
 import { useAuth } from "../hooks/useAuth/useAuth";
 import {
@@ -10,11 +10,13 @@ import {
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useNotification } from "../context/NotificationContext";
+import { getDefaultPictureUrl } from "../firebase/imageServices/defaultImage";
 
 const UserProfilePage: React.FC = () => {
 	const { currentUser } = useAuth();
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const [imageUrls, setImageUrls] = useState<string[]>([]);
+	const [defaultImage, setDefaultImage] = useState<string | null>(null);
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 	const [showOptions, setShowOptions] = useState(false);
 	const [showGallery, setShowGallery] = useState(false);
@@ -32,6 +34,14 @@ const UserProfilePage: React.FC = () => {
 		};
 		fetchUserData();
 	}, [currentUser]);
+
+	useEffect(() => {
+		const fetchDefaultImage = async () => {
+			const url = await getDefaultPictureUrl();
+			setDefaultImage(url);
+		};
+		fetchDefaultImage();
+	}, []);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -89,7 +99,7 @@ const UserProfilePage: React.FC = () => {
 		<div className="profile-container" ref={profileContainerRef}>
 			<div className="profile-picture-container">
 				<img
-					src={previewUrl || selectedImage || "/default-profile-image.jpg"}
+					src={selectedImage || previewUrl || defaultImage || "fallback-url"}
 					alt="Profile"
 					className={`profile-pic ${previewUrl ? "blurred" : ""}`}
 				/>
@@ -115,15 +125,15 @@ const UserProfilePage: React.FC = () => {
 				</div>
 				{showOptions && (
 					<div className="hover-options">
-						<div
+						<Button
 							onClick={() => fileInputRef.current?.click()}
 							className="option"
 						>
 							Upload New Picture
-						</div>
-						<div onClick={handleChooseImage} className="option">
+						</Button>
+						<Button onClick={handleChooseImage} className="option">
 							Choose From Existing
-						</div>
+						</Button>
 					</div>
 				)}
 				<input

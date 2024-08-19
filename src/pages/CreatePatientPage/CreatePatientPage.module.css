@@ -4,6 +4,12 @@
 	padding: calc(20px + var(--navbar-height)) 20px 20px 20px;
 }
 
+.profilePictureWrapper {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+
 .personalInfoSection {
 	background-color: var(--fadedblue);
 	padding: 20px;

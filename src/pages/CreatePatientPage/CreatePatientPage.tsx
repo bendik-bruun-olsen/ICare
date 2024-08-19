@@ -153,7 +153,9 @@ export default function CreatePatientPage() {
 		<>
 			<Navbar centerContent="Create Patient" leftContent={<Logo />} />
 			<div className={styles.fullWrapper}>
-				<UploadProfilePicture />
+				<div className={styles.profilePictureWrapper}>
+					<UploadProfilePicture />
+				</div>
 				<form onSubmit={handleSubmit}>
 					<div className={styles.personalInfoSection}>
 						<h2 className={styles.headlineText}>Personal Information</h2>
