@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Paths } from "./paths";
 import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
-import Login from "./pages/Login/LoginPage";
+import Login from "./pages/LoginPage/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
 import ToDoPage from "./pages/ToDoPage/ToDoPage";
 import AddTodoPage from "./pages/AddTodoPage/AddTodoPage";
