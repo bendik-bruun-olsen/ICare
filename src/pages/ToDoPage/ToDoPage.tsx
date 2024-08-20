@@ -120,7 +120,7 @@ const ToDoPage: React.FC = () => {
 								</div>
 							</div>
 						))}
-						<Link to={Paths.ADD_TODO}>
+						<Link to={Paths.ADD_TODO} state={{ selectedDate }}>
 							<div className={styles.addIcon}>
 								<Button variant="contained_icon">
 									<Icon data={add} size={32} />
