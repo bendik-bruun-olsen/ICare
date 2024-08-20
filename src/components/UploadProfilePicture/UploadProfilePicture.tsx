@@ -4,7 +4,6 @@ import { camera } from "@equinor/eds-icons";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import {
 	uploadProfilePicture,
-	listProfilePictures,
 	updateProfilePictureUrl,
 } from "../../firebase/imageServices/profilePictureService";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
