@@ -44,7 +44,7 @@
     justify-content: space-between;
 }
 
-a {
+.links a {
     color: var(--blue);
     text-decoration: underline !important;
     font-weight: 500;
