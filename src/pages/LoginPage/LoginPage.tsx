@@ -123,7 +123,7 @@ export default function LoginPage() {
                 </Button>
             </form>
             <div className="links">
-                <a href={Paths.SIGNUP}>Sign up here</a>
+                <a href={Paths.SIGNUP}>Don't have an acccount? Signup here</a>
 
                 <a href={Paths.RECOVER_PASSWORD}>Forgot Password?</a>
             </div>
