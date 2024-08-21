@@ -71,7 +71,7 @@ const AddToDo: React.FC = () => {
     setTime("");
     setSelectCategory(null);
     setSelectedDays([]);
-    Navigate("/ToDoPage");
+    Navigate("/TODO");
   };
 
   const handleDayToggle = (day: string) => {

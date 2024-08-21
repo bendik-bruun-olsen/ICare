@@ -6,7 +6,8 @@ import "./RecoverPasswordPage.modules.css";
 import styled from "styled-components";
 import { sendResetEmail } from "../../utils";
 import { checkUserExists } from "../../utils";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
+import Loading from "../../components/Loading/Loading";
 
 const CustomButton = styled(Button)`
 	margin-top: 1rem;
@@ -26,12 +27,14 @@ export default function RecoverPasswordPage() {
 	const [email, setEmail] = useState<string>("");
 	const [message] = useState<string>("");
 	const { addNotification } = useNotification();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleForgotPassword = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		const exists = await checkUserExists(email);
 		try {
+			setIsLoading(true);
 			if (exists) {
 				await sendResetEmail(email);
 				addNotification("Password reset email sent!", "success");
@@ -40,12 +43,17 @@ export default function RecoverPasswordPage() {
 			}
 		} catch (error) {
 			addNotification("Error sending Email.", "error");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
 	};
+
+	if (isLoading) return <Loading />;
+
 	return (
 		<div className="pageWrapper">
 			<div className="heading">

@@ -8,6 +8,7 @@ import { NavLink } from "react-router-dom";
 import { Paths } from "../../paths";
 import { auth } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "../../hooks/useNotification";
 
 interface NavbarProps {
 	leftContent: ReactNode;
@@ -18,6 +19,7 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const navigate = useNavigate();
 	const username = useAuth().userData?.name;
+	const { addNotification } = useNotification();
 	const capitalizedUsername =
 		(username ?? "").toLowerCase().charAt(0).toUpperCase() +
 		(username ?? "").slice(1);
@@ -29,8 +31,10 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 	const handleSignOut = async () => {
 		try {
 			await auth.signOut();
+			addNotification("Logged out successfully!", "success");
 		} catch {
 			navigate(Paths.ERROR);
+			addNotification("Error! Please try again later", "error");
 		}
 	};
 

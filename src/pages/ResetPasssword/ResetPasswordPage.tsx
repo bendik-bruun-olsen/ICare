@@ -7,7 +7,8 @@ import { Paths } from "../../paths";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
 import "./ResetPasswordPage.modules.css";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
+import Loading from "../../components/Loading/Loading";
 
 export default function ResetPasswordPage() {
 	const [password, setPassword] = useState<string>("");
@@ -16,6 +17,7 @@ export default function ResetPasswordPage() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleResetPassword = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -33,10 +35,13 @@ export default function ResetPasswordPage() {
 		}
 
 		try {
+			setIsLoading(true);
 			await confirmPasswordReset(auth, oobCode, password);
 			addNotification("Password has been reset!", "success");
 		} catch (error) {
 			addNotification(`Error: `, "error");
+		} finally {
+			setIsLoading(false);
 		}
 		navigate(Paths.LOGIN);
 	};
@@ -50,6 +55,8 @@ export default function ResetPasswordPage() {
 	) => {
 		setConfirmPassword(e.target.value);
 	};
+
+	if (isLoading) return <Loading />;
 
 	return (
 		<div className="pageWrapper " id="resetWrapper">

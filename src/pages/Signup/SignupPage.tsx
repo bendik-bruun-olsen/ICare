@@ -13,7 +13,8 @@ import { doc, setDoc } from "firebase/firestore";
 import "./SignupPage.modules.css";
 import { FirebaseError } from "firebase/app";
 import Logo from "../../components/Logo/Logo";
-import { useNotification } from "../../context/NotificationContext";
+import { useNotification } from "../../hooks/useNotification";
+import Loading from "../../components/Loading/Loading";
 
 export default function SignupPage() {
 	const [name, setName] = useState("");
@@ -29,6 +30,7 @@ export default function SignupPage() {
 		password: false,
 		confirmPassword: false,
 	});
+	const [isLoading, setIsLoading] = useState(false);
 
 	const { addNotification } = useNotification();
 
@@ -81,6 +83,7 @@ export default function SignupPage() {
 			return;
 		}
 		try {
+			setIsLoading(true);
 			await createUserWithEmailAndPassword(auth, email, password);
 
 			await setDoc(doc(db, "users", email), {
@@ -105,10 +108,13 @@ export default function SignupPage() {
 				return;
 			}
 			setHasError(true);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	if (hasError) navigate(Paths.ERROR);
+	if (isLoading) return <Loading />;
 
 	return (
 		<div className="pageWrapper">
@@ -162,7 +168,9 @@ export default function SignupPage() {
 						type="password"
 						value={password}
 						onChange={handlePasswordChange}
-						helperText={errors.password ? "Password is required" : ""}
+						helperText={
+							errors.password ? "Password is required" : ""
+						}
 					/>
 				</InputWrapper>
 				<InputWrapper
@@ -178,7 +186,9 @@ export default function SignupPage() {
 						value={confirmPassword}
 						onChange={handleConfirmPasswordChange}
 						helperText={
-							errors.confirmPassword ? "Confirm Password is required" : ""
+							errors.confirmPassword
+								? "Confirm Password is required"
+								: ""
 						}
 					/>
 				</InputWrapper>

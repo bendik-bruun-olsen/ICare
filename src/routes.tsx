@@ -2,10 +2,10 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Paths } from "./paths";
 import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
-import Login from "./pages/Login/LoginPage";
+import Login from "./pages/LoginPage/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
 import ToDoPage from "./pages/ToDoPage/ToDoPage";
-import AddTodo from "./pages/AddTodo/AddTodo";
+import AddTodoPage from "./pages/AddTodoPage/AddTodoPage";
 import EditToDoPage from "./pages/EditTodoPage/EditTodoPage";
 import Appointment from "./pages/AppointmentPage";
 import AddAppointment from "./pages/AddAppointment/AddAppointment";
@@ -15,6 +15,7 @@ import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasssword/ResetPasswordPage";
+import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";
 import { Navigate } from "react-router-dom";
 import CreatePatientPage from "./pages/CreatePatientPage/CreatePatientPage";
 
@@ -57,10 +58,14 @@ const protectedRoutes = [
 	},
 	{
 		path: Paths.ADD_TODO,
-		element: <AddTodo />,
+		element: <AddTodoPage />,
 	},
 	{
-		path: Paths.EDIT_TODO,
+		path: Paths.EDIT_TODO_ITEM,
+		element: <EditToDoPage />,
+	},
+	{
+		path: Paths.EDIT_TODO_SERIES,
 		element: <EditToDoPage />,
 	},
 	{
@@ -84,8 +89,8 @@ const protectedRoutes = [
 		element: <AboutUsPage />,
 	},
 	{
-		path: Paths.CREATE_PATIENT,
-		element: <CreatePatientPage />,
+		path: Paths.USER_PROFILE,
+		element: <UserProfilePage />,
 	},
 ];
 
