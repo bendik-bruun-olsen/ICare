@@ -95,7 +95,6 @@ export default function ToDoTile({
 				<div className={styles.titleSection}>
 					<div className={styles.titleContainer}>
 						<h2>{`${time} - ${toDoTitle}`}</h2>
-						{/* <Icon data={library_books} size={24} /> */}
 					</div>
 					<Chip
 						variant={
