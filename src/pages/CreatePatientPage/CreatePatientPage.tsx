@@ -4,7 +4,6 @@ import Navbar from "../../components/Navbar/Navbar";
 import styles from "./CreatePatientPage.module.css";
 import { InputWrapper, Input, Button, Icon } from "@equinor/eds-core-react";
 import { add, remove_outlined } from "@equinor/eds-icons";
-import { useNotification } from "../../context/NotificationContext";
 import LoadingPage from "../LoadingPage";
 import {
 	CaretakerInformationInterface,
@@ -15,7 +14,10 @@ import { addPatient } from "../../firebase/patientServices/addPatient";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
-import UploadProfilePicture from "../../components/UploadProfilePicture/UploadProfilePicture";
+import AddProfilePicture from "../../components/AddProfilePicture/AddProfilePicture";
+
+import { useNotification } from "../../hooks/useNotification";
+import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
 
 const FormField = ({
 	label,
@@ -57,6 +59,7 @@ export default function CreatePatientPage() {
 		defaultPatientFormData
 	);
 	const [pictureUrl, setPictureUrl] = useState("");
+	const [profileImage, setProfileImage] = useState<File | null>(null);
 
 	useEffect(() => {
 		const fetchDefaultPictureUrl = async () => {
@@ -124,7 +127,11 @@ export default function CreatePatientPage() {
 
 		try {
 			setIsLoading(true);
-			await addPatient(formData, caretakers);
+			const patientId = await addPatient(formData, caretakers);
+			console.log("patientId:", patientId);
+
+			if (!profileImage) return;
+			uploadProfilePicture(profileImage, patientId);
 			addNotification("Patient created successfully", "success");
 		} catch (err) {
 			addNotification("Failed to create patient", "error");
@@ -145,6 +152,11 @@ export default function CreatePatientPage() {
 		{ label: "Allergies", name: "allergies" },
 	];
 
+	useEffect(() => {
+		console.log("image:", profileImage);
+		console.log("type:", profileImage?.type);
+	}, [profileImage]);
+
 	if (isLoading) {
 		return <LoadingPage />;
 	}
@@ -154,7 +166,7 @@ export default function CreatePatientPage() {
 			<Navbar centerContent="Create Patient" leftContent={<Logo />} />
 			<div className={styles.fullWrapper}>
 				<div className={styles.profilePictureWrapper}>
-					<UploadProfilePicture />
+					<AddProfilePicture setProfileImage={setProfileImage} />
 				</div>
 				<form onSubmit={handleSubmit}>
 					<div className={styles.personalInfoSection}>
