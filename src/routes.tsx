@@ -92,6 +92,10 @@ const protectedRoutes = [
 		path: Paths.USER_PROFILE,
 		element: <UserProfilePage />,
 	},
+	{
+		path: Paths.CREATE_PATIENT,
+		element: <CreatePatientPage />,
+	},
 ];
 
 const router = createBrowserRouter([

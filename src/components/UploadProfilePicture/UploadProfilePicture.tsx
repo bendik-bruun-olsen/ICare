@@ -5,11 +5,11 @@ import { useAuth } from "../../hooks/useAuth/useAuth";
 import {
 	uploadProfilePicture,
 	updateProfilePictureUrl,
-} from "../../firebase/imageServices/profilePictureService";
+} from "../../firebase/patientImageServices/patientPictureService";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
-import { useNotification } from "../../context/NotificationContext";
-import { getDefaultPictureUrl } from "../../firebase/imageServices/defaultImage";
+import { useNotification } from "../../hooks/useNotification";
+import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import {
 	getDownloadURL,
 	getStorage,
