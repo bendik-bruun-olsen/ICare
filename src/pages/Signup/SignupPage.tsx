@@ -6,6 +6,7 @@ import {
     Button,
     InputWrapper,
     Typography,
+    Label,
 } from "@equinor/eds-core-react";
 import { Paths } from "../../paths";
 import { useNavigate } from "react-router-dom";
@@ -112,15 +113,15 @@ export default function SignupPage() {
 
     return (
         <div className="pageWrapper">
-            {/* {notificationMessage && (
+            {notificationMessage && (
                 <Typography variant="caption" color="danger">
                     {notificationMessage}
                 </Typography>
-            )} */}
+            )}
             <div className="heading">
                 <Logo size={"60px"} color={"var(--blue)"} />
             </div>
-            <form className="inputcontainer" onSubmit={signUp}>
+            <form className="inputContainer" onSubmit={signUp}>
                 <InputWrapper
                     className="input"
                     labelProps={{
@@ -201,7 +202,7 @@ export default function SignupPage() {
                     />
                 </InputWrapper>
 
-                <Button id="signupbutton" type="submit">
+                <Button id="signupButton" type="submit">
                     Sign Up
                 </Button>
             </form>

@@ -1,4 +1,4 @@
-.inputcontainer {
+.inputContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -6,17 +6,17 @@
     margin: 10px;
 }
 
-.inputcontainer label {
+.inputContainer label {
     color: var(--black);
 }
 
-.inputcontainer input {
+.inputContainer input {
     margin: 10px;
     padding: 10px;
     width: 100%;
     color: var(--black);
 }
-#signupbutton {
+#signupButton {
     background-color: var(--blue);
     margin: 10px;
     color: var(--white);
