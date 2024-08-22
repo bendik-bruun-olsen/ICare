@@ -96,20 +96,28 @@ export default function ToDoTile({
 					<div className={styles.iconContainer}>
 						<Icon data={repeat} size={16} />
 					</div>
-					<Chip
-						variant={
-							currentChip.variant as
-								| "default"
-								| "active"
-								| "error"
+					<div
+						className={
+							currentChip.variant === "error"
+								? ""
+								: styles.chipContainer
 						}
 					>
-						{currentChip.label}
-					</Chip>
+						<Chip
+							variant={
+								currentChip.variant as
+									| "default"
+									| "active"
+									| "error"
+							}
+						>
+							{currentChip.label}
+						</Chip>
+					</div>
 				</div>
 				<div className={styles.titleSection}>
 					<div className={styles.titleContainer}>
-						<h2>{`${time} - ${toDoTitle}`}</h2>
+						<h3>{`${time} - ${toDoTitle}`}</h3>
 					</div>
 				</div>
 				<div className={styles.descriptionSection}>
@@ -118,7 +126,7 @@ export default function ToDoTile({
 						<Icon
 							data={more_horizontal}
 							size={40}
-							className={styles.moreIcon}
+							className={styles.menuIcon}
 							onClick={handleMenuClick}
 							ref={moreIconRef}
 						/>

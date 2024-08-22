@@ -12,22 +12,31 @@
 }
 
 .toDoWrapper {
-	padding: 0.5rem;
 	width: 100%;
 	border-radius: 3px;
 	margin-right: 16px;
-	background-color: var(--white);
-	box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+	background-color: rgb(241, 241, 241);
+	/* box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; */
+	/* box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+		rgba(0, 0, 0, 0.3) 0px 8px 16px -8px; */
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
 	position: relative;
+	margin-bottom: 20px;
+	padding: 15px 10px;
 }
 
 .tags {
 	position: absolute;
-	top: -10px;
+	top: -11px;
 	right: 10px;
 	display: flex;
 	align-items: center;
 	gap: 10px;
+}
+
+.chipContainer {
+	border: 1px solid var(--blue);
+	border-radius: 20px;
 }
 
 .iconContainer {
@@ -38,6 +47,11 @@
 	width: 20px;
 	background-color: var(--blue);
 	border-radius: 50%;
+	border: none;
+}
+
+.iconContainer svg {
+	color: var(--white);
 }
 
 .descriptionSection {
@@ -45,10 +59,6 @@
 	margin: 0.5rem 0 0.5rem 0;
 	align-items: flex-end;
 	justify-content: space-between;
-}
-
-.menuIconContainer {
-	position: relative;
 }
 
 .titleSection {
@@ -60,11 +70,11 @@
 	display: flex;
 }
 
-.titleContainer h2 {
-	font-weight: 300;
+.titleContainer h3 {
+	font-weight: 500;
 }
 
-.titleContainer h2,
+.titleContainer h3,
 .descriptionSection p {
 	cursor: pointer;
 	word-break: break-word;
@@ -74,12 +84,25 @@
 	font-size: 0.9rem;
 }
 
-.moreIcon {
+.menuIconContainer {
+	position: absolute;
+	/* bottom: -20px; */
+	bottom: 0;
+	/* right: 10px; */
+	right: 5px;
+	/* background-color: var(--blue); */
+	/* border: 1px solid black; */
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.menuIcon {
 	cursor: pointer;
-	margin: 0 0.5rem 0 0.5rem;
 	position: relative;
-	min-width: 40px;
-	height: 40px;
+	/* color: var(--white); */
+	color: var(--black);
 }
 
 .modalOverlay {
@@ -127,30 +150,6 @@
 
 .modalItem:hover {
 	background-color: var(--lightblue);
-}
-
-.commentWrapper {
-	display: flex;
-	justify-content: space-between;
-}
-
-.commentSection {
-	display: flex;
-	text-align: center;
-}
-
-.commentSection p {
-	margin-left: 0.2rem;
-	font-style: italic;
-}
-
-.iconContainer {
-	margin-top: 2px;
-}
-
-.badgeIcon {
-	margin: 0 0.5rem 0.5rem 0;
-	opacity: 0.3;
 }
 
 .notApplicable {
