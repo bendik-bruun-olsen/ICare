@@ -3,6 +3,7 @@
 	padding-inline: 24px;
 	display: flex;
 	justify-content: center;
+	padding-top: var(--navbar-height);
 }
 
 .pageContent {
