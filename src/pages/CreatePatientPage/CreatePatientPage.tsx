@@ -128,7 +128,6 @@ export default function CreatePatientPage() {
 		try {
 			setIsLoading(true);
 			const patientId = await addPatient(formData, caretakers);
-			console.log("patientId:", patientId);
 
 			if (!profileImage) return;
 			uploadProfilePicture(profileImage, patientId);
