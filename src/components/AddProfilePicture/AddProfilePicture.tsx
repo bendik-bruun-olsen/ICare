@@ -88,10 +88,13 @@ export default function AddProfilePicture({
 					<Icon data={camera_add_photo} />
 				</div>
 				<input
+					accept="image/*"
+					id="icon-button-file"
 					type="file"
-					ref={fileInputRef}
-					style={{ display: "none" }}
+					capture="user"
 					onChange={handleImageAdd}
+					style={{ display: "none" }}
+					ref={fileInputRef}
 				/>
 			</div>
 		</div>

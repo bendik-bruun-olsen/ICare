@@ -128,7 +128,6 @@ export default function CreatePatientPage() {
 		try {
 			setIsLoading(true);
 			const patientId = await addPatient(formData, caretakers);
-			console.log("patientId:", patientId);
 
 			if (!profileImage) return;
 			uploadProfilePicture(profileImage, patientId);
@@ -151,11 +150,6 @@ export default function CreatePatientPage() {
 		{ label: "Diagnoses", name: "diagnoses" },
 		{ label: "Allergies", name: "allergies" },
 	];
-
-	useEffect(() => {
-		console.log("image:", profileImage);
-		console.log("type:", profileImage?.type);
-	}, [profileImage]);
 
 	if (isLoading) {
 		return <LoadingPage />;
