@@ -86,6 +86,7 @@ const UserProfileForm: React.FC = () => {
           value={userData?.name || ""}
           onChange={handleChange}
           readOnly={!isEditing}
+          className={isEditing ? "editable" : ""}
         />
       </div>
       <div className="inputGroup">
@@ -96,6 +97,7 @@ const UserProfileForm: React.FC = () => {
           value={userData?.age || ""}
           onChange={handleChange}
           readOnly={!isEditing}
+          className={isEditing ? "editable" : ""}
         />
       </div>
       <div className="inputGroup">
@@ -106,6 +108,7 @@ const UserProfileForm: React.FC = () => {
           value={userData?.gender || ""}
           onChange={handleChange}
           disabled={!isEditing}
+          className={isEditing ? "editable" : ""}
         >
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
@@ -121,6 +124,7 @@ const UserProfileForm: React.FC = () => {
           value={userData?.phone || ""}
           onChange={handleChange}
           readOnly={!isEditing}
+          className={isEditing ? "editable" : ""}
         />
       </div>
       <div className="inputGroup">

@@ -1,12 +1,18 @@
 .fullInfoContainer {
   min-width: 40%;
   max-width: 60%;
+  padding: 20px;
+  background-color: var(--fadedblue);
+  border-radius: 5px;
 }
+
 .userInfo {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 20px 0;
+  margin-bottom: 20px;
+  color: var(--white);
 }
 
 .inputGroup {
@@ -14,22 +20,58 @@
 }
 
 .inputGroup Label {
-  /* margin-bottom: 2px; */
-  font-size: 12px;
+  color: var(--white);
+  font-size: 14px;
   font-weight: 600;
-}
-
-.inputGroup Input {
-  font-family: inherit;
-  font-size: 16px;
+  margin-bottom: 5px;
 }
 
 .inputGroup Input,
 .inputGroup NativeSelect {
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--white);
+  background-color: var(--blue);
+  border: 1px solid var(--blue);
+  line-height: 1.5;
   width: 100%;
-  /* padding: 8px; */
   box-sizing: border-box;
 }
-NativeSelect {
-  font-family: sans-serif;
+
+.inputGroup .editable:focus {
+  color: black;
+  background-color: var(--blue);
+  border: 1px solid var(--lightblue);
+  outline: none;
+}
+
+.inputGroup Input:focus,
+.inputGroup select:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.inputGroup NativeSelect option {
+  font-family: inherit;
+  color: var(--white);
+  background-color: var(--blue);
+}
+
+.inputGroup NativeSelect:disabled {
+  background-color: var(--blue);
+  border: 1px solid var(--blue);
+}
+
+.inputGroup Input::placeholder,
+.inputGroup NativeSelect::placeholder {
+  color: var(--grey);
+}
+
+.Icon {
+  color: var(--white);
+  cursor: pointer;
+}
+
+.Icon:hover {
+  color: var(--grey);
 }
