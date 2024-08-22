@@ -9,7 +9,7 @@ import { Icon, Checkbox, Chip } from "@equinor/eds-core-react";
 // 	library_books,
 // 	receipt,
 // } from "@equinor/eds-icons";
-import { more_horizontal } from "@equinor/eds-icons";
+import { more_horizontal, repeat } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTodo";
@@ -92,9 +92,9 @@ export default function ToDoTile({
 					currentTaskStatus
 				)}`}
 			>
-				<div className={styles.titleSection}>
-					<div className={styles.titleContainer}>
-						<h2>{`${time} - ${toDoTitle}`}</h2>
+				<div className={styles.tags}>
+					<div className={styles.iconContainer}>
+						<Icon data={repeat} size={16} />
 					</div>
 					<Chip
 						variant={
@@ -106,6 +106,11 @@ export default function ToDoTile({
 					>
 						{currentChip.label}
 					</Chip>
+				</div>
+				<div className={styles.titleSection}>
+					<div className={styles.titleContainer}>
+						<h2>{`${time} - ${toDoTitle}`}</h2>
+					</div>
 				</div>
 				<div className={styles.descriptionSection}>
 					<p>{toDoDescription}</p>
