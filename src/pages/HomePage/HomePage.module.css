@@ -1,3 +1,18 @@
+.pageContainer {
+	width: 100%;
+	padding-inline: 24px;
+	display: flex;
+	justify-content: center;
+}
+
+.pageContent {
+	width: 100%;
+	max-width: 960px;
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+}
+
 .remainingTodosOuterWrapper {
 	width: fit-content;
 	margin: 0 auto;
