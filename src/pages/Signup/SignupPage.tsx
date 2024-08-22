@@ -6,7 +6,6 @@ import {
     Button,
     InputWrapper,
     Typography,
-    Label,
 } from "@equinor/eds-core-react";
 import { Paths } from "../../paths";
 import { useNavigate } from "react-router-dom";
