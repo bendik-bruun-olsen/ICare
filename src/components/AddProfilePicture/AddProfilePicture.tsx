@@ -71,18 +71,14 @@ export default function AddProfilePicture({
 					src={selectedImage || ""}
 					alt="Profile"
 					style={{
-						width: "85px",
-						height: "85px",
+						width: "150px",
+						height: "150px",
 						borderRadius: "50%",
 						objectFit: "cover",
 					}}
 				/>
 				<div
-					style={{
-						display: "flex",
-						justifyContent: "center",
-						marginTop: "5px",
-					}}
+					className={styles.cameraIcon}
 					onClick={() => fileInputRef.current?.click()}
 				>
 					<Icon data={camera_add_photo} />
