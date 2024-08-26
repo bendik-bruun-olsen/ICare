@@ -15,7 +15,7 @@ import { addPatient } from "../../firebase/patientServices/addPatient";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
-import AddProfilePicture from "../../components/AddProfilePicture/AddProfilePicture";
+import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
 import { useNotification } from "../../hooks/useNotification";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
 
@@ -63,7 +63,8 @@ export default function CreatePatientPage() {
 
 	useEffect(() => {
 		const fetchDefaultPictureUrl = async () => {
-			const url = await getDefaultPictureUrl();
+			const url = await getDefaultPictureUrl(addNotification);
+			if (!url) return;
 			setPictureUrl(url);
 		};
 		fetchDefaultPictureUrl();
@@ -129,8 +130,9 @@ export default function CreatePatientPage() {
 			setIsLoading(true);
 			const patientId = await addPatient(formData, caretakers);
 
-			if (!profileImage) return;
-			uploadProfilePicture(profileImage, patientId);
+			if (profileImage) {
+				uploadProfilePicture(profileImage, patientId);
+			}
 			addNotification("Patient created successfully", "success");
 		} catch (err) {
 			addNotification("Failed to create patient", "error");
@@ -160,7 +162,7 @@ export default function CreatePatientPage() {
 			<Navbar centerContent="Create Patient" leftContent={<Logo />} />
 			<div className={styles.fullWrapper}>
 				<div className={styles.profilePictureWrapper}>
-					<AddProfilePicture setProfileImage={setProfileImage} />
+					<PatientProfilePicture setProfileImage={setProfileImage} />
 				</div>
 				<form onSubmit={handleSubmit}>
 					<div className={`${styles.personalInfoSection} dropShadow`}>

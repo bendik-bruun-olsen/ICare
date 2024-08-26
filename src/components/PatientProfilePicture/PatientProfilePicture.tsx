@@ -2,63 +2,61 @@ import { useEffect, useState, useRef } from "react";
 import { Icon } from "@equinor/eds-core-react";
 import { camera_add_photo } from "@equinor/eds-icons";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase/firebase";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
-import { getDownloadURL, getStorage, ref } from "firebase/storage";
-import styles from "./AddProfilePicture.module.css";
-import { AddProfilePictureProps } from "../../types";
+import styles from "./PatientProfilePicture.module.css";
+import { PatientProfilePictureProps } from "../../types";
 import Loading from "../Loading/Loading";
+import { getPatient } from "../../firebase/patientServices/getPatient";
+import { useNotification } from "../../hooks/useNotification";
 
-export default function AddProfilePicture({
+export default function PatientProfilePicture({
 	setProfileImage,
-}: AddProfilePictureProps) {
+}: PatientProfilePictureProps) {
 	const { currentUser } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
+	const { addNotification } = useNotification();
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const profileContainerRef = useRef<HTMLDivElement>(null);
 
+	// PatientId is fetched from useContext, which hasn't been made yet
+	const patientId = null;
+	const isEditingPatient = !!patientId;
+
 	useEffect(() => {
-		const fetchUserData = async () => {
-			if (!currentUser?.email) return;
-
+		const fetchData = async () => {
 			try {
-				const docSnap = await getDoc(doc(db, "users", currentUser.email));
-				let profilePictureUrl = docSnap.exists()
-					? docSnap.data()?.profilePictureUrl
-					: null;
+				setIsLoading(true);
+				if (isEditingPatient) {
+					const patient = await getPatient(patientId, addNotification);
+					if (!patient) return;
 
-				if (profilePictureUrl) {
-					const storage = getStorage();
-					const storageRef = ref(storage, profilePictureUrl);
-					try {
-						await getDownloadURL(storageRef);
-					} catch (error) {
-						profilePictureUrl = await getDefaultPictureUrl();
-						await updateDoc(doc(db, "users", currentUser.email), {
-							profilePictureUrl: null,
-						});
+					if (!patient.profilePictureUrl) {
+						const defaultPictureUrl = await getDefaultPictureUrl(
+							addNotification
+						);
+						if (!defaultPictureUrl) return;
+						setSelectedImage(defaultPictureUrl);
+						return;
+					}
+					if (patient.profilePictureUrl) {
+						setSelectedImage(patient.profilePictureUrl);
 					}
 				}
 
-				if (!profilePictureUrl) {
-					setIsLoading(true);
-					profilePictureUrl = await getDefaultPictureUrl();
-					setIsLoading(false);
+				if (!isEditingPatient) {
+					const defaultPictureUrl = await getDefaultPictureUrl(addNotification);
+					if (!defaultPictureUrl) return;
+					setSelectedImage(defaultPictureUrl);
 				}
-
-				setSelectedImage(`${profilePictureUrl}?t=${new Date().getTime()}`);
-			} catch (error) {
-				console.error("Error fetching user data or image:", error);
-				const defaultUrl = await getDefaultPictureUrl();
-				setSelectedImage(`${defaultUrl}?t=${new Date().getTime()}`);
+			} finally {
+				setIsLoading(false);
 			}
 		};
 
-		fetchUserData();
-	}, [currentUser]);
+		fetchData();
+	}, [isEditingPatient]);
 
 	const handleImageAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files[0] && currentUser?.email) {

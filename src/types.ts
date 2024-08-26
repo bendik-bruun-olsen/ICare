@@ -113,6 +113,6 @@ export type FormFieldProps = {
 	required?: boolean;
 };
 
-export interface AddProfilePictureProps {
+export interface PatientProfilePictureProps {
 	setProfileImage: Dispatch<SetStateAction<File | null>>;
 }
