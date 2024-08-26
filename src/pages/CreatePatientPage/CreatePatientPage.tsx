@@ -4,7 +4,8 @@ import Navbar from "../../components/Navbar/Navbar";
 import styles from "./CreatePatientPage.module.css";
 import { InputWrapper, Input, Button, Icon } from "@equinor/eds-core-react";
 import { add, remove_outlined } from "@equinor/eds-icons";
-import LoadingPage from "../LoadingPage";
+import Loading from "../../components/Loading/Loading";
+
 import {
 	CaretakerInformationInterface,
 	FormFieldProps,
@@ -15,7 +16,6 @@ import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaul
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
 import AddProfilePicture from "../../components/AddProfilePicture/AddProfilePicture";
-
 import { useNotification } from "../../hooks/useNotification";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
 
@@ -152,7 +152,7 @@ export default function CreatePatientPage() {
 	];
 
 	if (isLoading) {
-		return <LoadingPage />;
+		return <Loading />;
 	}
 
 	return (
@@ -163,7 +163,7 @@ export default function CreatePatientPage() {
 					<AddProfilePicture setProfileImage={setProfileImage} />
 				</div>
 				<form onSubmit={handleSubmit}>
-					<div className={styles.personalInfoSection}>
+					<div className={`${styles.personalInfoSection} dropShadow`}>
 						<h2 className={styles.headlineText}>Personal Information</h2>
 						{personalInfoFields.map((field) => (
 							<FormField
@@ -176,7 +176,7 @@ export default function CreatePatientPage() {
 							/>
 						))}
 					</div>
-					<div className={styles.healthInfoSection}>
+					<div className={`${styles.healthInfoSection} dropShadow`}>
 						<h2 className={styles.headlineText}>Health Information</h2>
 						{healthInfoFields.map((field) => (
 							<FormField
@@ -188,7 +188,7 @@ export default function CreatePatientPage() {
 							/>
 						))}
 					</div>
-					<div className={styles.caretakerInfoSection}>
+					<div className={`${styles.caretakerInfoSection} dropShadow`}>
 						<h2 className={styles.headlineText}>Assign caretakers</h2>
 						<div className={styles.caretakerAndButton}>
 							<FormField

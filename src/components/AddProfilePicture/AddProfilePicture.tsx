@@ -8,11 +8,13 @@ import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaul
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import styles from "./AddProfilePicture.module.css";
 import { AddProfilePictureProps } from "../../types";
+import Loading from "../Loading/Loading";
 
 export default function AddProfilePicture({
 	setProfileImage,
 }: AddProfilePictureProps) {
 	const { currentUser } = useAuth();
+	const [isLoading, setIsLoading] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -42,7 +44,9 @@ export default function AddProfilePicture({
 				}
 
 				if (!profilePictureUrl) {
+					setIsLoading(true);
 					profilePictureUrl = await getDefaultPictureUrl();
+					setIsLoading(false);
 				}
 
 				setSelectedImage(`${profilePictureUrl}?t=${new Date().getTime()}`);
@@ -64,12 +68,16 @@ export default function AddProfilePicture({
 		}
 	};
 
+	if (isLoading) {
+		return <Loading />;
+	}
+
 	return (
 		<div className="profile-container" ref={profileContainerRef}>
 			<div className={styles.profilePictureContainer}>
 				<img
 					src={selectedImage || ""}
-					alt="Profile"
+					alt="Profile picture"
 					style={{
 						width: "150px",
 						height: "150px",
