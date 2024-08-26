@@ -154,6 +154,7 @@ const AddToDoPage: React.FC = () => {
 					status: ToDoStatus.unchecked,
 					seriesId: "",
 					id: "",
+					createdBy: "",
 				};
 				const newTodos = generateTodosForSeries(
 					newTodo,

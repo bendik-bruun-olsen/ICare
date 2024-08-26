@@ -92,9 +92,21 @@ const ToDoPage: React.FC = () => {
 						{Object.keys(categorizedTodos).map((category) => (
 							<div
 								key={category}
-								className={styles.categoryStyle}
+								className={`${styles.categoryStyle} ${
+									category === "Ignored"
+										? styles.ignoreCategory
+										: ""
+								}`}
 							>
-								<h2>{category}</h2>
+								<h2
+									className={
+										category === "Ignored"
+											? styles.ignoreCategory
+											: ""
+									}
+								>
+									{category}
+								</h2>
 								<div className={styles.toDoTileMargin}>
 									{categorizedTodos[category].map((todo) => (
 										<div

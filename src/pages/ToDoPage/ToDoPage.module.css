@@ -23,6 +23,10 @@
 	right: 16px;
 }
 
+.ignoreCategory {
+	opacity: 0.5;
+}
+
 @media screen and (min-width: 1024px) {
 	.addIcon {
 		position: absolute;

@@ -28,6 +28,7 @@ export interface TodoItemInterface {
 	status: ToDoStatus;
 	seriesId: string | null;
 	id: string;
+	createdBy: string;
 }
 
 export interface TodoSeriesInfoInterface {
@@ -81,10 +82,10 @@ export interface TodoSeriesInputFieldStatusProps {
 }
 
 export interface UserData {
-  name: string;
-  age?: number;
-  gender?: "Male" | "Female" | "Others";
-  phone?: string;
-  email: string;
-  profilePictureUrl?: string;
+	name: string;
+	age?: number;
+	gender?: "Male" | "Female" | "Others";
+	phone?: string;
+	email: string;
+	profilePictureUrl?: string;
 }

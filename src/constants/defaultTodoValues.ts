@@ -14,6 +14,7 @@ export const defaultTodoItem: TodoItemInterface = {
 	status: ToDoStatus.unchecked,
 	seriesId: null,
 	id: "",
+	createdBy: "",
 };
 
 export const defaultTodoSeries: TodoSeriesInfoInterface = {

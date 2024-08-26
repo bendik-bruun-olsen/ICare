@@ -7,6 +7,7 @@ import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTo
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
 import { useNotification } from "../../hooks/useNotification";
+import { capitalizeUsername } from "../../utils";
 
 interface ToDoTileProps {
 	selectedDate: Date;
@@ -108,6 +109,11 @@ export default function ToDoTile({
 				>{`${todoItem.time} - ${todoItem.title}`}</h3>
 				<p className={styles.description}>{todoItem.description}</p>
 				<div className={styles.menuContainer}>
+					<span
+						className={styles.createdBy}
+					>{`Created by ${capitalizeUsername(
+						todoItem.createdBy
+					)}`}</span>
 					<Icon
 						data={more_horizontal}
 						size={40}
