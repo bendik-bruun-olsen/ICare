@@ -339,6 +339,7 @@ const EditToDoPage = () => {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
 		}
+		setHasError(true);
 	};
 	if (hasError) return <ErrorPage />;
 	if (isLoading)
