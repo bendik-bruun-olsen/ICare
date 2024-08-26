@@ -93,14 +93,16 @@ export default function ToDoTile({
 				)}`}
 			>
 				<div className={styles.tags}>
-					<div className={styles.iconContainer}>
-						<Icon data={repeat} size={16} />
-					</div>
+					{seriesId && (
+						<div className={styles.iconContainer}>
+							<Icon data={repeat} size={16} />
+						</div>
+					)}
 					<div
 						className={
 							currentChip.variant === "error"
 								? ""
-								: styles.chipContainer
+								: styles.chipOutline
 						}
 					>
 						<Chip
