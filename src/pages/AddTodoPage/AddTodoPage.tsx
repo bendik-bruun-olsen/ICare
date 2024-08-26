@@ -66,7 +66,7 @@ const AddToDoPage: React.FC = () => {
 	);
 	const { addNotification } = useNotification();
 	const navigate = useNavigate();
-	const currentUser = useAuth().userData?.name;
+	const currentUserName = useAuth().userData?.name;
 
 	useEffect(() => {
 		if (!location.state.selectedDate) {
@@ -135,6 +135,7 @@ const AddToDoPage: React.FC = () => {
 					)
 				)
 					return;
+				if (!currentUserName) return setHasError(true);
 
 				const selectedDaysNumbers = mapSelectedDaysToNumbers(
 					todoSeriesInfo.selectedDays
@@ -153,7 +154,6 @@ const AddToDoPage: React.FC = () => {
 					status: ToDoStatus.unchecked,
 					seriesId: "",
 					id: "",
-					createdBy: currentUser,
 				};
 				const newTodos = generateTodosForSeries(
 					newTodo,
@@ -164,6 +164,7 @@ const AddToDoPage: React.FC = () => {
 				await addMultipleNewTodos(
 					newTodos,
 					todoSeriesInfo,
+					currentUserName,
 					addNotification
 				);
 				return navigate(Paths.TODO, {
@@ -179,7 +180,12 @@ const AddToDoPage: React.FC = () => {
 					)
 				)
 					return;
-				await addSingleNewTodo(todoItem, addNotification);
+				if (!currentUserName) return setHasError(true);
+				await addSingleNewTodo(
+					todoItem,
+					currentUserName,
+					addNotification
+				);
 				return navigate(Paths.TODO, {
 					state: { selectedDate: todoItem.date.toDate() },
 				});
