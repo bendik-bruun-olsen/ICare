@@ -6,7 +6,7 @@ import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
 import { Paths } from "../../paths";
 import "./LoginPage.modules.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FirestoreError } from "firebase/firestore";
 import { useNotification } from "../../hooks/useNotification";
 import Loading from "../../components/Loading/Loading";
@@ -123,9 +123,8 @@ export default function LoginPage() {
                 </Button>
             </form>
             <div className="links">
-                <a href={Paths.SIGNUP}>Don't have an acccount? Signup here</a>
-
-                <a href={Paths.RECOVER_PASSWORD}>Forgot Password?</a>
+                <Link to={Paths.SIGNUP}>Sign up!</Link>
+                <Link to={Paths.RECOVER_PASSWORD}>Forgot Password?</Link>
             </div>
         </div>
     );
