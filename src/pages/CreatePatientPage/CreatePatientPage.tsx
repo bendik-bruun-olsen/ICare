@@ -68,7 +68,7 @@ export default function CreatePatientPage() {
 			setPictureUrl(url);
 		};
 		fetchDefaultPictureUrl();
-	}, []);
+	});
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
