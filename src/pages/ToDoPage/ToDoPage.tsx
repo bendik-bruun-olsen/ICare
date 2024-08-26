@@ -102,15 +102,8 @@ const ToDoPage: React.FC = () => {
 											key={todo.id}
 										>
 											<ToDoTile
-												todoId={todo.id}
-												toDoTitle={todo.title}
-												toDoDescription={
-													todo.description
-												}
-												taskStatus={todo.status}
-												time={todo.time}
-												seriesId={todo.seriesId}
 												selectedDate={selectedDate}
+												todoItem={todo}
 												onStatusChange={
 													handleStatusChange
 												}

@@ -42,6 +42,7 @@ import {
 	defaultTodoSeriesInputFieldStatus,
 } from "../../constants/defaultTodoValues";
 import Loading from "../../components/Loading/Loading";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 
 const AddToDoPage: React.FC = () => {
 	const location = useLocation();
@@ -65,6 +66,7 @@ const AddToDoPage: React.FC = () => {
 	);
 	const { addNotification } = useNotification();
 	const navigate = useNavigate();
+	const currentUser = useAuth().userData?.name;
 
 	useEffect(() => {
 		if (!location.state.selectedDate) {
@@ -151,6 +153,7 @@ const AddToDoPage: React.FC = () => {
 					status: ToDoStatus.unchecked,
 					seriesId: "",
 					id: "",
+					createdBy: currentUser,
 				};
 				const newTodos = generateTodosForSeries(
 					newTodo,

@@ -1,45 +1,27 @@
 import { useRef, useState } from "react";
 import { Icon, Checkbox, Chip } from "@equinor/eds-core-react";
-// import {
-// 	layers,
-// 	copy,
-// 	list,
-// 	repeat,
-// 	bookmark_collection,
-// 	library_books,
-// 	receipt,
-// } from "@equinor/eds-icons";
 import { more_horizontal, repeat } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
-import { ToDoStatus } from "../../types";
+import { TodoItemInterface, ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTodo";
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
 import { useNotification } from "../../hooks/useNotification";
 
 interface ToDoTileProps {
-	toDoTitle: string;
-	toDoDescription: string;
-	time: string;
-	taskStatus: ToDoStatus;
-	todoId: string;
-	seriesId: string | null;
 	selectedDate: Date;
+	todoItem: TodoItemInterface;
 	onStatusChange: (todoId: string, newStatus: ToDoStatus) => void;
 }
 
 export default function ToDoTile({
-	todoId,
-	toDoTitle,
-	toDoDescription,
-	taskStatus,
-	time,
-	seriesId,
 	selectedDate,
+	todoItem,
 	onStatusChange,
 }: ToDoTileProps) {
-	const [currentTaskStatus, setCurrentTaskStatus] =
-		useState<ToDoStatus>(taskStatus);
+	const [currentTaskStatus, setCurrentTaskStatus] = useState<ToDoStatus>(
+		todoItem.status
+	);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const { addNotification } = useNotification();
 	const moreIconRef = useRef<SVGSVGElement>(null);
@@ -63,8 +45,12 @@ export default function ToDoTile({
 
 	const handleStatusChange = async (newStatus: ToDoStatus) => {
 		setCurrentTaskStatus(newStatus);
-		onStatusChange(todoId, newStatus);
-		await updateToDoStatusInDatabase(todoId, newStatus, addNotification);
+		onStatusChange(todoItem.id, newStatus);
+		await updateToDoStatusInDatabase(
+			todoItem.id,
+			newStatus,
+			addNotification
+		);
 	};
 
 	const chipMapping = {
@@ -93,8 +79,8 @@ export default function ToDoTile({
 				)}`}
 			>
 				<div className={styles.tags}>
-					{seriesId && (
-						<div className={styles.iconContainer}>
+					{todoItem.seriesId && (
+						<div className={styles.seriesIconContainer}>
 							<Icon data={repeat} size={16} />
 						</div>
 					)}
@@ -117,86 +103,82 @@ export default function ToDoTile({
 						</Chip>
 					</div>
 				</div>
-				<div className={styles.titleSection}>
-					<div className={styles.titleContainer}>
-						<h3>{`${time} - ${toDoTitle}`}</h3>
-					</div>
-				</div>
-				<div className={styles.descriptionSection}>
-					<p>{toDoDescription}</p>
-					<div className={styles.menuIconContainer}>
-						<Icon
-							data={more_horizontal}
-							size={40}
-							className={styles.menuIcon}
-							onClick={handleMenuClick}
-							ref={moreIconRef}
-						/>
-						{isModalOpen && (
-							<>
-								<div
-									className={styles.modalOverlay}
-									onClick={handleMenuClick}
-								></div>
-								<div
-									className={`${styles.modalContainer} ${
-										displayDropdownAbove
-											? styles.dropdownAbove
-											: ""
-									}`}
-									onClick={(e) => e.stopPropagation()}
-								>
-									<ul className={styles.modalList}>
-										<li
-											className={styles.modalItem}
-											onClick={() =>
-												handleStatusChange(
-													currentTaskStatus ===
-														ToDoStatus.ignore
-														? ToDoStatus.unchecked
-														: ToDoStatus.ignore
-												)
-											}
+				<h3
+					className={styles.title}
+				>{`${todoItem.time} - ${todoItem.title}`}</h3>
+				<p className={styles.description}>{todoItem.description}</p>
+				<div className={styles.menuContainer}>
+					<Icon
+						data={more_horizontal}
+						size={40}
+						className={styles.menuIcon}
+						onClick={handleMenuClick}
+						ref={moreIconRef}
+					/>
+					{isModalOpen && (
+						<>
+							<div
+								className={styles.modalOverlay}
+								onClick={handleMenuClick}
+							></div>
+							<div
+								className={`${styles.modalContainer} ${
+									displayDropdownAbove
+										? styles.dropdownAbove
+										: ""
+								}`}
+								onClick={(e) => e.stopPropagation()}
+							>
+								<ul className={styles.modalList}>
+									<li
+										className={styles.modalItem}
+										onClick={() =>
+											handleStatusChange(
+												currentTaskStatus ===
+													ToDoStatus.ignore
+													? ToDoStatus.unchecked
+													: ToDoStatus.ignore
+											)
+										}
+									>
+										<p>
+											{currentTaskStatus ===
+											ToDoStatus.ignore
+												? "Mark as applicable"
+												: "Mark as N/A"}
+										</p>
+									</li>
+									<li className={styles.modalItem}>
+										<Link
+											to={Paths.EDIT_TODO_ITEM.replace(
+												":todoId",
+												todoItem.id
+											)}
+											state={{ selectedDate }}
 										>
-											<p>
-												{currentTaskStatus ===
-												ToDoStatus.ignore
-													? "Mark as applicable"
-													: "Mark as N/A"}
-											</p>
-										</li>
+											<p>Edit/Delete This Task</p>
+										</Link>
+									</li>
+									{todoItem.seriesId && (
 										<li className={styles.modalItem}>
 											<Link
-												to={Paths.EDIT_TODO_ITEM.replace(
-													":todoId",
-													todoId
+												to={Paths.EDIT_TODO_SERIES.replace(
+													":seriesId",
+													todoItem.seriesId
 												)}
 												state={{ selectedDate }}
 											>
-												<p>Edit/Delete This Task</p>
+												<p>
+													Edit/Delete All Tasks In
+													Series
+												</p>
 											</Link>
 										</li>
-										{seriesId && (
-											<li className={styles.modalItem}>
-												<Link
-													to={Paths.EDIT_TODO_SERIES.replace(
-														":seriesId",
-														seriesId
-													)}
-													state={{ selectedDate }}
-												>
-													<p>
-														Edit/Delete All Tasks In
-														Series
-													</p>
-												</Link>
-											</li>
-										)}
-									</ul>
-								</div>
-							</>
-						)}
-					</div>
+									)}
+								</ul>
+							</div>
+						</>
+					)}
 				</div>
 			</div>
 		</div>

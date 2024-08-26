@@ -36,7 +36,7 @@
 	border-radius: 20px;
 }
 
-.iconContainer {
+.seriesIconContainer {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -44,49 +44,25 @@
 	width: 20px;
 	background-color: var(--blue);
 	border-radius: 50%;
-	border: none;
 }
 
-.iconContainer svg {
+.seriesIconContainer svg {
 	color: var(--white);
 }
 
-.descriptionSection {
-	display: flex;
-	margin-top: 0.5rem;
-	justify-content: space-between;
-}
-
-.titleSection {
-	display: flex;
-	justify-content: space-between;
-}
-
-.titleContainer {
-	display: flex;
-}
-
-.titleContainer h3 {
+.title {
 	font-weight: 500;
+	margin-bottom: 5px;
 }
 
-.titleContainer h3,
-.descriptionSection p {
-	cursor: pointer;
-	word-break: break-word;
-}
-
-.descriptionSection p {
+.description {
 	font-size: 0.9rem;
-	margin-bottom: 10px;
 }
 
-.menuIconContainer {
+.menuContainer {
 	position: relative;
-	border-radius: 50%;
 	display: flex;
-	justify-content: center;
-	align-items: flex-end;
+	justify-content: flex-end;
 }
 
 .menuIcon {
