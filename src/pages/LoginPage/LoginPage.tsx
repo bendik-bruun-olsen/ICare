@@ -89,7 +89,7 @@ export default function LoginPage() {
             )}
 
             <form className="inputContainer" onSubmit={signIn}>
-                <div className="bgWrapper">
+                <div className="inputBackgroundBox">
                     <div className="input">
                         <Label htmlFor="textfield-normal" label="Email" />
                         <Input
