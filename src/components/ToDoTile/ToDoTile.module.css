@@ -59,9 +59,9 @@
 	font-size: 0.9rem;
 }
 
-.title,
-.description {
-	word-break: break-all;
+.showMore {
+	color: var(--blue);
+	font-size: 0.9rem;
 }
 
 .menuContainer {

@@ -29,6 +29,7 @@ export default function ToDoTile({
 	const moreIconRef = useRef<SVGSVGElement>(null);
 	const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
 	const [createdByName, setCreatedByName] = useState("Unknown");
+	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
 	useEffect(() => {
 		const fetchName = async () => {
@@ -73,6 +74,18 @@ export default function ToDoTile({
 	};
 	const currentChip = chipMapping[currentTaskStatus];
 
+	const titleLimit = 60;
+	const isTitleLong = todoItem.title.length > titleLimit;
+	const displayedTitle = isTitleLong
+		? todoItem.title.slice(0, titleLimit) + "..."
+		: todoItem.title;
+
+	const descriptionLimit = 100;
+	const isDescriptionLong = todoItem.description.length > descriptionLimit;
+	const displayedDescription = isDescriptionExpanded
+		? todoItem.description
+		: todoItem.description.slice(0, descriptionLimit) + "...";
+
 	return (
 		<div className={styles.checkboxAndToDoTileWrapper}>
 			<Checkbox
@@ -116,10 +129,26 @@ export default function ToDoTile({
 						</Chip>
 					</div>
 				</div>
-				<h3
-					className={styles.title}
-				>{`${todoItem.time} - ${todoItem.title}`}</h3>
-				<p className={styles.description}>{todoItem.description}</p>
+				<h3 className={styles.title}>
+					{`${todoItem.time} - ${displayedTitle}`}
+				</h3>
+				<p className={styles.description}>
+					{displayedDescription}
+					{isDescriptionLong && (
+						<>
+							<span
+								className={styles.showMore}
+								onClick={() =>
+									setIsDescriptionExpanded((prev) => !prev)
+								}
+							>
+								{isDescriptionExpanded
+									? " show less"
+									: " show more"}
+							</span>
+						</>
+					)}
+				</p>
 				<div className={styles.menuContainer}>
 					<span
 						className={styles.createdBy}
