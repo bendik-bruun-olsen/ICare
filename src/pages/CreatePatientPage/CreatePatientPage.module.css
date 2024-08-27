@@ -47,13 +47,13 @@
 
 .healthInfoSection span,
 .personalInfoSection span {
-	color: var(--white);
+	color: var(--black);
 }
 
 .caretakerList {
 	display: flex;
 	flex-direction: column;
-	color: var(--white);
+	color: var(--black);
 	border-radius: 5px;
 }
 
@@ -84,11 +84,11 @@
 }
 
 .nameAndEmail h3 {
-	color: var(--white);
+	color: var(--black);
 }
 
 .nameAndEmail span {
-	color: var(--grey);
+	color: var(--black);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -99,7 +99,7 @@
 }
 
 .required {
-	color: var(--coral) !important;
+	color: rgb(245, 11, 11) !important;
 }
 
 label {
@@ -108,7 +108,7 @@ label {
 }
 
 .headlineText {
-	color: var(--white);
+	color: var(--black);
 	margin-bottom: 15px;
 }
 
