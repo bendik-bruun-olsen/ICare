@@ -130,6 +130,7 @@ export default function SignupPage() {
                 />
 
                 <Input
+                    className="input"
                     value={name}
                     onChange={handleUsernameChange}
                     helperText={errors.name ? "Name is required" : ""}
@@ -143,6 +144,7 @@ export default function SignupPage() {
                 ></Label>
 
                 <Input
+                    className="input"
                     value={email}
                     onChange={handleEmailChange}
                     helperText={errors.email ? "Email is required" : ""}
@@ -156,6 +158,7 @@ export default function SignupPage() {
                 ></Label>
 
                 <Input
+                    className="input"
                     type="password"
                     value={password}
                     onChange={handlePasswordChange}
@@ -171,6 +174,7 @@ export default function SignupPage() {
                 ></Label>
 
                 <Input
+                    className="input"
                     type="password"
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
