@@ -63,8 +63,8 @@ a {
     padding: 20px;
     border-radius: 5px;
 }
-@media (min-width: 301px) {
-    .bgWrapper {
+@media (min-width: 501px) {
+    .inputBackgroundBox {
         padding: 10px;
     }
 }
