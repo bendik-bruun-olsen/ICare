@@ -2,6 +2,9 @@
     margin: 10px;
     text-align: center;
 }
+#loginPageWrapper {
+    max-width: max-content;
+}
 .inputContainer {
     width: 100%;
     display: flex;
@@ -36,10 +39,15 @@
 }
 
 .links {
-    color: var(--blue);
     margin: 10px;
     display: flex;
     justify-content: space-between;
+}
+
+.links a {
+    color: var(--blue);
+    text-decoration: underline !important;
+    font-weight: 500;
 }
 
 @media (min-width: 501px) {

@@ -1,19 +1,15 @@
 import { auth, db } from "../../firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import {
-    Input,
-    Button,
-    InputWrapper,
-    Typography,
-} from "@equinor/eds-core-react";
+import { Label, Input, Button, Typography } from "@equinor/eds-core-react";
 import { Paths } from "../../paths";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import "./SignupPage.modules.css";
 import { FirebaseError } from "firebase/app";
 import Logo from "../../components/Logo/Logo";
 import { useNotification } from "../../hooks/useNotification";
+import Loading from "../../components/Loading/Loading";
 
 export default function SignupPage() {
     const [name, setName] = useState("");
@@ -22,6 +18,7 @@ export default function SignupPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const navigate = useNavigate();
     const [hasError, setHasError] = useState(false);
+
     const [notificationMessage] = useState("");
     const [errors, setErrors] = useState({
         name: false,
@@ -29,6 +26,7 @@ export default function SignupPage() {
         password: false,
         confirmPassword: false,
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const { addNotification } = useNotification();
 
@@ -59,16 +57,16 @@ export default function SignupPage() {
 
         const newErrors = { ...errors };
 
-        if (name === "") {
+        if (!name) {
             newErrors.name = true;
         }
-        if (email === "") {
+        if (!email) {
             newErrors.email = true;
         }
-        if (password === "") {
+        if (!password) {
             newErrors.password = true;
         }
-        if (confirmPassword === "") {
+        if (!confirmPassword) {
             newErrors.confirmPassword = true;
         }
 
@@ -81,6 +79,7 @@ export default function SignupPage() {
             return;
         }
         try {
+            setIsLoading(true);
             await createUserWithEmailAndPassword(auth, email, password);
 
             await setDoc(doc(db, "users", email), {
@@ -105,10 +104,13 @@ export default function SignupPage() {
                 return;
             }
             setHasError(true);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     if (hasError) navigate(Paths.ERROR);
+    if (isLoading) return <Loading />;
 
     return (
         <div className="pageWrapper">
@@ -121,89 +123,74 @@ export default function SignupPage() {
                 <Logo size={"60px"} color={"var(--blue)"} />
             </div>
             <form className="inputContainer" onSubmit={signUp}>
-                <InputWrapper
+                <Label
+                    htmlFor="textfield-normal"
+                    label="Name"
                     className="input"
-                    labelProps={{
-                        label: "Name*",
-                        htmlFor: "textfield-normal",
-                        style: { display: "block" },
-                    }}
-                >
-                    <Input
-                        type="text"
-                        value={name}
-                        required
-                        autocomplete="off"
-                        onChange={handleUsernameChange}
-                        variant={errors.name ? "error" : undefined}
-                        helperProps={{
-                            text: errors.name ? "Name is required" : "",
-                        }}
-                    />
-                </InputWrapper>
-                <InputWrapper
-                    className="input"
-                    labelProps={{
-                        label: "Email*",
-                        htmlFor: "textfield-normal",
-                        style: { display: "block" },
-                    }}
-                >
-                    <Input
-                        type="email"
-                        value={email}
-                        required
-                        autocomplete="off"
-                        onChange={handleEmailChange}
-                        variant={errors.email ? "error" : undefined}
-                        helperText={errors.email ? "Email is required" : ""}
-                    />
-                </InputWrapper>
+                />
 
-                <InputWrapper
+                <Input
+                    value={name}
+                    onChange={handleUsernameChange}
+                    helperText={errors.name ? "Name is required" : ""}
+                    variant={errors.name ? "error" : undefined}
+                    required
+                />
+                <Label
+                    htmlFor="textfield-normal"
+                    label="Email*"
                     className="input"
-                    labelProps={{
-                        label: "Password*",
-                        htmlFor: "textfield-password",
-                        style: { display: "block" },
-                    }}
-                >
-                    <Input
-                        type="password"
-                        value={password}
-                        required
-                        onChange={handlePasswordChange}
-                        variant={errors.password ? "error" : undefined}
-                        helperText={
-                            errors.password ? "Password is required" : ""
-                        }
-                    />
-                </InputWrapper>
-                <InputWrapper
-                    className="input"
-                    labelProps={{
-                        label: "Confirm Password*",
-                        htmlFor: "textfield-password",
-                        style: { display: "block" },
-                    }}
-                >
-                    <Input
-                        type="password"
-                        value={confirmPassword}
-                        required
-                        onChange={handleConfirmPasswordChange}
-                        variant={errors.confirmPassword ? "error" : undefined}
-                        helperText={
-                            errors.confirmPassword
-                                ? "Confirm Password is required"
-                                : ""
-                        }
-                    />
-                </InputWrapper>
+                ></Label>
 
-                <Button id="signupButton" type="submit">
-                    Sign Up
-                </Button>
+                <Input
+                    value={email}
+                    onChange={handleEmailChange}
+                    helperText={errors.email ? "Email is required" : ""}
+                    variant={errors.email ? "error" : undefined}
+                    required
+                />
+                <Label
+                    htmlFor="textfield-normal"
+                    label="Password*"
+                    className="input"
+                ></Label>
+
+                <Input
+                    type="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    helperText={errors.password ? "Password is required" : ""}
+                    variant={errors.password ? "error" : undefined}
+                    required
+                />
+
+                <Label
+                    htmlFor="textfield-normal"
+                    label="Confirm Password*"
+                    className="input"
+                ></Label>
+
+                <Input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    helperText={
+                        errors.confirmPassword
+                            ? "Confirm Password is required"
+                            : ""
+                    }
+                    variant={errors.confirmPassword ? "error" : undefined}
+                    required
+                />
+                <div className="links">
+                    <Button id="signupbutton" type="submit">
+                        Sign Up
+                    </Button>
+
+                    <Link to={Paths.LOGIN} id="backToLogin">
+                        Back to Login page
+                    </Link>
+                </div>
             </form>
         </div>
     );

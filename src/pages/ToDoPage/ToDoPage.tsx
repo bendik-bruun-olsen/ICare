@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, CircularProgress } from "@equinor/eds-core-react";
+import { Button } from "@equinor/eds-core-react";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import ToDoTile from "../../components/ToDoTile/ToDoTile";
 import styles from "./ToDoPage.module.css";
@@ -13,6 +13,7 @@ import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
 import { useNotification } from "../../hooks/useNotification";
 import ErrorPage from "../ErrorPage/ErrorPage";
+import Loading from "../../components/Loading/Loading";
 import { Paths } from "../../paths";
 
 const ToDoPage: React.FC = () => {
@@ -52,16 +53,11 @@ const ToDoPage: React.FC = () => {
 		fetchData();
 	}, [selectedDate]);
 
-	const handleStatusChange = async (
-		todoId: string,
-		newStatus: ToDoStatus
-	) => {
+	const handleStatusChange = async (todoId: string, newStatus: ToDoStatus) => {
 		if (!categorizedTodos) return;
 
 		const flattenedTodos = Object.values(categorizedTodos).flat();
-		const todoIndex = flattenedTodos.findIndex(
-			(todo) => todo.id === todoId
-		);
+		const todoIndex = flattenedTodos.findIndex((todo) => todo.id === todoId);
 		if (todoIndex === -1) return;
 		const updatedTodo = { ...flattenedTodos[todoIndex], status: newStatus };
 		flattenedTodos[todoIndex] = updatedTodo;
@@ -70,7 +66,13 @@ const ToDoPage: React.FC = () => {
 		setCategorizedTodos(updatedSortedTodosGroup);
 	};
 
-	if (isLoading) return <CircularProgress />;
+	if (isLoading)
+		return (
+			<>
+				<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
+				<Loading />
+			</>
+		);
 	if (hasError) return <ErrorPage />;
 	return (
 		<>
@@ -83,37 +85,27 @@ const ToDoPage: React.FC = () => {
 					/>
 					<div>
 						{Object.keys(categorizedTodos).map((category) => (
-							<div
-								key={category}
-								className={styles.categoryStyle}
-							>
+							<div key={category} className={styles.categoryStyle}>
 								<h3>{category}</h3>
 								<div className={styles.toDoTileMargin}>
 									{categorizedTodos[category].map((todo) => (
-										<div
-											className={styles.toDoTile}
-											key={todo.id}
-										>
+										<div className={styles.toDoTile} key={todo.id}>
 											<ToDoTile
 												todoId={todo.id}
 												toDoTitle={todo.title}
-												toDoDescription={
-													todo.description
-												}
+												toDoDescription={todo.description}
 												taskStatus={todo.status}
 												time={todo.time}
 												seriesId={todo.seriesId}
 												selectedDate={selectedDate}
-												onStatusChange={
-													handleStatusChange
-												}
+												onStatusChange={handleStatusChange}
 											/>
 										</div>
 									))}
 								</div>
 							</div>
 						))}
-						<Link to={Paths.ADD_TODO}>
+						<Link to={Paths.ADD_TODO} state={{ selectedDate }}>
 							<div className={styles.addIcon}>
 								<Button variant="contained_icon">
 									<Icon data={add} size={32} />

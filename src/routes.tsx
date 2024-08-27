@@ -2,7 +2,7 @@ import { createBrowserRouter, Outlet } from "react-router-dom";
 import { Paths } from "./paths";
 import { useAuth } from "./hooks/useAuth/useAuth";
 import HomePage from "./pages/HomePage/HomePage";
-import Login from "./pages/Login/LoginPage";
+import Login from "./pages/LoginPage/LoginPage";
 import Signup from "./pages/Signup/SignupPage";
 import ToDoPage from "./pages/ToDoPage/ToDoPage";
 import AddTodoPage from "./pages/AddTodoPage/AddTodoPage";
@@ -15,7 +15,9 @@ import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasssword/ResetPasswordPage";
+import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";
 import { Navigate } from "react-router-dom";
+import CreatePatientPage from "./pages/CreatePatientPage/CreatePatientPage";
 
 const RequireAuthWrapper = () => {
 	const { isUserLoggedIn } = useAuth();
@@ -85,6 +87,14 @@ const protectedRoutes = [
 	{
 		path: Paths.ABOUT,
 		element: <AboutUsPage />,
+	},
+	{
+		path: Paths.USER_PROFILE,
+		element: <UserProfilePage />,
+	},
+	{
+		path: Paths.CREATE_PATIENT,
+		element: <CreatePatientPage />,
 	},
 ];
 

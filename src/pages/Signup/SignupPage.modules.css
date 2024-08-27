@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .inputContainer {
     display: flex;
     flex-direction: column;
@@ -17,6 +18,19 @@
     color: var(--black);
 }
 #signupButton {
+=======
+.inputcontainer label {
+    color: var(--black);
+}
+
+.inputcontainer input {
+    margin: 10px;
+    padding: 10px;
+    width: 100%;
+    color: var(--black);
+}
+#signupbutton {
+>>>>>>> development
     background-color: var(--blue);
     margin: 10px;
     color: var(--white);
@@ -25,4 +39,11 @@
     .input {
         width: 500px;
     }
+<<<<<<< HEAD
+=======
+}
+#backToLogin {
+    display: flex;
+    align-items: center;
+>>>>>>> development
 }
