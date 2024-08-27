@@ -55,8 +55,7 @@ const EditToDoPage = () => {
 	const { selectedDate: DateSelectedInTodoPage } = location.state;
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
-	const [todoItem, setTodoItem] =
-		useState<TodoItemInterface>(defaultTodoItem);
+	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
 	const { todoId: todoItemIdFromParams, seriesId: seriesIdFromParams } =
@@ -65,15 +64,11 @@ const EditToDoPage = () => {
 			seriesId: string;
 		}>();
 	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
-	const [isEditingSeries, setIsEditingSeries] = useState(
-		!!seriesIdFromParams
-	);
+	const [isEditingSeries, setIsEditingSeries] = useState(!!seriesIdFromParams);
 	const { addNotification } = useNotification();
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
-		useState<TodoItemInputFieldStatusProps>(
-			defaultTodoItemInputFieldStatus
-		);
+		useState<TodoItemInputFieldStatusProps>(defaultTodoItemInputFieldStatus);
 	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
 		useState<TodoSeriesInputFieldStatusProps>(
 			defaultTodoSeriesInputFieldStatus
@@ -198,8 +193,7 @@ const EditToDoPage = () => {
 			if (!prev) {
 				setIsEditingSeries(false);
 
-				const currentDay =
-					daysOfTheWeek[todoItem.date.toDate().getDay()];
+				const currentDay = daysOfTheWeek[todoItem.date.toDate().getDay()];
 				setTodoSeriesInfo((prev) => ({
 					title: todoItem.title,
 					description: todoItem.description,
@@ -347,9 +341,7 @@ const EditToDoPage = () => {
 			<>
 				<Navbar
 					leftContent={<BackHomeButton />}
-					centerContent={
-						isEditingSeries ? "Edit ToDo Series" : "Edit ToDo"
-					}
+					centerContent={isEditingSeries ? "Edit ToDo Series" : "Edit ToDo"}
 				/>
 				<Loading />
 			</>
@@ -359,9 +351,7 @@ const EditToDoPage = () => {
 		<>
 			<Navbar
 				leftContent={<BackHomeButton />}
-				centerContent={
-					isEditingSeries ? "Edit ToDo Series" : "Edit ToDo"
-				}
+				centerContent={isEditingSeries ? "Edit ToDo Series" : "Edit ToDo"}
 			/>
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
@@ -420,8 +410,7 @@ const EditToDoPage = () => {
 												: todoItem.category
 										}
 										onSelectionChange={(category) =>
-											isEditingSeries ||
-											isCreatingNewSeries
+											isEditingSeries || isCreatingNewSeries
 												? setTodoSeriesInfo((prev) => ({
 														...prev,
 														category,
@@ -432,35 +421,28 @@ const EditToDoPage = () => {
 												  }))
 										}
 										variant={
-											isEditingSeries ||
-											isCreatingNewSeries
+											isEditingSeries || isCreatingNewSeries
 												? todoSeriesInputFieldStatus.category
 												: todoItemInputFieldStatus.category
 										}
 									/>
 									<StartAndEndDate
 										label={
-											isCreatingNewSeries ||
-											isEditingSeries
+											isCreatingNewSeries || isEditingSeries
 												? "Start date"
 												: "Date"
 										}
 										value={formatTimestampToDateString(
-											isEditingSeries
-												? todoSeriesInfo.startDate
-												: todoItem.date
+											isEditingSeries ? todoSeriesInfo.startDate : todoItem.date
 										)}
 										onChange={(date) =>
 											handleDateChange(
-												isEditingSeries
-													? "startDate"
-													: "date",
+												isEditingSeries ? "startDate" : "date",
 												date
 											)
 										}
 										variant={
-											isEditingSeries ||
-											isCreatingNewSeries
+											isEditingSeries || isCreatingNewSeries
 												? todoSeriesInputFieldStatus.startDate
 												: todoItemInputFieldStatus.date
 										}
@@ -474,16 +456,13 @@ const EditToDoPage = () => {
 										type="time"
 										name="time"
 										value={
-											isEditingSeries
-												? todoSeriesInfo.time
-												: todoItem.time
+											isEditingSeries ? todoSeriesInfo.time : todoItem.time
 										}
 										className={styles.time}
 										onChange={handleTimeChange}
 										style={{ width: "150px" }}
 										variant={
-											isEditingSeries ||
-											isCreatingNewSeries
+											isEditingSeries || isCreatingNewSeries
 												? todoSeriesInputFieldStatus.time
 												: todoItemInputFieldStatus.time
 										}
@@ -497,15 +476,8 @@ const EditToDoPage = () => {
 									) : (
 										<Checkbox
 											label="Repeat"
-											checked={
-												isCreatingNewSeries ||
-												isEditingSeries
-											}
-											disabled={
-												seriesIdFromParams
-													? true
-													: false
-											}
+											checked={isCreatingNewSeries || isEditingSeries}
+											disabled={seriesIdFromParams ? true : false}
 											onChange={handleToggleRepeat}
 										/>
 									)}
@@ -516,26 +488,16 @@ const EditToDoPage = () => {
 									<StartAndEndDate
 										label="End date"
 										value={formatTimestampToDateString(
-											isEditingSeries
-												? todoSeriesInfo.endDate
-												: todoItem.date
+											isEditingSeries ? todoSeriesInfo.endDate : todoItem.date
 										)}
-										onChange={(date) =>
-											handleDateChange("endDate", date)
-										}
-										variant={
-											todoSeriesInputFieldStatus.endDate
-										}
+										onChange={(date) => handleDateChange("endDate", date)}
+										variant={todoSeriesInputFieldStatus.endDate}
 										minValue={endDateMinValue}
 									/>
 									<DaysComponent
-										selectedDays={
-											todoSeriesInfo.selectedDays
-										}
+										selectedDays={todoSeriesInfo.selectedDays}
 										onDayToggle={handleDayToggle}
-										variant={
-											todoSeriesInputFieldStatus.selectedDays
-										}
+										variant={todoSeriesInputFieldStatus.selectedDays}
 									/>
 								</>
 							)}

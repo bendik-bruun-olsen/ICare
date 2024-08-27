@@ -1,5 +1,6 @@
 import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
 import { Timestamp } from "firebase/firestore";
+import { Dispatch, SetStateAction } from "react";
 
 export enum ToDoStatus {
 	unchecked = "unchecked",
@@ -81,10 +82,37 @@ export interface TodoSeriesInputFieldStatusProps {
 }
 
 export interface UserData {
-  name: string;
-  age?: number;
-  gender?: "Male" | "Female" | "Others";
-  phone?: string;
-  email: string;
-  profilePictureUrl?: string;
+	name: string;
+	age?: number;
+	gender?: "Male" | "Female" | "Others";
+	phone?: string;
+	email: string;
+	profilePictureUrl?: string;
+}
+
+export interface PatientFormDataInterface {
+	[key: string]: string;
+	name: string;
+	age: string;
+	phone: string;
+	address: string;
+	diagnoses: string;
+	allergies: string;
+}
+
+export interface CaretakerInformationInterface {
+	name: string;
+	email: string;
+}
+
+export type FormFieldProps = {
+	label?: string;
+	name: string;
+	value: string;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	required?: boolean;
+};
+
+export interface PatientProfilePictureProps {
+	setProfileImage: Dispatch<SetStateAction<File | null>>;
 }
