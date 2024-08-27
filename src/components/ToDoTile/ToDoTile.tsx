@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icon, Checkbox, Chip } from "@equinor/eds-core-react";
 import { more_horizontal, repeat } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
 import { useNotification } from "../../hooks/useNotification";
 import { capitalizeUsername } from "../../utils";
+import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
 
 interface ToDoTileProps {
 	selectedDate: Date;
@@ -27,6 +28,17 @@ export default function ToDoTile({
 	const { addNotification } = useNotification();
 	const moreIconRef = useRef<SVGSVGElement>(null);
 	const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
+	const [createdByName, setCreatedByName] = useState("Unknown");
+
+	useEffect(() => {
+		const fetchName = async () => {
+			const result = await getNameFromEmail(todoItem.createdBy);
+			if (result) {
+				setCreatedByName(result);
+			}
+		};
+		fetchName();
+	}, [todoItem.createdBy]);
 
 	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
 		if (currentToDoStatus === ToDoStatus.checked) return styles.checked;
@@ -111,9 +123,7 @@ export default function ToDoTile({
 				<div className={styles.menuContainer}>
 					<span
 						className={styles.createdBy}
-					>{`Created by ${capitalizeUsername(
-						todoItem.createdBy
-					)}`}</span>
+					>{`Created by ${capitalizeUsername(createdByName)}`}</span>
 					<Icon
 						data={more_horizontal}
 						size={40}

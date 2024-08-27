@@ -59,6 +59,11 @@
 	font-size: 0.9rem;
 }
 
+.title,
+.description {
+	word-break: break-all;
+}
+
 .menuContainer {
 	position: relative;
 	display: flex;

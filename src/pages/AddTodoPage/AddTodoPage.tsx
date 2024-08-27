@@ -66,7 +66,7 @@ const AddToDoPage: React.FC = () => {
 	);
 	const { addNotification } = useNotification();
 	const navigate = useNavigate();
-	const currentUserName = useAuth().userData?.name;
+	const currentUserEmail = useAuth().userData?.email;
 
 	useEffect(() => {
 		if (!location.state.selectedDate) {
@@ -135,7 +135,7 @@ const AddToDoPage: React.FC = () => {
 					)
 				)
 					return;
-				if (!currentUserName) return setHasError(true);
+				if (!currentUserEmail) return setHasError(true);
 
 				const selectedDaysNumbers = mapSelectedDaysToNumbers(
 					todoSeriesInfo.selectedDays
@@ -165,7 +165,7 @@ const AddToDoPage: React.FC = () => {
 				await addMultipleNewTodos(
 					newTodos,
 					todoSeriesInfo,
-					currentUserName,
+					currentUserEmail,
 					addNotification
 				);
 				return navigate(Paths.TODO, {
@@ -181,10 +181,10 @@ const AddToDoPage: React.FC = () => {
 					)
 				)
 					return;
-				if (!currentUserName) return setHasError(true);
+				if (!currentUserEmail) return setHasError(true);
 				await addSingleNewTodo(
 					todoItem,
-					currentUserName,
+					currentUserEmail,
 					addNotification
 				);
 				return navigate(Paths.TODO, {

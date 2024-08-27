@@ -98,15 +98,7 @@ const ToDoPage: React.FC = () => {
 										: ""
 								}`}
 							>
-								<h2
-									className={
-										category === "Ignored"
-											? styles.ignoreCategory
-											: ""
-									}
-								>
-									{category}
-								</h2>
+								<h2>{category}</h2>
 								<div className={styles.toDoTileMargin}>
 									{categorizedTodos[category].map((todo) => (
 										<div
