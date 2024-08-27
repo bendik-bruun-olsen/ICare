@@ -68,14 +68,13 @@
 	position: relative;
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-end;
+	align-items: center;
 }
 
 .createdBy {
 	font-size: 0.8rem;
 	opacity: 0.6;
 	font-style: italic;
-	margin-bottom: 5px;
 }
 
 .menuIcon {
@@ -129,10 +128,6 @@
 
 .modalItem:hover {
 	background-color: var(--lightblue);
-}
-
-.notApplicable {
-	/* background-color: var(--coral); */
 }
 
 .checked {
