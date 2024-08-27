@@ -89,38 +89,41 @@ export default function LoginPage() {
             )}
 
             <form className="inputContainer" onSubmit={signIn}>
-                <div className="input">
-                    <Label htmlFor="textfield-normal" label="Email" />
-                    <Input
-                        type="email"
-                        id="textfield-normal"
-                        autoComplete="off"
-                        onChange={handleEmailChange}
-                        value={email}
-                        variant={emailError ? "error" : undefined}
-                    />
-                    {emailError && (
-                        <span className="error-text">{emailError}</span>
-                    )}
-                </div>
+                <div className="bgWrapper">
+                    <div className="input">
+                        <Label htmlFor="textfield-normal" label="Email" />
+                        <Input
+                            type="email"
+                            id="textfield-normal"
+                            autoComplete="off"
+                            onChange={handleEmailChange}
+                            value={email}
+                            variant={emailError ? "error" : undefined}
+                        />
+                        {emailError && (
+                            <span className="error-text">{emailError}</span>
+                        )}
+                    </div>
 
-                <div className="input">
-                    <Label htmlFor="textfield-password" label="Password" />
-                    <Input
-                        type="password"
-                        autoComplete="off"
-                        id="textfield-password"
-                        onChange={handlePasswordChange}
-                        value={password}
-                        variant={passwordError ? "error" : undefined}
-                    />
-                    {passwordError && (
-                        <span className="error-text">{passwordError}</span>
-                    )}
+                    <div className="input">
+                        <Label htmlFor="textfield-password" label="Password" />
+                        <Input
+                            type="password"
+                            autoComplete="off"
+                            id="textfield-password"
+                            onChange={handlePasswordChange}
+                            value={password}
+                            variant={passwordError ? "error" : undefined}
+                        />
+                        {passwordError && (
+                            <span className="error-text">{passwordError}</span>
+                        )}
+                    </div>
+
+                    <Button id="signInButton" type="submit">
+                        Sign In
+                    </Button>
                 </div>
-                <Button id="signInButton" type="submit">
-                    Sign In
-                </Button>
             </form>
             <div className="links">
                 <Link to={Paths.SIGNUP}>Sign up!</Link>
