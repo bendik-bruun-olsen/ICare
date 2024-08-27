@@ -46,7 +46,7 @@ p {
 a {
     text-decoration: none;
 }
-.bgWrapper {
+.inputBackgroundBox {
     margin-top: 10px;
     background-color: var(--fadedblue);
     padding: 20px;
