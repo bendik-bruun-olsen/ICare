@@ -20,7 +20,7 @@ const ProfilePicture: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserProfilePic = async () => {
       if (currentUser?.email) {
         const userFolder = currentUser.email;
         const userDocRef = doc(db, "users", currentUser.email);
@@ -59,7 +59,7 @@ const ProfilePicture: React.FC = () => {
       }
     };
 
-    fetchUserData();
+    fetchUserProfilePic();
   }, [currentUser]);
 
   const loadDefaultProfilePicture = async () => {
