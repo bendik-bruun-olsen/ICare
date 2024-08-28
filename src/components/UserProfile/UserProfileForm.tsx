@@ -12,7 +12,6 @@ const UserProfileForm: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { currentUser } = useAuth();
   const fullInfoContainerRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -37,51 +36,32 @@ const UserProfileForm: React.FC = () => {
         fullInfoContainerRef.current &&
         !fullInfoContainerRef.current.contains(event.target as Node)
       ) {
-        saveDataToFirebase(); // Save immediately if clicking outside
         setIsEditing(false);
       }
     };
 
-    const handleBeforeUnload = () => {
-      saveDataToFirebase(); // Save immediately on page unload or navigation
-    };
-
     document.addEventListener("mousedown", handleClickOutside);
-    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [userData]);
+  }, []);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
-  const handleChange = (
+  const handleChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { id, value } = e.target;
     const updatedData = { ...userData, [id]: value } as UserData;
     setUserData(updatedData);
 
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    // Set a timer to save after 5 seconds of inactivity
-    timerRef.current = setTimeout(() => {
-      saveDataToFirebase();
-    }, 5000);
-  };
-
-  const saveDataToFirebase = async () => {
-    if (currentUser?.email && userData) {
+    if (currentUser?.email) {
       try {
         const userDocRef = doc(db, "users", currentUser.email);
-        await updateDoc(userDocRef, userData);
-        console.log("Document successfully updated!");
+        await updateDoc(userDocRef, { [id]: value });
       } catch (error) {
         console.error("Error updating document:", error);
       }
@@ -106,7 +86,6 @@ const UserProfileForm: React.FC = () => {
           value={userData?.name || ""}
           onChange={handleChange}
           readOnly={!isEditing}
-          className={isEditing ? "editable" : ""}
         />
       </div>
       <div className="inputGroup">
@@ -117,7 +96,6 @@ const UserProfileForm: React.FC = () => {
           value={userData?.age || ""}
           onChange={handleChange}
           readOnly={!isEditing}
-          className={isEditing ? "editable" : ""}
         />
       </div>
       <div className="inputGroup">
@@ -128,7 +106,6 @@ const UserProfileForm: React.FC = () => {
           value={userData?.gender || ""}
           onChange={handleChange}
           disabled={!isEditing}
-          className={isEditing ? "editable" : ""}
         >
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
@@ -144,7 +121,6 @@ const UserProfileForm: React.FC = () => {
           value={userData?.phone || ""}
           onChange={handleChange}
           readOnly={!isEditing}
-          className={isEditing ? "editable" : ""}
         />
       </div>
       <div className="inputGroup">

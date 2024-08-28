@@ -3,7 +3,13 @@ import { Icon } from "@equinor/eds-core-react";
 import { camera } from "@equinor/eds-icons";
 import { db, storage } from "../../firebase/firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  listAll,
+  deleteObject,
+} from "firebase/storage";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import "./ProfilePicture.css";
 import { UserData } from "../../types";
@@ -13,16 +19,34 @@ const ProfilePicture: React.FC = () => {
   const { currentUser } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load the user's profile picture or the default picture
   useEffect(() => {
     const fetchUserData = async () => {
       if (currentUser?.email) {
+        const userFolder = currentUser.email;
         const userDocRef = doc(db, "users", currentUser.email);
         const docSnap = await getDoc(userDocRef);
+
         if (docSnap.exists()) {
           const data = docSnap.data() as UserData;
+
           if (data.profilePictureUrl) {
-            setSelectedImage(data.profilePictureUrl);
+            try {
+              const storageRef = ref(storage, `profilePictures/${userFolder}/`);
+              const listResult = await listAll(storageRef);
+
+              if (listResult.items.length === 0) {
+                await updateDoc(userDocRef, { profilePictureUrl: "" });
+                loadDefaultProfilePicture();
+              } else {
+                setSelectedImage(data.profilePictureUrl);
+              }
+            } catch (error) {
+              console.error(
+                "Error checking profile picture in storage:",
+                error
+              );
+              loadDefaultProfilePicture();
+            }
           } else {
             loadDefaultProfilePicture();
           }
@@ -38,31 +62,35 @@ const ProfilePicture: React.FC = () => {
     fetchUserData();
   }, [currentUser]);
 
-  // Load the default profile picture from Firebase Storage
   const loadDefaultProfilePicture = async () => {
     try {
-      const defaultPicRef = ref(storage, "Default.png"); // Adjust this path if Default.png is in a subfolder
+      const defaultPicRef = ref(storage, "Default.png");
       const defaultUrl = await getDownloadURL(defaultPicRef);
       setSelectedImage(defaultUrl);
     } catch (error) {
       console.error("Error loading default profile picture:", error);
-      // Fallback to a local default image if Firebase storage fails
-      setSelectedImage("/default-profile-image.jpg");
+      setSelectedImage("/Default.png");
     }
   };
 
-  // Handle the image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const userFolder = currentUser?.email || "default";
-      const storageRef = ref(
-        storage,
-        `profilePictures/${userFolder}/${file.name}`
-      );
+      const userFolder = currentUser?.email;
+      const storageRef = ref(storage, `profilePictures/${userFolder}/`);
 
       try {
-        const uploadTask = uploadBytesResumable(storageRef, file);
+        const listResult = await listAll(storageRef);
+        const deleteOldPic = listResult.items.map((item) => deleteObject(item));
+        await Promise.all(deleteOldPic);
+
+        const newFileName = `${Date.now()}_${file.name}`;
+        const newStorageRef = ref(
+          storage,
+          `profilePictures/${userFolder}/${newFileName}`
+        );
+
+        const uploadTask = uploadBytesResumable(newStorageRef, file);
 
         uploadTask.on(
           "state_changed",

@@ -4,6 +4,8 @@
   padding: 20px;
   background-color: var(--fadedblue);
   border-radius: 5px;
+  margin-bottom: 200px;
+  margin-top: 50px;
 }
 
 .userInfo {
@@ -11,7 +13,10 @@
   align-items: center;
   justify-content: space-between;
   margin: 20px 0;
-  margin-bottom: 20px;
+  margin-top: 20px;
+  color: var(--white);
+}
+.userInfo h2 {
   color: var(--white);
 }
 
@@ -23,23 +28,23 @@
   color: var(--white);
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 5px;
+  /* margin-bottom: 5px; */
 }
 
 .inputGroup Input,
 .inputGroup NativeSelect {
   font-family: inherit;
   font-size: 16px;
-  color: var(--white);
-  background-color: var(--blue);
-  border: 1px solid var(--blue);
-  line-height: 1.5;
+  /* color: var(--white); */
+  background-color: none;
+  /* border: 1px solid var(--blue); */
+  line-height: 1;
   width: 100%;
   box-sizing: border-box;
 }
 
 .inputGroup .editable:focus {
-  color: black;
+  /* color: black; */
   background-color: var(--blue);
   border: 1px solid var(--lightblue);
   outline: none;
