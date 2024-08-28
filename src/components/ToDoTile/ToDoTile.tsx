@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Icon, Checkbox, Chip } from "@equinor/eds-core-react";
-import { more_horizontal, repeat } from "@equinor/eds-icons";
+import { Icon, Checkbox, Chip, Button } from "@equinor/eds-core-react";
+import { arrow_back_ios, arrow_forward_ios, repeat } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { TodoItemInterface, ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTodo";
@@ -26,10 +26,14 @@ export default function ToDoTile({
 	);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const { addNotification } = useNotification();
-	const moreIconRef = useRef<SVGSVGElement>(null);
+	const optionsIconRef = useRef<SVGSVGElement>(null);
 	const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
 	const [createdByName, setCreatedByName] = useState("Unknown");
-	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+	const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+	const contentContainerRef = useRef<HTMLDivElement>(null);
+	const descriptionRef = useRef<HTMLParagraphElement>(null);
+	const defaultContentMaxHeight = 45;
+	const [contentMaxHeight, setContentMaxHeight] = useState("10px");
 
 	useEffect(() => {
 		const fetchName = async () => {
@@ -43,14 +47,29 @@ export default function ToDoTile({
 
 	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
 		if (currentToDoStatus === ToDoStatus.checked) return styles.checked;
-		if (currentToDoStatus === ToDoStatus.ignore)
-			return styles.notApplicable;
+		if (currentToDoStatus === ToDoStatus.ignore) return styles.notApplicable;
 		return styles.default;
 	}
 
-	const handleMenuClick = () => {
-		if (moreIconRef.current) {
-			const rect = moreIconRef.current.getBoundingClientRect();
+	useEffect(() => {
+		if (isMenuExpanded && contentContainerRef.current) {
+			setContentMaxHeight(`${contentContainerRef.current.scrollHeight}px`);
+		}
+		if (!isMenuExpanded && contentContainerRef.current) {
+			if (
+				descriptionRef.current &&
+				descriptionRef.current.scrollHeight < defaultContentMaxHeight
+			) {
+				setContentMaxHeight(`${descriptionRef.current.scrollHeight}px`);
+				return;
+			}
+			setContentMaxHeight(`${defaultContentMaxHeight}px`);
+		}
+	}, [isMenuExpanded]);
+
+	const handleOptionsClick = () => {
+		if (optionsIconRef.current) {
+			const rect = optionsIconRef.current.getBoundingClientRect();
 			const spaceBelow = window.innerHeight - rect.bottom;
 			setDisplayDropdownAbove(spaceBelow < 180);
 		}
@@ -60,11 +79,11 @@ export default function ToDoTile({
 	const handleStatusChange = async (newStatus: ToDoStatus) => {
 		setCurrentTaskStatus(newStatus);
 		onStatusChange(todoItem.id, newStatus);
-		await updateToDoStatusInDatabase(
-			todoItem.id,
-			newStatus,
-			addNotification
-		);
+		await updateToDoStatusInDatabase(todoItem.id, newStatus, addNotification);
+	};
+
+	const handleMenuExpand = () => {
+		setIsMenuExpanded((prev) => !prev);
 	};
 
 	const chipMapping = {
@@ -73,18 +92,6 @@ export default function ToDoTile({
 		[ToDoStatus.ignore]: { variant: "error", label: "Ignored" },
 	};
 	const currentChip = chipMapping[currentTaskStatus];
-
-	const titleLimit = 60;
-	const isTitleLong = todoItem.title.length > titleLimit;
-	const displayedTitle = isTitleLong
-		? todoItem.title.slice(0, titleLimit) + "..."
-		: todoItem.title;
-
-	const descriptionLimit = 100;
-	const isDescriptionLong = todoItem.description.length > descriptionLimit;
-	const displayedDescription = isDescriptionExpanded
-		? todoItem.description
-		: todoItem.description.slice(0, descriptionLimit) + "...";
 
 	return (
 		<div className={styles.checkboxAndToDoTileWrapper}>
@@ -112,118 +119,109 @@ export default function ToDoTile({
 					)}
 					<div
 						className={
-							currentChip.variant === "error"
-								? ""
-								: styles.chipOutline
+							currentChip.variant === "error" ? "" : styles.chipOutline
 						}
 					>
 						<Chip
-							variant={
-								currentChip.variant as
-									| "default"
-									| "active"
-									| "error"
-							}
+							variant={currentChip.variant as "default" | "active" | "error"}
 						>
 							{currentChip.label}
 						</Chip>
 					</div>
 				</div>
 				<h3 className={styles.title}>
-					{`${todoItem.time} - ${displayedTitle}`}
+					{`${todoItem.time} - ${todoItem.title}`}
 				</h3>
-				<p className={styles.description}>
-					{displayedDescription}
-					{isDescriptionLong && (
-						<>
-							<span
-								className={styles.showMore}
-								onClick={() =>
-									setIsDescriptionExpanded((prev) => !prev)
-								}
-							>
-								{isDescriptionExpanded
-									? " show less"
-									: " show more"}
+				<div
+					className={styles.contentContainer}
+					style={{ maxHeight: contentMaxHeight }}
+					ref={contentContainerRef}
+				>
+					<p className={styles.description} ref={descriptionRef}>
+						{todoItem.description}
+					</p>
+					<div className={styles.metaDataAndOptionsContainer}>
+						<div className={styles.metaDataContainer}>
+							<span className={styles.metaDataText}>
+								{`Completed by ${capitalizeUsername(createdByName)}`}
 							</span>
-						</>
-					)}
-				</p>
-				<div className={styles.menuContainer}>
-					<span
-						className={styles.createdBy}
-					>{`Created by ${capitalizeUsername(createdByName)}`}</span>
-					<Icon
-						data={more_horizontal}
-						size={40}
-						className={styles.menuIcon}
-						onClick={handleMenuClick}
-						ref={moreIconRef}
-					/>
-					{isModalOpen && (
-						<>
-							<div
-								className={styles.modalOverlay}
-								onClick={handleMenuClick}
-							></div>
-							<div
-								className={`${styles.modalContainer} ${
-									displayDropdownAbove
-										? styles.dropdownAbove
-										: ""
-								}`}
-								onClick={(e) => e.stopPropagation()}
-							>
-								<ul className={styles.modalList}>
-									<li
-										className={styles.modalItem}
-										onClick={() =>
-											handleStatusChange(
-												currentTaskStatus ===
-													ToDoStatus.ignore
-													? ToDoStatus.unchecked
-													: ToDoStatus.ignore
-											)
-										}
+							<span className={styles.metaDataText}>
+								{`Created by ${capitalizeUsername(createdByName)}`}
+							</span>
+						</div>
+						<div className={styles.optionsMenuContainer}>
+							<Button onClick={handleOptionsClick} ref={optionsIconRef}>
+								Options
+							</Button>
+							{isModalOpen && (
+								<>
+									<div
+										className={styles.modalOverlay}
+										onClick={handleOptionsClick}
+									></div>
+									<div
+										className={`${styles.modalContainer} ${
+											displayDropdownAbove ? styles.dropdownAbove : ""
+										}`}
+										onClick={(e) => e.stopPropagation()}
 									>
-										<p>
-											{currentTaskStatus ===
-											ToDoStatus.ignore
-												? "Mark as applicable"
-												: "Mark as N/A"}
-										</p>
-									</li>
-									<li className={styles.modalItem}>
-										<Link
-											to={Paths.EDIT_TODO_ITEM.replace(
-												":todoId",
-												todoItem.id
-											)}
-											state={{ selectedDate }}
-										>
-											<p>Edit/Delete This Task</p>
-										</Link>
-									</li>
-									{todoItem.seriesId && (
-										<li className={styles.modalItem}>
-											<Link
-												to={Paths.EDIT_TODO_SERIES.replace(
-													":seriesId",
-													todoItem.seriesId
-												)}
-												state={{ selectedDate }}
+										<ul className={styles.modalList}>
+											<li
+												className={styles.modalItem}
+												onClick={() =>
+													handleStatusChange(
+														currentTaskStatus === ToDoStatus.ignore
+															? ToDoStatus.unchecked
+															: ToDoStatus.ignore
+													)
+												}
 											>
 												<p>
-													Edit/Delete All Tasks In
-													Series
+													{currentTaskStatus === ToDoStatus.ignore
+														? "Mark as applicable"
+														: "Mark as N/A"}
 												</p>
-											</Link>
-										</li>
-									)}
-								</ul>
-							</div>
-						</>
-					)}
+											</li>
+											<li className={styles.modalItem}>
+												<Link
+													to={Paths.EDIT_TODO_ITEM.replace(
+														":todoId",
+														todoItem.id
+													)}
+													state={{ selectedDate }}
+												>
+													<p>Edit/Delete This Task</p>
+												</Link>
+											</li>
+											{todoItem.seriesId && (
+												<li className={styles.modalItem}>
+													<Link
+														to={Paths.EDIT_TODO_SERIES.replace(
+															":seriesId",
+															todoItem.seriesId
+														)}
+														state={{
+															selectedDate,
+														}}
+													>
+														<p>Edit/Delete All Tasks In Series</p>
+													</Link>
+												</li>
+											)}
+										</ul>
+									</div>
+								</>
+							)}
+						</div>
+					</div>
+				</div>
+				<div
+					className={styles.expandMenuButtonContainer}
+					onClick={handleMenuExpand}
+				>
+					<Button className={styles.expandMenuButton} variant={"ghost_icon"}>
+						<Icon data={isMenuExpanded ? arrow_back_ios : arrow_forward_ios} />
+					</Button>
 				</div>
 			</div>
 		</div>

@@ -57,30 +57,44 @@
 
 .description {
 	font-size: 0.9rem;
+	padding-bottom: 10px;
 }
 
-.showMore {
-	color: var(--blue);
-	font-size: 0.9rem;
+.contentContainer {
+	transition: max-height 0.3s ease-out;
+	overflow: hidden;
 }
 
-.menuContainer {
+.expandMenuButtonContainer {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	/* border-top: 3px dashed var(--lightblue); */
+}
+
+.expandMenuButton {
+	transform: rotate(90deg);
+}
+
+.optionsMenuContainer {
 	position: relative;
+}
+
+.metaDataAndOptionsContainer {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	padding: 10px 0;
 }
 
-.createdBy {
+.metaDataContainer {
+	display: flex;
+	flex-direction: column;
+}
+
+.metaDataText {
 	font-size: 0.8rem;
 	opacity: 0.6;
 	font-style: italic;
-}
-
-.menuIcon {
-	cursor: pointer;
-	position: relative;
-	color: var(--black);
 }
 
 .modalOverlay {
@@ -89,7 +103,6 @@
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	z-index: 2;
 }
 
 .modalContainer {
@@ -101,7 +114,6 @@
 	border-radius: 3px;
 	white-space: nowrap;
 	outline: 1px solid var(--lightblue);
-	z-index: 2;
 }
 
 .dropdownAbove {
