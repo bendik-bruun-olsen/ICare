@@ -116,3 +116,10 @@ export type FormFieldProps = {
 export interface PatientProfilePictureProps {
 	setProfileImage: Dispatch<SetStateAction<File | null>>;
 }
+
+export interface EmergencyContactInterface {
+	name: string;
+	phone: string;
+	email: string;
+	relation: string;
+}
