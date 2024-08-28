@@ -12,7 +12,7 @@ import {
 } from "firebase/storage";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import styles from "./ProfilePicture.module.css"; // Importing the CSS module
-import { UserData } from "../../types";
+import { UserProfile } from "../../types";
 
 const ProfilePicture: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -27,7 +27,7 @@ const ProfilePicture: React.FC = () => {
         const docSnap = await getDoc(userDocRef);
 
         if (docSnap.exists()) {
-          const data = docSnap.data() as UserData;
+          const data = docSnap.data() as UserProfile;
 
           if (data.profilePictureUrl) {
             try {
