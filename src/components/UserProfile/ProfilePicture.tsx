@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Icon } from "@equinor/eds-core-react";
-import { camera } from "@equinor/eds-icons";
+import { camera_add_photo } from "@equinor/eds-icons";
 import { db, storage } from "../../firebase/firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import {
@@ -11,7 +11,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import "./ProfilePicture.css";
+import styles from "./ProfilePicture.module.css"; // Importing the CSS module
 import { UserData } from "../../types";
 
 const ProfilePicture: React.FC = () => {
@@ -115,13 +115,13 @@ const ProfilePicture: React.FC = () => {
   };
 
   return (
-    <div className="profile-picture-container">
-      <div className="imageContainer">
-        <div className="profile-pic-container">
+    <div className={styles.profilePictureContainer}>
+      <div className={styles.imageContainer}>
+        <div className={styles.profilePicContainer}>
           <img
             src={selectedImage || "/default-profile-image.jpg"}
             alt="Profile"
-            className="profile-pic"
+            className={styles.profilePic}
           />
         </div>
         <input
@@ -134,10 +134,10 @@ const ProfilePicture: React.FC = () => {
           onChange={handleImageUpload}
         />
         <div
-          className="camera-icon"
+          className={styles.cameraIcon}
           onClick={() => fileInputRef.current?.click()}
         >
-          <Icon data={camera} />
+          <Icon data={camera_add_photo} />
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { db } from "../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { UserData } from "../../types";
-import "./UserProfileForm.css";
+import styles from "./UserProfileForm.module.css"; // Importing the CSS module
 
 const UserProfileForm: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -69,17 +69,17 @@ const UserProfileForm: React.FC = () => {
   };
 
   return (
-    <div className="fullInfoContainer" ref={fullInfoContainerRef}>
-      <div className="userInfo">
+    <div className={styles.fullInfoContainer} ref={fullInfoContainerRef}>
+      <div className={styles.userInfo}>
         <h2>User Information</h2>
         <Icon
           data={edit}
           onClick={handleEditClick}
-          style={{ color: isEditing ? "grey" : "black", cursor: "pointer" }}
+          className={`${styles.icon} ${isEditing ? styles.editing : ""}`}
         />
       </div>
-      <div className="inputGroup">
-        <Label htmlFor="name" label="Name" />
+      <div className={styles.inputGroup}>
+        <Label htmlFor="name" label="Name*" />
         <Input
           id="name"
           type="text"
@@ -88,7 +88,7 @@ const UserProfileForm: React.FC = () => {
           readOnly={!isEditing}
         />
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="age" label="Age" />
         <Input
           id="age"
@@ -98,7 +98,7 @@ const UserProfileForm: React.FC = () => {
           readOnly={!isEditing}
         />
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="gender" label="Gender" />
         <NativeSelect
           id="gender"
@@ -113,7 +113,7 @@ const UserProfileForm: React.FC = () => {
           <option value="Others">Others</option>
         </NativeSelect>
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="phone" label="Phone" />
         <Input
           id="phone"
@@ -123,7 +123,7 @@ const UserProfileForm: React.FC = () => {
           readOnly={!isEditing}
         />
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="email" label="Email" />
         <Input id="email" type="email" value={userData?.email || ""} readOnly />
       </div>

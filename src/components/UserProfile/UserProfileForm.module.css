@@ -1,23 +1,21 @@
 .fullInfoContainer {
-  min-width: 40%;
-  max-width: 60%;
+  /* min-width: 40%;
+  max-width: 60%; */
   padding: 20px;
   background-color: var(--fadedblue);
   border-radius: 5px;
   margin-bottom: 200px;
-  margin-top: 50px;
+  /* margin-top: 50px; */
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
 }
 
 .userInfo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 20px 0;
-  margin-top: 20px;
-  color: var(--white);
 }
 .userInfo h2 {
-  color: var(--white);
+  font-size: 1.25rem;
 }
 
 .inputGroup {
@@ -25,30 +23,21 @@
 }
 
 .inputGroup Label {
-  color: var(--white);
-  font-size: 14px;
-  font-weight: 600;
-  /* margin-bottom: 5px; */
+  color: var(--black);
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .inputGroup Input,
 .inputGroup NativeSelect {
   font-family: inherit;
-  font-size: 16px;
-  /* color: var(--white); */
-  background-color: none;
-  /* border: 1px solid var(--blue); */
-  line-height: 1;
-  width: 100%;
-  box-sizing: border-box;
+  font-size: 1rem;
+  padding: 0;
 }
-
+/* 
 .inputGroup .editable:focus {
-  /* color: black; */
-  background-color: var(--blue);
-  border: 1px solid var(--lightblue);
-  outline: none;
-}
+  border: none;
+} */
 
 .inputGroup Input:focus,
 .inputGroup select:focus {
@@ -58,25 +47,23 @@
 
 .inputGroup NativeSelect option {
   font-family: inherit;
-  color: var(--white);
+  color: var(--black);
   background-color: var(--blue);
 }
 
 .inputGroup NativeSelect:disabled {
   background-color: var(--blue);
-  border: 1px solid var(--blue);
+  border: none;
 }
 
-.inputGroup Input::placeholder,
+/* .inputGroup Input::placeholder,
 .inputGroup NativeSelect::placeholder {
-  color: var(--grey);
-}
+  color: var(--white);
+} */
 
 .Icon {
-  color: var(--white);
   cursor: pointer;
 }
-
-.Icon:hover {
-  color: var(--grey);
+.icon.editing {
+  color: grey;
 }
