@@ -53,16 +53,11 @@ const ToDoPage: React.FC = () => {
 		fetchData();
 	}, [selectedDate]);
 
-	const handleStatusChange = async (
-		todoId: string,
-		newStatus: ToDoStatus
-	) => {
+	const handleStatusChange = async (todoId: string, newStatus: ToDoStatus) => {
 		if (!categorizedTodos) return;
 
 		const flattenedTodos = Object.values(categorizedTodos).flat();
-		const todoIndex = flattenedTodos.findIndex(
-			(todo) => todo.id === todoId
-		);
+		const todoIndex = flattenedTodos.findIndex((todo) => todo.id === todoId);
 		if (todoIndex === -1) return;
 		const updatedTodo = { ...flattenedTodos[todoIndex], status: newStatus };
 		flattenedTodos[todoIndex] = updatedTodo;
@@ -90,37 +85,27 @@ const ToDoPage: React.FC = () => {
 					/>
 					<div>
 						{Object.keys(categorizedTodos).map((category) => (
-							<div
-								key={category}
-								className={styles.categoryStyle}
-							>
+							<div key={category} className={styles.categoryStyle}>
 								<h3>{category}</h3>
 								<div className={styles.toDoTileMargin}>
 									{categorizedTodos[category].map((todo) => (
-										<div
-											className={styles.toDoTile}
-											key={todo.id}
-										>
+										<div className={styles.toDoTile} key={todo.id}>
 											<ToDoTile
 												todoId={todo.id}
 												toDoTitle={todo.title}
-												toDoDescription={
-													todo.description
-												}
+												toDoDescription={todo.description}
 												taskStatus={todo.status}
 												time={todo.time}
 												seriesId={todo.seriesId}
 												selectedDate={selectedDate}
-												onStatusChange={
-													handleStatusChange
-												}
+												onStatusChange={handleStatusChange}
 											/>
 										</div>
 									))}
 								</div>
 							</div>
 						))}
-						<Link to={Paths.ADD_TODO}>
+						<Link to={Paths.ADD_TODO} state={{ selectedDate }}>
 							<div className={styles.addIcon}>
 								<Button variant="contained_icon">
 									<Icon data={add} size={32} />
