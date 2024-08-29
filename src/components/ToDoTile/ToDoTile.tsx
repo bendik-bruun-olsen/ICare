@@ -9,11 +9,17 @@ import { Paths } from "../../paths";
 import { useNotification } from "../../hooks/useNotification";
 import { capitalizeUsername } from "../../utils";
 import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 
 interface ToDoTileProps {
 	selectedDate: Date;
 	todoItem: TodoItemInterface;
 	onStatusChange: (todoId: string, newStatus: ToDoStatus) => void;
+}
+
+enum overflowStatus {
+	hidden = "hidden",
+	visible = "visible",
 }
 
 export default function ToDoTile({
@@ -29,20 +35,40 @@ export default function ToDoTile({
 	const optionsIconRef = useRef<SVGSVGElement>(null);
 	const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
 	const [createdByName, setCreatedByName] = useState("Unknown");
+	const [completedBy, setCompletedBy] = useState<string | null>(
+		todoItem.completedBy
+	);
 	const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 	const contentContainerRef = useRef<HTMLDivElement>(null);
 	const descriptionRef = useRef<HTMLParagraphElement>(null);
 	const defaultContentMaxHeight = 45;
-	const [contentMaxHeight, setContentMaxHeight] = useState("10px");
+	const [contentMaxHeight, setContentMaxHeight] = useState("30px");
+	const [contentContainerOverflow, setContentContainerOverflow] = useState(
+		overflowStatus.hidden
+	);
+	const currentUser = useAuth().userData?.email;
 
 	useEffect(() => {
-		const fetchName = async () => {
-			const result = await getNameFromEmail(todoItem.createdBy);
-			if (result) {
-				setCreatedByName(result);
+		const fetchNameFromEmail = async () => {
+			if (completedBy) {
+				const name = await getNameFromEmail(completedBy);
+				if (name) {
+					setCompletedBy(name);
+					return;
+				}
 			}
 		};
-		fetchName();
+		fetchNameFromEmail();
+	}, [completedBy]);
+
+	useEffect(() => {
+		const fetchNameFromEmail = async () => {
+			const name = await getNameFromEmail(todoItem.createdBy);
+			if (name) {
+				setCreatedByName(name);
+			}
+		};
+		fetchNameFromEmail();
 	}, [todoItem.createdBy]);
 
 	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
@@ -51,7 +77,19 @@ export default function ToDoTile({
 		return styles.default;
 	}
 
+	const setOverflowStatus = () => {
+		if (isMenuExpanded) {
+			setTimeout(() => {
+				setContentContainerOverflow(overflowStatus.visible);
+			}, 300);
+		}
+		if (!isMenuExpanded) {
+			setContentContainerOverflow(overflowStatus.hidden);
+		}
+	};
+
 	useEffect(() => {
+		setOverflowStatus();
 		if (isMenuExpanded && contentContainerRef.current) {
 			setContentMaxHeight(`${contentContainerRef.current.scrollHeight}px`);
 		}
@@ -77,9 +115,21 @@ export default function ToDoTile({
 	};
 
 	const handleStatusChange = async (newStatus: ToDoStatus) => {
+		if (!currentUser) return;
+		if (newStatus === "checked") {
+			setCompletedBy(currentUser);
+		} else {
+			setCompletedBy(null);
+		}
+
 		setCurrentTaskStatus(newStatus);
 		onStatusChange(todoItem.id, newStatus);
-		await updateToDoStatusInDatabase(todoItem.id, newStatus, addNotification);
+		await updateToDoStatusInDatabase(
+			todoItem.id,
+			newStatus,
+			currentUser,
+			addNotification
+		);
 	};
 
 	const handleMenuExpand = () => {
@@ -134,7 +184,10 @@ export default function ToDoTile({
 				</h3>
 				<div
 					className={styles.contentContainer}
-					style={{ maxHeight: contentMaxHeight }}
+					style={{
+						maxHeight: contentMaxHeight,
+						overflow: contentContainerOverflow,
+					}}
 					ref={contentContainerRef}
 				>
 					<p className={styles.description} ref={descriptionRef}>
@@ -142,9 +195,11 @@ export default function ToDoTile({
 					</p>
 					<div className={styles.metaDataAndOptionsContainer}>
 						<div className={styles.metaDataContainer}>
-							<span className={styles.metaDataText}>
-								{`Completed by ${capitalizeUsername(createdByName)}`}
-							</span>
+							{completedBy && (
+								<span className={styles.metaDataText}>
+									{`Completed by ${capitalizeUsername(createdByName)}`}
+								</span>
+							)}
 							<span className={styles.metaDataText}>
 								{`Created by ${capitalizeUsername(createdByName)}`}
 							</span>

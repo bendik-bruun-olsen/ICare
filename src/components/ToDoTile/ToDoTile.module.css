@@ -13,12 +13,11 @@
 
 .toDoWrapper {
 	width: 100%;
-	border-radius: 3px;
+	border-radius: 5px;
 	margin-right: 16px;
 	background-color: rgb(241, 241, 241);
 	box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
 	position: relative;
-	margin-bottom: 20px;
 	padding: 18px 10px 0 10px;
 }
 
@@ -51,8 +50,9 @@
 }
 
 .title {
-	font-weight: 500;
+	font-weight: 600;
 	margin-bottom: 5px;
+	font-size: 1rem;
 }
 
 .description {
@@ -69,7 +69,6 @@
 	display: flex;
 	justify-content: center;
 	width: 100%;
-	/* border-top: 3px dashed var(--lightblue); */
 }
 
 .expandMenuButton {
@@ -114,6 +113,7 @@
 	border-radius: 3px;
 	white-space: nowrap;
 	outline: 1px solid var(--lightblue);
+	z-index: 5;
 }
 
 .dropdownAbove {
@@ -143,5 +143,5 @@
 }
 
 .checked {
-	background-color: #9db3b6;
+	background-color: var(--fadedblue);
 }

@@ -29,6 +29,7 @@ export interface TodoItemInterface {
 	seriesId: string | null;
 	id: string;
 	createdBy: string;
+	completedBy: string | null;
 }
 
 export interface TodoSeriesInfoInterface {

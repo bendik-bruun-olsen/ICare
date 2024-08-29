@@ -53,16 +53,11 @@ const ToDoPage: React.FC = () => {
 		fetchData();
 	}, [selectedDate]);
 
-	const handleStatusChange = async (
-		todoId: string,
-		newStatus: ToDoStatus
-	) => {
+	const handleStatusChange = async (todoId: string, newStatus: ToDoStatus) => {
 		if (!categorizedTodos) return;
 
 		const flattenedTodos = Object.values(categorizedTodos).flat();
-		const todoIndex = flattenedTodos.findIndex(
-			(todo) => todo.id === todoId
-		);
+		const todoIndex = flattenedTodos.findIndex((todo) => todo.id === todoId);
 		if (todoIndex === -1) return;
 		const updatedTodo = { ...flattenedTodos[todoIndex], status: newStatus };
 		flattenedTodos[todoIndex] = updatedTodo;
@@ -93,24 +88,17 @@ const ToDoPage: React.FC = () => {
 							<div
 								key={category}
 								className={`${styles.categoryStyle} ${
-									category === "Ignored"
-										? styles.ignoreCategory
-										: ""
+									category === "Ignored" ? styles.ignoreCategory : ""
 								}`}
 							>
 								<h2>{category}</h2>
-								<div className={styles.toDoTileMargin}>
+								<div className={styles.toDoTilesWrapper}>
 									{categorizedTodos[category].map((todo) => (
-										<div
-											className={styles.toDoTile}
-											key={todo.id}
-										>
+										<div className={styles.toDoTile} key={todo.id}>
 											<ToDoTile
 												selectedDate={selectedDate}
 												todoItem={todo}
-												onStatusChange={
-													handleStatusChange
-												}
+												onStatusChange={handleStatusChange}
 											/>
 										</div>
 									))}
