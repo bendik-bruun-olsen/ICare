@@ -123,65 +123,69 @@ export default function SignupPage() {
                 <Logo size={"60px"} color={"var(--blue)"} />
             </div>
             <form className="inputContainer" onSubmit={signUp}>
-                <Label
-                    htmlFor="textfield-normal"
-                    label="Name"
-                    className="input"
-                />
+                <div className="bgWrapper">
+                    <Label
+                        htmlFor="textfield-normal"
+                        label="Name"
+                        className="input"
+                    />
 
-                <Input
-                    value={name}
-                    onChange={handleUsernameChange}
-                    helperText={errors.name ? "Name is required" : ""}
-                    variant={errors.name ? "error" : undefined}
-                    required
-                />
-                <Label
-                    htmlFor="textfield-normal"
-                    label="Email*"
-                    className="input"
-                ></Label>
+                    <Input
+                        value={name}
+                        onChange={handleUsernameChange}
+                        helperText={errors.name ? "Name is required" : ""}
+                        variant={errors.name ? "error" : undefined}
+                        required
+                    />
+                    <Label
+                        htmlFor="textfield-normal"
+                        label="Email*"
+                        className="input"
+                    ></Label>
 
-                <Input
-                    value={email}
-                    onChange={handleEmailChange}
-                    helperText={errors.email ? "Email is required" : ""}
-                    variant={errors.email ? "error" : undefined}
-                    required
-                />
-                <Label
-                    htmlFor="textfield-normal"
-                    label="Password*"
-                    className="input"
-                ></Label>
+                    <Input
+                        value={email}
+                        onChange={handleEmailChange}
+                        helperText={errors.email ? "Email is required" : ""}
+                        variant={errors.email ? "error" : undefined}
+                        required
+                    />
+                    <Label
+                        htmlFor="textfield-normal"
+                        label="Password*"
+                        className="input"
+                    ></Label>
 
-                <Input
-                    type="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    helperText={errors.password ? "Password is required" : ""}
-                    variant={errors.password ? "error" : undefined}
-                    required
-                />
+                    <Input
+                        type="password"
+                        value={password}
+                        onChange={handlePasswordChange}
+                        helperText={
+                            errors.password ? "Password is required" : ""
+                        }
+                        variant={errors.password ? "error" : undefined}
+                        required
+                    />
 
-                <Label
-                    htmlFor="textfield-normal"
-                    label="Confirm Password*"
-                    className="input"
-                ></Label>
+                    <Label
+                        htmlFor="textfield-normal"
+                        label="Confirm Password*"
+                        className="input"
+                    ></Label>
 
-                <Input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={handleConfirmPasswordChange}
-                    helperText={
-                        errors.confirmPassword
-                            ? "Confirm Password is required"
-                            : ""
-                    }
-                    variant={errors.confirmPassword ? "error" : undefined}
-                    required
-                />
+                    <Input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={handleConfirmPasswordChange}
+                        helperText={
+                            errors.confirmPassword
+                                ? "Confirm Password is required"
+                                : ""
+                        }
+                        variant={errors.confirmPassword ? "error" : undefined}
+                        required
+                    />
+                </div>
                 <div className="links">
                     <Button id="signupbutton" type="submit">
                         Sign Up
