@@ -111,7 +111,7 @@ export default function SignupPage() {
 
   return (
     <div className="pageWrapper">
-      <div className="heading">
+      <div className={styles.heading}>
         <Logo size="60px" color="var(--blue)" />
       </div>
       <form className={styles.inputContainer} onSubmit={signUp}>
