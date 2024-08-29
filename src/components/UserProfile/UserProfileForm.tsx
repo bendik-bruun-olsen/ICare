@@ -5,12 +5,14 @@ import { db } from "../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { UserData } from "../../types";
+import EDSSpinner from "../SavingSpinner/SavingSpinner";
 import styles from "./UserProfileForm.module.css";
 
 const UserProfileForm: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { currentUser } = useAuth();
   const fullInfoContainerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,6 +36,7 @@ const UserProfileForm: React.FC = () => {
 
   const saveDataToFirebase = useCallback(async () => {
     if (currentUser?.email && userData && isChanged) {
+      setIsSaving(true);
       try {
         const userDocRef = doc(db, "users", currentUser.email);
         await updateDoc(userDocRef, { ...userData });
@@ -41,6 +44,10 @@ const UserProfileForm: React.FC = () => {
         setIsChanged(false);
       } catch (error) {
         console.error("Error updating document:", error);
+      } finally {
+        setTimeout(() => {
+          setIsSaving(false);
+        }, 1000);
       }
     }
   }, [currentUser, userData, isChanged]);
@@ -113,6 +120,7 @@ const UserProfileForm: React.FC = () => {
 
   return (
     <div className={styles.fullInfoContainer} ref={fullInfoContainerRef}>
+      {isSaving && <EDSSpinner />} {/* Use the spinner component */}
       <div className={styles.userInfo}>
         <h2>User Information</h2>
         <Icon
