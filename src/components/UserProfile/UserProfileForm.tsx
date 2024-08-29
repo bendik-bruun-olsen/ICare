@@ -5,7 +5,7 @@ import { db } from "../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { UserData } from "../../types";
-import EDSSpinner from "../SavingSpinner/SavingSpinner";
+import SavingSpinner from "../SavingSpinner/SavingSpinner";
 import styles from "./UserProfileForm.module.css";
 
 const UserProfileForm: React.FC = () => {
@@ -120,7 +120,7 @@ const UserProfileForm: React.FC = () => {
 
   return (
     <div className={styles.fullInfoContainer} ref={fullInfoContainerRef}>
-      {isSaving && <EDSSpinner />} {/* Use the spinner component */}
+      {isSaving && <SavingSpinner />}
       <div className={styles.userInfo}>
         <h2>User Information</h2>
         <Icon
