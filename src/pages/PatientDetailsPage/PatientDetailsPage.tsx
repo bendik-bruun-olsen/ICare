@@ -9,8 +9,9 @@ import Navbar from "../../components/Navbar/Navbar";
 import Logo from "../../components/Logo/Logo";
 import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
 import { useNotification } from "../../hooks/useNotification";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
+import { editPatient } from "../../firebase/patientServices/editPatient";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
 import { addPatient } from "../../firebase/patientServices/addPatient";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
@@ -59,6 +60,10 @@ export default function PatientDetailsPage() {
 	);
 	const [pictureUrl, setPictureUrl] = useState("");
 	const [profileImage, setProfileImage] = useState<File | null>(null);
+	const [isEditing, setIsEditing] = useState(false);
+	const [isChanged, setIsChanged] = useState(false);
+	const fullInfoContainerRef = useRef<HTMLDivElement>(null);
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		const fetchDefaultPictureUrl = async () => {
@@ -69,12 +74,60 @@ export default function PatientDetailsPage() {
 		fetchDefaultPictureUrl();
 	});
 
+	useEffect(() => {
+		if (timerRef.current) {
+			clearTimeout(timerRef.current);
+		}
+
+		timerRef.current = setTimeout(() => {
+			if (isChanged) {
+				editPatient(formData, caretakers, "oXeggo9PiQsLaW74Ih7P");
+			}
+		}, 2000);
+
+		return () => {
+			if (timerRef.current) {
+				clearTimeout(timerRef.current);
+			}
+		};
+	}, [formData, caretakers, isChanged]);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				fullInfoContainerRef.current &&
+				!fullInfoContainerRef.current.contains(event.target as Node)
+			) {
+				if (isChanged) {
+					editPatient(formData, caretakers, formData.id);
+				}
+				setIsEditing(false);
+			}
+		};
+
+		const handleBeforeUnload = () => {
+			if (isChanged) {
+				editPatient(formData, caretakers, formData.id);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		window.addEventListener("beforeunload", handleBeforeUnload);
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+		};
+	}, [formData, isChanged, caretakers]);
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({
 			...prevData,
 			[name]: value,
 		}));
+
+		setIsChanged(true);
 	};
 
 	const addCaretaker = async (e: React.FormEvent) => {
@@ -141,6 +194,10 @@ export default function PatientDetailsPage() {
 		}
 	};
 
+	const handleEditClick = () => {
+		setIsEditing(true);
+	};
+
 	const personalInfoFields = [
 		{ label: "Name", name: "name", required: true },
 		{ label: "Age", name: "age" },
@@ -160,7 +217,7 @@ export default function PatientDetailsPage() {
 	return (
 		<>
 			<Navbar leftContent={<Logo />} centerContent="Patient Details" />
-			<div className={styles.fullWrapper}>
+			<div className={styles.fullWrapper} ref={fullInfoContainerRef}>
 				<div className={styles.profilePictureWrapper}>
 					<PatientProfilePicture setProfileImage={setProfileImage} />
 				</div>
@@ -169,7 +226,7 @@ export default function PatientDetailsPage() {
 						<div className={styles.headlineAndIcon}>
 							<h2 className={styles.headlineText}>Personal Information</h2>
 							<Button type="button" variant="ghost_icon">
-								<Icon data={edit} />
+								<Icon data={edit} onClick={handleEditClick} />
 							</Button>
 						</div>
 						{personalInfoFields.map((field) => (
