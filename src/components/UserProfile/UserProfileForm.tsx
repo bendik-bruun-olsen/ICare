@@ -10,7 +10,7 @@ import styles from "./UserProfileForm.module.css";
 const UserProfileForm: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isChanged, setIsChanged] = useState(false); // Track if data has changed
+  const [isChanged, setIsChanged] = useState(false);
   const { currentUser } = useAuth();
   const fullInfoContainerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -38,7 +38,7 @@ const UserProfileForm: React.FC = () => {
         const userDocRef = doc(db, "users", currentUser.email);
         await updateDoc(userDocRef, { ...userData });
         console.log("Document successfully updated!");
-        setIsChanged(false); // Reset the changed state after saving
+        setIsChanged(false);
       } catch (error) {
         console.error("Error updating document:", error);
       }

@@ -1,6 +1,4 @@
 .fullInfoContainer {
-  /* min-width: 40%;
-  max-width: 60%; */
   padding: 20px;
   background-color: var(--fadedblue);
   border-radius: 5px;
@@ -35,17 +33,6 @@
   padding: 0;
 }
 
-/* 
-.inputGroup .editable:focus {
-  border: none;
-} */
-
-/* .inputGroup Input:focus,
-.inputGroup select:focus {
-  box-shadow: none;
-  outline: none;
-} */
-
 .inputGroup NativeSelect option {
   font-family: inherit;
   color: var(--black);
@@ -56,11 +43,6 @@
   background-color: var(--blue);
   border: none;
 }
-
-/* .inputGroup Input::placeholder,
-.inputGroup NativeSelect::placeholder {
-  color: var(--white);
-} */
 
 .Icon {
   cursor: pointer;
