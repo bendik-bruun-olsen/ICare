@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Icon } from "@equinor/eds-core-react";
-import { camera } from "@equinor/eds-icons";
+import { camera_add_photo } from "@equinor/eds-icons";
 import { db, storage } from "../../firebase/firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import {
@@ -8,207 +8,138 @@ import {
   uploadBytesResumable,
   getDownloadURL,
   listAll,
+  deleteObject,
 } from "firebase/storage";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import "./ProfilePicture.css";
-import { UserData } from "../../types";
+import styles from "./ProfilePicture.module.css"; // Importing the CSS module
+import { UserProfile } from "../../types";
 
 const ProfilePicture: React.FC = () => {
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [imageToSelect, setImageToSelect] = useState<string | null>(null);
-  const [isOptionsVisible, setIsOptionsVisible] = useState(false);
-  const [isGalleryVisible, setIsGalleryVisible] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { currentUser } = useAuth();
-  const profileContainerRef = useRef<HTMLDivElement>(null);
-  const cameraIconRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserProfilePic = async () => {
       if (currentUser?.email) {
+        const userFolder = currentUser.email;
         const userDocRef = doc(db, "users", currentUser.email);
         const docSnap = await getDoc(userDocRef);
+
         if (docSnap.exists()) {
-          const data = docSnap.data() as UserData;
-          setSelectedImage(data.profilePictureUrl || null);
+          const data = docSnap.data() as UserProfile;
+
+          if (data.profilePictureUrl) {
+            try {
+              const storageRef = ref(storage, `profilePictures/${userFolder}/`);
+              const listResult = await listAll(storageRef);
+
+              if (listResult.items.length === 0) {
+                await updateDoc(userDocRef, { profilePictureUrl: "" });
+                loadDefaultProfilePicture();
+              } else {
+                setSelectedImage(data.profilePictureUrl);
+              }
+            } catch (error) {
+              console.error(
+                "Error checking profile picture in storage:",
+                error
+              );
+              loadDefaultProfilePicture();
+            }
+          } else {
+            loadDefaultProfilePicture();
+          }
         } else {
-          console.error("No such document!");
+          console.error("No such document! Loading default picture.");
+          loadDefaultProfilePicture();
         }
+      } else {
+        loadDefaultProfilePicture();
       }
     };
 
-    fetchUserData();
+    fetchUserProfilePic();
   }, [currentUser]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        profileContainerRef.current &&
-        !profileContainerRef.current.contains(event.target as Node)
-      ) {
-        setIsOptionsVisible(false);
-        setIsGalleryVisible(false);
-        setPreviewUrl(null);
-        setImageToSelect(null);
-      }
-    };
+  const loadDefaultProfilePicture = async () => {
+    try {
+      const defaultPicRef = ref(storage, "Default.png");
+      const defaultUrl = await getDownloadURL(defaultPicRef);
+      setSelectedImage(defaultUrl);
+    } catch (error) {
+      console.error("Error loading default profile picture:", error);
+      setSelectedImage("/Default.png");
+    }
+  };
 
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const userFolder = currentUser?.email || "default";
-      const storageRef = ref(
-        storage,
-        `profilePictures/${userFolder}/${file.name}`
-      );
+      const userFolder = currentUser?.email;
+      const storageRef = ref(storage, `profilePictures/${userFolder}/`);
 
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      try {
+        const listResult = await listAll(storageRef);
+        const deleteOldPic = listResult.items.map((item) => deleteObject(item));
+        await Promise.all(deleteOldPic);
 
-      uploadTask.on(
-        "state_changed",
-        null,
-        (error) => {
-          console.error("Upload error: ", error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        const newFileName = `${Date.now()}_${file.name}`;
+        const newStorageRef = ref(
+          storage,
+          `profilePictures/${userFolder}/${newFileName}`
+        );
+
+        const uploadTask = uploadBytesResumable(newStorageRef, file);
+
+        uploadTask.on(
+          "state_changed",
+          null,
+          (error) => {
+            console.error("Upload error: ", error);
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             if (currentUser?.email) {
-              updateDoc(doc(db, "users", currentUser.email), {
+              await updateDoc(doc(db, "users", currentUser.email), {
                 profilePictureUrl: downloadURL,
               });
               setSelectedImage(downloadURL);
-              setPreviewUrl(null);
-              setIsOptionsVisible(false);
-              setIsGalleryVisible(false);
             }
-          });
-        }
-      );
-    }
-  };
-
-  const handleChooseImage = async () => {
-    const userFolder = currentUser?.email || "default";
-    const storageRef = ref(storage, `profilePictures/${userFolder}/`);
-    try {
-      const listResult = await listAll(storageRef);
-      const urls = await Promise.all(
-        listResult.items.map(async (itemRef) => {
-          return await getDownloadURL(itemRef);
-        })
-      );
-      setImageUrls(urls);
-      setIsOptionsVisible(false);
-      setIsGalleryVisible(true);
-    } catch (error) {
-      console.error("Error fetching images: ", error);
-    }
-  };
-
-  const handleImageSelect = (url: string) => {
-    setImageToSelect(url);
-    setPreviewUrl(url);
-  };
-
-  const handleSaveSelectedImage = () => {
-    if (currentUser?.email && imageToSelect) {
-      updateDoc(doc(db, "users", currentUser.email), {
-        profilePictureUrl: imageToSelect,
-      });
-      setSelectedImage(imageToSelect);
-      setImageToSelect(null);
-      setPreviewUrl(null);
-      setIsOptionsVisible(false);
-      setIsGalleryVisible(false);
+          }
+        );
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
+      }
     }
   };
 
   return (
-    <div className="profile-picture-container" ref={profileContainerRef}>
-      <div className="imageContainer">
-        <div className="profile-pic-container">
+    <div className={styles.profilePictureContainer}>
+      <div className={styles.imageContainer}>
+        <div className={styles.profilePicContainer}>
           <img
             src={selectedImage || "/default-profile-image.jpg"}
             alt="Profile"
-            className={`profile-pic ${previewUrl ? "blurred" : ""}`}
+            className={styles.profilePic}
           />
-          {previewUrl && (
-            <img
-              src={previewUrl}
-              alt="Preview"
-              className="profile-pic-overlay"
-            />
-          )}
         </div>
-        <div
-          className="camera-icon"
-          onClick={() => {
-            setIsOptionsVisible(!isOptionsVisible);
-            if (isGalleryVisible) {
-              setIsGalleryVisible(false);
-              setIsOptionsVisible(false);
-            }
-          }}
-          ref={cameraIconRef}
-        >
-          <Icon data={camera} />
-        </div>
-
-        {isOptionsVisible && (
-          <div className="hover-options">
-            <div
-              onClick={() => {
-                fileInputRef.current?.click();
-                setIsOptionsVisible(false);
-                setIsGalleryVisible(false);
-              }}
-              className="option"
-            >
-              Upload New Picture
-            </div>
-            <div onClick={handleChooseImage} className="option">
-              Choose From Existing
-            </div>
-          </div>
-        )}
         <input
           type="file"
-          ref={fileInputRef}
+          id="imageFile"
+          capture="user"
+          accept="image/*"
           style={{ display: "none" }}
+          ref={fileInputRef}
           onChange={handleImageUpload}
         />
-      </div>
-      {isGalleryVisible && imageUrls.length > 0 && (
-        <div className="image-gallery">
-          {imageUrls.map((url) => (
-            <div key={url} className="gallery-item">
-              <img
-                src={url}
-                alt="Gallery"
-                className="gallery-image"
-                onClick={() => handleImageSelect(url)}
-              />
-              {imageToSelect === url && (
-                <button
-                  onClick={handleSaveSelectedImage}
-                  className="choose-button"
-                >
-                  Choose
-                </button>
-              )}
-            </div>
-          ))}
+        <div
+          className={styles.cameraIcon}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <Icon data={camera_add_photo} />
         </div>
-      )}
+      </div>
     </div>
   );
 };

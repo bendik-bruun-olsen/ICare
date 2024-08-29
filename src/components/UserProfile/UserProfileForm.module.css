@@ -1,0 +1,52 @@
+.fullInfoContainer {
+  padding: 20px;
+  background-color: var(--fadedblue);
+  border-radius: 5px;
+  margin-bottom: 200px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.userInfo h2 {
+  font-size: 1.25rem;
+}
+
+.inputGroup {
+  margin-bottom: 15px;
+}
+
+.inputGroup Label {
+  color: var(--black);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.inputGroup Input,
+.inputGroup NativeSelect {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0;
+}
+
+.inputGroup NativeSelect option {
+  font-family: inherit;
+  color: var(--black);
+  background-color: red;
+}
+
+.inputGroup NativeSelect:disabled {
+  background-color: var(--blue);
+  border: none;
+}
+
+.Icon {
+  cursor: pointer;
+}
+.icon.editing {
+  color: grey;
+}
