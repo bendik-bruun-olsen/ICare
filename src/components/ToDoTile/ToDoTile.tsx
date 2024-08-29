@@ -31,22 +31,25 @@ export default function ToDoTile({
 		todoItem.status
 	);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const { addNotification } = useNotification();
-	const optionsIconRef = useRef<SVGSVGElement>(null);
 	const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
 	const [createdByName, setCreatedByName] = useState("Unknown");
 	const [completedBy, setCompletedBy] = useState<string | null>(
 		todoItem.completedBy
 	);
 	const [isMenuExpanded, setIsMenuExpanded] = useState(false);
-	const contentContainerRef = useRef<HTMLDivElement>(null);
-	const descriptionRef = useRef<HTMLParagraphElement>(null);
-	const defaultContentMaxHeight = 65;
 	const [contentMaxHeight, setContentMaxHeight] = useState("30px");
 	const [contentContainerOverflow, setContentContainerOverflow] = useState(
 		overflowStatus.hidden
 	);
+
+	const { addNotification } = useNotification();
 	const currentUser = useAuth().userData?.email;
+
+	const contentContainerRef = useRef<HTMLDivElement>(null);
+	const descriptionRef = useRef<HTMLParagraphElement>(null);
+	const optionsIconRef = useRef<SVGSVGElement>(null);
+
+	const defaultContentMaxHeight = 65;
 
 	useEffect(() => {
 		const fetchNameFromEmail = async () => {
@@ -70,6 +73,22 @@ export default function ToDoTile({
 		fetchNameFromEmail();
 	}, [todoItem.createdBy]);
 
+	useEffect(() => {
+		setOverflowStatus();
+		if (isMenuExpanded && contentContainerRef.current) {
+			setContentMaxHeight(`${contentContainerRef.current.scrollHeight}px`);
+		}
+		if (!isMenuExpanded && contentContainerRef.current) {
+			if (descriptionRef.current) {
+				const calculatedHeight =
+					descriptionRef.current.scrollHeight < defaultContentMaxHeight
+						? descriptionRef.current.scrollHeight
+						: defaultContentMaxHeight;
+				setContentMaxHeight(`${calculatedHeight}px`);
+			}
+		}
+	}, [isMenuExpanded]);
+
 	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
 		if (currentToDoStatus === ToDoStatus.checked) return styles.checked;
 		if (currentToDoStatus === ToDoStatus.ignore) return styles.notApplicable;
@@ -87,22 +106,9 @@ export default function ToDoTile({
 		}
 	};
 
-	useEffect(() => {
-		setOverflowStatus();
-		if (isMenuExpanded && contentContainerRef.current) {
-			setContentMaxHeight(`${contentContainerRef.current.scrollHeight}px`);
-		}
-		if (!isMenuExpanded && contentContainerRef.current) {
-			if (
-				descriptionRef.current &&
-				descriptionRef.current.scrollHeight < defaultContentMaxHeight
-			) {
-				setContentMaxHeight(`${descriptionRef.current.scrollHeight}px`);
-				return;
-			}
-			setContentMaxHeight(`${defaultContentMaxHeight}px`);
-		}
-	}, [isMenuExpanded]);
+	const handleMenuExpand = () => {
+		setIsMenuExpanded((prev) => !prev);
+	};
 
 	const handleOptionsClick = () => {
 		if (optionsIconRef.current) {
@@ -129,10 +135,6 @@ export default function ToDoTile({
 			currentUser,
 			addNotification
 		);
-	};
-
-	const handleMenuExpand = () => {
-		setIsMenuExpanded((prev) => !prev);
 	};
 
 	const chipMapping = {
