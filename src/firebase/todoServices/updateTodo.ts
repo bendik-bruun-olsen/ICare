@@ -18,7 +18,6 @@ export async function updateToDoStatusInDatabase(
 		}
 
 		const updatedMetaData = { status: newStatus, ...completedByUser };
-		console.log("updatedMetaData: ", updatedMetaData);
 
 		await updateDoc(todoRef, updatedMetaData);
 	} catch {

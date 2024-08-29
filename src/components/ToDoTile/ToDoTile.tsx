@@ -53,18 +53,6 @@ export default function ToDoTile({
 
 	useEffect(() => {
 		const fetchNameFromEmail = async () => {
-			if (completedBy) {
-				const name = await getNameFromEmail(completedBy);
-				if (name) {
-					setCompletedBy(name);
-				}
-			}
-		};
-		fetchNameFromEmail();
-	}, [completedBy]);
-
-	useEffect(() => {
-		const fetchNameFromEmail = async () => {
 			const name = await getNameFromEmail(todoItem.createdBy);
 			if (name) {
 				setCreatedByName(name);
@@ -88,12 +76,6 @@ export default function ToDoTile({
 			}
 		}
 	}, [isMenuExpanded]);
-
-	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
-		if (currentToDoStatus === ToDoStatus.checked) return styles.checked;
-		if (currentToDoStatus === ToDoStatus.ignore) return styles.notApplicable;
-		return styles.default;
-	}
 
 	const setOverflowStatus = () => {
 		if (isMenuExpanded) {
@@ -121,13 +103,10 @@ export default function ToDoTile({
 
 	const handleStatusChange = async (newStatus: ToDoStatus) => {
 		if (!currentUser) return;
-		if (newStatus === "checked") {
-			setCompletedBy(currentUser);
-		} else {
-			setCompletedBy(null);
-		}
 
 		setCurrentTaskStatus(newStatus);
+		setCompletedBy(newStatus === ToDoStatus.checked ? currentUser : null);
+
 		onStatusChange(todoItem.id, newStatus);
 		await updateToDoStatusInDatabase(
 			todoItem.id,
@@ -135,14 +114,32 @@ export default function ToDoTile({
 			currentUser,
 			addNotification
 		);
+
+		if (newStatus === ToDoStatus.checked) {
+			setCompletedBy(await getNameFromEmail(currentUser));
+		} else {
+			setCompletedBy(null);
+		}
 	};
 
-	const chipMapping = {
-		[ToDoStatus.checked]: { variant: "active", label: "Completed" },
-		[ToDoStatus.unchecked]: { variant: "default", label: "Active" },
-		[ToDoStatus.ignore]: { variant: "error", label: "Ignored" },
+	const renderChip = () => {
+		const chipMapping = {
+			[ToDoStatus.checked]: { variant: "active", label: "Completed" },
+			[ToDoStatus.unchecked]: { variant: "default", label: "Active" },
+			[ToDoStatus.ignore]: { variant: "error", label: "Ignored" },
+		};
+		const currentChip = chipMapping[currentTaskStatus];
+
+		return (
+			<div
+				className={currentChip.variant === "error" ? "" : styles.chipOutline}
+			>
+				<Chip variant={currentChip.variant as "default" | "active" | "error"}>
+					{currentChip.label}
+				</Chip>
+			</div>
+		);
 	};
-	const currentChip = chipMapping[currentTaskStatus];
 
 	return (
 		<div className={styles.checkboxAndToDoTileWrapper}>
@@ -158,9 +155,9 @@ export default function ToDoTile({
 				disabled={currentTaskStatus === ToDoStatus.ignore}
 			/>
 			<div
-				className={`${styles.toDoWrapper} ${chooseTileStyle(
-					currentTaskStatus
-				)}`}
+				className={`${styles.toDoWrapper} ${
+					currentTaskStatus === ToDoStatus.checked ? styles.checked : ""
+				}`}
 			>
 				<div className={styles.tags}>
 					{todoItem.seriesId && (
@@ -168,17 +165,7 @@ export default function ToDoTile({
 							<Icon data={repeat} size={16} />
 						</div>
 					)}
-					<div
-						className={
-							currentChip.variant === "error" ? "" : styles.chipOutline
-						}
-					>
-						<Chip
-							variant={currentChip.variant as "default" | "active" | "error"}
-						>
-							{currentChip.label}
-						</Chip>
-					</div>
+					{renderChip()}
 				</div>
 				<h3 className={styles.title}>
 					{`${todoItem.time} - ${todoItem.title}`}
