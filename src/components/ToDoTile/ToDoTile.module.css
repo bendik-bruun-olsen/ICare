@@ -82,12 +82,13 @@
 .metaDataAndOptionsContainer {
 	display: flex;
 	justify-content: space-between;
-	padding: 10px 0;
+	padding-top: 10px;
 }
 
 .metaDataContainer {
 	display: flex;
 	flex-direction: column;
+	justify-content: flex-end;
 }
 
 .metaDataText {

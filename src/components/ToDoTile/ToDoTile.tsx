@@ -41,7 +41,7 @@ export default function ToDoTile({
 	const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 	const contentContainerRef = useRef<HTMLDivElement>(null);
 	const descriptionRef = useRef<HTMLParagraphElement>(null);
-	const defaultContentMaxHeight = 45;
+	const defaultContentMaxHeight = 65;
 	const [contentMaxHeight, setContentMaxHeight] = useState("30px");
 	const [contentContainerOverflow, setContentContainerOverflow] = useState(
 		overflowStatus.hidden
@@ -54,7 +54,6 @@ export default function ToDoTile({
 				const name = await getNameFromEmail(completedBy);
 				if (name) {
 					setCompletedBy(name);
-					return;
 				}
 			}
 		};
