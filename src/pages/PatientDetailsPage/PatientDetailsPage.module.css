@@ -10,6 +10,12 @@
 	margin-bottom: 20px;
 }
 
+.headlineAndIcon {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .personalInfoSection {
 	background-color: var(--fadedblue);
 	padding: 20px;

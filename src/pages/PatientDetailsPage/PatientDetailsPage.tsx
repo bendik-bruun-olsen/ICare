@@ -14,7 +14,7 @@ import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
 import { addPatient } from "../../firebase/patientServices/addPatient";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
-import { remove_outlined, add } from "@equinor/eds-icons";
+import { remove_outlined, add, edit } from "@equinor/eds-icons";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import Loading from "../../components/Loading/Loading";
 
@@ -166,7 +166,12 @@ export default function PatientDetailsPage() {
 				</div>
 				<form onSubmit={handleSubmit}>
 					<div className={`${styles.personalInfoSection} dropShadow`}>
-						<h2 className={styles.headlineText}>Personal Information</h2>
+						<div className={styles.headlineAndIcon}>
+							<h2 className={styles.headlineText}>Personal Information</h2>
+							<Button type="button" variant="ghost_icon">
+								<Icon data={edit} />
+							</Button>
+						</div>
 						{personalInfoFields.map((field) => (
 							<FormField
 								key={field.name}
