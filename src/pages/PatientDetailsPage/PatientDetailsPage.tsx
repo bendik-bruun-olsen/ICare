@@ -81,7 +81,7 @@ export default function PatientDetailsPage() {
 
 		timerRef.current = setTimeout(() => {
 			if (isChanged) {
-				editPatient(formData, caretakers, "oXeggo9PiQsLaW74Ih7P");
+				editPatient(formData, caretakers, formData.id);
 			}
 		}, 2000);
 
