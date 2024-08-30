@@ -5,13 +5,21 @@ import { NotificationContextType } from "../../types";
 export async function updateToDoStatusInDatabase(
 	todoId: string,
 	newStatus: string,
+	currentUser: string,
 	addNotification: NotificationContextType["addNotification"]
 ) {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoRef = doc(patientRef, "todoItems", todoId);
 
-		await updateDoc(todoRef, { status: newStatus });
+		let completedByUser: { completedBy: string | null } = { completedBy: null };
+		if (newStatus === "checked") {
+			completedByUser = { completedBy: currentUser };
+		}
+
+		const updatedMetaData = { status: newStatus, ...completedByUser };
+
+		await updateDoc(todoRef, updatedMetaData);
 	} catch {
 		addNotification("Error updating todo status", "error");
 	}

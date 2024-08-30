@@ -42,7 +42,7 @@ export default function AppointmentsQuickView({
 					<Icon
 						data={calendar_today}
 						size={48}
-						color={"#aacccf"}
+						color={"#1c7b8285"}
 						className={styles.calendarIcon}
 					/>
 				</div>

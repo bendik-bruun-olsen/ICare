@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
-import StartAndEndDate from "../../components/StartAndEndDate";
-import SelectCategory from "../../components/SelectCategory";
+import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
+import SelectCategory from "../../components/SelectCategory/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
-import TitleDescription from "../../components/TitleDescription";
+import TitleDescription from "../../components/TitleDescription/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
@@ -42,20 +42,18 @@ import {
 	defaultTodoSeriesInputFieldStatus,
 } from "../../constants/defaultTodoValues";
 import Loading from "../../components/Loading/Loading";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 
 const AddToDoPage: React.FC = () => {
 	const location = useLocation();
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isRepeating, setIsRepeating] = useState(false);
-	const [todoItem, setTodoItem] =
-		useState<TodoItemInterface>(defaultTodoItem);
+	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
-		useState<TodoItemInputFieldStatusProps>(
-			defaultTodoItemInputFieldStatus
-		);
+		useState<TodoItemInputFieldStatusProps>(defaultTodoItemInputFieldStatus);
 	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
 		useState<TodoSeriesInputFieldStatusProps>(
 			defaultTodoSeriesInputFieldStatus
@@ -65,6 +63,7 @@ const AddToDoPage: React.FC = () => {
 	);
 	const { addNotification } = useNotification();
 	const navigate = useNavigate();
+	const currentUserEmail = useAuth().userData?.email;
 
 	useEffect(() => {
 		if (!location.state.selectedDate) {
@@ -92,8 +91,7 @@ const AddToDoPage: React.FC = () => {
 	const handleToggleRepeat = () => {
 		setIsRepeating((isRepeating) => {
 			if (!isRepeating) {
-				const currentDay =
-					daysOfTheWeek[todoItem.date.toDate().getDay()];
+				const currentDay = daysOfTheWeek[todoItem.date.toDate().getDay()];
 				setTodoSeriesInfo((prev) => ({
 					title: todoItem.title,
 					description: todoItem.description,
@@ -133,6 +131,7 @@ const AddToDoPage: React.FC = () => {
 					)
 				)
 					return;
+				if (!currentUserEmail) return setHasError(true);
 
 				const selectedDaysNumbers = mapSelectedDaysToNumbers(
 					todoSeriesInfo.selectedDays
@@ -151,6 +150,8 @@ const AddToDoPage: React.FC = () => {
 					status: ToDoStatus.unchecked,
 					seriesId: "",
 					id: "",
+					createdBy: "",
+					completedBy: null,
 				};
 				const newTodos = generateTodosForSeries(
 					newTodo,
@@ -161,6 +162,7 @@ const AddToDoPage: React.FC = () => {
 				await addMultipleNewTodos(
 					newTodos,
 					todoSeriesInfo,
+					currentUserEmail,
 					addNotification
 				);
 				return navigate(Paths.TODO, {
@@ -176,7 +178,8 @@ const AddToDoPage: React.FC = () => {
 					)
 				)
 					return;
-				await addSingleNewTodo(todoItem, addNotification);
+				if (!currentUserEmail) return setHasError(true);
+				await addSingleNewTodo(todoItem, currentUserEmail, addNotification);
 				return navigate(Paths.TODO, {
 					state: { selectedDate: todoItem.date.toDate() },
 				});
@@ -219,173 +222,149 @@ const AddToDoPage: React.FC = () => {
 	if (isLoading)
 		return (
 			<>
-				<Navbar
-					leftContent={<BackHomeButton />}
-					centerContent="Add ToDo"
-				/>
+				<Navbar centerContent="Add ToDo" />
 				<Loading />
 			</>
 		);
 
 	return (
 		<>
-			<Navbar
-				leftContent={<BackHomeButton />}
-				centerContent="Add To Do"
-			/>
+			<Navbar centerContent="Add To Do" />
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
 					<div className={styles.formContainer}>
-						<div className={styles.mainContentContainer}>
-							<TitleDescription
-								title={
-									isRepeating
-										? todoSeriesInfo.title
-										: todoItem.title
-								}
-								setTitle={(title) =>
-									isRepeating
-										? setTodoSeriesInfo((prev) => ({
-												...prev,
-												title,
-										  }))
-										: setTodoItem((prev) => ({
-												...prev,
-												title,
-										  }))
-								}
-								titleVariant={
-									isRepeating
-										? todoSeriesInputFieldStatus.title
-										: todoItemInputFieldStatus.title
-								}
-								description={
-									isRepeating
-										? todoSeriesInfo.description
-										: todoItem.description
-								}
-								setDescription={(description) =>
-									isRepeating
-										? setTodoSeriesInfo((prev) => ({
-												...prev,
-												description,
-										  }))
-										: setTodoItem((prev) => ({
-												...prev,
-												description,
-										  }))
-								}
-								descriptionVariant={
-									isRepeating
-										? todoSeriesInputFieldStatus.description
-										: todoItemInputFieldStatus.description
-								}
-							/>
-							<div className={styles.scheduleControlsContainer}>
-								<div>
-									<SelectCategory
-										selectedOption={
-											isRepeating
-												? todoSeriesInfo.category
-												: todoItem.category
-										}
-										onSelectionChange={(category) =>
-											isRepeating
-												? setTodoSeriesInfo((prev) => ({
-														...prev,
-														category,
-												  }))
-												: setTodoItem((prev) => ({
-														...prev,
-														category,
-												  }))
-										}
-										variant={
-											isRepeating
-												? todoSeriesInputFieldStatus.category
-												: todoItemInputFieldStatus.category
-										}
-									/>
-									<StartAndEndDate
-										label={
-											isRepeating ? "Start date" : "Date"
-										}
-										value={formatTimestampToDateString(
-											isRepeating
-												? todoSeriesInfo.startDate
-												: todoItem.date
-										)}
-										onChange={(date) =>
-											handleDateChange(
+						<div className="inputBackgroundBox">
+							<div className={styles.mainContentContainer}>
+								<TitleDescription
+									title={isRepeating ? todoSeriesInfo.title : todoItem.title}
+									setTitle={(title) =>
+										isRepeating
+											? setTodoSeriesInfo((prev) => ({
+													...prev,
+													title,
+											  }))
+											: setTodoItem((prev) => ({
+													...prev,
+													title,
+											  }))
+									}
+									titleVariant={
+										isRepeating
+											? todoSeriesInputFieldStatus.title
+											: todoItemInputFieldStatus.title
+									}
+									description={
+										isRepeating
+											? todoSeriesInfo.description
+											: todoItem.description
+									}
+									setDescription={(description) =>
+										isRepeating
+											? setTodoSeriesInfo((prev) => ({
+													...prev,
+													description,
+											  }))
+											: setTodoItem((prev) => ({
+													...prev,
+													description,
+											  }))
+									}
+									descriptionVariant={
+										isRepeating
+											? todoSeriesInputFieldStatus.description
+											: todoItemInputFieldStatus.description
+									}
+								/>
+								<div className={styles.scheduleControlsContainer}>
+									<div>
+										<SelectCategory
+											selectedOption={
 												isRepeating
-													? "startDate"
-													: "date",
-												date
-											)
-										}
-										variant={
-											isRepeating
-												? todoSeriesInputFieldStatus.startDate
-												: todoItemInputFieldStatus.date
-										}
-										minValue={undefined}
-									/>
-								</div>
+													? todoSeriesInfo.category
+													: todoItem.category
+											}
+											onSelectionChange={(category) =>
+												isRepeating
+													? setTodoSeriesInfo((prev) => ({
+															...prev,
+															category,
+													  }))
+													: setTodoItem((prev) => ({
+															...prev,
+															category,
+													  }))
+											}
+											variant={
+												isRepeating
+													? todoSeriesInputFieldStatus.category
+													: todoItemInputFieldStatus.category
+											}
+										/>
+										<StartAndEndDate
+											label={isRepeating ? "Start date" : "Date"}
+											value={formatTimestampToDateString(
+												isRepeating ? todoSeriesInfo.startDate : todoItem.date
+											)}
+											onChange={(date) =>
+												handleDateChange(
+													isRepeating ? "startDate" : "date",
+													date
+												)
+											}
+											variant={
+												isRepeating
+													? todoSeriesInputFieldStatus.startDate
+													: todoItemInputFieldStatus.date
+											}
+											minValue={undefined}
+										/>
+									</div>
 
-								<div className={styles.timeAndRepeatControls}>
-									<TextField
-										id="time"
-										label="Select time"
-										type="time"
-										value={
-											isRepeating
-												? todoSeriesInfo.time
-												: todoItem.time
-										}
-										className={styles.time}
-										onChange={handleTimeChange}
-										style={{ width: "150px" }}
-										variant={
-											isRepeating
-												? todoSeriesInputFieldStatus.time
-												: todoItemInputFieldStatus.time
-										}
-									/>
-									<Checkbox
-										label="Repeat"
-										checked={isRepeating}
-										onChange={handleToggleRepeat}
-									/>
+									<div className={styles.timeAndRepeatControls}>
+										<TextField
+											id="time"
+											label="Select time"
+											type="time"
+											value={isRepeating ? todoSeriesInfo.time : todoItem.time}
+											className={styles.time}
+											onChange={handleTimeChange}
+											style={{ width: "150px" }}
+											variant={
+												isRepeating
+													? todoSeriesInputFieldStatus.time
+													: todoItemInputFieldStatus.time
+											}
+										/>
+										<Checkbox
+											label="Repeat"
+											checked={isRepeating}
+											onChange={handleToggleRepeat}
+										/>
+									</div>
 								</div>
+								{isRepeating && (
+									<>
+										<StartAndEndDate
+											label="End date"
+											value={formatTimestampToDateString(
+												todoSeriesInfo.endDate
+											)}
+											onChange={(date) => handleDateChange("endDate", date)}
+											variant={todoSeriesInputFieldStatus.endDate}
+											minValue={endDateMinValue}
+										/>
+										<DaysComponent
+											selectedDays={todoSeriesInfo.selectedDays}
+											onDayToggle={handleDayToggle}
+											variant={todoSeriesInputFieldStatus.selectedDays}
+										/>
+									</>
+								)}
 							</div>
-							{isRepeating && (
-								<>
-									<StartAndEndDate
-										label="End date"
-										value={formatTimestampToDateString(
-											todoSeriesInfo.endDate
-										)}
-										onChange={(date) =>
-											handleDateChange("endDate", date)
-										}
-										variant={
-											todoSeriesInputFieldStatus.endDate
-										}
-										minValue={endDateMinValue}
-									/>
-									<DaysComponent
-										selectedDays={
-											todoSeriesInfo.selectedDays
-										}
-										onDayToggle={handleDayToggle}
-										variant={
-											todoSeriesInputFieldStatus.selectedDays
-										}
-									/>
-								</>
-							)}
 						</div>
-						<AddButton label="Add" onClick={handleSubmit} />
+						<div className={styles.buttonContainer}>
+							<AddButton label="Add" onClick={handleSubmit} />
+						</div>
 					</div>
 				</form>
 			</div>

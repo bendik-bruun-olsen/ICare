@@ -1,17 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Input, Label, NativeSelect, Icon } from "@equinor/eds-core-react";
 import { edit } from "@equinor/eds-icons";
 import { db } from "../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { UserData } from "../../types";
-import "./UserProfileForm.css";
+import SavingSpinner from "../SavingSpinner/SavingSpinner";
+import styles from "./UserProfileForm.module.css";
 
 const UserProfileForm: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { currentUser } = useAuth();
   const fullInfoContainerRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -30,55 +36,146 @@ const UserProfileForm: React.FC = () => {
     fetchUserData();
   }, [currentUser]);
 
+  const validateNameField = useCallback((): boolean => {
+    if (!userData?.name || userData.name.trim() === "") {
+      setErrorMessage("Name field cannot be empty.");
+      if (nameInputRef.current) {
+        nameInputRef.current.focus();
+        nameInputRef.current.setSelectionRange(
+          nameInputRef.current.value.length,
+          nameInputRef.current.value.length
+        );
+      }
+      return false;
+    }
+    setErrorMessage(null);
+    return true;
+  }, [userData?.name]);
+
+  const saveDataToFirebase = useCallback(async () => {
+    if (currentUser?.email && userData && isChanged) {
+      if (!validateNameField()) {
+        return;
+      }
+
+      setIsSaving(true);
+      try {
+        const userDocRef = doc(db, "users", currentUser.email);
+        await updateDoc(userDocRef, { ...userData });
+
+        setIsChanged(false);
+      } catch (error) {
+        console.error("Error updating document:", error);
+      } finally {
+        setTimeout(() => {
+          setIsSaving(false);
+        }, 1000);
+      }
+    }
+  }, [currentUser?.email, userData, isChanged, validateNameField]);
+
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    timerRef.current = setTimeout(() => {
+      if (isChanged) {
+        saveDataToFirebase();
+      }
+    }, 5000);
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [userData, saveDataToFirebase, isChanged]);
+
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+
       if (
         fullInfoContainerRef.current &&
-        !fullInfoContainerRef.current.contains(event.target as Node)
+        !fullInfoContainerRef.current.contains(target)
       ) {
-        setIsEditing(false);
+        if (!validateNameField()) {
+          event.preventDefault();
+          event.stopPropagation();
+        } else {
+          if (isChanged) {
+            saveDataToFirebase();
+          }
+
+          setIsEditing(false);
+        }
+      } else if (
+        target !== nameInputRef.current &&
+        (target instanceof HTMLInputElement ||
+          target instanceof HTMLSelectElement)
+      ) {
+        if (!validateNameField()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    const handleBeforeUnload = () => {
+      if (isChanged) {
+        saveDataToFirebase();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClick);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [validateNameField, userData, saveDataToFirebase, isChanged]);
 
   const handleEditClick = () => {
     setIsEditing(true);
-  };
-
-  const handleChange = async (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { id, value } = e.target;
-    const updatedData = { ...userData, [id]: value } as UserData;
-    setUserData(updatedData);
-
-    if (currentUser?.email) {
-      try {
-        const userDocRef = doc(db, "users", currentUser.email);
-        await updateDoc(userDocRef, { [id]: value });
-      } catch (error) {
-        console.error("Error updating document:", error);
-      }
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+      nameInputRef.current.setSelectionRange(
+        nameInputRef.current.value.length,
+        nameInputRef.current.value.length
+      );
     }
   };
 
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { id, value } = e.target;
+
+    setUserData(
+      (prevData) =>
+        ({
+          ...prevData,
+          [id]: value,
+        } as UserData)
+    );
+
+    setIsChanged(true);
+  };
+
   return (
-    <div className="fullInfoContainer" ref={fullInfoContainerRef}>
-      <div className="userInfo">
+    <div className={styles.fullInfoContainer} ref={fullInfoContainerRef}>
+      {isSaving && <SavingSpinner />}
+      <div className={styles.userInfo}>
         <h2>User Information</h2>
         <Icon
           data={edit}
           onClick={handleEditClick}
-          style={{ color: isEditing ? "grey" : "black", cursor: "pointer" }}
+          className={`${styles.icon} ${isEditing ? styles.editing : ""}`}
         />
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="name" label="Name" />
         <Input
           id="name"
@@ -86,9 +183,14 @@ const UserProfileForm: React.FC = () => {
           value={userData?.name || ""}
           onChange={handleChange}
           readOnly={!isEditing}
+          className={`${isEditing ? styles.editable : ""} ${
+            errorMessage ? styles.errorInput : ""
+          }`}
+          ref={nameInputRef}
         />
+        {errorMessage && <p className={styles.error}>{errorMessage}</p>}
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="age" label="Age" />
         <Input
           id="age"
@@ -96,9 +198,10 @@ const UserProfileForm: React.FC = () => {
           value={userData?.age || ""}
           onChange={handleChange}
           readOnly={!isEditing}
+          className={isEditing ? styles.editable : ""}
         />
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="gender" label="Gender" />
         <NativeSelect
           id="gender"
@@ -106,6 +209,7 @@ const UserProfileForm: React.FC = () => {
           value={userData?.gender || ""}
           onChange={handleChange}
           disabled={!isEditing}
+          className={isEditing ? styles.editable : ""}
         >
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
@@ -113,7 +217,7 @@ const UserProfileForm: React.FC = () => {
           <option value="Others">Others</option>
         </NativeSelect>
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="phone" label="Phone" />
         <Input
           id="phone"
@@ -121,9 +225,10 @@ const UserProfileForm: React.FC = () => {
           value={userData?.phone || ""}
           onChange={handleChange}
           readOnly={!isEditing}
+          className={isEditing ? styles.editable : ""}
         />
       </div>
-      <div className="inputGroup">
+      <div className={styles.inputGroup}>
         <Label htmlFor="email" label="Email" />
         <Input id="email" type="email" value={userData?.email || ""} readOnly />
       </div>

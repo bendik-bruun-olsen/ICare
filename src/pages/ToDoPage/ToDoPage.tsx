@@ -69,14 +69,14 @@ const ToDoPage: React.FC = () => {
 	if (isLoading)
 		return (
 			<>
-				<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
+				<Navbar centerContent="ToDo" />
 				<Loading />
 			</>
 		);
 	if (hasError) return <ErrorPage />;
 	return (
 		<>
-			<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
+			<Navbar centerContent="ToDo" />
 			<div className={"pageWrapper " + styles.fullPage}>
 				<div className={styles.fullPage}>
 					<DateSelector
@@ -85,19 +85,19 @@ const ToDoPage: React.FC = () => {
 					/>
 					<div>
 						{Object.keys(categorizedTodos).map((category) => (
-							<div key={category} className={styles.categoryStyle}>
-								<h3>{category}</h3>
-								<div className={styles.toDoTileMargin}>
+							<div
+								key={category}
+								className={`${styles.categoryStyle} ${
+									category === "Ignored" ? styles.ignoreCategory : ""
+								}`}
+							>
+								<h2>{category}</h2>
+								<div className={styles.toDoTilesWrapper}>
 									{categorizedTodos[category].map((todo) => (
 										<div className={styles.toDoTile} key={todo.id}>
 											<ToDoTile
-												todoId={todo.id}
-												toDoTitle={todo.title}
-												toDoDescription={todo.description}
-												taskStatus={todo.status}
-												time={todo.time}
-												seriesId={todo.seriesId}
 												selectedDate={selectedDate}
+												todoItem={todo}
 												onStatusChange={handleStatusChange}
 											/>
 										</div>

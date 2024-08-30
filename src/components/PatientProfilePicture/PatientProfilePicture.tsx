@@ -5,7 +5,6 @@ import { useAuth } from "../../hooks/useAuth/useAuth";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import styles from "./PatientProfilePicture.module.css";
 import { PatientProfilePictureProps } from "../../types";
-import Loading from "../Loading/Loading";
 import { getPatient } from "../../firebase/patientServices/getPatient";
 import { useNotification } from "../../hooks/useNotification";
 
@@ -13,7 +12,6 @@ export default function PatientProfilePicture({
 	setProfileImage,
 }: PatientProfilePictureProps) {
 	const { currentUser } = useAuth();
-	const [isLoading, setIsLoading] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const { addNotification } = useNotification();
 
@@ -27,7 +25,6 @@ export default function PatientProfilePicture({
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				setIsLoading(true);
 				if (isEditingPatient) {
 					const patient = await getPatient(patientId, addNotification);
 					if (!patient) return;
@@ -50,8 +47,8 @@ export default function PatientProfilePicture({
 					if (!defaultPictureUrl) return;
 					setSelectedImage(defaultPictureUrl);
 				}
-			} finally {
-				setIsLoading(false);
+			} catch (error) {
+				addNotification("Failed to fetch patient data", "error");
 			}
 		};
 
@@ -65,10 +62,6 @@ export default function PatientProfilePicture({
 			setSelectedImage(URL.createObjectURL(image));
 		}
 	};
-
-	if (isLoading) {
-		return <Loading />;
-	}
 
 	return (
 		<div className="profile-container" ref={profileContainerRef}>

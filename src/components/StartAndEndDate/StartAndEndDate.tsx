@@ -1,13 +1,8 @@
 import { I18nProvider } from "@react-aria/i18n";
 import { useState, useEffect } from "react";
 import { DatePicker } from "@equinor/eds-core-react";
-import styled from "styled-components";
 import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
-
-const StyledDatePickerWrapper = styled.div`
-	min-width: 150px;
-	width: fit-content;
-`;
+import styles from "./StartAndEndDate.module.css";
 
 type StartAndEndDateProps = {
 	label: string;
@@ -49,7 +44,7 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 	return (
 		<div>
 			<I18nProvider locale="nb-NO">
-				<StyledDatePickerWrapper>
+				<div className={styles.wrapper}>
 					<DatePicker
 						label={label}
 						value={selectedDate}
@@ -62,7 +57,7 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 						variant={variant}
 						minValue={minValue}
 					/>
-				</StyledDatePickerWrapper>
+				</div>
 			</I18nProvider>
 		</div>
 	);

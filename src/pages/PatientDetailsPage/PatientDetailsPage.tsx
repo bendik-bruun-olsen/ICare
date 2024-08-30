@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar/Navbar";
-import styles from "./CreatePatientPage.module.css";
-import { InputWrapper, Input, Button, Icon } from "@equinor/eds-core-react";
-import { add, remove_outlined } from "@equinor/eds-icons";
-import Loading from "../../components/Loading/Loading";
-
+import { Button, Icon, Input, InputWrapper } from "@equinor/eds-core-react";
 import {
 	CaretakerInformationInterface,
 	FormFieldProps,
 	PatientFormDataInterface,
 } from "../../types";
-import { addPatient } from "../../firebase/patientServices/addPatient";
-import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
-import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
-import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
+import styles from "./PatientDetailsPage.module.css";
+import Navbar from "../../components/Navbar/Navbar";
 import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
 import { useNotification } from "../../hooks/useNotification";
+import { useEffect, useRef, useState } from "react";
+import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
+import { editPatient } from "../../firebase/patientServices/editPatient";
+import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
+import { addPatient } from "../../firebase/patientServices/addPatient";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
+import { remove_outlined, add, edit } from "@equinor/eds-icons";
+import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
+import Loading from "../../components/Loading/Loading";
 
 const FormField = ({
 	label,
@@ -47,7 +47,7 @@ const FormField = ({
 	</InputWrapper>
 );
 
-export default function CreatePatientPage() {
+export default function PatientDetailsPage() {
 	const { addNotification } = useNotification();
 	const [isLoading, setIsLoading] = useState(false);
 	const [caretakerEmail, setCaretakerEmail] = useState("");
@@ -59,6 +59,10 @@ export default function CreatePatientPage() {
 	);
 	const [pictureUrl, setPictureUrl] = useState("");
 	const [profileImage, setProfileImage] = useState<File | null>(null);
+	const [isEditing, setIsEditing] = useState(false);
+	const [isChanged, setIsChanged] = useState(false);
+	const fullInfoContainerRef = useRef<HTMLDivElement>(null);
+	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		const fetchDefaultPictureUrl = async () => {
@@ -69,12 +73,60 @@ export default function CreatePatientPage() {
 		fetchDefaultPictureUrl();
 	});
 
+	useEffect(() => {
+		if (timerRef.current) {
+			clearTimeout(timerRef.current);
+		}
+
+		timerRef.current = setTimeout(() => {
+			if (isChanged) {
+				editPatient(formData, caretakers, formData.id);
+			}
+		}, 2000);
+
+		return () => {
+			if (timerRef.current) {
+				clearTimeout(timerRef.current);
+			}
+		};
+	}, [formData, caretakers, isChanged]);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				fullInfoContainerRef.current &&
+				!fullInfoContainerRef.current.contains(event.target as Node)
+			) {
+				if (isChanged) {
+					editPatient(formData, caretakers, formData.id);
+				}
+				setIsEditing(false);
+			}
+		};
+
+		const handleBeforeUnload = () => {
+			if (isChanged) {
+				editPatient(formData, caretakers, formData.id);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		window.addEventListener("beforeunload", handleBeforeUnload);
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+		};
+	}, [formData, isChanged, caretakers]);
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({
 			...prevData,
 			[name]: value,
 		}));
+
+		setIsChanged(true);
 	};
 
 	const addCaretaker = async (e: React.FormEvent) => {
@@ -127,6 +179,7 @@ export default function CreatePatientPage() {
 
 		try {
 			setIsLoading(true);
+
 			const patientId = await addPatient(formData, caretakers);
 
 			if (profileImage) {
@@ -138,6 +191,10 @@ export default function CreatePatientPage() {
 		} finally {
 			setIsLoading(false);
 		}
+	};
+
+	const handleEditClick = () => {
+		setIsEditing(true);
 	};
 
 	const personalInfoFields = [
@@ -158,14 +215,19 @@ export default function CreatePatientPage() {
 
 	return (
 		<>
-			<Navbar centerContent="Create Patient" />
-			<div className={styles.fullWrapper}>
+			<Navbar centerContent="Patient Details" />
+			<div className={styles.fullWrapper} ref={fullInfoContainerRef}>
 				<div className={styles.profilePictureWrapper}>
 					<PatientProfilePicture setProfileImage={setProfileImage} />
 				</div>
 				<form onSubmit={handleSubmit}>
 					<div className={`${styles.personalInfoSection} dropShadow`}>
-						<h2 className={styles.headlineText}>Personal Information</h2>
+						<div className={styles.headlineAndIcon}>
+							<h2 className={styles.headlineText}>Personal Information</h2>
+							<Button type="button" variant="ghost_icon">
+								<Icon data={edit} onClick={handleEditClick} />
+							</Button>
+						</div>
 						{personalInfoFields.map((field) => (
 							<FormField
 								key={field.name}
@@ -222,9 +284,6 @@ export default function CreatePatientPage() {
 							))}
 						</ul>
 					</div>
-					<Button id={styles.createPatientButton} type="submit">
-						Register Patient
-					</Button>
 				</form>
 			</div>
 		</>

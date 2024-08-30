@@ -29,6 +29,8 @@ export interface TodoItemInterface {
 	status: ToDoStatus;
 	seriesId: string | null;
 	id: string;
+	createdBy: string;
+	completedBy: string | null;
 }
 
 export interface TodoSeriesInfoInterface {
@@ -90,6 +92,10 @@ export interface UserData {
 	profilePictureUrl?: string;
 }
 
+export interface UserProfile {
+	profilePictureUrl?: string;
+}
+
 export interface PatientFormDataInterface {
 	[key: string]: string;
 	name: string;
@@ -115,4 +121,11 @@ export type FormFieldProps = {
 
 export interface PatientProfilePictureProps {
 	setProfileImage: Dispatch<SetStateAction<File | null>>;
+}
+
+export interface EmergencyContactInterface {
+	name: string;
+	phone: string;
+	email: string;
+	relation: string;
 }

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { TextField } from "@equinor/eds-core-react";
-import StartAndEndDate from "../../components/StartAndEndDate";
+import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
 import { db } from "../../firebase/firebase";
 import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
-import TitleDescription from "../../components/TitleDescription";
+import TitleDescription from "../../components/TitleDescription/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "../AddTodoPage/AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
-import BackHomeButton from "../../components/BackHomeButton";
 
 const AddAppointment: React.FC = () => {
 	const [title, setTitle] = useState("");
@@ -48,10 +47,7 @@ const AddAppointment: React.FC = () => {
 
 	return (
 		<>
-			<Navbar
-				leftContent={<BackHomeButton />}
-				centerContent="Add Appointments"
-			/>
+			<Navbar centerContent="Add Appointments" />
 			<div className="pageWrapper">
 				<div className={styles.mainContainer}>
 					<h1>Add Appointments</h1>
@@ -69,9 +65,7 @@ const AddAppointment: React.FC = () => {
 								<StartAndEndDate
 									label="Select Date"
 									value={startDate}
-									onChange={(date: string) =>
-										setStartDate(date)
-									}
+									onChange={(date: string) => setStartDate(date)}
 								/>
 							</div>
 							<div className={styles.fieldContainer}>
@@ -81,9 +75,9 @@ const AddAppointment: React.FC = () => {
 									type="time"
 									value={time}
 									className={styles.time}
-									onChange={(
-										e: React.ChangeEvent<HTMLInputElement>
-									) => setTime(e.target.value)}
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										setTime(e.target.value)
+									}
 									style={{ width: "150px" }}
 								/>
 							</div>

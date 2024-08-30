@@ -1,3 +1,8 @@
+.wrapper {
+	display: flex;
+	flex-direction: column;
+}
+
 .buttonsContainer {
 	display: flex;
 	flex-direction: column;
@@ -26,4 +31,9 @@
 
 .transparentOutline {
 	border-color: transparent;
+}
+
+.label {
+	color: var(--black);
+	font-weight: 500;
 }
