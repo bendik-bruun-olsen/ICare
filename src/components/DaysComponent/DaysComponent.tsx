@@ -50,7 +50,7 @@ const DaysComponent: React.FC<DaysComponentProps> = ({
 
 	return (
 		<div className={styles.wrapper}>
-			<span style={{ color: "#6F6F6F", fontWeight: 500 }}>Frequency</span>
+			<span className={styles.label}>Frequency</span>
 			<div className={`${styles.buttonsContainer} ${getOutlineClass()}`}>
 				<Button.Toggle
 					multiple

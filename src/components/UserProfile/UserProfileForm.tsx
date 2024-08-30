@@ -5,7 +5,7 @@ import { db } from "../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { UserData } from "../../types";
-import EDSSpinner from "../SavingSpinner/SavingSpinner";
+import SavingSpinner from "../SavingSpinner/SavingSpinner";
 import styles from "./UserProfileForm.module.css";
 
 const UserProfileForm: React.FC = () => {
@@ -13,8 +13,10 @@ const UserProfileForm: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { currentUser } = useAuth();
   const fullInfoContainerRef = useRef<HTMLDivElement>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -34,13 +36,33 @@ const UserProfileForm: React.FC = () => {
     fetchUserData();
   }, [currentUser]);
 
+  const validateNameField = useCallback((): boolean => {
+    if (!userData?.name || userData.name.trim() === "") {
+      setErrorMessage("Name field cannot be empty.");
+      if (nameInputRef.current) {
+        nameInputRef.current.focus();
+        nameInputRef.current.setSelectionRange(
+          nameInputRef.current.value.length,
+          nameInputRef.current.value.length
+        );
+      }
+      return false;
+    }
+    setErrorMessage(null);
+    return true;
+  }, [userData?.name]);
+
   const saveDataToFirebase = useCallback(async () => {
     if (currentUser?.email && userData && isChanged) {
+      if (!validateNameField()) {
+        return;
+      }
+
       setIsSaving(true);
       try {
         const userDocRef = doc(db, "users", currentUser.email);
         await updateDoc(userDocRef, { ...userData });
-        console.log("Document successfully updated!");
+
         setIsChanged(false);
       } catch (error) {
         console.error("Error updating document:", error);
@@ -50,7 +72,7 @@ const UserProfileForm: React.FC = () => {
         }, 1000);
       }
     }
-  }, [currentUser, userData, isChanged]);
+  }, [currentUser?.email, userData, isChanged, validateNameField]);
 
   useEffect(() => {
     if (timerRef.current) {
@@ -61,7 +83,7 @@ const UserProfileForm: React.FC = () => {
       if (isChanged) {
         saveDataToFirebase();
       }
-    }, 2000);
+    }, 5000);
 
     return () => {
       if (timerRef.current) {
@@ -71,15 +93,32 @@ const UserProfileForm: React.FC = () => {
   }, [userData, saveDataToFirebase, isChanged]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+
       if (
         fullInfoContainerRef.current &&
-        !fullInfoContainerRef.current.contains(event.target as Node)
+        !fullInfoContainerRef.current.contains(target)
       ) {
-        if (isChanged) {
-          saveDataToFirebase();
+        if (!validateNameField()) {
+          event.preventDefault();
+          event.stopPropagation();
+        } else {
+          if (isChanged) {
+            saveDataToFirebase();
+          }
+
+          setIsEditing(false);
         }
-        setIsEditing(false);
+      } else if (
+        target !== nameInputRef.current &&
+        (target instanceof HTMLInputElement ||
+          target instanceof HTMLSelectElement)
+      ) {
+        if (!validateNameField()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
       }
     };
 
@@ -89,17 +128,24 @@ const UserProfileForm: React.FC = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClick);
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClick);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [userData, saveDataToFirebase, isChanged]);
+  }, [validateNameField, userData, saveDataToFirebase, isChanged]);
 
   const handleEditClick = () => {
     setIsEditing(true);
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+      nameInputRef.current.setSelectionRange(
+        nameInputRef.current.value.length,
+        nameInputRef.current.value.length
+      );
+    }
   };
 
   const handleChange = (
@@ -120,7 +166,7 @@ const UserProfileForm: React.FC = () => {
 
   return (
     <div className={styles.fullInfoContainer} ref={fullInfoContainerRef}>
-      {isSaving && <EDSSpinner />} {/* Use the spinner component */}
+      {isSaving && <SavingSpinner />}
       <div className={styles.userInfo}>
         <h2>User Information</h2>
         <Icon
@@ -137,8 +183,12 @@ const UserProfileForm: React.FC = () => {
           value={userData?.name || ""}
           onChange={handleChange}
           readOnly={!isEditing}
-          className={isEditing ? styles.editable : ""}
+          className={`${isEditing ? styles.editable : ""} ${
+            errorMessage ? styles.errorInput : ""
+          }`}
+          ref={nameInputRef}
         />
+        {errorMessage && <p className={styles.error}>{errorMessage}</p>}
       </div>
       <div className={styles.inputGroup}>
         <Label htmlFor="age" label="Age" />

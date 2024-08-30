@@ -22,12 +22,12 @@
 
 .actionButtons {
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: flex-end;
 	margin-top: 20px;
+	gap: 20px;
 }
 
 .modal h3 {
 	display: flex;
-	justify-content: center;
 	margin-bottom: 10px;
 }

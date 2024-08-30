@@ -1,11 +1,7 @@
-import styled from "styled-components";
 import React from "react";
 import { Autocomplete } from "@equinor/eds-core-react";
 import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
-
-const StyledCategory = styled.div`
-	width: 150px;
-`;
+import styles from "./SelectCategory.module.css";
 
 const options: string[] = ["Food", "Medicine", "Social", "Exercise", "Others"];
 
@@ -21,7 +17,7 @@ const SelectCategory: React.FC<CategoryComponentProps> = ({
 	variant,
 }) => {
 	return (
-		<StyledCategory>
+		<div className={styles.wrapper}>
 			<Autocomplete<string>
 				label="Category"
 				options={options}
@@ -31,7 +27,7 @@ const SelectCategory: React.FC<CategoryComponentProps> = ({
 				}
 				variant={variant}
 			/>
-		</StyledCategory>
+		</div>
 	);
 };
 

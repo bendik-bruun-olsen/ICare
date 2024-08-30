@@ -11,11 +11,15 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import styles from "./ProfilePicture.module.css"; // Importing the CSS module
+import styles from "./ProfilePicture.module.css";
 import { UserProfile } from "../../types";
 
 const ProfilePicture: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>(
+    "Max file size: 1 MB"
+  );
+  const [isFileSizeError, setIsFileSizeError] = useState<boolean>(false);
   const { currentUser } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -76,6 +80,15 @@ const ProfilePicture: React.FC = () => {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (fileSizeMB > 1) {
+        setErrorMessage("File is too big. Max size is 1 MB.");
+        setIsFileSizeError(true);
+        return;
+      }
+
+      setErrorMessage("Max file size: 1 MB");
+      setIsFileSizeError(false);
       const userFolder = currentUser?.email;
       const storageRef = ref(storage, `profilePictures/${userFolder}/`);
 
@@ -110,6 +123,8 @@ const ProfilePicture: React.FC = () => {
         );
       } catch (error) {
         console.error("Error uploading profile picture:", error);
+        setErrorMessage("Failed to upload profile picture. Please try again.");
+        setIsFileSizeError(true);
       }
     }
   };
@@ -123,6 +138,13 @@ const ProfilePicture: React.FC = () => {
             alt="Profile"
             className={styles.profilePic}
           />
+          <div
+            className={`${styles.errorMessage} ${
+              isFileSizeError ? styles.error : ""
+            }`}
+          >
+            {errorMessage}
+          </div>
         </div>
         <input
           type="file"
