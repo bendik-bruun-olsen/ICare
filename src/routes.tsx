@@ -18,6 +18,7 @@ import ResetPasswordPage from "./pages/ResetPasssword/ResetPasswordPage";
 import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";
 import { Navigate } from "react-router-dom";
 import CreatePatientPage from "./pages/CreatePatientPage/CreatePatientPage";
+import PatientDetailsPage from "./pages/PatientDetailsPage/PatientDetailsPage";
 
 const RequireAuthWrapper = () => {
 	const { isUserLoggedIn } = useAuth();
@@ -95,6 +96,10 @@ const protectedRoutes = [
 	{
 		path: Paths.CREATE_PATIENT,
 		element: <CreatePatientPage />,
+	},
+	{
+		path: Paths.PATIENT_DETAILS,
+		element: <PatientDetailsPage />,
 	},
 ];
 
