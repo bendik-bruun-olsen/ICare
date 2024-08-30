@@ -8,6 +8,7 @@ import {
 
 export const addSingleNewTodo = async (
 	todo: TodoItemInterface,
+	currentUserName: string,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
 	try {
@@ -15,12 +16,13 @@ export const addSingleNewTodo = async (
 		const todoCollection = collection(patientRef, "todoItems");
 		const todoItemRef = doc(todoCollection);
 
-		const todoWithId = {
+		const updatedTodo = {
 			...todo,
 			id: todoItemRef.id,
+			createdBy: currentUserName,
 		};
 
-		await setDoc(todoItemRef, todoWithId);
+		await setDoc(todoItemRef, updatedTodo);
 		addNotification("Todo added successfully", "success");
 	} catch {
 		addNotification("Error adding todo", "error");
@@ -30,6 +32,7 @@ export const addSingleNewTodo = async (
 export const addMultipleNewTodos = async (
 	todos: TodoItemInterface[],
 	seriesInfo: TodoSeriesInfoInterface,
+	currentUserName: string,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
 	try {
@@ -47,12 +50,13 @@ export const addMultipleNewTodos = async (
 
 		todos.forEach((todo) => {
 			const todoItemRef = doc(todoCollection);
-			const todoWithId = {
+			const updatedTodo = {
 				...todo,
 				seriesId: todoSeriesInfoRef.id,
 				id: todoItemRef.id,
+				createdBy: currentUserName,
 			};
-			batch.set(todoItemRef, todoWithId);
+			batch.set(todoItemRef, updatedTodo);
 		});
 
 		await batch.commit();

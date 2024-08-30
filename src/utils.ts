@@ -32,6 +32,16 @@ export function getEndOfDay(selectedDate: Date) {
 	return endOfDay;
 }
 
+export const capitalizeUsername = (username: string) => {
+	if (!username) return "";
+	return username
+		.split(" ")
+		.map(
+			(word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+		)
+		.join(" ");
+};
+
 export const toDoCollectionRef = collection(
 	doc(db, "patientdetails", "patient@patient.com"),
 	"todos"

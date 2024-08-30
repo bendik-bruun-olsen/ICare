@@ -42,20 +42,18 @@ import {
 	defaultTodoSeriesInputFieldStatus,
 } from "../../constants/defaultTodoValues";
 import Loading from "../../components/Loading/Loading";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 
 const AddToDoPage: React.FC = () => {
 	const location = useLocation();
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isRepeating, setIsRepeating] = useState(false);
-	const [todoItem, setTodoItem] =
-		useState<TodoItemInterface>(defaultTodoItem);
+	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
-		useState<TodoItemInputFieldStatusProps>(
-			defaultTodoItemInputFieldStatus
-		);
+		useState<TodoItemInputFieldStatusProps>(defaultTodoItemInputFieldStatus);
 	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
 		useState<TodoSeriesInputFieldStatusProps>(
 			defaultTodoSeriesInputFieldStatus
@@ -65,6 +63,7 @@ const AddToDoPage: React.FC = () => {
 	);
 	const { addNotification } = useNotification();
 	const navigate = useNavigate();
+	const currentUserEmail = useAuth().userData?.email;
 
 	useEffect(() => {
 		if (!location.state.selectedDate) {
@@ -92,8 +91,7 @@ const AddToDoPage: React.FC = () => {
 	const handleToggleRepeat = () => {
 		setIsRepeating((isRepeating) => {
 			if (!isRepeating) {
-				const currentDay =
-					daysOfTheWeek[todoItem.date.toDate().getDay()];
+				const currentDay = daysOfTheWeek[todoItem.date.toDate().getDay()];
 				setTodoSeriesInfo((prev) => ({
 					title: todoItem.title,
 					description: todoItem.description,
@@ -133,6 +131,7 @@ const AddToDoPage: React.FC = () => {
 					)
 				)
 					return;
+				if (!currentUserEmail) return setHasError(true);
 
 				const selectedDaysNumbers = mapSelectedDaysToNumbers(
 					todoSeriesInfo.selectedDays
@@ -151,6 +150,8 @@ const AddToDoPage: React.FC = () => {
 					status: ToDoStatus.unchecked,
 					seriesId: "",
 					id: "",
+					createdBy: "",
+					completedBy: null,
 				};
 				const newTodos = generateTodosForSeries(
 					newTodo,
@@ -161,6 +162,7 @@ const AddToDoPage: React.FC = () => {
 				await addMultipleNewTodos(
 					newTodos,
 					todoSeriesInfo,
+					currentUserEmail,
 					addNotification
 				);
 				return navigate(Paths.TODO, {
@@ -176,7 +178,8 @@ const AddToDoPage: React.FC = () => {
 					)
 				)
 					return;
-				await addSingleNewTodo(todoItem, addNotification);
+				if (!currentUserEmail) return setHasError(true);
+				await addSingleNewTodo(todoItem, currentUserEmail, addNotification);
 				return navigate(Paths.TODO, {
 					state: { selectedDate: todoItem.date.toDate() },
 				});
@@ -219,30 +222,20 @@ const AddToDoPage: React.FC = () => {
 	if (isLoading)
 		return (
 			<>
-				<Navbar
-					leftContent={<BackHomeButton />}
-					centerContent="Add ToDo"
-				/>
+				<Navbar leftContent={<BackHomeButton />} centerContent="Add ToDo" />
 				<Loading />
 			</>
 		);
 
 	return (
 		<>
-			<Navbar
-				leftContent={<BackHomeButton />}
-				centerContent="Add To Do"
-			/>
+			<Navbar leftContent={<BackHomeButton />} centerContent="Add To Do" />
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
 					<div className={styles.formContainer}>
 						<div className={styles.mainContentContainer}>
 							<TitleDescription
-								title={
-									isRepeating
-										? todoSeriesInfo.title
-										: todoItem.title
-								}
+								title={isRepeating ? todoSeriesInfo.title : todoItem.title}
 								setTitle={(title) =>
 									isRepeating
 										? setTodoSeriesInfo((prev) => ({
@@ -285,9 +278,7 @@ const AddToDoPage: React.FC = () => {
 								<div>
 									<SelectCategory
 										selectedOption={
-											isRepeating
-												? todoSeriesInfo.category
-												: todoItem.category
+											isRepeating ? todoSeriesInfo.category : todoItem.category
 										}
 										onSelectionChange={(category) =>
 											isRepeating
@@ -307,21 +298,12 @@ const AddToDoPage: React.FC = () => {
 										}
 									/>
 									<StartAndEndDate
-										label={
-											isRepeating ? "Start date" : "Date"
-										}
+										label={isRepeating ? "Start date" : "Date"}
 										value={formatTimestampToDateString(
-											isRepeating
-												? todoSeriesInfo.startDate
-												: todoItem.date
+											isRepeating ? todoSeriesInfo.startDate : todoItem.date
 										)}
 										onChange={(date) =>
-											handleDateChange(
-												isRepeating
-													? "startDate"
-													: "date",
-												date
-											)
+											handleDateChange(isRepeating ? "startDate" : "date", date)
 										}
 										variant={
 											isRepeating
@@ -337,11 +319,7 @@ const AddToDoPage: React.FC = () => {
 										id="time"
 										label="Select time"
 										type="time"
-										value={
-											isRepeating
-												? todoSeriesInfo.time
-												: todoItem.time
-										}
+										value={isRepeating ? todoSeriesInfo.time : todoItem.time}
 										className={styles.time}
 										onChange={handleTimeChange}
 										style={{ width: "150px" }}
@@ -362,25 +340,15 @@ const AddToDoPage: React.FC = () => {
 								<>
 									<StartAndEndDate
 										label="End date"
-										value={formatTimestampToDateString(
-											todoSeriesInfo.endDate
-										)}
-										onChange={(date) =>
-											handleDateChange("endDate", date)
-										}
-										variant={
-											todoSeriesInputFieldStatus.endDate
-										}
+										value={formatTimestampToDateString(todoSeriesInfo.endDate)}
+										onChange={(date) => handleDateChange("endDate", date)}
+										variant={todoSeriesInputFieldStatus.endDate}
 										minValue={endDateMinValue}
 									/>
 									<DaysComponent
-										selectedDays={
-											todoSeriesInfo.selectedDays
-										}
+										selectedDays={todoSeriesInfo.selectedDays}
 										onDayToggle={handleDayToggle}
-										variant={
-											todoSeriesInputFieldStatus.selectedDays
-										}
+										variant={todoSeriesInputFieldStatus.selectedDays}
 									/>
 								</>
 							)}
