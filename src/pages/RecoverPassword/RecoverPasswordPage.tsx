@@ -8,20 +8,8 @@ import { sendResetEmail } from "../../utils";
 import { checkUserExists } from "../../utils";
 import { useNotification } from "../../hooks/useNotification";
 import Loading from "../../components/Loading/Loading";
-
-const CustomButton = styled(Button)`
-  margin-top: 1rem;
-
-  width: 100%;
-
-  background-color: var(--blue);
-  color: var(--white);
-`;
-const CustomInputWrapper = styled(InputWrapper)`
-  margin-top: 1rem;
-  width: 100%;
-  color: var(--black);
-`;
+import { Link } from "react-router-dom";
+import { Paths } from "../../paths";
 
 export default function RecoverPasswordPage() {
   const [email, setEmail] = useState<string>("");
@@ -56,33 +44,40 @@ export default function RecoverPasswordPage() {
 
   return (
     <div className="pageWrapper">
-      <div className="heading">
+      <div className={styles.heading}>
         <Logo size={"70px"} color={"var(--blue)"} />
       </div>
 
       <img src={BannerImage} alt="logo-image" className={styles.bannerImage} />
 
-      <form onSubmit={handleForgotPassword} className={styles.InputContainer}>
-        <CustomInputWrapper
-          className="input1"
-          labelProps={{
-            label: "Email",
-            htmlFor: "textfield-normal",
-            style: { display: "block" },
-          }}
-        >
-          <Input
-            type="email"
-            id="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
-          />
-        </CustomInputWrapper>
-
-        <CustomButton id="sendEmail" type="submit">
-          Send Email
-        </CustomButton>
+      <form onSubmit={handleForgotPassword} className="inputContainer">
+        <div className="inputBackgroundBox">
+          <div className={styles.sendEmailContainer}>
+            <InputWrapper
+              className="input1"
+              labelProps={{
+                label: "Email",
+                htmlFor: "textfield-normal",
+              }}
+            >
+              <Input
+                type="email"
+                id="email"
+                value={email}
+                onChange={handleEmailChange}
+                required
+              />
+            </InputWrapper>
+          </div>
+        </div>
+        <div className={styles.links}>
+          <Button id="sendEmail" type="submit">
+            Send Email
+          </Button>
+          <Link to={Paths.LOGIN} className={styles.backToLogin}>
+            Back to Login page
+          </Link>
+        </div>
       </form>
 
       {message && <p>{message}</p>}
