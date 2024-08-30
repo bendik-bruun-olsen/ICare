@@ -17,7 +17,7 @@ import { UserProfile } from "../../types";
 const ProfilePicture: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>(
-    "Max file size: 3 MB"
+    "Max file size: 1 MB"
   );
   const [isFileSizeError, setIsFileSizeError] = useState<boolean>(false);
   const { currentUser } = useAuth();
@@ -81,13 +81,13 @@ const ProfilePicture: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const fileSizeMB = file.size / (1024 * 1024);
-      if (fileSizeMB > 3) {
-        setErrorMessage("File is too big. Max size is 3 MB.");
+      if (fileSizeMB > 1) {
+        setErrorMessage("File is too big. Max size is 1 MB.");
         setIsFileSizeError(true);
         return;
       }
 
-      setErrorMessage("Max file size: 3 MB");
+      setErrorMessage("Max file size: 1 MB");
       setIsFileSizeError(false);
       const userFolder = currentUser?.email;
       const storageRef = ref(storage, `profilePictures/${userFolder}/`);

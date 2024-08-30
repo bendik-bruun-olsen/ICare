@@ -17,8 +17,7 @@
 }
 
 .inputGroup {
-  /* margin-bottom: 20px; */
-  margin-top: 20px;
+  margin-bottom: 15px;
 }
 
 .inputGroup Label {
@@ -31,23 +30,31 @@
 .inputGroup NativeSelect {
   font-family: inherit;
   font-size: 1rem;
-  padding: 0;
+  border-radius: 4px;
+  border: 1px solid var(--gray);
 }
 
 .inputGroup NativeSelect option {
   font-family: inherit;
   color: var(--black);
-  background-color: red;
+  background-color: white;
 }
 
 .inputGroup NativeSelect:disabled {
-  background-color: var(--blue);
+  background-color: var(--lightgrey);
   border: none;
 }
 
 .Icon {
   cursor: pointer;
 }
+
 .icon.editing {
   color: grey;
+}
+
+.error {
+  color: rgb(246, 32, 32);
+  margin-top: 5px;
+  font-size: 0.875rem;
 }
