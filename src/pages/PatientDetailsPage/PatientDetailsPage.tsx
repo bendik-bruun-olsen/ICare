@@ -6,7 +6,6 @@ import {
 } from "../../types";
 import styles from "./PatientDetailsPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
-import Logo from "../../components/Logo/Logo";
 import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
 import { useNotification } from "../../hooks/useNotification";
 import { useEffect, useRef, useState } from "react";
@@ -216,7 +215,7 @@ export default function PatientDetailsPage() {
 
 	return (
 		<>
-			<Navbar leftContent={<Logo />} centerContent="Patient Details" />
+			<Navbar centerContent="Patient Details" />
 			<div className={styles.fullWrapper} ref={fullInfoContainerRef}>
 				<div className={styles.profilePictureWrapper}>
 					<PatientProfilePicture setProfileImage={setProfileImage} />

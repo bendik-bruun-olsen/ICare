@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Logo from "../../components/Logo/Logo";
 import Navbar from "../../components/Navbar/Navbar";
 import styles from "./CreatePatientPage.module.css";
 import { InputWrapper, Input, Button, Icon } from "@equinor/eds-core-react";
@@ -159,7 +158,7 @@ export default function CreatePatientPage() {
 
 	return (
 		<>
-			<Navbar centerContent="Create Patient" leftContent={<Logo />} />
+			<Navbar centerContent="Create Patient" />
 			<div className={styles.fullWrapper}>
 				<div className={styles.profilePictureWrapper}>
 					<PatientProfilePicture setProfileImage={setProfileImage} />

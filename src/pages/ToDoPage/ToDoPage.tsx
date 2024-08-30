@@ -69,14 +69,14 @@ const ToDoPage: React.FC = () => {
 	if (isLoading)
 		return (
 			<>
-				<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
+				<Navbar centerContent="ToDo" />
 				<Loading />
 			</>
 		);
 	if (hasError) return <ErrorPage />;
 	return (
 		<>
-			<Navbar leftContent={<BackHomeButton />} centerContent="ToDo" />
+			<Navbar centerContent="ToDo" />
 			<div className={"pageWrapper " + styles.fullPage}>
 				<div className={styles.fullPage}>
 					<DateSelector
