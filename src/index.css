@@ -46,7 +46,12 @@ p {
 a {
 	text-decoration: none;
 }
-
+.inputBackgroundBox {
+	margin-top: 22px;
+	background-color: var(--fadedblue);
+	padding: 20px;
+	border-radius: 5px;
+}
 .pageWrapper {
 	max-width: 960px;
 	margin: 0 auto;
@@ -57,6 +62,11 @@ a {
 	background-color: var(--fadedblue);
 	padding: 20px;
 	border-radius: 5px;
+}
+@media (min-width: 501px) {
+	.inputBackgroundBox {
+		padding: 10px;
+	}
 }
 
 .dropShadow {
