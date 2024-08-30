@@ -45,6 +45,7 @@ export default function ToDoTile({
 	const contentContainerRef = useRef<HTMLDivElement>(null);
 	const descriptionRef = useRef<HTMLParagraphElement>(null);
 	const optionsIconRef = useRef<SVGSVGElement>(null);
+	const overflowTimeoutRef = useRef<number | undefined>();
 
 	const defaultContentMaxHeight = 65;
 
@@ -98,8 +99,11 @@ export default function ToDoTile({
 	}, [isMenuExpanded]);
 
 	const setOverflowStatus = () => {
+		if (overflowTimeoutRef.current) {
+			clearTimeout(overflowTimeoutRef.current);
+		}
 		if (isMenuExpanded) {
-			setTimeout(() => {
+			overflowTimeoutRef.current = window.setTimeout(() => {
 				setContentContainerOverflow(overflowStatus.visible);
 			}, 300);
 		}
