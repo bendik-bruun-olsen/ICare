@@ -11,6 +11,13 @@ import Logo from "../../components/Logo/Logo";
 import { useNotification } from "../../hooks/useNotification";
 import Loading from "../../components/Loading/Loading";
 
+const initialErrorState = {
+  name: false,
+  email: false,
+  password: false,
+  confirmPassword: false,
+};
+
 export default function SignupPage() {
   const [formData, setFormData] = useState<{
     [key: string]: string;
@@ -20,7 +27,9 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   });
-  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
+  const [errors, setErrors] = useState<{ [key: string]: boolean }>(
+    initialErrorState
+  );
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { addNotification } = useNotification();
@@ -31,21 +40,30 @@ export default function SignupPage() {
     setErrors((prev) => ({ ...prev, [name]: false }));
   };
 
-  const signUp = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newErrors = { ...errors };
+    const updatedErrors = {
+      name: !formData.name,
+      email: !formData.email,
+      password: !formData.password,
+      confirmPassword: !formData.confirmPassword,
+    };
 
-    ["name", "email", "password", "confirmPassword"].forEach((field) => {
-      if (!formData[field]) newErrors[field] = true;
-    });
+    setErrors(updatedErrors);
+
     const passwordsMatch = formData.password === formData.confirmPassword;
     if (!passwordsMatch) {
       addNotification("Passwords do not match", "error");
+      updatedErrors.password = true;
+      updatedErrors.confirmPassword = true;
       return;
     }
-    const validationErrors = Object.keys(newErrors).length > 0;
+
+    const validationErrors = Object.values(updatedErrors).some(
+      (error) => error
+    );
+
     if (validationErrors) {
-      setErrors(newErrors);
       return;
     }
 
@@ -88,21 +106,22 @@ export default function SignupPage() {
   const renderInput = (
     label: string,
     name: string,
-    type: string = "text",
-    required: boolean = true
+    type: string,
+    required: boolean
   ) => (
     <>
-      <Label label={label} htmlFor={name}>
-        {label}
+      <div className={styles.labelContainer}>
+        <Label label={label} htmlFor={name}>
+          {label}
+        </Label>
         {required && <span className={styles.requiredStar}>*</span>}
-      </Label>
+      </div>
       <Input
         className={styles.input}
         type={type}
         name={name}
         value={formData[name]}
         onChange={handleChange}
-        helperText={errors[name] ? `${label} is required` : ""}
         variant={errors[name] ? "error" : undefined}
         required={required}
       />
@@ -114,7 +133,7 @@ export default function SignupPage() {
       <div className={styles.heading}>
         <Logo size="60px" color="var(--blue)" />
       </div>
-      <form className={styles.inputContainer} onSubmit={signUp}>
+      <form className={styles.inputContainer} onSubmit={handleSubmit}>
         <div className={styles.inputBackgroundBox}>
           {renderInput("Name", "name", "text", true)}
           {renderInput("Email", "email", "email", true)}
@@ -122,7 +141,7 @@ export default function SignupPage() {
           {renderInput("Confirm Password", "confirmPassword", "password", true)}
         </div>
         <div className={styles.links}>
-          <Button id="signupbutton" type="submit">
+          <Button id="signupButton" type="submit">
             Sign Up
           </Button>
           <Link to={Paths.LOGIN} className={styles.backToLogin}>
