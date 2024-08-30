@@ -35,11 +35,6 @@
 	color: var(--black);
 }
 
-/* .timeAndRepeatControls label {
-	padding: 0 0 5px 0;
-	color: var(--black);
-} */
-
 .buttonContainer {
 	display: flex;
 	justify-content: space-between;
@@ -51,16 +46,3 @@
 	flex-direction: column;
 	gap: 10px;
 }
-
-/* 
-@media (min-width: 426px) {
-	.scheduleControlsContainer {
-		flex-direction: row;
-	}
-	.formContainer {
-		justify-content: initial;
-	}
-	.buttonContainer {
-		margin-top: 20px;
-	}
-} */
