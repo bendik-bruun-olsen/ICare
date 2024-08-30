@@ -1,10 +1,11 @@
 .toDoWrapper {
 	display: flex;
-	background-color: var(--white);
+	background-color: #1c7b8236;
 	padding: 1rem;
 	width: 100%;
 	justify-content: center;
-	border-radius: 8px;
+	border-radius: 5px;
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
 }
 
 .titleWrapper {

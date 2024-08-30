@@ -3,8 +3,8 @@ import {
 	restaurant,
 	group,
 	walk,
-	placeholder_icon,
 	arrow_forward,
+	hospital,
 } from "@equinor/eds-icons";
 import styles from "./RemainingTodos.module.css";
 import { Link } from "react-router-dom";
@@ -13,7 +13,7 @@ import RemainingTodoItem from "./RemainingTodoItem";
 
 const todos = [
 	{ category: "Food", completed: 3, all: 6, icon: restaurant },
-	{ category: "Medicine", completed: 2, all: 5, icon: placeholder_icon },
+	{ category: "Medicine", completed: 2, all: 5, icon: hospital },
 	{ category: "Social", completed: 1, all: 1, icon: group },
 	{ category: "Exercise", completed: 2, all: 3, icon: walk },
 ];

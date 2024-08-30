@@ -18,12 +18,13 @@
 
 .appointmentsWrapper {
 	display: flex;
-	background-color: var(--white);
+	background-color: #1c7b8236;
 	height: 6rem;
 	align-items: center;
-	border-radius: 10px;
+	border-radius: 5px;
 	justify-content: space-between;
 	width: 100%;
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
 }
 
 .textWrapper {
