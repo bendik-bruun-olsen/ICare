@@ -17,7 +17,9 @@ export default function DeleteConfirmModal({
 				<p>Do you really want to delete this {type}?</p>
 				<p>This action cannot be undone.</p>
 				<div className={styles.actionButtons}>
-					<Button onClick={onConfirm}>Confirm</Button>
+					<Button color="danger" onClick={onConfirm}>
+						Delete
+					</Button>
 					<Button onClick={onClose}>Cancel</Button>
 				</div>
 			</div>

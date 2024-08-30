@@ -3,8 +3,7 @@
 	flex-direction: column;
 	max-width: 500px;
 	margin: 0 auto;
-	min-height: calc(100vh - var(--navbar-height) - 30px);
-	justify-content: space-between;
+	gap: 10px;
 }
 
 .formContainer label {
@@ -14,7 +13,6 @@
 .mainContentContainer {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
 }
 
 .scheduleControlsContainer > div {
@@ -25,17 +23,17 @@
 
 .scheduleControlsContainer {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: space-between;
 	gap: 10px;
 }
 
-@media (max-width: 425px) {
-	.scheduleControlsContainer {
-		flex-direction: column;
-	}
+.timeAndRepeatControls span {
+	padding: 2px 0 0 0;
+	color: var(--black);
 }
 
-.timeAndRepeatControls span {
-	padding: 2px 5px 0 0;
+.buttonContainer {
+	display: flex;
+	justify-content: flex-end;
 }
