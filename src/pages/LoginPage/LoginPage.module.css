@@ -1,0 +1,69 @@
+.heading {
+  text-align: center;
+}
+#loginPageWrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: calc(20px + var(--navbar-height)) 20px 0 20px;
+}
+.inputContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.inputContainer label {
+  color: var(--black);
+  margin: 0 0 3px 0;
+}
+.input {
+  margin-bottom: 10px;
+
+  color: var(--black);
+}
+.bannerImage {
+  width: 4rem;
+  height: 4rem;
+  margin: 25px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#signInButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--blue);
+  max-width: 100px;
+  margin: 10px 0 5px 0;
+  color: var(--white);
+}
+
+.links {
+  margin: 2px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.links a {
+  color: var(--blue);
+  text-decoration: underline !important;
+  font-weight: 500;
+}
+
+@media (min-width: 501px) {
+  .inputContainer {
+    min-width: 500px;
+  }
+  .loginPageWrapper {
+    max-width: 100%;
+  }
+}
+@media (max-width: 400px) {
+  .inputContainer {
+    max-width: 500px;
+  }
+  .loginPageWrapper {
+    min-width: 100%;
+  }
+}

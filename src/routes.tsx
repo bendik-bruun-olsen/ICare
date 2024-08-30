@@ -17,88 +17,93 @@ import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasssword/ResetPasswordPage";
 import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";
 import { Navigate } from "react-router-dom";
+import CreatePatientPage from "./pages/CreatePatientPage/CreatePatientPage";
 
 const RequireAuthWrapper = () => {
-  const { isUserLoggedIn } = useAuth();
-  return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
+	const { isUserLoggedIn } = useAuth();
+	return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
 };
 
 const unprotectedRoutes = [
-  {
-    path: Paths.LOGIN,
-    element: <Login />,
-  },
-  {
-    path: Paths.SIGNUP,
-    element: <Signup />,
-  },
-  {
-    path: Paths.RECOVER_PASSWORD,
-    element: <RecoverPasswordPage />,
-  },
-  {
-    path: Paths.RESET_PASSWORD,
-    element: <ResetPasswordPage />,
-  },
-  {
-    path: Paths.ERROR,
-    element: <ErrorPage />,
-  },
+	{
+		path: Paths.LOGIN,
+		element: <Login />,
+	},
+	{
+		path: Paths.SIGNUP,
+		element: <Signup />,
+	},
+	{
+		path: Paths.RECOVER_PASSWORD,
+		element: <RecoverPasswordPage />,
+	},
+	{
+		path: Paths.RESET_PASSWORD,
+		element: <ResetPasswordPage />,
+	},
+	{
+		path: Paths.ERROR,
+		element: <ErrorPage />,
+	},
 ];
 
 const protectedRoutes = [
-  {
-    path: Paths.HOME,
-    element: <HomePage />,
-  },
-  {
-    path: Paths.TODO,
-    element: <ToDoPage />,
-  },
-  {
-    path: Paths.ADD_TODO,
-    element: <AddTodoPage />,
-  },
-  {
-    path: Paths.EDIT_TODO_ITEM,
-    element: <EditToDoPage />,
-  },
-  {
-    path: Paths.EDIT_TODO_SERIES,
-    element: <EditToDoPage />,
-  },
-  {
-    path: Paths.APPOINTMENT,
-    element: <Appointment />,
-  },
-  {
-    path: Paths.ADD_APPOINTMENT,
-    element: <AddAppointment />,
-  },
-  {
-    path: Paths.EDIT_APPOINTMENT,
-    element: <EditAppointment />,
-  },
-  {
-    path: Paths.CONTACT,
-    element: <ContactDetailsPage />,
-  },
-  {
-    path: Paths.ABOUT,
-    element: <AboutUsPage />,
-  },
-  {
-    path: Paths.USER_PROFILE,
-    element: <UserProfilePage />,
-  },
+	{
+		path: Paths.HOME,
+		element: <HomePage />,
+	},
+	{
+		path: Paths.TODO,
+		element: <ToDoPage />,
+	},
+	{
+		path: Paths.ADD_TODO,
+		element: <AddTodoPage />,
+	},
+	{
+		path: Paths.EDIT_TODO_ITEM,
+		element: <EditToDoPage />,
+	},
+	{
+		path: Paths.EDIT_TODO_SERIES,
+		element: <EditToDoPage />,
+	},
+	{
+		path: Paths.APPOINTMENT,
+		element: <Appointment />,
+	},
+	{
+		path: Paths.ADD_APPOINTMENT,
+		element: <AddAppointment />,
+	},
+	{
+		path: Paths.EDIT_APPOINTMENT,
+		element: <EditAppointment />,
+	},
+	{
+		path: Paths.CONTACT,
+		element: <ContactDetailsPage />,
+	},
+	{
+		path: Paths.ABOUT,
+		element: <AboutUsPage />,
+	},
+	{
+		path: Paths.USER_PROFILE,
+		element: <UserProfilePage />,
+	},
+	{
+		path: Paths.CREATE_PATIENT,
+		element: <CreatePatientPage />,
+	},
 ];
 
 const router = createBrowserRouter([
-  {
-    element: <RequireAuthWrapper />,
-    children: protectedRoutes,
-  },
-  ...unprotectedRoutes,
+	{
+		element: <RequireAuthWrapper />,
+		children: protectedRoutes,
+	},
+	...unprotectedRoutes,
 ]);
 
 export default router;
