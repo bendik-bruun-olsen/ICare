@@ -48,6 +48,7 @@ a {
 }
 .inputBackgroundBox {
   margin-top: 22px;
+  margin: 22px 10px 0;
   background-color: var(--fadedblue);
   padding: 20px;
   border-radius: 5px;
@@ -70,5 +71,5 @@ a {
 }
 
 .dropShadow {
-	box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
 }
