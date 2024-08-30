@@ -285,9 +285,6 @@ export default function PatientDetailsPage() {
 							))}
 						</ul>
 					</div>
-					<Button id={styles.createPatientButton} type="submit">
-						Register Patient
-					</Button>
 				</form>
 			</div>
 		</>
