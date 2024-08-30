@@ -262,9 +262,7 @@ export const resetTodoSeriesInputFieldStatus = (
 		endDate: todoSeriesInfo.endDate ? undefined : prev.endDate,
 		time: todoSeriesInfo.time ? undefined : prev.time,
 		selectedDays:
-			todoSeriesInfo.selectedDays.length > 0
-				? undefined
-				: prev.selectedDays,
+			todoSeriesInfo.selectedDays.length > 0 ? undefined : prev.selectedDays,
 	}));
 };
 
