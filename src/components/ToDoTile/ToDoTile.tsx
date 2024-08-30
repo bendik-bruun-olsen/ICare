@@ -128,24 +128,17 @@ export default function ToDoTile({
 	};
 
 	const handleStatusChange = async (newStatus: ToDoStatus) => {
-		console.log("handleStatusChange");
-
 		if (!currentUser) return;
 
 		setCurrentTaskStatus(newStatus);
-		console.log("completedByBefore: ", completedByName);
 
 		if (newStatus === ToDoStatus.checked) {
 			const name = await getNameFromEmail(currentUser);
 			const capitalizedName = capitalizeUsername(name);
 			setCompletedByName(capitalizedName);
 		} else {
-			console.log("setCompletedByName(null)");
-
 			setCompletedByName(null);
 		}
-
-		console.log("completedByAfter: ", completedByName);
 
 		onStatusChange(todoItem.id, newStatus);
 		await updateToDoStatusInDatabase(
