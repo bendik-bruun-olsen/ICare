@@ -4,8 +4,6 @@ import { arrow_back_ios, arrow_forward_ios, repeat } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
 import { TodoItemInterface, ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTodo";
-import { Link } from "react-router-dom";
-import { Paths } from "../../paths";
 import { useNotification } from "../../hooks/useNotification";
 import { capitalizeUsername } from "../../utils";
 import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
@@ -34,9 +32,7 @@ export default function ToDoTile({
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
 	const [createdByName, setCreatedByName] = useState("Unknown");
-	const [completedBy, setCompletedBy] = useState<string | null>(
-		todoItem.completedBy
-	);
+	const [completedByName, setCompletedByName] = useState<string | null>(null);
 	const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 	const [contentMaxHeight, setContentMaxHeight] = useState("30px");
 	const [contentContainerOverflow, setContentContainerOverflow] = useState(
@@ -53,14 +49,37 @@ export default function ToDoTile({
 	const defaultContentMaxHeight = 65;
 
 	useEffect(() => {
-		const fetchNameFromEmail = async () => {
-			const name = await getNameFromEmail(todoItem.createdBy);
-			if (name) {
-				setCreatedByName(name);
+		const fetchNames = async () => {
+			if (todoItem.createdBy) {
+				const name = await getNameFromEmail(todoItem.createdBy);
+				if (name) {
+					const capitalizedName = capitalizeUsername(name);
+					setCreatedByName(capitalizedName);
+				}
+			}
+			if (todoItem.completedBy) {
+				const name = await getNameFromEmail(todoItem.completedBy);
+				if (name) {
+					const capitalizedName = capitalizeUsername(name);
+					setCompletedByName(capitalizedName);
+				}
 			}
 		};
-		fetchNameFromEmail();
-	}, [todoItem.createdBy]);
+		fetchNames();
+	}, [todoItem.createdBy, todoItem.completedBy]);
+
+	useEffect(() => {
+		const fetchCompletedByNameUsingEmail = async () => {
+			if (todoItem.completedBy) {
+				const name = await getNameFromEmail(todoItem.completedBy);
+				if (name) {
+					const capitalizedName = capitalizeUsername(name);
+					setCompletedByName(capitalizedName);
+				}
+			}
+		};
+		fetchCompletedByNameUsingEmail();
+	}, [todoItem.completedBy]);
 
 	useEffect(() => {
 		setOverflowStatus();
@@ -108,7 +127,14 @@ export default function ToDoTile({
 		if (!currentUser) return;
 
 		setCurrentTaskStatus(newStatus);
-		setCompletedBy(newStatus === ToDoStatus.checked ? currentUser : null);
+
+		if (newStatus === ToDoStatus.checked) {
+			const name = await getNameFromEmail(currentUser);
+			const capitalizedName = capitalizeUsername(name);
+			setCompletedByName(capitalizedName);
+		} else {
+			setCompletedByName(null);
+		}
 
 		onStatusChange(todoItem.id, newStatus);
 		await updateToDoStatusInDatabase(
@@ -117,12 +143,6 @@ export default function ToDoTile({
 			currentUser,
 			addNotification
 		);
-
-		if (newStatus === ToDoStatus.checked) {
-			setCompletedBy(await getNameFromEmail(currentUser));
-		} else {
-			setCompletedBy(null);
-		}
 	};
 
 	const renderChip = () => {
@@ -186,13 +206,13 @@ export default function ToDoTile({
 					</p>
 					<div className={styles.metaDataAndOptionsContainer}>
 						<div className={styles.metaDataContainer}>
-							{completedBy && (
+							{completedByName && (
 								<span className={styles.metaDataText}>
-									{`Completed by ${capitalizeUsername(createdByName)}`}
+									{`Completed by ${completedByName}`}
 								</span>
 							)}
 							<span className={styles.metaDataText}>
-								{`Created by ${capitalizeUsername(createdByName)}`}
+								{`Created by ${createdByName}`}
 							</span>
 						</div>
 						<div className={styles.optionsMenuContainer}>
