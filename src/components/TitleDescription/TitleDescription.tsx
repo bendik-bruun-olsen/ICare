@@ -1,9 +1,7 @@
 import React from "react";
 import { Input, Label, TextField } from "@equinor/eds-core-react";
-import styled from "styled-components";
 import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
-
-const StyledTitleDescription = styled.div``;
+import styles from "./TitleDescription.module.css";
 
 type TitleDescriptionProps = {
 	title: string;
@@ -23,8 +21,8 @@ const TitleDescription: React.FC<TitleDescriptionProps> = ({
 	descriptionVariant,
 }) => {
 	return (
-		<>
-			<StyledTitleDescription>
+		<div className={styles.wrapper}>
+			<div className={styles.title}>
 				<Label htmlFor="title" label="Title" />
 				<Input
 					id="title"
@@ -35,8 +33,8 @@ const TitleDescription: React.FC<TitleDescriptionProps> = ({
 					}
 					variant={titleVariant}
 				/>
-			</StyledTitleDescription>
-			<>
+			</div>
+			<div className={styles.description}>
 				<TextField
 					id="description"
 					label="Description"
@@ -48,8 +46,8 @@ const TitleDescription: React.FC<TitleDescriptionProps> = ({
 					}
 					variant={descriptionVariant}
 				/>
-			</>
-		</>
+			</div>
+		</div>
 	);
 };
 
