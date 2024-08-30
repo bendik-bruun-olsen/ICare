@@ -9,6 +9,7 @@ import { Paths } from "../../paths";
 import { auth } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../hooks/useNotification";
+import { capitalizeUsername } from "../../utils";
 
 interface NavbarProps {
 	leftContent: ReactNode;
@@ -20,9 +21,6 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 	const navigate = useNavigate();
 	const username = useAuth().userData?.name;
 	const { addNotification } = useNotification();
-	const capitalizedUsername =
-		(username ?? "").toLowerCase().charAt(0).toUpperCase() +
-		(username ?? "").slice(1);
 
 	const toggleModalVisibility = () => {
 		setIsModalOpen((prev) => !prev);
@@ -49,7 +47,7 @@ export default function Navbar({ leftContent, centerContent }: NavbarProps) {
 				onClick={toggleModalVisibility}
 			>
 				<Icon className={styles.userIcon} data={person} size={32} />
-				<span>{capitalizedUsername}</span>
+				<span>{capitalizeUsername(username ?? "")}</span>
 			</div>
 			{isModalOpen && (
 				<div

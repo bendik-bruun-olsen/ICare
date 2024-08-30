@@ -23,6 +23,7 @@ interface Props {
 
 interface userDataType {
 	name: string;
+	email: string;
 	type: string;
 }
 

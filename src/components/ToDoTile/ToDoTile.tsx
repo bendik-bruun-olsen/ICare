@@ -1,78 +1,172 @@
-import { useRef, useState } from "react";
-import { Icon, Checkbox, Chip } from "@equinor/eds-core-react";
-// import {
-// 	layers,
-// 	copy,
-// 	list,
-// 	repeat,
-// 	bookmark_collection,
-// 	library_books,
-// 	receipt,
-// } from "@equinor/eds-icons";
-import { more_horizontal } from "@equinor/eds-icons";
+import { useEffect, useRef, useState } from "react";
+import { Icon, Checkbox, Chip, Button } from "@equinor/eds-core-react";
+import { arrow_back_ios, arrow_forward_ios, repeat } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
-import { ToDoStatus } from "../../types";
+import { TodoItemInterface, ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTodo";
-import { Link } from "react-router-dom";
-import { Paths } from "../../paths";
 import { useNotification } from "../../hooks/useNotification";
+import { capitalizeUsername } from "../../utils";
+import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
+import { useAuth } from "../../hooks/useAuth/useAuth";
+import TaskOptionsModal from "../TaskOptionsModal/TaskOptionsModal";
 
 interface ToDoTileProps {
-	toDoTitle: string;
-	toDoDescription: string;
-	time: string;
-	taskStatus: ToDoStatus;
-	todoId: string;
-	seriesId: string | null;
 	selectedDate: Date;
+	todoItem: TodoItemInterface;
 	onStatusChange: (todoId: string, newStatus: ToDoStatus) => void;
 }
 
+enum overflowStatus {
+	hidden = "hidden",
+	visible = "visible",
+}
+
 export default function ToDoTile({
-	todoId,
-	toDoTitle,
-	toDoDescription,
-	taskStatus,
-	time,
-	seriesId,
 	selectedDate,
+	todoItem,
 	onStatusChange,
 }: ToDoTileProps) {
-	const [currentTaskStatus, setCurrentTaskStatus] =
-		useState<ToDoStatus>(taskStatus);
+	const [currentTaskStatus, setCurrentTaskStatus] = useState<ToDoStatus>(
+		todoItem.status
+	);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const { addNotification } = useNotification();
-	const moreIconRef = useRef<SVGSVGElement>(null);
 	const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
+	const [createdByName, setCreatedByName] = useState("Unknown");
+	const [completedByName, setCompletedByName] = useState<string | null>(null);
+	const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+	const [contentMaxHeight, setContentMaxHeight] = useState("30px");
+	const [contentContainerOverflow, setContentContainerOverflow] = useState(
+		overflowStatus.hidden
+	);
 
-	function chooseTileStyle(currentToDoStatus: ToDoStatus) {
-		if (currentToDoStatus === ToDoStatus.checked) return styles.checked;
-		if (currentToDoStatus === ToDoStatus.ignore)
-			return styles.notApplicable;
-		return styles.default;
-	}
+	const { addNotification } = useNotification();
+	const currentUser = useAuth().userData?.email;
 
-	const handleMenuClick = () => {
-		if (moreIconRef.current) {
-			const rect = moreIconRef.current.getBoundingClientRect();
+	const contentContainerRef = useRef<HTMLDivElement>(null);
+	const descriptionRef = useRef<HTMLParagraphElement>(null);
+	const optionsIconRef = useRef<SVGSVGElement>(null);
+	const overflowTimeoutRef = useRef<number | undefined>();
+
+	const defaultContentMaxHeight = 65;
+
+	useEffect(() => {
+		const fetchNames = async () => {
+			if (todoItem.createdBy) {
+				const name = await getNameFromEmail(todoItem.createdBy);
+				if (name) {
+					const capitalizedName = capitalizeUsername(name);
+					setCreatedByName(capitalizedName);
+				}
+			}
+			if (todoItem.completedBy) {
+				const name = await getNameFromEmail(todoItem.completedBy);
+				if (name) {
+					const capitalizedName = capitalizeUsername(name);
+					setCompletedByName(capitalizedName);
+				}
+			}
+		};
+		fetchNames();
+	}, [todoItem.createdBy, todoItem.completedBy]);
+
+	useEffect(() => {
+		const fetchCompletedByNameUsingEmail = async () => {
+			if (todoItem.completedBy) {
+				const name = await getNameFromEmail(todoItem.completedBy);
+				if (name) {
+					const capitalizedName = capitalizeUsername(name);
+					setCompletedByName(capitalizedName);
+				}
+			}
+		};
+		fetchCompletedByNameUsingEmail();
+	}, [todoItem.completedBy]);
+
+	useEffect(() => {
+		setOverflowStatus();
+		if (isMenuExpanded && contentContainerRef.current) {
+			setContentMaxHeight(`${contentContainerRef.current.scrollHeight}px`);
+		}
+		if (!isMenuExpanded && contentContainerRef.current) {
+			if (descriptionRef.current) {
+				const calculatedHeight =
+					descriptionRef.current.scrollHeight < defaultContentMaxHeight
+						? descriptionRef.current.scrollHeight
+						: defaultContentMaxHeight;
+				setContentMaxHeight(`${calculatedHeight}px`);
+			}
+		}
+	}, [isMenuExpanded]);
+
+	const setOverflowStatus = () => {
+		if (overflowTimeoutRef.current) {
+			clearTimeout(overflowTimeoutRef.current);
+		}
+		if (isMenuExpanded) {
+			overflowTimeoutRef.current = window.setTimeout(() => {
+				setContentContainerOverflow(overflowStatus.visible);
+			}, 300);
+		}
+		if (!isMenuExpanded) {
+			setContentContainerOverflow(overflowStatus.hidden);
+		}
+	};
+
+	const handleMenuExpand = () => {
+		setIsMenuExpanded((prev) => !prev);
+	};
+
+	const toggleModal = () => setIsModalOpen((prev) => !prev);
+
+	const handleOptionsClick = () => {
+		if (optionsIconRef.current) {
+			const rect = optionsIconRef.current.getBoundingClientRect();
 			const spaceBelow = window.innerHeight - rect.bottom;
 			setDisplayDropdownAbove(spaceBelow < 180);
 		}
-		setIsModalOpen((prev) => !prev);
+		toggleModal();
 	};
 
 	const handleStatusChange = async (newStatus: ToDoStatus) => {
+		if (!currentUser) return;
+
 		setCurrentTaskStatus(newStatus);
-		onStatusChange(todoId, newStatus);
-		await updateToDoStatusInDatabase(todoId, newStatus, addNotification);
+
+		if (newStatus === ToDoStatus.checked) {
+			const name = await getNameFromEmail(currentUser);
+			const capitalizedName = capitalizeUsername(name);
+			setCompletedByName(capitalizedName);
+		} else {
+			setCompletedByName(null);
+		}
+
+		onStatusChange(todoItem.id, newStatus);
+		await updateToDoStatusInDatabase(
+			todoItem.id,
+			newStatus,
+			currentUser,
+			addNotification
+		);
 	};
 
-	const chipMapping = {
-		[ToDoStatus.checked]: { variant: "active", label: "Completed" },
-		[ToDoStatus.unchecked]: { variant: "default", label: "Active" },
-		[ToDoStatus.ignore]: { variant: "error", label: "Ignored" },
+	const renderChip = () => {
+		const chipMapping = {
+			[ToDoStatus.checked]: { variant: "active", label: "Completed" },
+			[ToDoStatus.unchecked]: { variant: "default", label: "Active" },
+			[ToDoStatus.ignore]: { variant: "error", label: "Ignored" },
+		};
+		const currentChip = chipMapping[currentTaskStatus];
+
+		return (
+			<div
+				className={currentChip.variant === "error" ? "" : styles.chipOutline}
+			>
+				<Chip variant={currentChip.variant as "default" | "active" | "error"}>
+					{currentChip.label}
+				</Chip>
+			</div>
+		);
 	};
-	const currentChip = chipMapping[currentTaskStatus];
 
 	return (
 		<div className={styles.checkboxAndToDoTileWrapper}>
@@ -88,101 +182,67 @@ export default function ToDoTile({
 				disabled={currentTaskStatus === ToDoStatus.ignore}
 			/>
 			<div
-				className={`${styles.toDoWrapper} ${chooseTileStyle(
-					currentTaskStatus
-				)}`}
+				className={`${styles.toDoWrapper} ${
+					currentTaskStatus === ToDoStatus.checked ? styles.checked : ""
+				}`}
 			>
-				<div className={styles.titleSection}>
-					<div className={styles.titleContainer}>
-						<h2>{`${time} - ${toDoTitle}`}</h2>
-						{/* <Icon data={library_books} size={24} /> */}
-					</div>
-					<Chip
-						variant={
-							currentChip.variant as
-								| "default"
-								| "active"
-								| "error"
-						}
-					>
-						{currentChip.label}
-					</Chip>
+				<div className={styles.tags}>
+					{todoItem.seriesId && (
+						<div className={styles.seriesIconContainer}>
+							<Icon data={repeat} size={16} />
+						</div>
+					)}
+					{renderChip()}
 				</div>
-				<div className={styles.descriptionSection}>
-					<p>{toDoDescription}</p>
-					<div className={styles.menuIconContainer}>
-						<Icon
-							data={more_horizontal}
-							size={40}
-							className={styles.moreIcon}
-							onClick={handleMenuClick}
-							ref={moreIconRef}
-						/>
-						{isModalOpen && (
-							<>
-								<div
-									className={styles.modalOverlay}
-									onClick={handleMenuClick}
-								></div>
-								<div
-									className={`${styles.modalContainer} ${
-										displayDropdownAbove
-											? styles.dropdownAbove
-											: ""
-									}`}
-									onClick={(e) => e.stopPropagation()}
-								>
-									<ul className={styles.modalList}>
-										<li
-											className={styles.modalItem}
-											onClick={() =>
-												handleStatusChange(
-													currentTaskStatus ===
-														ToDoStatus.ignore
-														? ToDoStatus.unchecked
-														: ToDoStatus.ignore
-												)
-											}
-										>
-											<p>
-												{currentTaskStatus ===
-												ToDoStatus.ignore
-													? "Mark as applicable"
-													: "Mark as N/A"}
-											</p>
-										</li>
-										<li className={styles.modalItem}>
-											<Link
-												to={Paths.EDIT_TODO_ITEM.replace(
-													":todoId",
-													todoId
-												)}
-												state={{ selectedDate }}
-											>
-												<p>Edit/Delete This Task</p>
-											</Link>
-										</li>
-										{seriesId && (
-											<li className={styles.modalItem}>
-												<Link
-													to={Paths.EDIT_TODO_SERIES.replace(
-														":seriesId",
-														seriesId
-													)}
-													state={{ selectedDate }}
-												>
-													<p>
-														Edit/Delete All Tasks In
-														Series
-													</p>
-												</Link>
-											</li>
-										)}
-									</ul>
-								</div>
-							</>
-						)}
+				<h3 className={styles.title}>
+					{`${todoItem.time} - ${todoItem.title}`}
+				</h3>
+				<div
+					className={styles.contentContainer}
+					style={{
+						maxHeight: contentMaxHeight,
+						overflow: contentContainerOverflow,
+					}}
+					ref={contentContainerRef}
+				>
+					<p className={styles.description} ref={descriptionRef}>
+						{todoItem.description}
+					</p>
+					<div className={styles.metaDataAndOptionsContainer}>
+						<div className={styles.metaDataContainer}>
+							{completedByName && (
+								<span className={styles.metaDataText}>
+									{`Completed by ${completedByName}`}
+								</span>
+							)}
+							<span className={styles.metaDataText}>
+								{`Created by ${createdByName}`}
+							</span>
+						</div>
+						<div className={styles.optionsMenuContainer}>
+							<Button onClick={handleOptionsClick} ref={optionsIconRef}>
+								Options
+							</Button>
+							{isModalOpen && (
+								<TaskOptionsModal
+									isAbove={displayDropdownAbove}
+									onClose={toggleModal}
+									onStatusChange={handleStatusChange}
+									currentTaskStatus={currentTaskStatus}
+									todoItem={todoItem}
+									selectedDate={selectedDate}
+								/>
+							)}
+						</div>
 					</div>
+				</div>
+				<div
+					className={styles.expandMenuButtonContainer}
+					onClick={handleMenuExpand}
+				>
+					<Button className={styles.expandMenuButton} variant={"ghost_icon"}>
+						<Icon data={isMenuExpanded ? arrow_back_ios : arrow_forward_ios} />
+					</Button>
 				</div>
 			</div>
 		</div>
