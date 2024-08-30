@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
-import StartAndEndDate from "../../components/StartAndEndDate";
-import SelectCategory from "../../components/SelectCategory";
+import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
+import SelectCategory from "../../components/SelectCategory/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
-import TitleDescription from "../../components/TitleDescription";
+import TitleDescription from "../../components/TitleDescription/TitleDescription";
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";

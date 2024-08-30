@@ -1,0 +1,14 @@
+.wrapper {
+	display: flex;
+	flex-direction: column;
+}
+
+.wrapper label {
+	padding: 0 0 5px 0;
+	color: var(--black);
+}
+
+.title,
+.description {
+	margin-bottom: 10px;
+}
