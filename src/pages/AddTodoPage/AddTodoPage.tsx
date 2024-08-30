@@ -222,14 +222,14 @@ const AddToDoPage: React.FC = () => {
 	if (isLoading)
 		return (
 			<>
-				<Navbar leftContent={<BackHomeButton />} centerContent="Add ToDo" />
+				<Navbar centerContent="Add ToDo" />
 				<Loading />
 			</>
 		);
 
 	return (
 		<>
-			<Navbar leftContent={<BackHomeButton />} centerContent="Add To Do" />
+			<Navbar centerContent="Add To Do" />
 			<div className="pageWrapper">
 				<form onSubmit={handleSubmit}>
 					<div className={styles.formContainer}>

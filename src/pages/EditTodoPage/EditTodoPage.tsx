@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Button, Checkbox, TextField } from "@equinor/eds-core-react";
 import { Timestamp } from "firebase/firestore";
 import Navbar from "../../components/Navbar/Navbar";
-import BackHomeButton from "../../components/BackHomeButton";
 import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
@@ -340,7 +339,6 @@ const EditToDoPage = () => {
 		return (
 			<>
 				<Navbar
-					leftContent={<BackHomeButton />}
 					centerContent={isEditingSeries ? "Edit ToDo Series" : "Edit ToDo"}
 				/>
 				<Loading />
@@ -350,7 +348,6 @@ const EditToDoPage = () => {
 	return (
 		<>
 			<Navbar
-				leftContent={<BackHomeButton />}
 				centerContent={isEditingSeries ? "Edit ToDo Series" : "Edit ToDo"}
 			/>
 			<div className="pageWrapper">
