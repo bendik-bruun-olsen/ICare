@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Input, Label, NativeSelect, Icon } from "@equinor/eds-core-react";
 import { edit } from "@equinor/eds-icons";
-import { db } from "../../firebase/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import getUserData from "../../firebase/UserProfileService/getUserData";
+import updateUserData from "../../firebase/UserProfileService/updateUserData";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { UserData } from "../../types";
 import SavingSpinner from "../SavingSpinner/SavingSpinner";
@@ -20,20 +20,15 @@ const UserProfileForm: React.FC = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       if (currentUser?.email) {
-        const userDocRef = doc(db, "users", currentUser.email);
-        const docSnap = await getDoc(userDocRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data() as UserData;
+        const data = await getUserData(currentUser.email);
+        if (data) {
           setUserData(data);
-        } else {
-          console.error("No such document!");
         }
       }
     };
-
-    fetchUserData();
+    fetchData();
   }, [currentUser]);
 
   const validateNameField = useCallback((): boolean => {
@@ -60,9 +55,7 @@ const UserProfileForm: React.FC = () => {
 
       setIsSaving(true);
       try {
-        const userDocRef = doc(db, "users", currentUser.email);
-        await updateDoc(userDocRef, { ...userData });
-
+        await updateUserData(currentUser.email, userData);
         setIsChanged(false);
       } catch (error) {
         console.error("Error updating document:", error);
@@ -83,7 +76,7 @@ const UserProfileForm: React.FC = () => {
       if (isChanged) {
         saveDataToFirebase();
       }
-    }, 5000);
+    }, 2000);
 
     return () => {
       if (timerRef.current) {
@@ -135,7 +128,7 @@ const UserProfileForm: React.FC = () => {
       document.removeEventListener("mousedown", handleClick);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [validateNameField, userData, saveDataToFirebase, isChanged]);
+  }, [validateNameField, saveDataToFirebase, isChanged]);
 
   const handleEditClick = () => {
     setIsEditing(true);

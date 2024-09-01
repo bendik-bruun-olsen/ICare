@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Icon } from "@equinor/eds-core-react";
 import { camera_add_photo } from "@equinor/eds-icons";
-import { db, storage } from "../../firebase/firebase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  listAll,
-  deleteObject,
-} from "firebase/storage";
+import getUserProfile from "../../firebase/UserProfilePictureService/getUserProfile";
+import updateUserProfilePicture from "../../firebase/UserProfilePictureService/updateUserProfilePicture";
+import getProfilePictureUrl from "../../firebase/UserProfilePictureService/getProfilePictureUrl";
+import uploadProfilePicture from "../../firebase/UserProfilePictureService/uploadProfilePicture";
+import deleteAllFilesInFolder from "../../firebase/UserProfilePictureService/deleteAllFilesInFolder";
+import getDefaultProfilePictureUrl from "../../firebase/UserProfilePictureService/getDefaultProfilePictureUrl";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import styles from "./ProfilePicture.module.css";
-import { UserProfile } from "../../types";
 
 const ProfilePicture: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -27,35 +23,24 @@ const ProfilePicture: React.FC = () => {
     const fetchUserProfilePic = async () => {
       if (currentUser?.email) {
         const userFolder = currentUser.email;
-        const userDocRef = doc(db, "users", currentUser.email);
-        const docSnap = await getDoc(userDocRef);
+        const userProfile = await getUserProfile(currentUser.email);
 
-        if (docSnap.exists()) {
-          const data = docSnap.data() as UserProfile;
-
-          if (data.profilePictureUrl) {
-            try {
-              const storageRef = ref(storage, `profilePictures/${userFolder}/`);
-              const listResult = await listAll(storageRef);
-
-              if (listResult.items.length === 0) {
-                await updateDoc(userDocRef, { profilePictureUrl: "" });
-                loadDefaultProfilePicture();
-              } else {
-                setSelectedImage(data.profilePictureUrl);
-              }
-            } catch (error) {
-              console.error(
-                "Error checking profile picture in storage:",
-                error
-              );
+        if (userProfile?.profilePictureUrl) {
+          try {
+            const imageUrl = await getProfilePictureUrl(
+              `profilePictures/${userFolder}/`
+            );
+            if (imageUrl) {
+              setSelectedImage(imageUrl);
+            } else {
+              await updateUserProfilePicture(currentUser.email, "");
               loadDefaultProfilePicture();
             }
-          } else {
+          } catch (error) {
+            console.error("Error checking profile picture in storage:", error);
             loadDefaultProfilePicture();
           }
         } else {
-          console.error("No such document! Loading default picture.");
           loadDefaultProfilePicture();
         }
       } else {
@@ -68,8 +53,7 @@ const ProfilePicture: React.FC = () => {
 
   const loadDefaultProfilePicture = async () => {
     try {
-      const defaultPicRef = ref(storage, "Default.png");
-      const defaultUrl = await getDownloadURL(defaultPicRef);
+      const defaultUrl = await getDefaultProfilePictureUrl();
       setSelectedImage(defaultUrl);
     } catch (error) {
       console.error("Error loading default profile picture:", error);
@@ -90,37 +74,19 @@ const ProfilePicture: React.FC = () => {
       setErrorMessage("Max file size: 1 MB");
       setIsFileSizeError(false);
       const userFolder = currentUser?.email;
-      const storageRef = ref(storage, `profilePictures/${userFolder}/`);
+      const storagePath = `profilePictures/${userFolder}/`;
 
       try {
-        const listResult = await listAll(storageRef);
-        const deleteOldPic = listResult.items.map((item) => deleteObject(item));
-        await Promise.all(deleteOldPic);
-
+        await deleteAllFilesInFolder(storagePath);
         const newFileName = `${Date.now()}_${file.name}`;
-        const newStorageRef = ref(
-          storage,
-          `profilePictures/${userFolder}/${newFileName}`
+        const downloadURL = await uploadProfilePicture(
+          `${storagePath}${newFileName}`,
+          file
         );
-
-        const uploadTask = uploadBytesResumable(newStorageRef, file);
-
-        uploadTask.on(
-          "state_changed",
-          null,
-          (error) => {
-            console.error("Upload error: ", error);
-          },
-          async () => {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            if (currentUser?.email) {
-              await updateDoc(doc(db, "users", currentUser.email), {
-                profilePictureUrl: downloadURL,
-              });
-              setSelectedImage(downloadURL);
-            }
-          }
-        );
+        if (currentUser?.email) {
+          await updateUserProfilePicture(currentUser.email, downloadURL);
+          setSelectedImage(downloadURL);
+        }
       } catch (error) {
         console.error("Error uploading profile picture:", error);
         setErrorMessage("Failed to upload profile picture. Please try again.");

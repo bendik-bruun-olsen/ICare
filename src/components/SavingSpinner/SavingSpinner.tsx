@@ -4,7 +4,7 @@ import styles from "./SavingSpinner.module.css";
 
 const SavingSpinner: React.FC = () => {
   return (
-    <div className={styles.spinnerOverlay}>
+    <div className={styles.spinnerContainer}>
       <p>Saving</p>
       <Progress.Dots color="neutral" />
     </div>
