@@ -62,7 +62,7 @@ const UserProfileForm: React.FC = () => {
       } finally {
         setTimeout(() => {
           setIsSaving(false);
-        }, 1000);
+        }, 500);
       }
     }
   }, [currentUser?.email, userData, isChanged, validateNameField]);
