@@ -77,12 +77,12 @@ export default function LoginPage() {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="pageWrapper" id="loginPageWrapper">
+    <div className="loginPageWrapper">
       <div className={styles.heading}>
         <Logo size={"70px"} color={"var(--blue)"} />
       </div>
 
-      <img src={BannerImage} alt="logo-image" className="bannerImage" />
+      <img src={BannerImage} alt="logo-image" className={styles.bannerImage} />
 
       {notificationMessage && (
         <div className="notification">{notificationMessage}</div>

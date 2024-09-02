@@ -1,10 +1,11 @@
 .heading {
   text-align: center;
+  color: var(--blue);
 }
-#loginPageWrapper {
+.loginPageWrapper {
   max-width: 960px;
-  margin: 0 auto;
-  padding: calc(20px + var(--navbar-height)) 20px 0 20px;
+  margin: 20px 10px;
+  padding: calc(20px) 20px 0 20px;
 }
 .inputContainer {
   width: 100%;
@@ -21,8 +22,8 @@
   color: var(--black);
 }
 .bannerImage {
-  width: 4rem;
-  height: 4rem;
+  width: 50%;
+  height: 40%;
   margin: 25px auto;
   display: flex;
   justify-content: center;
@@ -40,7 +41,7 @@
 }
 
 .links {
-  margin: 2px 0;
+  margin: 2px 10px;
   display: flex;
   justify-content: space-between;
 }
@@ -49,21 +50,4 @@
   color: var(--blue);
   text-decoration: underline !important;
   font-weight: 500;
-}
-
-@media (min-width: 501px) {
-  .inputContainer {
-    min-width: 500px;
-  }
-  .loginPageWrapper {
-    max-width: 100%;
-  }
-}
-@media (max-width: 400px) {
-  .inputContainer {
-    max-width: 500px;
-  }
-  .loginPageWrapper {
-    min-width: 100%;
-  }
 }
