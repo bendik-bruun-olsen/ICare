@@ -6,6 +6,13 @@
 	position: relative;
 }
 
+.image {
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
 .cameraIcon {
 	position: absolute;
 	bottom: 0;
@@ -15,4 +22,8 @@
 	padding: 5px;
 	cursor: pointer;
 	display: block;
+}
+
+.imageInput {
+	display: none;
 }

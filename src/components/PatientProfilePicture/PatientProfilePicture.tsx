@@ -51,7 +51,6 @@ export default function PatientProfilePicture({
 				addNotification("Failed to fetch patient data", "error");
 			}
 		};
-
 		fetchData();
 	}, [isEditingPatient]);
 
@@ -64,17 +63,12 @@ export default function PatientProfilePicture({
 	};
 
 	return (
-		<div className="profile-container" ref={profileContainerRef}>
+		<div ref={profileContainerRef}>
 			<div className={styles.profilePictureContainer}>
 				<img
 					src={selectedImage || ""}
 					alt="Profile picture"
-					style={{
-						width: "150px",
-						height: "150px",
-						borderRadius: "50%",
-						objectFit: "cover",
-					}}
+					className={styles.image}
 				/>
 				<div
 					className={styles.cameraIcon}
@@ -84,11 +78,10 @@ export default function PatientProfilePicture({
 				</div>
 				<input
 					accept="image/*"
-					id="icon-button-file"
 					type="file"
 					capture="user"
 					onChange={handleImageAdd}
-					style={{ display: "none" }}
+					className={styles.imageInput}
 					ref={fileInputRef}
 				/>
 			</div>
