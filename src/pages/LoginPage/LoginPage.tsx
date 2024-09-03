@@ -56,10 +56,11 @@ export default function LoginPage() {
       navigate(Paths.HOME);
     } catch (err) {
       const error = err as FirestoreError;
-      if (
-        error.message.includes("auth/invalid-email") ||
-        error.message.includes("auth/invalid-credential")
-      ) {
+      const invalidEmail = error.message.includes("auth/invalid-email");
+      const invalidCredential = error.message.includes(
+        "auth/invalid-credential"
+      );
+      if (invalidEmail || invalidCredential) {
         setPasswordError("Invalid email or password.");
         addNotification(
           "Invalid login credentials. Please try again.",
@@ -77,7 +78,7 @@ export default function LoginPage() {
   if (isLoading) return <Loading />;
 
   return (
-    <div className="loginPageWrapper">
+    <div className={styles.loginPageWrapper}>
       <div className={styles.heading}>
         <Logo size={"70px"} color={"var(--blue)"} />
       </div>
