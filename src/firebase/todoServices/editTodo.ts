@@ -40,12 +40,15 @@ export const editTodoItem = async (
 export const editTodoSeries = async (
 	seriesId: string,
 	updatedSeriesInfo: TodoSeriesInfoInterface,
+	currentUser: string,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");
 		const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
+
+		console.log("currentUser received in editTodoSeries", currentUser);
 
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
@@ -81,6 +84,8 @@ export const editTodoSeries = async (
 				seriesId: seriesId,
 				date: updatedSeriesInfo.startDate,
 				id: "",
+				createdBy: currentUser,
+				completedBy: null,
 			},
 			formatTimestampToDateString(startOfToday),
 			formatTimestampToDateString(updatedSeriesInfo.endDate),
@@ -105,8 +110,7 @@ export const editTodoSeries = async (
 	}
 };
 
-export const editSingleTodoToSeries = async (
-	todoId: string,
+export const createTodoSeriesFromSingleTodo = async (
 	todoItem: TodoItemInterface,
 	seriesInfo: TodoSeriesInfoInterface,
 	addNotification: NotificationContextType["addNotification"]
@@ -115,7 +119,7 @@ export const editSingleTodoToSeries = async (
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const seriesCollection = collection(patientRef, "todoSeriesInfo");
 		const todoCollection = collection(patientRef, "todoItems");
-		const todoRef = doc(todoCollection, todoId);
+		const todoRef = doc(todoCollection, todoItem.id);
 
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);

@@ -87,3 +87,20 @@ export const getTodosBySelectedDate = async (
 		return [];
 	}
 };
+
+export const getTodoSerieIdFromTodoId = async (
+	todoId: string
+): Promise<string | null> => {
+	try {
+		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const todoCollection = collection(patientRef, "todoItems");
+		const todoRef = doc(todoCollection, todoId);
+		const todoSnap = await getDoc(todoRef);
+		if (!todoSnap.exists()) {
+			return null;
+		}
+		return todoSnap.data().seriesId;
+	} catch {
+		return null;
+	}
+};

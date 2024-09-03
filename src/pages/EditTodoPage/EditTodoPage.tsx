@@ -7,12 +7,13 @@ import SelectCategory from "../../components/SelectCategory/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription/TitleDescription";
 import {
-	editSingleTodoToSeries,
+	createTodoSeriesFromSingleTodo,
 	editTodoItem,
 	editTodoSeries,
 } from "../../firebase/todoServices/editTodo";
 import {
 	getTodo,
+	getTodoSerieIdFromTodoId,
 	getTodoSeriesInfo,
 } from "../../firebase/todoServices/getTodo";
 import styles from "./EditTodoPage.module.css";
@@ -47,23 +48,30 @@ import {
 import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
 import { Paths } from "../../paths";
 import Loading from "../../components/Loading/Loading";
+import { useAuth } from "../../hooks/useAuth/useAuth";
+
+interface LocationState {
+	selectedDate: Date;
+	editingSeries: boolean;
+}
 
 const EditToDoPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const { selectedDate: DateSelectedInTodoPage } = location.state;
+	const currentUser = useAuth().userData?.email;
+	const { selectedDate: DateSelectedInTodoPage, editingSeries } =
+		location.state as LocationState;
+	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
+	const [isEditingSeries, setIsEditingSeries] = useState(editingSeries);
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
-	const { todoId: todoItemIdFromParams, seriesId: seriesIdFromParams } =
-		useParams<{
-			todoId: string;
-			seriesId: string;
-		}>();
-	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
-	const [isEditingSeries, setIsEditingSeries] = useState(!!seriesIdFromParams);
+	const { todoId: todoItemIdFromParams } = useParams<{
+		todoId: string;
+	}>();
+
 	const { addNotification } = useNotification();
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
@@ -77,67 +85,44 @@ const EditToDoPage = () => {
 		undefined
 	);
 
-	async function fetchSeriesInfo() {
-		const id = seriesIdFromParams || todoItem.seriesId;
-		if (!id) return setHasError(true);
-		try {
-			setIsLoading(true);
-			const result = await getTodoSeriesInfo(id, addNotification);
-			if (result) {
-				setTodoSeriesInfo(result as TodoSeriesInfoInterface);
-				setEndDateMinValue(result.startDate.toDate());
-			}
-		} finally {
-			setIsLoading(false);
+	async function fetchTodoItem() {
+		if (!todoItemIdFromParams) return setHasError(true);
+		const id = todoItemIdFromParams;
+
+		const result = await getTodo(id, addNotification);
+		if (result) {
+			setTodoItem(result as TodoItemInterface);
 		}
 	}
 
-	async function fetchTodoItem() {
-		const id = todoItemIdFromParams;
+	async function fetchSeriesInfo() {
+		if (!todoItemIdFromParams) return setHasError(true);
+		const id = await getTodoSerieIdFromTodoId(todoItemIdFromParams);
+
 		if (!id) return setHasError(true);
-		try {
-			setIsLoading(true);
-			const result = await getTodo(id, addNotification);
-			if (result) {
-				setTodoItem(result as TodoItemInterface);
-			}
-		} finally {
-			setIsLoading(false);
+		const result = await getTodoSeriesInfo(id, addNotification);
+		if (result) {
+			setTodoSeriesInfo(result as TodoSeriesInfoInterface);
+			setEndDateMinValue(result.startDate.toDate());
 		}
 	}
 
 	useEffect(() => {
 		const fetchData = async () => {
-			if (isEditingSeries) {
-				await fetchSeriesInfo();
-				return;
+			try {
+				setIsLoading(true);
+				if (isEditingSeries) {
+					await fetchSeriesInfo();
+				}
+				if (!isEditingSeries) {
+					await fetchTodoItem();
+				}
+			} finally {
+				setIsLoading(false);
 			}
-			await fetchTodoItem();
 		};
 		fetchData();
-	}, [isEditingSeries, todoItemIdFromParams, seriesIdFromParams]);
-
-	const handleSeriesEdit = async () => {
-		const seriesId = seriesIdFromParams || todoItem.seriesId;
-		if (!seriesId) return setHasError(true);
-		try {
-			setIsLoading(true);
-			await editTodoSeries(seriesId, todoSeriesInfo, addNotification);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	const handleSingleTodoEdit = async () => {
-		const todoItemId = todoItemIdFromParams || todoItem.id;
-		if (!todoItemId) return setHasError(true);
-		try {
-			setIsLoading(true);
-			await editTodoItem(todoItemId, todoItem, addNotification);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	}, [isEditingSeries, todoItemIdFromParams]);
 
 	useEffect(() => {
 		if (isEditingSeries || isCreatingNewSeries) {
@@ -178,15 +163,6 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const handleToggleEditSeries = () => {
-		setIsEditingSeries((prev) => {
-			if (!prev) {
-				setIsCreatingNewSeries(false);
-			}
-			return !prev;
-		});
-	};
-
 	const handleToggleRepeat = () => {
 		setIsCreatingNewSeries((prev) => {
 			if (!prev) {
@@ -210,6 +186,43 @@ const EditToDoPage = () => {
 		});
 	};
 
+	const handleToggleEditSeries = () => {
+		setIsEditingSeries((prev) => {
+			if (!prev) {
+				setIsCreatingNewSeries(false);
+			}
+			return !prev;
+		});
+	};
+
+	const handleSeriesEdit = async () => {
+		if (!todoItemIdFromParams) return setHasError(true);
+		const seriesId = await getTodoSerieIdFromTodoId(todoItemIdFromParams);
+		if (!seriesId || !currentUser) return setHasError(true);
+		try {
+			setIsLoading(true);
+			await editTodoSeries(
+				seriesId,
+				todoSeriesInfo,
+				currentUser,
+				addNotification
+			);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleSingleTodoEdit = async () => {
+		const todoItemId = todoItemIdFromParams || todoItem.id;
+		if (!todoItemId) return setHasError(true);
+		try {
+			setIsLoading(true);
+			await editTodoItem(todoItemId, todoItem, addNotification);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	const handleCreateNewSeriesFromSingleTodo = async () => {
 		const todoItemId = todoItemIdFromParams || todoItem.id;
 		if (!todoItemId) {
@@ -218,8 +231,7 @@ const EditToDoPage = () => {
 		}
 		try {
 			setIsLoading(true);
-			await editSingleTodoToSeries(
-				todoItemId,
+			await createTodoSeriesFromSingleTodo(
 				todoItem,
 				todoSeriesInfo,
 				addNotification
@@ -230,8 +242,9 @@ const EditToDoPage = () => {
 	};
 
 	const handleDelete = async () => {
+		if (!todoItemIdFromParams) return setHasError(true);
 		if (isEditingSeries) {
-			const seriesId = seriesIdFromParams || todoItem.seriesId;
+			const seriesId = await getTodoSerieIdFromTodoId(todoItemIdFromParams);
 			if (!seriesId) return setHasError(true);
 			try {
 				setIsConfirmModalOpen(false);
@@ -466,7 +479,7 @@ const EditToDoPage = () => {
 													: todoItemInputFieldStatus.time
 											}
 										/>
-										{todoItem.seriesId ? (
+										{todoItem.seriesId || isEditingSeries ? (
 											<Checkbox
 												label="Edit Series"
 												checked={isEditingSeries}
@@ -475,8 +488,7 @@ const EditToDoPage = () => {
 										) : (
 											<Checkbox
 												label="Repeat"
-												checked={isCreatingNewSeries || isEditingSeries}
-												disabled={seriesIdFromParams ? true : false}
+												checked={isCreatingNewSeries}
 												onChange={handleToggleRepeat}
 											/>
 										)}
