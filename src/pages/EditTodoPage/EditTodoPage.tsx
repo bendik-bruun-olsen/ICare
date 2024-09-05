@@ -252,7 +252,7 @@ const EditToDoPage = () => {
 				});
 			}
 			if (!isCreatingNewSeries) {
-				handleValidateItemFields();
+				if (!handleValidateItemFields()) return;
 				await editTodoItem(itemId, todoItem, addNotification);
 				return navigate(Paths.TODO, {
 					state: { selectedDate: DateSelectedInTodoPage },
