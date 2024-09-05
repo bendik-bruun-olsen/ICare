@@ -7,7 +7,6 @@ import TitleDescription from "../../components/TitleDescription/TitleDescription
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
-import BackHomeButton from "../../components/BackHomeButton";
 import {
 	addSingleNewTodo,
 	addMultipleNewTodos,
@@ -26,8 +25,8 @@ import {
 	formatTimestampToDateString,
 	generateTodosForSeries,
 	mapSelectedDaysToNumbers,
-	checkAndClearTodoItemInputStatus,
-	checkAndClearTodoSeriesInputStatus,
+	clearTodoItemInputStatus,
+	clearTodoSeriesInputStatus,
 	validateDateRange,
 	validateTodoItemFields,
 	validateTodoSeriesFields,
@@ -77,13 +76,10 @@ const AddToDoPage: React.FC = () => {
 
 	useEffect(() => {
 		if (isRepeating) {
-			checkAndClearTodoSeriesInputStatus(
-				todoSeriesInfo,
-				setTodoSeriesInputFieldStatus
-			);
+			clearTodoSeriesInputStatus(todoSeriesInfo, setTodoSeriesInputFieldStatus);
 			return;
 		}
-		checkAndClearTodoItemInputStatus(todoItem, setTodoItemInputFieldStatus);
+		clearTodoItemInputStatus(todoItem, setTodoItemInputFieldStatus);
 	}, [todoItem, todoSeriesInfo]);
 
 	const handleToggleRepeat = () => {

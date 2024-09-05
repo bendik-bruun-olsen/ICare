@@ -19,8 +19,8 @@ import {
 import styles from "./EditTodoPage.module.css";
 import {
 	formatTimestampToDateString,
-	checkAndClearTodoItemInputStatus as clearTodoItemInputStatus,
-	checkAndClearTodoSeriesInputStatus as clearTodoSeriesInputStatus,
+	clearTodoItemInputStatus,
+	clearTodoSeriesInputStatus,
 	validateDateRange,
 	validateTodoItemFields,
 	validateTodoSeriesFields,
@@ -64,6 +64,7 @@ const EditToDoPage = () => {
 		locationState || { selectedDate: new Date(), editingSeries: false };
 	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
 	const [isEditingSeries, setIsEditingSeries] = useState(editingSeries);
+	const [isSeriesMode, setIsSeriesMode] = useState(editingSeries);
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -119,15 +120,28 @@ const EditToDoPage = () => {
 	}, [isEditingSeries, todoItemIdFromParams]);
 
 	useEffect(() => {
-		if (isEditingSeries || isCreatingNewSeries) {
+		setIsSeriesMode(isEditingSeries || isCreatingNewSeries);
+	}, [isEditingSeries, isCreatingNewSeries]);
+
+	useEffect(() => {
+		if (isSeriesMode) {
 			clearTodoSeriesInputStatus(todoSeriesInfo, setTodoSeriesInputStatus);
 			return;
 		}
 		clearTodoItemInputStatus(todoItem, setTodoItemInputStatus);
-	}, [todoItem, todoSeriesInfo]);
+	}, [todoItem, todoSeriesInfo, isSeriesMode]);
+
+	const handleToggleEditSeries = () => {
+		setIsEditingSeries((prev) => {
+			if (!prev) {
+				setIsCreatingNewSeries(false);
+			}
+			return !prev;
+		});
+	};
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (isEditingSeries || isCreatingNewSeries) {
+		if (isSeriesMode) {
 			setTodoSeriesInfo((prev) => ({ ...prev, time: e.target.value }));
 			return;
 		}
@@ -136,7 +150,7 @@ const EditToDoPage = () => {
 
 	const handleDateChange = (field: string, date: string) => {
 		const newTimestamp = Timestamp.fromDate(new Date(date));
-		if (isEditingSeries || isCreatingNewSeries) {
+		if (isSeriesMode) {
 			if (field === "startDate") setEndDateMinValue(new Date(date));
 			setTodoSeriesInfo((prev) => ({ ...prev, [field]: newTimestamp }));
 			return;
@@ -172,15 +186,6 @@ const EditToDoPage = () => {
 						: [...prev.selectedDays, currentDay],
 				}));
 				setEndDateMinValue(todoItem.date.toDate());
-			}
-			return !prev;
-		});
-	};
-
-	const handleToggleEditSeries = () => {
-		setIsEditingSeries((prev) => {
-			if (!prev) {
-				setIsCreatingNewSeries(false);
 			}
 			return !prev;
 		});
@@ -323,7 +328,7 @@ const EditToDoPage = () => {
 			)
 				return;
 
-			await handleCreateNewSeriesFromSingleTodo(itemId);
+			await handleCreateNewSeriesFromSingleTodo();
 			return navigate(Paths.TODO, {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
@@ -352,13 +357,9 @@ const EditToDoPage = () => {
 						<div className="inputBackgroundBox">
 							<div className={styles.mainContentContainer}>
 								<TitleDescription
-									title={
-										isEditingSeries || isCreatingNewSeries
-											? todoSeriesInfo.title
-											: todoItem.title
-									}
+									title={isSeriesMode ? todoSeriesInfo.title : todoItem.title}
 									setTitle={(title) =>
-										isEditingSeries || isCreatingNewSeries
+										isSeriesMode
 											? setTodoSeriesInfo((prev) => ({
 													...prev,
 													title,
@@ -369,17 +370,17 @@ const EditToDoPage = () => {
 											  }))
 									}
 									titleVariant={
-										isEditingSeries || isCreatingNewSeries
+										isSeriesMode
 											? todoSeriesInputStatus.title
 											: todoItemInputStatus.title
 									}
 									description={
-										isEditingSeries || isCreatingNewSeries
+										isSeriesMode
 											? todoSeriesInfo.description
 											: todoItem.description
 									}
 									setDescription={(description) =>
-										isEditingSeries || isCreatingNewSeries
+										isSeriesMode
 											? setTodoSeriesInfo((prev) => ({
 													...prev,
 													description,
@@ -390,7 +391,7 @@ const EditToDoPage = () => {
 											  }))
 									}
 									descriptionVariant={
-										isEditingSeries || isCreatingNewSeries
+										isSeriesMode
 											? todoSeriesInputStatus.description
 											: todoItemInputStatus.description
 									}
@@ -404,7 +405,7 @@ const EditToDoPage = () => {
 													: todoItem.category
 											}
 											onSelectionChange={(category) =>
-												isEditingSeries || isCreatingNewSeries
+												isSeriesMode
 													? setTodoSeriesInfo((prev) => ({
 															...prev,
 															category,
@@ -415,17 +416,13 @@ const EditToDoPage = () => {
 													  }))
 											}
 											variant={
-												isEditingSeries || isCreatingNewSeries
+												isSeriesMode
 													? todoSeriesInputStatus.category
 													: todoItemInputStatus.category
 											}
 										/>
 										<StartAndEndDate
-											label={
-												isCreatingNewSeries || isEditingSeries
-													? "Start date"
-													: "Date"
-											}
+											label={isSeriesMode ? "Start date" : "Date"}
 											value={formatTimestampToDateString(
 												isEditingSeries
 													? todoSeriesInfo.startDate
@@ -438,7 +435,7 @@ const EditToDoPage = () => {
 												)
 											}
 											variant={
-												isEditingSeries || isCreatingNewSeries
+												isSeriesMode
 													? todoSeriesInputStatus.startDate
 													: todoItemInputStatus.date
 											}
@@ -457,7 +454,7 @@ const EditToDoPage = () => {
 											onChange={handleTimeChange}
 											style={{ width: "150px" }}
 											variant={
-												isEditingSeries || isCreatingNewSeries
+												isSeriesMode
 													? todoSeriesInputStatus.time
 													: todoItemInputStatus.time
 											}
@@ -477,7 +474,7 @@ const EditToDoPage = () => {
 										)}
 									</div>
 								</div>
-								{(isCreatingNewSeries || isEditingSeries) && (
+								{isSeriesMode && (
 									<div className={styles.EndDateAndFrequencyContainer}>
 										<StartAndEndDate
 											label="End date"
