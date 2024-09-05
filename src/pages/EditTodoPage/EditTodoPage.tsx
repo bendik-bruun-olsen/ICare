@@ -191,42 +191,88 @@ const EditToDoPage = () => {
 		});
 	};
 
+	const handleValidateItemFields = (): boolean => {
+		if (
+			!validateTodoItemFields(todoItem, setTodoItemInputStatus, addNotification)
+		)
+			return false;
+		return true;
+	};
+
+	const handleValidateSeriesFields = (): boolean => {
+		if (
+			!validateDateRange(
+				todoSeriesInfo.startDate,
+				todoSeriesInfo.endDate,
+				addNotification
+			)
+		) {
+			setTodoSeriesInputStatus((prev) => ({
+				...prev,
+				endDate: "error",
+			}));
+
+			return false;
+		}
+		if (
+			!validateTodoSeriesFields(
+				todoSeriesInfo,
+				setTodoSeriesInputStatus,
+				addNotification
+			)
+		)
+			return false;
+		return true;
+	};
+
 	const handleSeriesEdit = async (itemId: string) => {
 		const seriesId = await getTodoSeriesIdByTodoId(itemId);
 		if (!seriesId || !currentUser) return setHasError(true);
-		try {
-			setIsLoading(true);
-			await editTodoSeries(
-				seriesId,
-				todoSeriesInfo,
-				currentUser,
-				addNotification
-			);
-		} finally {
-			setIsLoading(false);
-		}
+
+		await editTodoSeries(
+			seriesId,
+			todoSeriesInfo,
+			currentUser,
+			addNotification
+		);
 	};
 
-	const handleSingleTodoEdit = async (itemId: string) => {
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		const itemId = todoItemIdFromParams;
+		if (!itemId) return setHasError(true);
 		try {
 			setIsLoading(true);
-			await editTodoItem(itemId, todoItem, addNotification);
-		} finally {
-			setIsLoading(false);
-		}
-	};
 
-	const handleCreateNewSeriesFromSingleTodo = async () => {
-		try {
-			setIsLoading(true);
-			await createTodoSeriesFromSingleTodo(
-				todoItem,
-				todoSeriesInfo,
-				addNotification
-			);
+			if (isEditingSeries) {
+				if (!handleValidateSeriesFields()) return;
+				await handleSeriesEdit(itemId);
+				return navigate(Paths.TODO, {
+					state: { selectedDate: DateSelectedInTodoPage },
+				});
+			}
+			if (!isCreatingNewSeries) {
+				handleValidateItemFields();
+				await editTodoItem(itemId, todoItem, addNotification);
+				return navigate(Paths.TODO, {
+					state: { selectedDate: DateSelectedInTodoPage },
+				});
+			}
+			if (isCreatingNewSeries) {
+				if (!handleValidateSeriesFields) return;
+				await createTodoSeriesFromSingleTodo(
+					todoItem,
+					todoSeriesInfo,
+					addNotification
+				);
+				return navigate(Paths.TODO, {
+					state: { selectedDate: DateSelectedInTodoPage },
+				});
+			}
 		} finally {
 			setIsLoading(false);
 		}
+		setHasError(true);
 	};
 
 	const handleDelete = async () => {
@@ -257,84 +303,6 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		const itemId = todoItemIdFromParams;
-		if (!itemId) return setHasError(true);
-		if (isEditingSeries) {
-			if (
-				!validateDateRange(
-					todoSeriesInfo.startDate,
-					todoSeriesInfo.endDate,
-					addNotification
-				)
-			) {
-				setTodoSeriesInputStatus((prev) => ({
-					...prev,
-					endDate: "error",
-				}));
-
-				return;
-			}
-			if (
-				!validateTodoSeriesFields(
-					todoSeriesInfo,
-					setTodoSeriesInputStatus,
-					addNotification
-				)
-			)
-				return;
-
-			await handleSeriesEdit(itemId);
-			return navigate(Paths.TODO, {
-				state: { selectedDate: DateSelectedInTodoPage },
-			});
-		}
-		if (!isCreatingNewSeries) {
-			if (
-				!validateTodoItemFields(
-					todoItem,
-					setTodoItemInputStatus,
-					addNotification
-				)
-			)
-				return;
-
-			await handleSingleTodoEdit(itemId);
-			return navigate(Paths.TODO, {
-				state: { selectedDate: DateSelectedInTodoPage },
-			});
-		}
-		if (isCreatingNewSeries) {
-			if (
-				!validateDateRange(
-					todoSeriesInfo.startDate,
-					todoSeriesInfo.endDate,
-					addNotification
-				)
-			) {
-				setTodoSeriesInputStatus((prev) => ({
-					...prev,
-					endDate: "error",
-				}));
-				return;
-			}
-			if (
-				!validateTodoSeriesFields(
-					todoSeriesInfo,
-					setTodoSeriesInputStatus,
-					addNotification
-				)
-			)
-				return;
-
-			await handleCreateNewSeriesFromSingleTodo();
-			return navigate(Paths.TODO, {
-				state: { selectedDate: DateSelectedInTodoPage },
-			});
-		}
-		setHasError(true);
-	};
 	if (hasError) return <ErrorPage />;
 	if (isLoading)
 		return (
