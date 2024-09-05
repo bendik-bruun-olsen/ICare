@@ -88,7 +88,7 @@ export const getTodosBySelectedDate = async (
 	}
 };
 
-export const getTodoSerieIdFromTodoId = async (
+export const getTodoSeriesIdByTodoId = async (
 	todoId: string
 ): Promise<string | null> => {
 	try {

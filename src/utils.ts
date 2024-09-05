@@ -11,10 +11,10 @@ import { db } from "./firebase/firebase";
 import {
 	NotificationContextType,
 	ToDo,
-	TodoItemInputFieldStatusProps,
+	TodoItemInputStatusProps,
 	TodoItemInterface,
 	TodoSeriesInfoInterface,
-	TodoSeriesInputFieldStatusProps,
+	TodoSeriesInputStatusProps,
 } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
@@ -36,9 +36,7 @@ export const capitalizeUsername = (username: string) => {
 	if (!username) return "";
 	return username
 		.split(" ")
-		.map(
-			(word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-		)
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
 		.join(" ");
 };
 
@@ -162,9 +160,7 @@ export const generateTodosForSeries = (
 
 export const validateTodoItemFields = (
 	todoItem: TodoItemInterface,
-	setTodoItemInputVariants: Dispatch<
-		SetStateAction<TodoItemInputFieldStatusProps>
-	>,
+	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemInputStatusProps>>,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
 	const fields = [
@@ -196,7 +192,7 @@ export const validateTodoItemFields = (
 export const validateTodoSeriesFields = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
 	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesInputFieldStatusProps>
+		SetStateAction<TodoSeriesInputStatusProps>
 	>,
 	addNotification: NotificationContextType["addNotification"]
 ) => {
@@ -234,10 +230,10 @@ export const validateTodoSeriesFields = (
 	return isValid;
 };
 
-export const resetTodoItemInputFieldStatus = (
+export const clearTodoItemInputStatus = (
 	todoItem: TodoItemInterface,
 	setTodoItemInputFieldStatus: Dispatch<
-		SetStateAction<TodoItemInputFieldStatusProps>
+		SetStateAction<TodoItemInputStatusProps>
 	>
 ) => {
 	setTodoItemInputFieldStatus((prev) => ({
@@ -248,10 +244,10 @@ export const resetTodoItemInputFieldStatus = (
 		time: todoItem.time ? undefined : prev.time,
 	}));
 };
-export const resetTodoSeriesInputFieldStatus = (
+export const clearTodoSeriesInputStatus = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
 	setTodoSeriesInputFieldStatus: Dispatch<
-		SetStateAction<TodoSeriesInputFieldStatusProps>
+		SetStateAction<TodoSeriesInputStatusProps>
 	>
 ) => {
 	setTodoSeriesInputFieldStatus((prev) => ({

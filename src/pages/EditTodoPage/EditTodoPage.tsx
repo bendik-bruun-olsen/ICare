@@ -13,14 +13,14 @@ import {
 } from "../../firebase/todoServices/editTodo";
 import {
 	getTodo,
-	getTodoSerieIdFromTodoId,
+	getTodoSeriesIdByTodoId,
 	getTodoSeriesInfo,
 } from "../../firebase/todoServices/getTodo";
 import styles from "./EditTodoPage.module.css";
 import {
 	formatTimestampToDateString,
-	resetTodoItemInputFieldStatus,
-	resetTodoSeriesInputFieldStatus,
+	checkAndClearTodoItemInputStatus as clearTodoItemInputStatus,
+	checkAndClearTodoSeriesInputStatus as clearTodoSeriesInputStatus,
 	validateDateRange,
 	validateTodoItemFields,
 	validateTodoSeriesFields,
@@ -29,17 +29,17 @@ import { useNotification } from "../../hooks/useNotification";
 import {
 	TodoSeriesInfoInterface,
 	TodoItemInterface,
-	TodoItemInputFieldStatusProps,
-	TodoSeriesInputFieldStatusProps,
+	TodoItemInputStatusProps,
+	TodoSeriesInputStatusProps,
 } from "../../types";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
-	defaultTodoItemInputFieldStatus,
+	defaultTodoItemInputStatus,
 	defaultTodoSeries,
-	defaultTodoSeriesInputFieldStatus,
+	defaultTodoSeriesInputStatus,
 } from "../../constants/defaultTodoValues";
 import {
 	deleteTodoItem,
@@ -59,48 +59,40 @@ const EditToDoPage = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const currentUser = useAuth().userData?.email;
+	const locationState = location.state as LocationState | null;
 	const { selectedDate: DateSelectedInTodoPage, editingSeries } =
-		location.state as LocationState;
+		locationState || { selectedDate: new Date(), editingSeries: false };
 	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
 	const [isEditingSeries, setIsEditingSeries] = useState(editingSeries);
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
+	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
 	const { todoId: todoItemIdFromParams } = useParams<{
 		todoId: string;
 	}>();
-
 	const { addNotification } = useNotification();
-	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
-		useState<TodoItemInputFieldStatusProps>(defaultTodoItemInputFieldStatus);
-	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
-		useState<TodoSeriesInputFieldStatusProps>(
-			defaultTodoSeriesInputFieldStatus
-		);
-
+	const [todoItemInputStatus, setTodoItemInputStatus] =
+		useState<TodoItemInputStatusProps>(defaultTodoItemInputStatus);
+	const [todoSeriesInputStatus, setTodoSeriesInputStatus] =
+		useState<TodoSeriesInputStatusProps>(defaultTodoSeriesInputStatus);
 	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
 		undefined
 	);
 
-	async function fetchTodoItem() {
-		if (!todoItemIdFromParams) return setHasError(true);
-		const id = todoItemIdFromParams;
-
-		const result = await getTodo(id, addNotification);
+	async function fetchTodoItem(itemId: string) {
+		const result = await getTodo(itemId, addNotification);
 		if (result) {
 			setTodoItem(result as TodoItemInterface);
 		}
 	}
 
-	async function fetchSeriesInfo() {
-		if (!todoItemIdFromParams) return setHasError(true);
-		const id = await getTodoSerieIdFromTodoId(todoItemIdFromParams);
-
-		if (!id) return setHasError(true);
-		const result = await getTodoSeriesInfo(id, addNotification);
+	async function fetchSeriesInfo(itemId: string) {
+		const seriesId = await getTodoSeriesIdByTodoId(itemId);
+		if (!seriesId) return setHasError(true);
+		const result = await getTodoSeriesInfo(seriesId, addNotification);
 		if (result) {
 			setTodoSeriesInfo(result as TodoSeriesInfoInterface);
 			setEndDateMinValue(result.startDate.toDate());
@@ -109,13 +101,15 @@ const EditToDoPage = () => {
 
 	useEffect(() => {
 		const fetchData = async () => {
+			if (!todoItemIdFromParams) return setHasError(true);
+			const itemId = todoItemIdFromParams;
 			try {
 				setIsLoading(true);
 				if (isEditingSeries) {
-					await fetchSeriesInfo();
+					await fetchSeriesInfo(itemId);
 				}
 				if (!isEditingSeries) {
-					await fetchTodoItem();
+					await fetchTodoItem(itemId);
 				}
 			} finally {
 				setIsLoading(false);
@@ -126,13 +120,10 @@ const EditToDoPage = () => {
 
 	useEffect(() => {
 		if (isEditingSeries || isCreatingNewSeries) {
-			resetTodoSeriesInputFieldStatus(
-				todoSeriesInfo,
-				setTodoSeriesInputFieldStatus
-			);
+			clearTodoSeriesInputStatus(todoSeriesInfo, setTodoSeriesInputStatus);
 			return;
 		}
-		resetTodoItemInputFieldStatus(todoItem, setTodoItemInputFieldStatus);
+		clearTodoItemInputStatus(todoItem, setTodoItemInputStatus);
 	}, [todoItem, todoSeriesInfo]);
 
 	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,9 +186,8 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const handleSeriesEdit = async () => {
-		if (!todoItemIdFromParams) return setHasError(true);
-		const seriesId = await getTodoSerieIdFromTodoId(todoItemIdFromParams);
+	const handleSeriesEdit = async (itemId: string) => {
+		const seriesId = await getTodoSeriesIdByTodoId(itemId);
 		if (!seriesId || !currentUser) return setHasError(true);
 		try {
 			setIsLoading(true);
@@ -212,23 +202,16 @@ const EditToDoPage = () => {
 		}
 	};
 
-	const handleSingleTodoEdit = async () => {
-		const todoItemId = todoItemIdFromParams || todoItem.id;
-		if (!todoItemId) return setHasError(true);
+	const handleSingleTodoEdit = async (itemId: string) => {
 		try {
 			setIsLoading(true);
-			await editTodoItem(todoItemId, todoItem, addNotification);
+			await editTodoItem(itemId, todoItem, addNotification);
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
 	const handleCreateNewSeriesFromSingleTodo = async () => {
-		const todoItemId = todoItemIdFromParams || todoItem.id;
-		if (!todoItemId) {
-			setHasError(true);
-			return;
-		}
 		try {
 			setIsLoading(true);
 			await createTodoSeriesFromSingleTodo(
@@ -244,7 +227,7 @@ const EditToDoPage = () => {
 	const handleDelete = async () => {
 		if (!todoItemIdFromParams) return setHasError(true);
 		if (isEditingSeries) {
-			const seriesId = await getTodoSerieIdFromTodoId(todoItemIdFromParams);
+			const seriesId = await getTodoSeriesIdByTodoId(todoItemIdFromParams);
 			if (!seriesId) return setHasError(true);
 			try {
 				setIsConfirmModalOpen(false);
@@ -257,11 +240,9 @@ const EditToDoPage = () => {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
 		}
-		const todoItemId = todoItemIdFromParams;
-		if (!todoItemId) return setHasError(true);
 		try {
 			setIsLoading(true);
-			await deleteTodoItem(todoItemId, addNotification);
+			await deleteTodoItem(todoItemIdFromParams, addNotification);
 		} finally {
 			setIsLoading(false);
 			setIsConfirmModalOpen(false);
@@ -273,6 +254,8 @@ const EditToDoPage = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		const itemId = todoItemIdFromParams;
+		if (!itemId) return setHasError(true);
 		if (isEditingSeries) {
 			if (
 				!validateDateRange(
@@ -281,7 +264,7 @@ const EditToDoPage = () => {
 					addNotification
 				)
 			) {
-				setTodoSeriesInputFieldStatus((prev) => ({
+				setTodoSeriesInputStatus((prev) => ({
 					...prev,
 					endDate: "error",
 				}));
@@ -291,13 +274,13 @@ const EditToDoPage = () => {
 			if (
 				!validateTodoSeriesFields(
 					todoSeriesInfo,
-					setTodoSeriesInputFieldStatus,
+					setTodoSeriesInputStatus,
 					addNotification
 				)
 			)
 				return;
 
-			await handleSeriesEdit();
+			await handleSeriesEdit(itemId);
 			return navigate(Paths.TODO, {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
@@ -306,13 +289,13 @@ const EditToDoPage = () => {
 			if (
 				!validateTodoItemFields(
 					todoItem,
-					setTodoItemInputFieldStatus,
+					setTodoItemInputStatus,
 					addNotification
 				)
 			)
 				return;
 
-			await handleSingleTodoEdit();
+			await handleSingleTodoEdit(itemId);
 			return navigate(Paths.TODO, {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
@@ -325,7 +308,7 @@ const EditToDoPage = () => {
 					addNotification
 				)
 			) {
-				setTodoSeriesInputFieldStatus((prev) => ({
+				setTodoSeriesInputStatus((prev) => ({
 					...prev,
 					endDate: "error",
 				}));
@@ -334,13 +317,13 @@ const EditToDoPage = () => {
 			if (
 				!validateTodoSeriesFields(
 					todoSeriesInfo,
-					setTodoSeriesInputFieldStatus,
+					setTodoSeriesInputStatus,
 					addNotification
 				)
 			)
 				return;
 
-			await handleCreateNewSeriesFromSingleTodo();
+			await handleCreateNewSeriesFromSingleTodo(itemId);
 			return navigate(Paths.TODO, {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
@@ -387,8 +370,8 @@ const EditToDoPage = () => {
 									}
 									titleVariant={
 										isEditingSeries || isCreatingNewSeries
-											? todoSeriesInputFieldStatus.title
-											: todoItemInputFieldStatus.title
+											? todoSeriesInputStatus.title
+											: todoItemInputStatus.title
 									}
 									description={
 										isEditingSeries || isCreatingNewSeries
@@ -408,8 +391,8 @@ const EditToDoPage = () => {
 									}
 									descriptionVariant={
 										isEditingSeries || isCreatingNewSeries
-											? todoSeriesInputFieldStatus.description
-											: todoItemInputFieldStatus.description
+											? todoSeriesInputStatus.description
+											: todoItemInputStatus.description
 									}
 								/>
 								<div className={styles.scheduleControlsContainer}>
@@ -433,8 +416,8 @@ const EditToDoPage = () => {
 											}
 											variant={
 												isEditingSeries || isCreatingNewSeries
-													? todoSeriesInputFieldStatus.category
-													: todoItemInputFieldStatus.category
+													? todoSeriesInputStatus.category
+													: todoItemInputStatus.category
 											}
 										/>
 										<StartAndEndDate
@@ -456,8 +439,8 @@ const EditToDoPage = () => {
 											}
 											variant={
 												isEditingSeries || isCreatingNewSeries
-													? todoSeriesInputFieldStatus.startDate
-													: todoItemInputFieldStatus.date
+													? todoSeriesInputStatus.startDate
+													: todoItemInputStatus.date
 											}
 											minValue={undefined}
 										/>
@@ -475,8 +458,8 @@ const EditToDoPage = () => {
 											style={{ width: "150px" }}
 											variant={
 												isEditingSeries || isCreatingNewSeries
-													? todoSeriesInputFieldStatus.time
-													: todoItemInputFieldStatus.time
+													? todoSeriesInputStatus.time
+													: todoItemInputStatus.time
 											}
 										/>
 										{todoItem.seriesId || isEditingSeries ? (
@@ -502,13 +485,13 @@ const EditToDoPage = () => {
 												isEditingSeries ? todoSeriesInfo.endDate : todoItem.date
 											)}
 											onChange={(date) => handleDateChange("endDate", date)}
-											variant={todoSeriesInputFieldStatus.endDate}
+											variant={todoSeriesInputStatus.endDate}
 											minValue={endDateMinValue}
 										/>
 										<DaysComponent
 											selectedDays={todoSeriesInfo.selectedDays}
 											onDayToggle={handleDayToggle}
-											variant={todoSeriesInputFieldStatus.selectedDays}
+											variant={todoSeriesInputStatus.selectedDays}
 										/>
 									</div>
 								)}

@@ -16,18 +16,18 @@ import { useNotification } from "../../hooks/useNotification";
 import { Timestamp } from "firebase/firestore";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-	TodoItemInputFieldStatusProps,
+	TodoItemInputStatusProps,
 	TodoItemInterface,
 	TodoSeriesInfoInterface,
-	TodoSeriesInputFieldStatusProps,
+	TodoSeriesInputStatusProps,
 	ToDoStatus,
 } from "../../types";
 import {
 	formatTimestampToDateString,
 	generateTodosForSeries,
 	mapSelectedDaysToNumbers,
-	resetTodoItemInputFieldStatus,
-	resetTodoSeriesInputFieldStatus,
+	checkAndClearTodoItemInputStatus,
+	checkAndClearTodoSeriesInputStatus,
 	validateDateRange,
 	validateTodoItemFields,
 	validateTodoSeriesFields,
@@ -37,9 +37,9 @@ import { Paths } from "../../paths";
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
-	defaultTodoItemInputFieldStatus,
+	defaultTodoItemInputStatus,
 	defaultTodoSeries,
-	defaultTodoSeriesInputFieldStatus,
+	defaultTodoSeriesInputStatus,
 } from "../../constants/defaultTodoValues";
 import Loading from "../../components/Loading/Loading";
 import { useAuth } from "../../hooks/useAuth/useAuth";
@@ -53,11 +53,9 @@ const AddToDoPage: React.FC = () => {
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
-		useState<TodoItemInputFieldStatusProps>(defaultTodoItemInputFieldStatus);
+		useState<TodoItemInputStatusProps>(defaultTodoItemInputStatus);
 	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
-		useState<TodoSeriesInputFieldStatusProps>(
-			defaultTodoSeriesInputFieldStatus
-		);
+		useState<TodoSeriesInputStatusProps>(defaultTodoSeriesInputStatus);
 	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
 		undefined
 	);
@@ -79,13 +77,13 @@ const AddToDoPage: React.FC = () => {
 
 	useEffect(() => {
 		if (isRepeating) {
-			resetTodoSeriesInputFieldStatus(
+			checkAndClearTodoSeriesInputStatus(
 				todoSeriesInfo,
 				setTodoSeriesInputFieldStatus
 			);
 			return;
 		}
-		resetTodoItemInputFieldStatus(todoItem, setTodoItemInputFieldStatus);
+		checkAndClearTodoItemInputStatus(todoItem, setTodoItemInputFieldStatus);
 	}, [todoItem, todoSeriesInfo]);
 
 	const handleToggleRepeat = () => {
