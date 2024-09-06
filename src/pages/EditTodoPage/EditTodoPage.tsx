@@ -1,22 +1,24 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Checkbox, TextField } from "@equinor/eds-core-react";
 import { Timestamp } from "firebase/firestore";
+
 import Navbar from "../../components/Navbar/Navbar";
 import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription/TitleDescription";
-import {
-	createTodoSeriesFromSingleTodo,
-	editTodoItem,
-	editTodoSeries,
-} from "../../firebase/todoServices/editTodo";
-import {
-	getTodo,
-	getTodoSeriesIdByTodoId,
-	getTodoSeriesInfo,
-} from "../../firebase/todoServices/getTodo";
+import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
+import Loading from "../../components/Loading/Loading";
+import ErrorPage from "../ErrorPage/ErrorPage";
+
+import { useAuth } from "../../hooks/useAuth/useAuth";
+import { useNotification } from "../../hooks/useNotification";
+
+import { Paths } from "../../paths";
+
 import styles from "./EditTodoPage.module.css";
+
 import {
 	formatTimestampToDateString,
 	clearTodoItemInputStatus,
@@ -25,15 +27,7 @@ import {
 	validateTodoItemFields,
 	validateTodoSeriesFields,
 } from "../../utils";
-import { useNotification } from "../../hooks/useNotification";
-import {
-	TodoSeriesInfoInterface,
-	TodoItemInterface,
-	TodoItemInputStatusProps,
-	TodoSeriesInputStatusProps,
-} from "../../types";
-import ErrorPage from "../ErrorPage/ErrorPage";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
@@ -41,21 +35,37 @@ import {
 	defaultTodoSeries,
 	defaultTodoSeriesInputStatus,
 } from "../../constants/defaultTodoValues";
+
+import {
+	TodoSeriesInfoInterface,
+	TodoItemInterface,
+	TodoItemInputStatusProps,
+	TodoSeriesInputStatusProps,
+} from "../../types";
+
+import {
+	getTodo,
+	getTodoSeriesIdByTodoId,
+	getTodoSeriesInfo,
+} from "../../firebase/todoServices/getTodo";
+
+import {
+	createTodoSeriesFromSingleTodo,
+	editTodoItem,
+	editTodoSeries,
+} from "../../firebase/todoServices/editTodo";
+
 import {
 	deleteTodoItem,
 	deleteTodoSeries,
 } from "../../firebase/todoServices/deleteTodo";
-import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
-import { Paths } from "../../paths";
-import Loading from "../../components/Loading/Loading";
-import { useAuth } from "../../hooks/useAuth/useAuth";
 
 interface LocationState {
 	selectedDate: Date;
 	editingSeries: boolean;
 }
 
-const EditToDoPage = () => {
+const EditToDoPage: React.FC = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const currentUser = useAuth().userData?.email;
@@ -83,35 +93,50 @@ const EditToDoPage = () => {
 		undefined
 	);
 
-	async function fetchTodoItem(itemId: string) {
+	async function fetchTodoItem(itemId: string): Promise<boolean> {
 		const result = await getTodo(itemId, addNotification);
 		if (result) {
 			setTodoItem(result as TodoItemInterface);
+			return true;
 		}
+		return false;
 	}
 
-	async function fetchSeriesInfo(itemId: string) {
+	async function fetchSeriesInfo(itemId: string): Promise<boolean> {
 		const seriesId = await getTodoSeriesIdByTodoId(itemId);
-		if (!seriesId) return setHasError(true);
+		if (!seriesId) {
+			setHasError(true);
+			return false;
+		}
+
 		const result = await getTodoSeriesInfo(seriesId, addNotification);
 		if (result) {
 			setTodoSeriesInfo(result as TodoSeriesInfoInterface);
 			setEndDateMinValue(result.startDate.toDate());
+			return true;
 		}
+		return false;
 	}
 
 	useEffect(() => {
-		const fetchData = async () => {
-			if (!todoItemIdFromParams) return setHasError(true);
+		const fetchData = async (): Promise<void> => {
 			const itemId = todoItemIdFromParams;
+			if (!itemId) {
+				setHasError(true);
+				return;
+			}
 			try {
 				setIsLoading(true);
+
 				if (isEditingSeries) {
-					await fetchSeriesInfo(itemId);
+					const fetchSeriesSuccess = await fetchSeriesInfo(itemId);
+					if (fetchSeriesSuccess) return;
 				}
 				if (!isEditingSeries) {
-					await fetchTodoItem(itemId);
+					const fetchItemSuccess = await fetchTodoItem(itemId);
+					if (fetchItemSuccess) return;
 				}
+				setHasError(true);
 			} finally {
 				setIsLoading(false);
 			}
@@ -131,7 +156,7 @@ const EditToDoPage = () => {
 		clearTodoItemInputStatus(todoItem, setTodoItemInputStatus);
 	}, [todoItem, todoSeriesInfo, isSeriesMode]);
 
-	const handleToggleEditSeries = () => {
+	const handleToggleEditSeries = (): void => {
 		setIsEditingSeries((prev) => {
 			if (!prev) {
 				setIsCreatingNewSeries(false);
@@ -140,7 +165,7 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		if (isSeriesMode) {
 			setTodoSeriesInfo((prev) => ({ ...prev, time: e.target.value }));
 			return;
@@ -148,7 +173,7 @@ const EditToDoPage = () => {
 		setTodoItem((prev) => ({ ...prev, time: e.target.value }));
 	};
 
-	const handleDateChange = (field: string, date: string) => {
+	const handleDateChange = (field: string, date: string): void => {
 		const newTimestamp = Timestamp.fromDate(new Date(date));
 		if (isSeriesMode) {
 			if (field === "startDate") setEndDateMinValue(new Date(date));
@@ -158,7 +183,7 @@ const EditToDoPage = () => {
 		setTodoItem((prev) => ({ ...prev, [field]: newTimestamp }));
 	};
 
-	const handleDayToggle = (day: string) => {
+	const handleDayToggle = (day: string): void => {
 		setTodoSeriesInfo((prev) => {
 			const isSelected = prev.selectedDays.includes(day);
 			const selectedDays = isSelected
@@ -168,7 +193,7 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const handleToggleRepeat = () => {
+	const handleToggleRepeat = (): void => {
 		setIsCreatingNewSeries((prev) => {
 			if (!prev) {
 				setIsEditingSeries(false);
@@ -225,11 +250,14 @@ const EditToDoPage = () => {
 		return true;
 	};
 
-	const handleSeriesEdit = async (itemId: string) => {
+	const handleSeriesEdit = async (itemId: string): Promise<boolean> => {
 		const seriesId = await getTodoSeriesIdByTodoId(itemId);
-		if (!seriesId || !currentUser) return setHasError(true);
+		if (!seriesId || !currentUser) {
+			setHasError(true);
+			return false;
+		}
 
-		await editTodoSeries(
+		return await editTodoSeries(
 			seriesId,
 			todoSeriesInfo,
 			currentUser,
@@ -237,7 +265,7 @@ const EditToDoPage = () => {
 		);
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	async function handleSubmit(e: React.FormEvent): Promise<void> {
 		e.preventDefault();
 		const itemId = todoItemIdFromParams;
 		if (!itemId) return setHasError(true);
@@ -246,36 +274,46 @@ const EditToDoPage = () => {
 
 			if (isEditingSeries) {
 				if (!handleValidateSeriesFields()) return;
-				await handleSeriesEdit(itemId);
-				return navigate(Paths.TODO, {
-					state: { selectedDate: DateSelectedInTodoPage },
-				});
+				const seriesEditSuccess = await handleSeriesEdit(itemId);
+				if (seriesEditSuccess) {
+					return navigate(Paths.TODO, {
+						state: { selectedDate: DateSelectedInTodoPage },
+					});
+				}
 			}
 			if (!isCreatingNewSeries) {
 				if (!handleValidateItemFields()) return;
-				await editTodoItem(itemId, todoItem, addNotification);
-				return navigate(Paths.TODO, {
-					state: { selectedDate: DateSelectedInTodoPage },
-				});
+				const itemEditSuccess = await editTodoItem(
+					itemId,
+					todoItem,
+					addNotification
+				);
+				if (itemEditSuccess) {
+					return navigate(Paths.TODO, {
+						state: { selectedDate: DateSelectedInTodoPage },
+					});
+				}
 			}
 			if (isCreatingNewSeries) {
 				if (!handleValidateSeriesFields) return;
-				await createTodoSeriesFromSingleTodo(
+				const seriesCreationSuccess = await createTodoSeriesFromSingleTodo(
 					todoItem,
 					todoSeriesInfo,
 					addNotification
 				);
-				return navigate(Paths.TODO, {
-					state: { selectedDate: DateSelectedInTodoPage },
-				});
+				if (seriesCreationSuccess) {
+					return navigate(Paths.TODO, {
+						state: { selectedDate: DateSelectedInTodoPage },
+					});
+				}
 			}
+			setHasError(true);
 		} finally {
 			setIsLoading(false);
 		}
-		setHasError(true);
-	};
+	}
 
-	const handleDelete = async () => {
+	async function handleDelete(): Promise<void> {
 		if (!todoItemIdFromParams) return setHasError(true);
 		if (isEditingSeries) {
 			const seriesId = await getTodoSeriesIdByTodoId(todoItemIdFromParams);
@@ -301,7 +339,7 @@ const EditToDoPage = () => {
 		return navigate(Paths.TODO, {
 			state: { selectedDate: DateSelectedInTodoPage },
 		});
-	};
+	}
 
 	if (hasError) return <ErrorPage />;
 	if (isLoading)

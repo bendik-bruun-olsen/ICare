@@ -6,7 +6,6 @@ import styles from "./ToDoPage.module.css";
 import { Icon } from "@equinor/eds-core-react";
 import { add } from "@equinor/eds-icons";
 import Navbar from "../../components/Navbar/Navbar";
-import BackHomeButton from "../../components/BackHomeButton";
 import { groupTodosByCategory, sortTodosGroup } from "../../utils";
 import { TodoItemInterface, ToDoStatus } from "../../types";
 import { Link, useLocation } from "react-router-dom";

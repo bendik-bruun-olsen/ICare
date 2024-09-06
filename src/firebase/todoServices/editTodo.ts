@@ -25,15 +25,17 @@ export const editTodoItem = async (
 	todoId: string,
 	updatedTodo: TodoItemInterface,
 	addNotification: NotificationContextType["addNotification"]
-) => {
+): Promise<boolean> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoRef = doc(patientRef, "todoItems", todoId);
 
 		await updateDoc(todoRef, { ...updatedTodo });
 		addNotification("Todo edited successfully", "success");
+		return true;
 	} catch {
 		addNotification("Error editing todo", "error");
+		return false;
 	}
 };
 
@@ -42,13 +44,11 @@ export const editTodoSeries = async (
 	updatedSeriesInfo: TodoSeriesInfoInterface,
 	currentUser: string,
 	addNotification: NotificationContextType["addNotification"]
-) => {
+): Promise<boolean> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");
 		const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
-
-		console.log("currentUser received in editTodoSeries", currentUser);
 
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
@@ -62,7 +62,7 @@ export const editTodoSeries = async (
 		const querySnap = await getDocs(q);
 		if (querySnap.empty) {
 			addNotification("No todos found for series", "error");
-			return;
+			return false;
 		}
 
 		const batch = writeBatch(db);
@@ -105,8 +105,10 @@ export const editTodoSeries = async (
 
 		await batch.commit();
 		addNotification("Series edited successfully", "success");
+		return true;
 	} catch {
 		addNotification("Error editing series", "error");
+		return false;
 	}
 };
 
@@ -114,7 +116,7 @@ export const createTodoSeriesFromSingleTodo = async (
 	todoItem: TodoItemInterface,
 	seriesInfo: TodoSeriesInfoInterface,
 	addNotification: NotificationContextType["addNotification"]
-) => {
+): Promise<boolean> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const seriesCollection = collection(patientRef, "todoSeriesInfo");
@@ -166,7 +168,9 @@ export const createTodoSeriesFromSingleTodo = async (
 
 		await batch.commit();
 		addNotification("Todo successfully created into series", "success");
+		return true;
 	} catch {
 		addNotification("Error creating series for todo", "error");
+		return false;
 	}
 };
