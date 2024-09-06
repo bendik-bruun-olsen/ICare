@@ -17,6 +17,7 @@ import { uploadProfilePicture } from "../../firebase/patientImageServices/patien
 import { remove_outlined, add, edit } from "@equinor/eds-icons";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import Loading from "../../components/Loading/Loading";
+import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
 
 const FormField = ({
 	label,
@@ -24,6 +25,7 @@ const FormField = ({
 	value,
 	onChange,
 	required = false,
+	type,
 }: FormFieldProps) => (
 	<InputWrapper
 		className={`${styles.inputWrapper} inputWrapper`}
@@ -43,6 +45,7 @@ const FormField = ({
 			id={name}
 			value={value}
 			onChange={onChange}
+			type={type}
 		/>
 	</InputWrapper>
 );
@@ -129,12 +132,24 @@ export default function PatientDetailsPage() {
 		setIsChanged(true);
 	};
 
-	const addCaretaker = async (e: React.FormEvent) => {
-		e.preventDefault();
-		const { exists, name } = await checkEmailExists(caretakerEmail);
-		if (!exists) {
+	const isCaretakersListEmpty = () => caretakers.length === 0;
+
+	const isFormDataValid = (formData: PatientFormDataInterface) => {
+		const { age, phone } = formData;
+		if (isNaN(Number(age))) return false;
+		if (isNaN(Number(phone))) return false;
+		return true;
+	};
+
+	const isCaretakerDataValid = async () => {
+		if (caretakerEmail === "") {
+			addNotification("Please enter an email address", "error");
+			return false;
+		}
+
+		if (!(await checkEmailExists(caretakerEmail))) {
 			addNotification("Email does not exist", "error");
-			return;
+			return false;
 		}
 
 		const emailAlreadyAdded = caretakers.some(
@@ -143,12 +158,36 @@ export default function PatientDetailsPage() {
 
 		if (emailAlreadyAdded) {
 			addNotification("Caretaker already added", "error");
-			return;
+			return false;
 		}
+		return true;
+	};
+
+	const submitPatientData = async () => {
+		try {
+			setIsLoading(true);
+			const patientId = await addPatient(formData, caretakers);
+
+			if (profileImage) {
+				uploadProfilePicture(profileImage, patientId);
+			}
+			addNotification("Patient created successfully", "success");
+		} catch {
+			addNotification("Failed to create patient", "error");
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const addCaretaker = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!(await isCaretakerDataValid())) return;
+
+		const caretakerName = await getNameFromEmail(caretakerEmail);
 
 		setCaretakers((prevCaretakers) => [
 			...prevCaretakers,
-			{ name, email: caretakerEmail },
+			{ name: caretakerName, email: caretakerEmail },
 		]);
 		setCaretakerEmail("");
 	};
@@ -163,34 +202,17 @@ export default function PatientDetailsPage() {
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (isNaN(Number(formData.age))) {
-			addNotification("Age must be a number", "error");
-			return;
-		}
-		if (isNaN(Number(formData.phone))) {
-			addNotification("Phone number must be a number", "error");
+		if (!isFormDataValid(formData)) {
+			addNotification("Invalid form data", "error");
 			return;
 		}
 
-		if (caretakers.length === 0) {
+		if (isCaretakersListEmpty()) {
 			addNotification("Please add at least one caretaker", "error");
 			return;
 		}
 
-		try {
-			setIsLoading(true);
-
-			const patientId = await addPatient(formData, caretakers);
-
-			if (profileImage) {
-				uploadProfilePicture(profileImage, patientId);
-			}
-			addNotification("Patient created successfully", "success");
-		} catch (err) {
-			addNotification("Failed to create patient", "error");
-		} finally {
-			setIsLoading(false);
-		}
+		await submitPatientData();
 	};
 
 	const handleEditClick = () => {
@@ -198,15 +220,15 @@ export default function PatientDetailsPage() {
 	};
 
 	const personalInfoFields = [
-		{ label: "Name", name: "name", required: true },
-		{ label: "Age", name: "age" },
-		{ label: "Phone", name: "phone", required: true },
-		{ label: "Address", name: "address", required: true },
+		{ label: "Name", name: "name", required: true, type: "text" },
+		{ label: "Age", name: "age", required: false, type: "number" },
+		{ label: "Phone", name: "phone", required: true, type: "number" },
+		{ label: "Address", name: "address", required: true, type: "text" },
 	];
 
 	const healthInfoFields = [
-		{ label: "Diagnoses", name: "diagnoses" },
-		{ label: "Allergies", name: "allergies" },
+		{ label: "Diagnoses", name: "diagnoses", type: "text" },
+		{ label: "Allergies", name: "allergies", type: "text" },
 	];
 
 	if (isLoading) {
@@ -236,6 +258,7 @@ export default function PatientDetailsPage() {
 								value={formData[field.name] as string}
 								onChange={handleChange}
 								required={field.required}
+								type={field.type}
 							/>
 						))}
 					</div>
@@ -248,6 +271,7 @@ export default function PatientDetailsPage() {
 								name={field.name}
 								value={formData[field.name] as string}
 								onChange={handleChange}
+								type={field.type}
 							/>
 						))}
 					</div>
@@ -258,6 +282,7 @@ export default function PatientDetailsPage() {
 								name="caretakerEmail"
 								value={caretakerEmail}
 								onChange={(e) => setCaretakerEmail(e.target.value)}
+								type="email"
 							/>
 							<Button type="button" onClick={addCaretaker}>
 								<Icon data={add} />
