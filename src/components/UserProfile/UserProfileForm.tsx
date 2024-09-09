@@ -103,14 +103,9 @@ const UserProfileForm: React.FC = () => {
           if (isChanged) {
             saveDataToFirebase();
           }
-
           setIsEditing(false);
         }
-      } else if (
-        target !== nameInputRef.current &&
-        (target instanceof HTMLInputElement ||
-          target instanceof HTMLSelectElement)
-      ) {
+      } else if (target !== nameInputRef.current) {
         if (!validateNameField()) {
           event.preventDefault();
           event.stopPropagation();
