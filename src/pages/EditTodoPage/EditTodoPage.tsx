@@ -69,7 +69,7 @@ const EditToDoPage: React.FC = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const currentUser = useAuth().userData?.email;
-	const locationState = location.state as LocationState | null;
+	const locationState = location.state as LocationState;
 	const { selectedDate: DateSelectedInTodoPage, editingSeries } =
 		locationState || { selectedDate: new Date(), editingSeries: false };
 	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
@@ -276,9 +276,10 @@ const EditToDoPage: React.FC = () => {
 				if (!handleValidateSeriesFields()) return;
 				const seriesEditSuccess = await handleSeriesEdit(itemId);
 				if (seriesEditSuccess) {
-					return navigate(Paths.TODO, {
+					navigate(Paths.TODO, {
 						state: { selectedDate: DateSelectedInTodoPage },
 					});
+					return;
 				}
 			}
 			if (!isCreatingNewSeries) {
@@ -289,9 +290,10 @@ const EditToDoPage: React.FC = () => {
 					addNotification
 				);
 				if (itemEditSuccess) {
-					return navigate(Paths.TODO, {
+					navigate(Paths.TODO, {
 						state: { selectedDate: DateSelectedInTodoPage },
 					});
+					return;
 				}
 			}
 			if (isCreatingNewSeries) {
@@ -302,9 +304,10 @@ const EditToDoPage: React.FC = () => {
 					addNotification
 				);
 				if (seriesCreationSuccess) {
-					return navigate(Paths.TODO, {
+					navigate(Paths.TODO, {
 						state: { selectedDate: DateSelectedInTodoPage },
 					});
+					return;
 				}
 			}
 			setHasError(true);
@@ -314,31 +317,42 @@ const EditToDoPage: React.FC = () => {
 	}
 
 	async function handleDelete(): Promise<void> {
-		if (!todoItemIdFromParams) return setHasError(true);
-		if (isEditingSeries) {
+		if (!todoItemIdFromParams) {
+			setHasError(true);
+			return;
+		}
+		if (isSeriesMode) {
 			const seriesId = await getTodoSeriesIdByTodoId(todoItemIdFromParams);
-			if (!seriesId) return setHasError(true);
+			if (!seriesId) {
+				setHasError(true);
+				return;
+			}
 			try {
-				setIsConfirmModalOpen(false);
 				setIsLoading(true);
 				await deleteTodoSeries(seriesId, addNotification);
 			} finally {
+				setIsConfirmModalOpen(false);
 				setIsLoading(false);
 			}
-			return navigate(Paths.TODO, {
+			navigate(Paths.TODO, {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
+			return;
 		}
-		try {
-			setIsLoading(true);
-			await deleteTodoItem(todoItemIdFromParams, addNotification);
-		} finally {
-			setIsLoading(false);
-			setIsConfirmModalOpen(false);
+
+		if (!isSeriesMode) {
+			try {
+				setIsLoading(true);
+				await deleteTodoItem(todoItemIdFromParams, addNotification);
+			} finally {
+				setIsConfirmModalOpen(false);
+				setIsLoading(false);
+			}
+			navigate(Paths.TODO, {
+				state: { selectedDate: DateSelectedInTodoPage },
+			});
+			return;
 		}
-		return navigate(Paths.TODO, {
-			state: { selectedDate: DateSelectedInTodoPage },
-		});
 	}
 
 	if (hasError) return <ErrorPage />;
