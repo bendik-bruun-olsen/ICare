@@ -5,9 +5,8 @@ export const checkEmailExists = async (email: string) => {
 	const ref = collection(db, "users");
 	const q = query(ref, where("email", "==", email));
 	const querySnapshot = await getDocs(q);
-	if (!querySnapshot.empty) {
-		const userData = querySnapshot.docs[0].data();
-		return { exists: true, name: userData.name };
+	if (querySnapshot.empty) {
+		return false;
 	}
-	return { exists: false, name: "" };
+	return true;
 };

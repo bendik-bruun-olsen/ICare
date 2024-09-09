@@ -17,6 +17,7 @@ import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
 import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
 import { useNotification } from "../../hooks/useNotification";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
+import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
 
 const FormField = ({
 	label,
@@ -24,6 +25,7 @@ const FormField = ({
 	value,
 	onChange,
 	required = false,
+	type,
 }: FormFieldProps) => (
 	<InputWrapper
 		className={`${styles.inputWrapper} inputWrapper`}
@@ -43,6 +45,7 @@ const FormField = ({
 			id={name}
 			value={value}
 			onChange={onChange}
+			type={type}
 		/>
 	</InputWrapper>
 );
@@ -69,7 +72,38 @@ export default function CreatePatientPage() {
 		fetchDefaultPictureUrl();
 	});
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const isFormDataValid = (formData: PatientFormDataInterface) => {
+		const { age, phone } = formData;
+		if (isNaN(Number(age))) return false;
+		if (isNaN(Number(phone))) return false;
+		return true;
+	};
+
+	const isCaretakersListEmpty = () => caretakers.length === 0;
+
+	const isCaretakerDataValid = async () => {
+		if (caretakerEmail === "") {
+			addNotification("Please enter an email address", "error");
+			return false;
+		}
+
+		if (!(await checkEmailExists(caretakerEmail))) {
+			addNotification("Email does not exist", "error");
+			return false;
+		}
+
+		const emailAlreadyAdded = caretakers.some(
+			(caretaker) => caretaker.email === caretakerEmail
+		);
+
+		if (emailAlreadyAdded) {
+			addNotification("Caretaker already added", "error");
+			return false;
+		}
+		return true;
+	};
+
+	const handleFormFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({
 			...prevData,
@@ -79,52 +113,28 @@ export default function CreatePatientPage() {
 
 	const addCaretaker = async (e: React.FormEvent) => {
 		e.preventDefault();
-		const { exists, name } = await checkEmailExists(caretakerEmail);
-		if (!exists) {
-			addNotification("Email does not exist", "error");
-			return;
-		}
 
-		const emailAlreadyAdded = caretakers.some(
-			(caretaker) => caretaker.email === caretakerEmail
-		);
+		if (!(await isCaretakerDataValid())) return;
 
-		if (emailAlreadyAdded) {
-			addNotification("Caretaker already added", "error");
-			return;
-		}
+		const caretakerName = await getNameFromEmail(caretakerEmail);
 
 		setCaretakers((prevCaretakers) => [
 			...prevCaretakers,
-			{ name, email: caretakerEmail },
+			{ name: caretakerName, email: caretakerEmail },
 		]);
+
 		setCaretakerEmail("");
 	};
 
-	const deleteCaretaker = (email: string) => {
+	const removeCaretakerFromList = (email: string) => {
 		setCaretakers((prevCaretakers) =>
 			prevCaretakers.filter((caretaker) => caretaker.email !== email)
 		);
 		addNotification("Caretaker removed successfully", "success");
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-
-		if (isNaN(Number(formData.age))) {
-			addNotification("Age must be a number", "error");
-			return;
-		}
-		if (isNaN(Number(formData.phone))) {
-			addNotification("Phone number must be a number", "error");
-			return;
-		}
-
-		if (caretakers.length === 0) {
-			addNotification("Please add at least one caretaker", "error");
-			return;
-		}
-
+	// Refactor if we find a better solution
+	const submitPatientData = async () => {
 		try {
 			setIsLoading(true);
 			const patientId = await addPatient(formData, caretakers);
@@ -133,23 +143,39 @@ export default function CreatePatientPage() {
 				uploadProfilePicture(profileImage, patientId);
 			}
 			addNotification("Patient created successfully", "success");
-		} catch (err) {
+		} catch {
 			addNotification("Failed to create patient", "error");
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		if (!isFormDataValid(formData)) {
+			addNotification("Invalid form data", "error");
+			return;
+		}
+
+		if (isCaretakersListEmpty()) {
+			addNotification("Please add at least one caretaker", "error");
+			return;
+		}
+
+		await submitPatientData();
+	};
+
 	const personalInfoFields = [
-		{ label: "Name", name: "name", required: true },
-		{ label: "Age", name: "age" },
-		{ label: "Phone", name: "phone", required: true },
-		{ label: "Address", name: "address", required: true },
+		{ label: "Name", name: "name", required: true, type: "text" },
+		{ label: "Age", name: "age", required: false, type: "number" },
+		{ label: "Phone", name: "phone", required: true, type: "number" },
+		{ label: "Address", name: "address", required: true, type: "text" },
 	];
 
 	const healthInfoFields = [
-		{ label: "Diagnoses", name: "diagnoses" },
-		{ label: "Allergies", name: "allergies" },
+		{ label: "Diagnoses", name: "diagnoses", required: false, type: "text" },
+		{ label: "Allergies", name: "allergies", required: false, type: "text" },
 	];
 
 	if (isLoading) {
@@ -172,8 +198,9 @@ export default function CreatePatientPage() {
 								label={field.label}
 								name={field.name}
 								value={formData[field.name] as string}
-								onChange={handleChange}
+								onChange={handleFormFieldChange}
 								required={field.required}
+								type={field.type}
 							/>
 						))}
 					</div>
@@ -185,7 +212,8 @@ export default function CreatePatientPage() {
 								label={field.label}
 								name={field.name}
 								value={formData[field.name] as string}
-								onChange={handleChange}
+								onChange={handleFormFieldChange}
+								type={field.type}
 							/>
 						))}
 					</div>
@@ -196,6 +224,7 @@ export default function CreatePatientPage() {
 								name="caretakerEmail"
 								value={caretakerEmail}
 								onChange={(e) => setCaretakerEmail(e.target.value)}
+								type="email"
 							/>
 							<Button type="button" onClick={addCaretaker}>
 								<Icon data={add} />
@@ -214,7 +243,7 @@ export default function CreatePatientPage() {
 									<Button
 										type="button"
 										variant="ghost_icon"
-										onClick={() => deleteCaretaker(caretaker.email)}
+										onClick={() => removeCaretakerFromList(caretaker.email)}
 									>
 										<Icon data={remove_outlined} color="var(--lightblue)" />
 									</Button>

@@ -28,7 +28,7 @@ export const defaultTodoSeries: TodoSeriesInfoInterface = {
 	selectedDays: [],
 };
 
-export const defaultTodoItemInputFieldStatus = {
+export const defaultTodoItemInputStatus = {
 	title: undefined,
 	description: undefined,
 	category: undefined,
@@ -36,7 +36,7 @@ export const defaultTodoItemInputFieldStatus = {
 	time: undefined,
 };
 
-export const defaultTodoSeriesInputFieldStatus = {
+export const defaultTodoSeriesInputStatus = {
 	title: undefined,
 	description: undefined,
 	category: undefined,

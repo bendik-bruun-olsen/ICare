@@ -1,166 +1,181 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Checkbox, TextField } from "@equinor/eds-core-react";
 import { Timestamp } from "firebase/firestore";
+
 import Navbar from "../../components/Navbar/Navbar";
 import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription/TitleDescription";
-import {
-	editSingleTodoToSeries,
-	editTodoItem,
-	editTodoSeries,
-} from "../../firebase/todoServices/editTodo";
-import {
-	getTodo,
-	getTodoSeriesInfo,
-} from "../../firebase/todoServices/getTodo";
+import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
+import Loading from "../../components/Loading/Loading";
+import ErrorPage from "../ErrorPage/ErrorPage";
+
+import { useAuth } from "../../hooks/useAuth/useAuth";
+import { useNotification } from "../../hooks/useNotification";
+
+import { Paths } from "../../paths";
+
 import styles from "./EditTodoPage.module.css";
+
 import {
 	formatTimestampToDateString,
-	resetTodoItemInputFieldStatus,
-	resetTodoSeriesInputFieldStatus,
+	clearTodoItemInputStatus,
+	clearTodoSeriesInputStatus,
 	validateDateRange,
 	validateTodoItemFields,
 	validateTodoSeriesFields,
 } from "../../utils";
-import { useNotification } from "../../hooks/useNotification";
-import {
-	TodoSeriesInfoInterface,
-	TodoItemInterface,
-	TodoItemInputFieldStatusProps,
-	TodoSeriesInputFieldStatusProps,
-} from "../../types";
-import ErrorPage from "../ErrorPage/ErrorPage";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
-	defaultTodoItemInputFieldStatus,
+	defaultTodoItemInputStatus,
 	defaultTodoSeries,
-	defaultTodoSeriesInputFieldStatus,
+	defaultTodoSeriesInputStatus,
 } from "../../constants/defaultTodoValues";
+
+import {
+	TodoSeriesInfoInterface,
+	TodoItemInterface,
+	TodoItemInputStatusProps,
+	TodoSeriesInputStatusProps,
+} from "../../types";
+
+import {
+	getTodo,
+	getTodoSeriesIdByTodoId,
+	getTodoSeriesInfo,
+} from "../../firebase/todoServices/getTodo";
+
+import {
+	createTodoSeriesFromSingleTodo,
+	editTodoItem,
+	editTodoSeries,
+} from "../../firebase/todoServices/editTodo";
+
 import {
 	deleteTodoItem,
 	deleteTodoSeries,
 } from "../../firebase/todoServices/deleteTodo";
-import DeleteConfirmModal from "../../components/DeleteConfirmModal/DeleteConfirmModal";
-import { Paths } from "../../paths";
-import Loading from "../../components/Loading/Loading";
 
-const EditToDoPage = () => {
+interface LocationState {
+	selectedDate: Date;
+	editingSeries: boolean;
+}
+
+const EditToDoPage: React.FC = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const { selectedDate: DateSelectedInTodoPage } = location.state;
+	const currentUser = useAuth().userData?.email;
+	const locationState = location.state as LocationState;
+	const { selectedDate: DateSelectedInTodoPage, editingSeries } =
+		locationState || { selectedDate: new Date(), editingSeries: false };
+	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
+	const [isEditingSeries, setIsEditingSeries] = useState(editingSeries);
+	const [isSeriesMode, setIsSeriesMode] = useState(editingSeries);
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
+	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
-	const { todoId: todoItemIdFromParams, seriesId: seriesIdFromParams } =
-		useParams<{
-			todoId: string;
-			seriesId: string;
-		}>();
-	const [isCreatingNewSeries, setIsCreatingNewSeries] = useState(false);
-	const [isEditingSeries, setIsEditingSeries] = useState(!!seriesIdFromParams);
+	const { todoId: todoItemIdFromParams } = useParams<{
+		todoId: string;
+	}>();
 	const { addNotification } = useNotification();
-	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
-		useState<TodoItemInputFieldStatusProps>(defaultTodoItemInputFieldStatus);
-	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
-		useState<TodoSeriesInputFieldStatusProps>(
-			defaultTodoSeriesInputFieldStatus
-		);
-
+	const [todoItemInputStatus, setTodoItemInputStatus] =
+		useState<TodoItemInputStatusProps>(defaultTodoItemInputStatus);
+	const [todoSeriesInputStatus, setTodoSeriesInputStatus] =
+		useState<TodoSeriesInputStatusProps>(defaultTodoSeriesInputStatus);
 	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
 		undefined
 	);
 
-	async function fetchSeriesInfo() {
-		const id = seriesIdFromParams || todoItem.seriesId;
-		if (!id) return setHasError(true);
-		try {
-			setIsLoading(true);
-			const result = await getTodoSeriesInfo(id, addNotification);
-			if (result) {
-				setTodoSeriesInfo(result as TodoSeriesInfoInterface);
-				setEndDateMinValue(result.startDate.toDate());
-			}
-		} finally {
-			setIsLoading(false);
+	async function fetchTodoItem(itemId: string): Promise<boolean> {
+		const result = await getTodo(itemId, addNotification);
+		if (result) {
+			setTodoItem(result as TodoItemInterface);
+			return true;
 		}
+		return false;
 	}
 
-	async function fetchTodoItem() {
-		const id = todoItemIdFromParams;
-		if (!id) return setHasError(true);
-		try {
-			setIsLoading(true);
-			const result = await getTodo(id, addNotification);
-			if (result) {
-				setTodoItem(result as TodoItemInterface);
-			}
-		} finally {
-			setIsLoading(false);
+	async function fetchSeriesInfo(itemId: string): Promise<boolean> {
+		const seriesId = await getTodoSeriesIdByTodoId(itemId);
+		if (!seriesId) {
+			setHasError(true);
+			return false;
 		}
+
+		const result = await getTodoSeriesInfo(seriesId, addNotification);
+		if (result) {
+			setTodoSeriesInfo(result as TodoSeriesInfoInterface);
+			setEndDateMinValue(result.startDate.toDate());
+			return true;
+		}
+		return false;
 	}
 
 	useEffect(() => {
-		const fetchData = async () => {
-			if (isEditingSeries) {
-				await fetchSeriesInfo();
+		const fetchData = async (): Promise<void> => {
+			const itemId = todoItemIdFromParams;
+			if (!itemId) {
+				setHasError(true);
 				return;
 			}
-			await fetchTodoItem();
+			try {
+				setIsLoading(true);
+
+				if (isEditingSeries) {
+					const fetchSeriesSuccess = await fetchSeriesInfo(itemId);
+					if (fetchSeriesSuccess) return;
+				}
+				if (!isEditingSeries) {
+					const fetchItemSuccess = await fetchTodoItem(itemId);
+					if (fetchItemSuccess) return;
+				}
+				setHasError(true);
+			} finally {
+				setIsLoading(false);
+			}
 		};
 		fetchData();
-	}, [isEditingSeries, todoItemIdFromParams, seriesIdFromParams]);
-
-	const handleSeriesEdit = async () => {
-		const seriesId = seriesIdFromParams || todoItem.seriesId;
-		if (!seriesId) return setHasError(true);
-		try {
-			setIsLoading(true);
-			await editTodoSeries(seriesId, todoSeriesInfo, addNotification);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	const handleSingleTodoEdit = async () => {
-		const todoItemId = todoItemIdFromParams || todoItem.id;
-		if (!todoItemId) return setHasError(true);
-		try {
-			setIsLoading(true);
-			await editTodoItem(todoItemId, todoItem, addNotification);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+	}, [isEditingSeries, todoItemIdFromParams]);
 
 	useEffect(() => {
-		if (isEditingSeries || isCreatingNewSeries) {
-			resetTodoSeriesInputFieldStatus(
-				todoSeriesInfo,
-				setTodoSeriesInputFieldStatus
-			);
+		setIsSeriesMode(isEditingSeries || isCreatingNewSeries);
+	}, [isEditingSeries, isCreatingNewSeries]);
+
+	useEffect(() => {
+		if (isSeriesMode) {
+			clearTodoSeriesInputStatus(todoSeriesInfo, setTodoSeriesInputStatus);
 			return;
 		}
-		resetTodoItemInputFieldStatus(todoItem, setTodoItemInputFieldStatus);
-	}, [todoItem, todoSeriesInfo]);
+		clearTodoItemInputStatus(todoItem, setTodoItemInputStatus);
+	}, [todoItem, todoSeriesInfo, isSeriesMode]);
 
-	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (isEditingSeries || isCreatingNewSeries) {
+	const handleToggleEditSeries = (): void => {
+		setIsEditingSeries((prev) => {
+			if (!prev) {
+				setIsCreatingNewSeries(false);
+			}
+			return !prev;
+		});
+	};
+
+	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+		if (isSeriesMode) {
 			setTodoSeriesInfo((prev) => ({ ...prev, time: e.target.value }));
 			return;
 		}
 		setTodoItem((prev) => ({ ...prev, time: e.target.value }));
 	};
 
-	const handleDateChange = (field: string, date: string) => {
+	const handleDateChange = (field: string, date: string): void => {
 		const newTimestamp = Timestamp.fromDate(new Date(date));
-		if (isEditingSeries || isCreatingNewSeries) {
+		if (isSeriesMode) {
 			if (field === "startDate") setEndDateMinValue(new Date(date));
 			setTodoSeriesInfo((prev) => ({ ...prev, [field]: newTimestamp }));
 			return;
@@ -168,7 +183,7 @@ const EditToDoPage = () => {
 		setTodoItem((prev) => ({ ...prev, [field]: newTimestamp }));
 	};
 
-	const handleDayToggle = (day: string) => {
+	const handleDayToggle = (day: string): void => {
 		setTodoSeriesInfo((prev) => {
 			const isSelected = prev.selectedDays.includes(day);
 			const selectedDays = isSelected
@@ -178,16 +193,7 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const handleToggleEditSeries = () => {
-		setIsEditingSeries((prev) => {
-			if (!prev) {
-				setIsCreatingNewSeries(false);
-			}
-			return !prev;
-		});
-	};
-
-	const handleToggleRepeat = () => {
+	const handleToggleRepeat = (): void => {
 		setIsCreatingNewSeries((prev) => {
 			if (!prev) {
 				setIsEditingSeries(false);
@@ -210,130 +216,145 @@ const EditToDoPage = () => {
 		});
 	};
 
-	const handleCreateNewSeriesFromSingleTodo = async () => {
-		const todoItemId = todoItemIdFromParams || todoItem.id;
-		if (!todoItemId) {
+	const handleValidateItemFields = (): boolean => {
+		if (
+			!validateTodoItemFields(todoItem, setTodoItemInputStatus, addNotification)
+		)
+			return false;
+		return true;
+	};
+
+	const handleValidateSeriesFields = (): boolean => {
+		if (
+			!validateDateRange(
+				todoSeriesInfo.startDate,
+				todoSeriesInfo.endDate,
+				addNotification
+			)
+		) {
+			setTodoSeriesInputStatus((prev) => ({
+				...prev,
+				endDate: "error",
+			}));
+
+			return false;
+		}
+		if (
+			!validateTodoSeriesFields(
+				todoSeriesInfo,
+				setTodoSeriesInputStatus,
+				addNotification
+			)
+		)
+			return false;
+		return true;
+	};
+
+	const handleSeriesEdit = async (itemId: string): Promise<boolean> => {
+		const seriesId = await getTodoSeriesIdByTodoId(itemId);
+		if (!seriesId || !currentUser) {
+			setHasError(true);
+			return false;
+		}
+
+		return await editTodoSeries(
+			seriesId,
+			todoSeriesInfo,
+			currentUser,
+			addNotification
+		);
+	};
+
+	async function handleSubmit(e: React.FormEvent): Promise<void> {
+		e.preventDefault();
+		const itemId = todoItemIdFromParams;
+		if (!itemId) return setHasError(true);
+		try {
+			setIsLoading(true);
+
+			if (isEditingSeries) {
+				if (!handleValidateSeriesFields()) return;
+				const seriesEditSuccess = await handleSeriesEdit(itemId);
+				if (seriesEditSuccess) {
+					navigate(Paths.TODO, {
+						state: { selectedDate: DateSelectedInTodoPage },
+					});
+					return;
+				}
+			}
+			if (!isCreatingNewSeries) {
+				if (!handleValidateItemFields()) return;
+				const itemEditSuccess = await editTodoItem(
+					itemId,
+					todoItem,
+					addNotification
+				);
+				if (itemEditSuccess) {
+					navigate(Paths.TODO, {
+						state: { selectedDate: DateSelectedInTodoPage },
+					});
+					return;
+				}
+			}
+			if (isCreatingNewSeries) {
+				if (!handleValidateSeriesFields) return;
+				const seriesCreationSuccess = await createTodoSeriesFromSingleTodo(
+					todoItem,
+					todoSeriesInfo,
+					addNotification
+				);
+				if (seriesCreationSuccess) {
+					navigate(Paths.TODO, {
+						state: { selectedDate: DateSelectedInTodoPage },
+					});
+					return;
+				}
+			}
+			setHasError(true);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+	async function handleDelete(): Promise<void> {
+		if (!todoItemIdFromParams) {
 			setHasError(true);
 			return;
 		}
-		try {
-			setIsLoading(true);
-			await editSingleTodoToSeries(
-				todoItemId,
-				todoItem,
-				todoSeriesInfo,
-				addNotification
-			);
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
-	const handleDelete = async () => {
-		if (isEditingSeries) {
-			const seriesId = seriesIdFromParams || todoItem.seriesId;
-			if (!seriesId) return setHasError(true);
+		if (isSeriesMode) {
+			const seriesId = await getTodoSeriesIdByTodoId(todoItemIdFromParams);
+			if (!seriesId) {
+				setHasError(true);
+				return;
+			}
 			try {
-				setIsConfirmModalOpen(false);
 				setIsLoading(true);
 				await deleteTodoSeries(seriesId, addNotification);
 			} finally {
+				setIsConfirmModalOpen(false);
 				setIsLoading(false);
 			}
-			return navigate(Paths.TODO, {
+			navigate(Paths.TODO, {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
+			return;
 		}
-		const todoItemId = todoItemIdFromParams;
-		if (!todoItemId) return setHasError(true);
-		try {
-			setIsLoading(true);
-			await deleteTodoItem(todoItemId, addNotification);
-		} finally {
-			setIsLoading(false);
-			setIsConfirmModalOpen(false);
-		}
-		return navigate(Paths.TODO, {
-			state: { selectedDate: DateSelectedInTodoPage },
-		});
-	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		if (isEditingSeries) {
-			if (
-				!validateDateRange(
-					todoSeriesInfo.startDate,
-					todoSeriesInfo.endDate,
-					addNotification
-				)
-			) {
-				setTodoSeriesInputFieldStatus((prev) => ({
-					...prev,
-					endDate: "error",
-				}));
-
-				return;
+		if (!isSeriesMode) {
+			try {
+				setIsLoading(true);
+				await deleteTodoItem(todoItemIdFromParams, addNotification);
+			} finally {
+				setIsConfirmModalOpen(false);
+				setIsLoading(false);
 			}
-			if (
-				!validateTodoSeriesFields(
-					todoSeriesInfo,
-					setTodoSeriesInputFieldStatus,
-					addNotification
-				)
-			)
-				return;
-
-			await handleSeriesEdit();
-			return navigate(Paths.TODO, {
+			navigate(Paths.TODO, {
 				state: { selectedDate: DateSelectedInTodoPage },
 			});
+			return;
 		}
-		if (!isCreatingNewSeries) {
-			if (
-				!validateTodoItemFields(
-					todoItem,
-					setTodoItemInputFieldStatus,
-					addNotification
-				)
-			)
-				return;
+	}
 
-			await handleSingleTodoEdit();
-			return navigate(Paths.TODO, {
-				state: { selectedDate: DateSelectedInTodoPage },
-			});
-		}
-		if (isCreatingNewSeries) {
-			if (
-				!validateDateRange(
-					todoSeriesInfo.startDate,
-					todoSeriesInfo.endDate,
-					addNotification
-				)
-			) {
-				setTodoSeriesInputFieldStatus((prev) => ({
-					...prev,
-					endDate: "error",
-				}));
-				return;
-			}
-			if (
-				!validateTodoSeriesFields(
-					todoSeriesInfo,
-					setTodoSeriesInputFieldStatus,
-					addNotification
-				)
-			)
-				return;
-
-			await handleCreateNewSeriesFromSingleTodo();
-			return navigate(Paths.TODO, {
-				state: { selectedDate: DateSelectedInTodoPage },
-			});
-		}
-		setHasError(true);
-	};
 	if (hasError) return <ErrorPage />;
 	if (isLoading)
 		return (
@@ -356,13 +377,9 @@ const EditToDoPage = () => {
 						<div className="inputBackgroundBox">
 							<div className={styles.mainContentContainer}>
 								<TitleDescription
-									title={
-										isEditingSeries || isCreatingNewSeries
-											? todoSeriesInfo.title
-											: todoItem.title
-									}
+									title={isSeriesMode ? todoSeriesInfo.title : todoItem.title}
 									setTitle={(title) =>
-										isEditingSeries || isCreatingNewSeries
+										isSeriesMode
 											? setTodoSeriesInfo((prev) => ({
 													...prev,
 													title,
@@ -373,17 +390,17 @@ const EditToDoPage = () => {
 											  }))
 									}
 									titleVariant={
-										isEditingSeries || isCreatingNewSeries
-											? todoSeriesInputFieldStatus.title
-											: todoItemInputFieldStatus.title
+										isSeriesMode
+											? todoSeriesInputStatus.title
+											: todoItemInputStatus.title
 									}
 									description={
-										isEditingSeries || isCreatingNewSeries
+										isSeriesMode
 											? todoSeriesInfo.description
 											: todoItem.description
 									}
 									setDescription={(description) =>
-										isEditingSeries || isCreatingNewSeries
+										isSeriesMode
 											? setTodoSeriesInfo((prev) => ({
 													...prev,
 													description,
@@ -394,9 +411,9 @@ const EditToDoPage = () => {
 											  }))
 									}
 									descriptionVariant={
-										isEditingSeries || isCreatingNewSeries
-											? todoSeriesInputFieldStatus.description
-											: todoItemInputFieldStatus.description
+										isSeriesMode
+											? todoSeriesInputStatus.description
+											: todoItemInputStatus.description
 									}
 								/>
 								<div className={styles.scheduleControlsContainer}>
@@ -408,7 +425,7 @@ const EditToDoPage = () => {
 													: todoItem.category
 											}
 											onSelectionChange={(category) =>
-												isEditingSeries || isCreatingNewSeries
+												isSeriesMode
 													? setTodoSeriesInfo((prev) => ({
 															...prev,
 															category,
@@ -419,17 +436,13 @@ const EditToDoPage = () => {
 													  }))
 											}
 											variant={
-												isEditingSeries || isCreatingNewSeries
-													? todoSeriesInputFieldStatus.category
-													: todoItemInputFieldStatus.category
+												isSeriesMode
+													? todoSeriesInputStatus.category
+													: todoItemInputStatus.category
 											}
 										/>
 										<StartAndEndDate
-											label={
-												isCreatingNewSeries || isEditingSeries
-													? "Start date"
-													: "Date"
-											}
+											label={isSeriesMode ? "Start date" : "Date"}
 											value={formatTimestampToDateString(
 												isEditingSeries
 													? todoSeriesInfo.startDate
@@ -442,9 +455,9 @@ const EditToDoPage = () => {
 												)
 											}
 											variant={
-												isEditingSeries || isCreatingNewSeries
-													? todoSeriesInputFieldStatus.startDate
-													: todoItemInputFieldStatus.date
+												isSeriesMode
+													? todoSeriesInputStatus.startDate
+													: todoItemInputStatus.date
 											}
 											minValue={undefined}
 										/>
@@ -461,12 +474,12 @@ const EditToDoPage = () => {
 											onChange={handleTimeChange}
 											style={{ width: "150px" }}
 											variant={
-												isEditingSeries || isCreatingNewSeries
-													? todoSeriesInputFieldStatus.time
-													: todoItemInputFieldStatus.time
+												isSeriesMode
+													? todoSeriesInputStatus.time
+													: todoItemInputStatus.time
 											}
 										/>
-										{todoItem.seriesId ? (
+										{todoItem.seriesId || isEditingSeries ? (
 											<Checkbox
 												label="Edit Series"
 												checked={isEditingSeries}
@@ -475,14 +488,13 @@ const EditToDoPage = () => {
 										) : (
 											<Checkbox
 												label="Repeat"
-												checked={isCreatingNewSeries || isEditingSeries}
-												disabled={seriesIdFromParams ? true : false}
+												checked={isCreatingNewSeries}
 												onChange={handleToggleRepeat}
 											/>
 										)}
 									</div>
 								</div>
-								{(isCreatingNewSeries || isEditingSeries) && (
+								{isSeriesMode && (
 									<div className={styles.EndDateAndFrequencyContainer}>
 										<StartAndEndDate
 											label="End date"
@@ -490,13 +502,13 @@ const EditToDoPage = () => {
 												isEditingSeries ? todoSeriesInfo.endDate : todoItem.date
 											)}
 											onChange={(date) => handleDateChange("endDate", date)}
-											variant={todoSeriesInputFieldStatus.endDate}
+											variant={todoSeriesInputStatus.endDate}
 											minValue={endDateMinValue}
 										/>
 										<DaysComponent
 											selectedDays={todoSeriesInfo.selectedDays}
 											onDayToggle={handleDayToggle}
-											variant={todoSeriesInputFieldStatus.selectedDays}
+											variant={todoSeriesInputStatus.selectedDays}
 										/>
 									</div>
 								)}
