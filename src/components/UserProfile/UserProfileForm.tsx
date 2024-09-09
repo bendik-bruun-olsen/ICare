@@ -105,7 +105,11 @@ const UserProfileForm: React.FC = () => {
           }
           setIsEditing(false);
         }
-      } else if (target !== nameInputRef.current) {
+      } else if (
+        target !== nameInputRef.current &&
+        (target instanceof HTMLInputElement ||
+          target instanceof HTMLSelectElement)
+      ) {
         if (!validateNameField()) {
           event.preventDefault();
           event.stopPropagation();
