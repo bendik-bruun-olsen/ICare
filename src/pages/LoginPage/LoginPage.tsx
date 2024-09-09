@@ -90,7 +90,7 @@ export default function LoginPage() {
       )}
 
       <form className={styles.inputContainer} onSubmit={signIn}>
-        <div className="inputBackgroundBox">
+        <div className={styles.loginInputBackgroundBox}>
           <div className={styles.input}>
             <Label htmlFor="textfield-normal" label="Email" />
             <Input

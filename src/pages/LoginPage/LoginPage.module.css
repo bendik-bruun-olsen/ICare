@@ -5,7 +5,7 @@
 .loginPageWrapper {
   max-width: 960px;
 
-  padding: calc(10px + var(--navbar-height)) 10px 0 10px;
+  padding: calc(10px + var(--navbar-height)) 16px 0 16px;
 }
 .inputContainer {
   width: 100%;
@@ -50,4 +50,10 @@
   color: var(--blue);
   text-decoration: underline !important;
   font-weight: 500;
+}
+.loginInputBackgroundBox {
+  margin: 22px 0px 0;
+  background-color: var(--fadedblue);
+  padding: 15px;
+  border-radius: 5px;
 }
