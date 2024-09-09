@@ -2,7 +2,6 @@
   padding: 20px;
   background-color: var(--fadedblue);
   border-radius: 5px;
-  margin-bottom: 200px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
 }
 
@@ -31,19 +30,6 @@
 .inputGroup NativeSelect {
   font-family: inherit;
   font-size: 1rem;
-  border-radius: 4px;
-  border: 1px solid var(--gray);
-}
-
-.inputGroup NativeSelect option {
-  font-family: inherit;
-  color: var(--black);
-  background-color: white;
-}
-
-.inputGroup NativeSelect:disabled {
-  background-color: var(--lightgrey);
-  border: none;
 }
 
 .Icon {

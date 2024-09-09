@@ -98,7 +98,7 @@ const ProfilePicture: React.FC = () => {
   return (
     <div className={styles.profilePictureContainer}>
       <div className={styles.imageContainer}>
-        <div className={styles.profilePicContainer}>
+        <div>
           <img
             src={selectedImage || "/default-profile-image.jpg"}
             alt="Profile"
