@@ -32,7 +32,8 @@ const UserProfileForm: React.FC = () => {
   }, [currentUser]);
 
   const validateNameField = useCallback((): boolean => {
-    if (!userData?.name || userData.name.trim() === "") {
+    const isUserNameEmpty = !userData?.name || userData.name.trim() === "";
+    if (isUserNameEmpty) {
       setErrorMessage("Name field cannot be empty.");
       if (nameInputRef.current) {
         nameInputRef.current.focus();
@@ -48,7 +49,9 @@ const UserProfileForm: React.FC = () => {
   }, [userData?.name]);
 
   const saveDataToFirebase = useCallback(async () => {
-    if (currentUser?.email && userData && isChanged) {
+    const isUserDataValid = currentUser?.email && userData && isChanged;
+
+    if (isUserDataValid) {
       if (!validateNameField()) {
         return;
       }

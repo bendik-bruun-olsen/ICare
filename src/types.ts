@@ -89,7 +89,6 @@ export interface UserData {
   gender?: "Male" | "Female" | "Others";
   phone?: string;
   email: string;
-  profilePictureUrl?: string;
 }
 
 export interface UserProfilePicUrl {
