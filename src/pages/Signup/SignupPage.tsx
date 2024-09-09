@@ -40,32 +40,31 @@ export default function SignupPage() {
     setErrors((prev) => ({ ...prev, [name]: false }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const updatedErrors = {
-      name: !formData.name,
-      email: !formData.email,
-      password: !formData.password,
-      confirmPassword: !formData.confirmPassword,
-    };
+  const validateForm = () => {
+    const updatedErrors = { ...initialErrorState };
 
-    setErrors(updatedErrors);
+    updatedErrors.name = !formData.name;
+    updatedErrors.email = !formData.email;
+    updatedErrors.password = !formData.password;
+    updatedErrors.confirmPassword = !formData.confirmPassword;
 
     const passwordsMatch = formData.password === formData.confirmPassword;
+
     if (!passwordsMatch) {
       addNotification("Passwords do not match", "error");
       updatedErrors.password = true;
       updatedErrors.confirmPassword = true;
-      return;
     }
+    setErrors(updatedErrors);
+    return !Object.values(updatedErrors).includes(true);
+  };
 
-    const validationErrors = Object.values(updatedErrors).some(
-      (error) => error
-    );
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    if (validationErrors) {
-      return;
-    }
+    if (!validateForm()) return;
+
+    setIsLoading(true);
 
     try {
       setIsLoading(true);
@@ -103,18 +102,13 @@ export default function SignupPage() {
 
   if (isLoading) return <Loading />;
 
-  const renderInput = (
-    label: string,
-    name: string,
-    type: string,
-    required: boolean
-  ) => (
+  const renderInput = (label: string, name: string, type: string) => (
     <>
       <div className={styles.labelContainer}>
         <Label label={label} htmlFor={name}>
           {label}
         </Label>
-        {required && <span className={styles.requiredStar}>*</span>}
+        <span className={styles.requiredStar}>*</span>
       </div>
       <Input
         className={styles.input}
@@ -123,7 +117,6 @@ export default function SignupPage() {
         value={formData[name]}
         onChange={handleChange}
         variant={errors[name] ? "error" : undefined}
-        required={required}
       />
     </>
   );
@@ -133,12 +126,13 @@ export default function SignupPage() {
       <div className={styles.heading}>
         <Logo size="60px" color="var(--blue)" />
       </div>
+
       <form className={styles.inputContainer} onSubmit={handleSubmit}>
         <div className={styles.inputBackgroundBox}>
-          {renderInput("Name", "name", "text", true)}
-          {renderInput("Email", "email", "email", true)}
-          {renderInput("Password", "password", "password", true)}
-          {renderInput("Confirm Password", "confirmPassword", "password", true)}
+          {renderInput("Name", "name", "text")}
+          {renderInput("Email", "email", "email")}
+          {renderInput("Password", "password", "password")}
+          {renderInput("Confirm Password", "confirmPassword", "password")}
         </div>
         <div className={styles.links}>
           <Button id="signupButton" type="submit">

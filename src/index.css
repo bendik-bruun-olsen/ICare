@@ -58,11 +58,6 @@ a {
   padding: calc(20px + var(--navbar-height)) 20px 0 20px;
 }
 
-.formWrapper {
-  background-color: var(--fadedblue);
-  padding: 20px;
-  border-radius: 5px;
-}
 @media (min-width: 501px) {
   .inputBackgroundBox {
     padding: 20px;
