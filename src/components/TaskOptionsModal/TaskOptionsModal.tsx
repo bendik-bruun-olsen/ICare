@@ -48,8 +48,8 @@ export default function TaskOptionsModal({
 					</li>
 					<li className={styles.modalItem}>
 						<Link
-							to={Paths.EDIT_TODO_ITEM.replace(":todoId", todoItem.id)}
-							state={{ selectedDate }}
+							to={Paths.EDIT_TODO.replace(":todoId", todoItem.id)}
+							state={{ selectedDate, editingSeries: false }}
 						>
 							<p>Edit/Delete This Task</p>
 						</Link>
@@ -57,11 +57,8 @@ export default function TaskOptionsModal({
 					{todoItem.seriesId && (
 						<li className={styles.modalItem}>
 							<Link
-								to={Paths.EDIT_TODO_SERIES.replace(
-									":seriesId",
-									todoItem.seriesId
-								)}
-								state={{ selectedDate }}
+								to={Paths.EDIT_TODO.replace(":todoId", todoItem.id)}
+								state={{ selectedDate, editingSeries: true }}
 							>
 								<p>Edit/Delete All Tasks In Series</p>
 							</Link>

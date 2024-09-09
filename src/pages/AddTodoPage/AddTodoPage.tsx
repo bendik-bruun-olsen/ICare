@@ -7,7 +7,6 @@ import TitleDescription from "../../components/TitleDescription/TitleDescription
 import AddButton from "../../components/AddButton";
 import styles from "./AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
-import BackHomeButton from "../../components/BackHomeButton";
 import {
 	addSingleNewTodo,
 	addMultipleNewTodos,
@@ -16,18 +15,18 @@ import { useNotification } from "../../hooks/useNotification";
 import { Timestamp } from "firebase/firestore";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-	TodoItemInputFieldStatusProps,
+	TodoItemInputStatusProps,
 	TodoItemInterface,
 	TodoSeriesInfoInterface,
-	TodoSeriesInputFieldStatusProps,
+	TodoSeriesInputStatusProps,
 	ToDoStatus,
 } from "../../types";
 import {
 	formatTimestampToDateString,
 	generateTodosForSeries,
 	mapSelectedDaysToNumbers,
-	resetTodoItemInputFieldStatus,
-	resetTodoSeriesInputFieldStatus,
+	clearTodoItemInputStatus,
+	clearTodoSeriesInputStatus,
 	validateDateRange,
 	validateTodoItemFields,
 	validateTodoSeriesFields,
@@ -37,9 +36,9 @@ import { Paths } from "../../paths";
 import {
 	daysOfTheWeek,
 	defaultTodoItem,
-	defaultTodoItemInputFieldStatus,
+	defaultTodoItemInputStatus,
 	defaultTodoSeries,
-	defaultTodoSeriesInputFieldStatus,
+	defaultTodoSeriesInputStatus,
 } from "../../constants/defaultTodoValues";
 import Loading from "../../components/Loading/Loading";
 import { useAuth } from "../../hooks/useAuth/useAuth";
@@ -53,11 +52,9 @@ const AddToDoPage: React.FC = () => {
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
-		useState<TodoItemInputFieldStatusProps>(defaultTodoItemInputFieldStatus);
+		useState<TodoItemInputStatusProps>(defaultTodoItemInputStatus);
 	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
-		useState<TodoSeriesInputFieldStatusProps>(
-			defaultTodoSeriesInputFieldStatus
-		);
+		useState<TodoSeriesInputStatusProps>(defaultTodoSeriesInputStatus);
 	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
 		undefined
 	);
@@ -79,13 +76,10 @@ const AddToDoPage: React.FC = () => {
 
 	useEffect(() => {
 		if (isRepeating) {
-			resetTodoSeriesInputFieldStatus(
-				todoSeriesInfo,
-				setTodoSeriesInputFieldStatus
-			);
+			clearTodoSeriesInputStatus(todoSeriesInfo, setTodoSeriesInputFieldStatus);
 			return;
 		}
-		resetTodoItemInputFieldStatus(todoItem, setTodoItemInputFieldStatus);
+		clearTodoItemInputStatus(todoItem, setTodoItemInputFieldStatus);
 	}, [todoItem, todoSeriesInfo]);
 
 	const handleToggleRepeat = () => {
