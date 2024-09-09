@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../hooks/useNotification";
 import { capitalizeUsername } from "../../utils";
 import Logo from "../Logo/Logo";
+import { NotificationType } from "../../types";
 
 interface NavbarProps {
 	centerContent: string;
@@ -28,10 +29,10 @@ export default function Navbar({ centerContent }: NavbarProps) {
 	const handleSignOut = async () => {
 		try {
 			await auth.signOut();
-			addNotification("Logged out successfully!", "success");
+			addNotification("Logged out successfully!", NotificationType.SUCCESS);
 		} catch {
 			navigate(Paths.ERROR);
-			addNotification("Error! Please try again later", "error");
+			addNotification("Error! Please try again later", NotificationType.ERROR);
 		}
 	};
 

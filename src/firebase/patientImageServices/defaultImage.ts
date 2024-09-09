@@ -1,8 +1,8 @@
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
-import { NotificationContextType } from "../../types";
+import { NotificationContext } from "../../types";
 
 export const getDefaultPictureUrl = async (
-	addNotification: NotificationContextType["addNotification"]
+	addNotification: NotificationContext["addNotification"]
 ) => {
 	const storage = getStorage();
 	const defaultPictureRef = ref(storage, "Default.png");
@@ -10,6 +10,6 @@ export const getDefaultPictureUrl = async (
 		const url = await getDownloadURL(defaultPictureRef);
 		return url;
 	} catch {
-		addNotification("Error fetching default picture", "error");
+		addNotification("Error fetching default picture", NotificationType.ERROR);
 	}
 };

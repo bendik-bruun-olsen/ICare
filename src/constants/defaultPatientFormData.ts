@@ -1,6 +1,6 @@
-import { PatientFormDataInterface } from "../types";
+import { NewPatient } from "../types";
 
-export const defaultPatientFormData: PatientFormDataInterface = {
+export const defaultPatientFormData: NewPatient = {
 	name: "",
 	age: "",
 	phone: "",

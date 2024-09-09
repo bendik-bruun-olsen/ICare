@@ -25,21 +25,21 @@ export default function ResetPasswordPage() {
 		const oobCode = queryParams.get("oobCode");
 
 		if (!oobCode) {
-			addNotification("Invalid or expired token", "error");
+			addNotification("Invalid or expired token", NotificationType.ERROR);
 			return;
 		}
 
 		if (password !== confirmPassword) {
-			addNotification("Passwords do not match", "error");
+			addNotification("Passwords do not match", NotificationType.ERROR);
 			return;
 		}
 
 		try {
 			setIsLoading(true);
 			await confirmPasswordReset(auth, oobCode, password);
-			addNotification("Password has been reset!", "success");
+			addNotification("Password has been reset!", NotificationType.SUCCESS);
 		} catch (error) {
-			addNotification(`Error: `, "error");
+			addNotification(`Error: `, NotificationType.ERROR);
 		} finally {
 			setIsLoading(false);
 		}

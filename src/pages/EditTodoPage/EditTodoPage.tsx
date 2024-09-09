@@ -38,7 +38,7 @@ import {
 
 import {
 	TodoSeriesInfoInterface,
-	TodoItemInterface,
+	ToDo,
 	TodoItemInputStatusProps,
 	TodoSeriesInputStatusProps,
 } from "../../types";
@@ -78,7 +78,7 @@ const EditToDoPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
+	const [todoItem, setTodoItem] = useState<ToDo>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
 	const { todoId: todoItemIdFromParams } = useParams<{
@@ -96,7 +96,7 @@ const EditToDoPage: React.FC = () => {
 	async function fetchTodoItem(itemId: string): Promise<boolean> {
 		const result = await getTodo(itemId, addNotification);
 		if (result) {
-			setTodoItem(result as TodoItemInterface);
+			setTodoItem(result as ToDo);
 			return true;
 		}
 		return false;

@@ -48,7 +48,7 @@ export default function PatientProfilePicture({
 					setSelectedImage(defaultPictureUrl);
 				}
 			} catch (error) {
-				addNotification("Failed to fetch patient data", "error");
+				addNotification("Failed to fetch patient data", NotificationType.ERROR);
 			}
 		};
 		fetchData();

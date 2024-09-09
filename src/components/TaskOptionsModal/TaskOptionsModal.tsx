@@ -1,6 +1,6 @@
 import styles from "./TaskOptionsModal.module.css";
 import { Link } from "react-router-dom";
-import { TodoItemInterface, ToDoStatus } from "../../types";
+import { ToDo, ToDoStatus } from "../../types";
 import { Paths } from "../../paths";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 	onClose: () => void;
 	onStatusChange: (newStatus: ToDoStatus) => Promise<void>;
 	currentTaskStatus: ToDoStatus;
-	todoItem: TodoItemInterface;
+	todoItem: ToDo;
 	selectedDate: Date;
 }
 

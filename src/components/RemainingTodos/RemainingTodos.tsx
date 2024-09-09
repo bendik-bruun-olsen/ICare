@@ -38,6 +38,7 @@ export default function RemainingTodos() {
 							completedTodosCount={todo.completed}
 							allTodosCount={todo.all}
 							icon={todo.icon}
+							key={todo.all}
 						/>
 					);
 				})}

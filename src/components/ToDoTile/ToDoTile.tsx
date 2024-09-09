@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon, Checkbox, Chip, Button } from "@equinor/eds-core-react";
 import { arrow_back_ios, arrow_forward_ios, repeat } from "@equinor/eds-icons";
 import styles from "./ToDoTile.module.css";
-import { TodoItemInterface, ToDoStatus } from "../../types";
+import { ToDo, ToDoStatus } from "../../types";
 import { updateToDoStatusInDatabase } from "../../firebase/todoServices/updateTodo";
 import { useNotification } from "../../hooks/useNotification";
 import { capitalizeUsername } from "../../utils";
@@ -12,7 +12,7 @@ import TaskOptionsModal from "../TaskOptionsModal/TaskOptionsModal";
 
 interface ToDoTileProps {
 	selectedDate: Date;
-	todoItem: TodoItemInterface;
+	todoItem: ToDo;
 	onStatusChange: (todoId: string, newStatus: ToDoStatus) => void;
 }
 

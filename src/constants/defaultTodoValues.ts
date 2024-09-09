@@ -1,11 +1,7 @@
 import { Timestamp } from "firebase/firestore";
-import {
-	TodoItemInterface,
-	TodoSeriesInfoInterface,
-	ToDoStatus,
-} from "../types";
+import { ToDo, TodoSeriesInfoInterface, ToDoStatus } from "../types";
 
-export const defaultTodoItem: TodoItemInterface = {
+export const defaultTodoItem: ToDo = {
 	title: "",
 	description: "",
 	date: Timestamp.now(),

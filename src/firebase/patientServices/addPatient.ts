@@ -1,13 +1,10 @@
 import { collection, doc, setDoc } from "firebase/firestore";
-import {
-	CaretakerInformationInterface,
-	PatientFormDataInterface,
-} from "../../types";
+import { Caretaker, NewPatient } from "../../types";
 import { db } from "../firebase";
 
 export const addPatient = async (
-	formData: PatientFormDataInterface,
-	caretakers: CaretakerInformationInterface[],
+	formData: NewPatient,
+	caretakers: Caretaker[],
 	id?: string
 ) => {
 	const patientRef = id

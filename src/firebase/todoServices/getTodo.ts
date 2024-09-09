@@ -1,4 +1,4 @@
-import { NotificationContextType } from "../../types";
+import { NotificationContext, NotificationType, ToDo } from "../../types";
 import { db } from "../firebase";
 import {
 	doc,
@@ -12,28 +12,28 @@ import {
 
 export const getTodo = async (
 	todoId: string,
-	addNotification: NotificationContextType["addNotification"]
-) => {
+	addNotification: NotificationContext["addNotification"]
+): Promise<ToDo | undefined> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoRef = doc(patientRef, "todoItems", todoId);
 		const todoSnap = await getDoc(todoRef);
 
 		if (!todoSnap.exists()) {
-			addNotification("Todo not found", "error");
-			return null;
+			addNotification("Todo not found", NotificationType.ERROR);
+			throw new Error("Todo not found");
 		}
 
-		return todoSnap.data();
+		const data = todoSnap.data() as ToDo;
+		return data;
 	} catch {
-		addNotification("Error fetching todo", "error");
-		return null;
+		addNotification("Error fetching todo", NotificationType.ERROR);
 	}
 };
 
 export const getTodoSeriesInfo = async (
 	seriesId: string,
-	addNotification: NotificationContextType["addNotification"]
+	addNotification: NotificationContext["addNotification"]
 ) => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
@@ -41,19 +41,19 @@ export const getTodoSeriesInfo = async (
 
 		const seriesInfoSnap = await getDoc(seriesInfoRef);
 		if (!seriesInfoSnap.exists()) {
-			addNotification("Series not found", "error");
+			addNotification("Series not found", NotificationType.ERROR);
 			return null;
 		}
 		return seriesInfoSnap.data();
 	} catch {
-		addNotification("Error fetching series", "error");
+		addNotification("Error fetching series", NotificationType.ERROR);
 		return null;
 	}
 };
 
 export const getTodosBySelectedDate = async (
 	selectedDate: Date,
-	addNotification: NotificationContextType["addNotification"]
+	addNotification: NotificationContext["addNotification"]
 ) => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
@@ -83,7 +83,7 @@ export const getTodosBySelectedDate = async (
 		}));
 		return todosWithId;
 	} catch {
-		addNotification("Error fetching todos", "error");
+		addNotification("Error fetching todos", NotificationType.ERROR);
 		return [];
 	}
 };

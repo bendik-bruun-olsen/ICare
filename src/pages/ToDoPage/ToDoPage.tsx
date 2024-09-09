@@ -7,7 +7,7 @@ import { Icon } from "@equinor/eds-core-react";
 import { add } from "@equinor/eds-icons";
 import Navbar from "../../components/Navbar/Navbar";
 import { groupTodosByCategory, sortTodosGroup } from "../../utils";
-import { TodoItemInterface, ToDoStatus } from "../../types";
+import { ToDo, ToDoStatus } from "../../types";
 import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
 import { useNotification } from "../../hooks/useNotification";
@@ -22,7 +22,7 @@ const ToDoPage: React.FC = () => {
 		: new Date();
 	const [selectedDate, setSelectedDate] = useState(initialDate);
 	const [categorizedTodos, setCategorizedTodos] = useState<{
-		[key: string]: TodoItemInterface[];
+		[key: string]: ToDo[];
 	}>({});
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
@@ -39,9 +39,7 @@ const ToDoPage: React.FC = () => {
 					addNotification
 				);
 				if (data) {
-					const groupedTodos = groupTodosByCategory(
-						data as TodoItemInterface[]
-					);
+					const groupedTodos = groupTodosByCategory(data as ToDo[]);
 					const sortedTodosGroup = sortTodosGroup(groupedTodos);
 					setCategorizedTodos(sortedTodosGroup);
 				}

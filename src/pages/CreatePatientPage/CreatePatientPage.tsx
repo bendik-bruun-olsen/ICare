@@ -6,9 +6,10 @@ import { add, remove_outlined } from "@equinor/eds-icons";
 import Loading from "../../components/Loading/Loading";
 
 import {
-	CaretakerInformationInterface,
+	Caretaker,
 	FormFieldProps,
-	PatientFormDataInterface,
+	NotificationType,
+	NewPatient,
 } from "../../types";
 import { addPatient } from "../../firebase/patientServices/addPatient";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
@@ -54,12 +55,8 @@ export default function CreatePatientPage() {
 	const { addNotification } = useNotification();
 	const [isLoading, setIsLoading] = useState(false);
 	const [caretakerEmail, setCaretakerEmail] = useState("");
-	const [caretakers, setCaretakers] = useState<CaretakerInformationInterface[]>(
-		[]
-	);
-	const [formData, setFormData] = useState<PatientFormDataInterface>(
-		defaultPatientFormData
-	);
+	const [caretakers, setCaretakers] = useState<Caretaker[]>([]);
+	const [formData, setFormData] = useState<NewPatient>(defaultPatientFormData);
 	const [pictureUrl, setPictureUrl] = useState("");
 	const [profileImage, setProfileImage] = useState<File | null>(null);
 
@@ -72,7 +69,7 @@ export default function CreatePatientPage() {
 		fetchDefaultPictureUrl();
 	});
 
-	const isFormDataValid = (formData: PatientFormDataInterface) => {
+	const isFormDataValid = (formData: NewPatient) => {
 		const { age, phone } = formData;
 		if (isNaN(Number(age))) return false;
 		if (isNaN(Number(phone))) return false;
@@ -83,12 +80,12 @@ export default function CreatePatientPage() {
 
 	const isCaretakerDataValid = async () => {
 		if (caretakerEmail === "") {
-			addNotification("Please enter an email address", "error");
+			addNotification("Please enter an email address", NotificationType.ERROR);
 			return false;
 		}
 
 		if (!(await checkEmailExists(caretakerEmail))) {
-			addNotification("Email does not exist", "error");
+			addNotification("Email does not exist", NotificationType.ERROR);
 			return false;
 		}
 
@@ -97,7 +94,7 @@ export default function CreatePatientPage() {
 		);
 
 		if (emailAlreadyAdded) {
-			addNotification("Caretaker already added", "error");
+			addNotification("Caretaker already added", NotificationType.ERROR);
 			return false;
 		}
 		return true;
@@ -130,7 +127,7 @@ export default function CreatePatientPage() {
 		setCaretakers((prevCaretakers) =>
 			prevCaretakers.filter((caretaker) => caretaker.email !== email)
 		);
-		addNotification("Caretaker removed successfully", "success");
+		addNotification("Caretaker removed successfully", NotificationType.SUCCESS);
 	};
 
 	// Refactor if we find a better solution
@@ -142,9 +139,9 @@ export default function CreatePatientPage() {
 			if (profileImage) {
 				uploadProfilePicture(profileImage, patientId);
 			}
-			addNotification("Patient created successfully", "success");
+			addNotification("Patient created successfully", NotificationType.SUCCESS);
 		} catch {
-			addNotification("Failed to create patient", "error");
+			addNotification("Failed to create patient", NotificationType.ERROR);
 		} finally {
 			setIsLoading(false);
 		}
@@ -154,12 +151,15 @@ export default function CreatePatientPage() {
 		e.preventDefault();
 
 		if (!isFormDataValid(formData)) {
-			addNotification("Invalid form data", "error");
+			addNotification("Invalid form data", NotificationType.ERROR);
 			return;
 		}
 
 		if (isCaretakersListEmpty()) {
-			addNotification("Please add at least one caretaker", "error");
+			addNotification(
+				"Please add at least one caretaker",
+				NotificationType.ERROR
+			);
 			return;
 		}
 

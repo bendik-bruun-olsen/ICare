@@ -8,11 +8,11 @@ import {
 	writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { NotificationContextType } from "../../types";
+import { NotificationContext } from "../../types";
 
 export const deleteTodoItem = async (
 	todoId: string,
-	addNotification: NotificationContextType["addNotification"]
+	addNotification: NotificationContext["addNotification"]
 ) => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
@@ -20,19 +20,22 @@ export const deleteTodoItem = async (
 		const todoRef = doc(todoCollection, todoId);
 
 		if (!todoRef) {
-			addNotification("Todo not found", "error");
+			addNotification("Todo not found", NotificationType.ERROR);
 			return;
 		}
 		await deleteDoc(todoRef);
-		addNotification("Todo deleted successfully", "success");
+		addNotification("Todo deleted successfully", NotificationType.SUCCESS);
 	} catch {
-		addNotification("Error deleting todo, please try again later", "error");
+		addNotification(
+			"Error deleting todo, please try again later",
+			NotificationType.ERROR
+		);
 	}
 };
 
 export const deleteTodoSeries = async (
 	seriesId: string,
-	addNotification: NotificationContextType["addNotification"]
+	addNotification: NotificationContext["addNotification"]
 ) => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
@@ -42,7 +45,7 @@ export const deleteTodoSeries = async (
 		const q = query(todoCollection, where("seriesId", "==", seriesId));
 		const querySnap = await getDocs(q);
 		if (querySnap.empty) {
-			addNotification("No todos found for series", "error");
+			addNotification("No todos found for series", NotificationType.ERROR);
 			return;
 		}
 
@@ -54,11 +57,11 @@ export const deleteTodoSeries = async (
 		batch.delete(seriesInfoRef);
 
 		await batch.commit();
-		addNotification("Series deleted successfully", "success");
+		addNotification("Series deleted successfully", NotificationType.SUCCESS);
 	} catch {
 		addNotification(
 			"Error deleting series, please try again later",
-			"error"
+			NotificationType.ERROR
 		);
 	}
 };

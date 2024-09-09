@@ -10,8 +10,9 @@ import {
 	writeBatch,
 } from "firebase/firestore";
 import {
-	NotificationContextType,
-	TodoItemInterface,
+	NotificationContext,
+	NotificationType,
+	ToDo,
 	TodoSeriesInfoInterface,
 	ToDoStatus,
 } from "../../types";
@@ -21,20 +22,26 @@ import {
 	mapSelectedDaysToNumbers,
 } from "../../utils";
 
-export const editTodoItem = async (
-	todoId: string,
-	updatedTodo: TodoItemInterface,
-	addNotification: NotificationContextType["addNotification"]
-): Promise<boolean> => {
+interface EditTodoItemProps {
+	todoId: string;
+	updatedTodo: ToDo;
+	addNotification: NotificationContext["addNotification"];
+}
+
+export const editTodoItem = async ({
+	todoId,
+	updatedTodo,
+	addNotification,
+}: EditTodoItemProps): Promise<boolean> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoRef = doc(patientRef, "todoItems", todoId);
 
 		await updateDoc(todoRef, { ...updatedTodo });
-		addNotification("Todo edited successfully", "success");
+		addNotification("Todo edited successfully", NotificationType.SUCCESS);
 		return true;
 	} catch {
-		addNotification("Error editing todo", "error");
+		addNotification("Error editing todo", NotificationType.ERROR);
 		return false;
 	}
 };
@@ -43,7 +50,7 @@ export const editTodoSeries = async (
 	seriesId: string,
 	updatedSeriesInfo: TodoSeriesInfoInterface,
 	currentUser: string,
-	addNotification: NotificationContextType["addNotification"]
+	addNotification: NotificationContext["addNotification"]
 ): Promise<boolean> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
@@ -61,7 +68,7 @@ export const editTodoSeries = async (
 
 		const querySnap = await getDocs(q);
 		if (querySnap.empty) {
-			addNotification("No todos found for series", "error");
+			addNotification("No todos found for series", NotificationType.ERROR);
 			return false;
 		}
 
@@ -104,18 +111,18 @@ export const editTodoSeries = async (
 		batch.update(seriesInfoRef, { ...updatedSeriesInfo });
 
 		await batch.commit();
-		addNotification("Series edited successfully", "success");
+		addNotification("Series edited successfully", NotificationType.SUCCESS);
 		return true;
 	} catch {
-		addNotification("Error editing series", "error");
+		addNotification("Error editing series", NotificationType.ERROR);
 		return false;
 	}
 };
 
 export const createTodoSeriesFromSingleTodo = async (
-	todoItem: TodoItemInterface,
+	todoItem: ToDo,
 	seriesInfo: TodoSeriesInfoInterface,
-	addNotification: NotificationContextType["addNotification"]
+	addNotification: NotificationContext["addNotification"]
 ): Promise<boolean> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
@@ -167,10 +174,13 @@ export const createTodoSeriesFromSingleTodo = async (
 		});
 
 		await batch.commit();
-		addNotification("Todo successfully created into series", "success");
+		addNotification(
+			"Todo successfully created into series",
+			NotificationType.SUCCESS
+		);
 		return true;
 	} catch {
-		addNotification("Error creating series for todo", "error");
+		addNotification("Error creating series for todo", NotificationType.ERROR);
 		return false;
 	}
 };

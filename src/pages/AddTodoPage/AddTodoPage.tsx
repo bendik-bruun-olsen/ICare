@@ -16,10 +16,11 @@ import { Timestamp } from "firebase/firestore";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
 	TodoItemInputStatusProps,
-	TodoItemInterface,
+	ToDo,
 	TodoSeriesInfoInterface,
 	TodoSeriesInputStatusProps,
 	ToDoStatus,
+	NotificationType,
 } from "../../types";
 import {
 	formatTimestampToDateString,
@@ -48,7 +49,7 @@ const AddToDoPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isRepeating, setIsRepeating] = useState(false);
-	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
+	const [todoItem, setTodoItem] = useState<ToDo>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
 		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
@@ -131,7 +132,7 @@ const AddToDoPage: React.FC = () => {
 					todoSeriesInfo.selectedDays
 				);
 				if (selectedDaysNumbers.includes(-1)) {
-					addNotification("Invalid day selected", "error");
+					addNotification("Invalid day selected", NotificationType.ERROR);
 					setHasError(true);
 					return;
 				}
