@@ -20,19 +20,19 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
 
-export function getStartOfDay(selectedDate: Date) {
+export function getStartOfDay(selectedDate: Date): Date {
 	const startOfDay = new Date(selectedDate);
 	startOfDay.setHours(0, 0, 0, 0);
 	return startOfDay;
 }
 
-export function getEndOfDay(selectedDate: Date) {
+export function getEndOfDay(selectedDate: Date): Date {
 	const endOfDay = new Date(selectedDate);
 	endOfDay.setHours(23, 59, 59, 999);
 	return endOfDay;
 }
 
-export const capitalizeUsername = (username: string) => {
+export const capitalizeUsername = (username: string): string => {
 	if (!username) return "";
 	return username
 		.split(" ")
@@ -68,7 +68,7 @@ export const formatTimestampToDateString = (timestamp: Timestamp): string => {
 	return timestamp.toDate().toISOString().substring(0, 10);
 };
 
-export const groupTodosByCategory = (todos: TodoItemInterface[]) => {
+export const groupTodosByCategory = (todos: TodoItemInterface[]): object => {
 	const grouped: { [key: string]: TodoItemInterface[] } = {};
 	todos.forEach((todo) => {
 		if (todo.status === "ignore") {
@@ -89,7 +89,7 @@ export const groupTodosByCategory = (todos: TodoItemInterface[]) => {
 
 export const sortTodosGroup = (groupedTodos: {
 	[key: string]: TodoItemInterface[];
-}) => {
+}): object => {
 	const priorityOrder = ["Medicine", "Food", "Exercise", "Social", "Others"];
 	const sortedGroup: { [key: string]: TodoItemInterface[] } = {};
 	Object.keys(groupedTodos)
@@ -109,7 +109,7 @@ export const sortTodosGroup = (groupedTodos: {
 	return sortedGroup;
 };
 
-export const mapSelectedDaysToNumbers = (selectedDays: string[]) => {
+export const mapSelectedDaysToNumbers = (selectedDays: string[]): number[] => {
 	return selectedDays.map((day) => {
 		switch (day) {
 			case "sunday":
@@ -137,7 +137,7 @@ export const generateTodosForSeries = (
 	startDate: string,
 	endDate: string,
 	selectedDaysNumbers: number[]
-) => {
+): Array<TodoItemInterface> => {
 	const newTodos = [];
 	const currentDate = new Date(startDate);
 	while (currentDate <= new Date(endDate)) {
@@ -162,7 +162,7 @@ export const validateTodoItemFields = (
 	todoItem: TodoItemInterface,
 	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemInputStatusProps>>,
 	addNotification: NotificationContextType["addNotification"]
-) => {
+): boolean => {
 	const fields = [
 		{ key: "title", value: todoItem.title },
 		{ key: "description", value: todoItem.description },
@@ -195,7 +195,7 @@ export const validateTodoSeriesFields = (
 		SetStateAction<TodoSeriesInputStatusProps>
 	>,
 	addNotification: NotificationContextType["addNotification"]
-) => {
+): boolean => {
 	const fields = [
 		{ key: "title", value: todoSeriesInfo.title },
 		{ key: "description", value: todoSeriesInfo.description },
@@ -235,7 +235,7 @@ export const clearTodoItemInputStatus = (
 	setTodoItemInputFieldStatus: Dispatch<
 		SetStateAction<TodoItemInputStatusProps>
 	>
-) => {
+): void => {
 	setTodoItemInputFieldStatus((prev) => ({
 		title: todoItem.title ? undefined : prev.title,
 		description: todoItem.description ? undefined : prev.description,
@@ -244,12 +244,13 @@ export const clearTodoItemInputStatus = (
 		time: todoItem.time ? undefined : prev.time,
 	}));
 };
+
 export const clearTodoSeriesInputStatus = (
 	todoSeriesInfo: TodoSeriesInfoInterface,
 	setTodoSeriesInputFieldStatus: Dispatch<
 		SetStateAction<TodoSeriesInputStatusProps>
 	>
-) => {
+): void => {
 	setTodoSeriesInputFieldStatus((prev) => ({
 		title: todoSeriesInfo.title ? undefined : prev.title,
 		description: todoSeriesInfo.description ? undefined : prev.description,
@@ -266,7 +267,7 @@ export const validateDateRange = (
 	startDate: Timestamp,
 	endDate: Timestamp,
 	addNotification: NotificationContextType["addNotification"]
-) => {
+): boolean => {
 	if (startDate.seconds > endDate.seconds) {
 		addNotification("End date cannot be before start date", "error");
 		return false;

@@ -134,7 +134,7 @@ export default function CreatePatientPage() {
 	};
 
 	// Refactor if we find a better solution
-	const submitPatientData = async () => {
+	const submitPatientData = async (): Promise<void> => {
 		try {
 			setIsLoading(true);
 			const patientId = await addPatient(formData, caretakers);
@@ -150,7 +150,7 @@ export default function CreatePatientPage() {
 		}
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
 
 		if (!isFormDataValid(formData)) {
