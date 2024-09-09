@@ -65,7 +65,7 @@ export interface DeleteConfirmModalProps {
 	type: "item" | "series";
 }
 
-export interface TodoItemInputFieldStatusProps {
+export interface TodoItemInputStatusProps {
 	title: Variants | undefined;
 	description: Variants | undefined;
 	category: Variants | undefined;
@@ -73,7 +73,7 @@ export interface TodoItemInputFieldStatusProps {
 	time: Variants | undefined;
 }
 
-export interface TodoSeriesInputFieldStatusProps {
+export interface TodoSeriesInputStatusProps {
 	title: Variants | undefined;
 	description: Variants | undefined;
 	category: Variants | undefined;
