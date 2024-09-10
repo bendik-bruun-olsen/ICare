@@ -7,7 +7,7 @@ interface Notification {
 }
 
 interface NotificationContext {
-	notifications: Notification;
+	notifications: Notification[];
 	addNotification: (
 		message: string,
 		type: "success" | "error" | "info"
@@ -22,28 +22,28 @@ export const NotificationContext = createContext<
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
-	const [notifications, setNotifications] = useState<Notification | null>(null);
+	const [notifications, setNotifications] = useState<Notification[]>([]);
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	const addNotification = (
 		message: string,
 		type: "success" | "error" | "info"
-	) => {
+	): void => {
 		const id = Date.now();
 
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current);
 		}
 
-		setNotifications({ id, message, type });
+		setNotifications([{ id, message, type }]);
 
 		timeoutRef.current = setTimeout(() => {
 			removeNotification();
 		}, 5000);
 	};
 
-	const removeNotification = () => {
-		setNotifications(null);
+	const removeNotification = (): void => {
+		setNotifications([]);
 
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current);

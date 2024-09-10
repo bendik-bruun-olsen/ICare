@@ -37,7 +37,7 @@ import {
 } from "../../constants/defaultTodoValues";
 
 import {
-	TodoSeriesInfoInterface,
+	TodoSeriesInfo,
 	ToDo,
 	TodoItemInputStatusProps,
 	TodoSeriesInputStatusProps,
@@ -80,7 +80,7 @@ const EditToDoPage: React.FC = () => {
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [todoItem, setTodoItem] = useState<ToDo>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
-		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
+		useState<TodoSeriesInfo>(defaultTodoSeries);
 	const { todoId: todoItemIdFromParams } = useParams<{
 		todoId: string;
 	}>();
@@ -111,7 +111,7 @@ const EditToDoPage: React.FC = () => {
 
 		const result = await getTodoSeriesInfo(seriesId, addNotification);
 		if (result) {
-			setTodoSeriesInfo(result as TodoSeriesInfoInterface);
+			setTodoSeriesInfo(result as TodoSeriesInfo);
 			setEndDateMinValue(result.startDate.toDate());
 			return true;
 		}

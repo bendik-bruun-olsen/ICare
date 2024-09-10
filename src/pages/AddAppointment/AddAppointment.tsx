@@ -4,7 +4,7 @@ import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
 import { db } from "../../firebase/firebase";
 import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
 import TitleDescription from "../../components/TitleDescription/TitleDescription";
-import AddButton from "../../components/AddButton";
+import AddButton from "../../components/AddButton/AddButton";
 import styles from "../AddTodoPage/AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 
@@ -17,9 +17,9 @@ const AddAppointment: React.FC = () => {
 	);
 	const [time, setTime] = useState("");
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
-		// push data into firebase
+
 		const newTodo = {
 			title,
 			description,
@@ -37,7 +37,9 @@ const AddAppointment: React.FC = () => {
 		}
 	};
 
-	const onclickAddButton = async (e: React.MouseEvent<HTMLButtonElement>) => {
+	const onclickAddButton = async (
+		e: React.MouseEvent<HTMLButtonElement>
+	): Promise<void> => {
 		await handleSubmit(e);
 		setTitle("");
 		setDescription("");

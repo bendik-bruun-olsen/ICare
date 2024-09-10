@@ -11,13 +11,13 @@ import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
 import { NotificationType } from "../../types";
 
-export default function RecoverPasswordPage() {
+export default function RecoverPasswordPage(): JSX.Element {
 	const [email, setEmail] = useState<string>("");
 	const [message] = useState<string>("");
 	const { addNotification } = useNotification();
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleForgotPassword = async (e: React.FormEvent) => {
+	const handleForgotPassword = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
 
 		const exists = await checkUserExists(email);
@@ -36,7 +36,7 @@ export default function RecoverPasswordPage() {
 		}
 	};
 
-	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		setEmail(e.target.value);
 	};
 
@@ -45,7 +45,7 @@ export default function RecoverPasswordPage() {
 	return (
 		<div className="pageWrapper">
 			<div className={styles.heading}>
-				<Logo size={"70px"} color={"var(--blue)"} />
+				<Logo fontSize={"70px"} color={"var(--blue)"} />
 			</div>
 
 			<img src={BannerImage} alt="logo-image" className={styles.bannerImage} />

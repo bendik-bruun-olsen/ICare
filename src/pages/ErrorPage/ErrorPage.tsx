@@ -3,9 +3,9 @@ import { Button } from "@equinor/eds-core-react";
 import { useNavigate } from "react-router-dom";
 import { Paths } from "../../paths";
 
-const ErrorPage = () => {
+export default function ErrorPage(): JSX.Element {
 	const navigate = useNavigate();
-	const handleClick = () => {
+	const handleClick = (): void => {
 		navigate(Paths.HOME);
 	};
 
@@ -15,8 +15,7 @@ const ErrorPage = () => {
 				<h1 className={styles.title}>Oops!</h1>
 				<h2 className={styles.subtitle}>Something Went Wrong.</h2>
 				<p className={styles.paragraph}>
-					We're experiencing an issue right now. Please try again
-					later.
+					We're experiencing an issue right now. Please try again later.
 				</p>
 			</div>
 			<Button id={styles.returnButton} onClick={handleClick}>
@@ -24,6 +23,4 @@ const ErrorPage = () => {
 			</Button>
 		</div>
 	);
-};
-
-export default ErrorPage;
+}

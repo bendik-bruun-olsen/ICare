@@ -6,7 +6,7 @@ export const addPatient = async (
 	formData: NewPatient,
 	caretakers: Caretaker[],
 	id?: string
-) => {
+): Promise<string> => {
 	const patientRef = id
 		? doc(db, "patientdetails", id)
 		: doc(collection(db, "patientdetails"));

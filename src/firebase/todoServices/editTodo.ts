@@ -13,7 +13,7 @@ import {
 	NotificationContext,
 	NotificationType,
 	ToDo,
-	TodoSeriesInfoInterface,
+	TodoSeriesInfo,
 	ToDoStatus,
 } from "../../types";
 import {
@@ -48,7 +48,7 @@ export const editTodoItem = async ({
 
 export const editTodoSeries = async (
 	seriesId: string,
-	updatedSeriesInfo: TodoSeriesInfoInterface,
+	updatedSeriesInfo: TodoSeriesInfo,
 	currentUser: string,
 	addNotification: NotificationContext["addNotification"]
 ): Promise<boolean> => {
@@ -121,7 +121,7 @@ export const editTodoSeries = async (
 
 export const createTodoSeriesFromSingleTodo = async (
 	todoItem: ToDo,
-	seriesInfo: TodoSeriesInfoInterface,
+	seriesInfo: TodoSeriesInfo,
 	addNotification: NotificationContext["addNotification"]
 ): Promise<boolean> => {
 	try {

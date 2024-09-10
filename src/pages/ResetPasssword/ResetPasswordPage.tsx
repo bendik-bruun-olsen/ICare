@@ -9,8 +9,9 @@ import Logo from "../../components/Logo/Logo";
 import "./ResetPasswordPage.modules.css";
 import { useNotification } from "../../hooks/useNotification";
 import Loading from "../../components/Loading/Loading";
+import { NotificationType } from "../../types";
 
-export default function ResetPasswordPage() {
+export default function ResetPasswordPage(): JSX.Element {
 	const [password, setPassword] = useState<string>("");
 	const [confirmPassword, setConfirmPassword] = useState<string>("");
 	const [message] = useState<string>("");
@@ -19,7 +20,7 @@ export default function ResetPasswordPage() {
 	const { addNotification } = useNotification();
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleResetPassword = async (e: React.FormEvent) => {
+	const handleResetPassword = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
 		const queryParams = new URLSearchParams(location.search);
 		const oobCode = queryParams.get("oobCode");
@@ -46,13 +47,15 @@ export default function ResetPasswordPage() {
 		navigate(Paths.LOGIN);
 	};
 
-	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handlePasswordChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	): void => {
 		setPassword(e.target.value);
 	};
 
 	const handleConfirmPasswordChange = (
 		e: React.ChangeEvent<HTMLInputElement>
-	) => {
+	): void => {
 		setConfirmPassword(e.target.value);
 	};
 
@@ -61,7 +64,7 @@ export default function ResetPasswordPage() {
 	return (
 		<div className="pageWrapper " id="resetWrapper">
 			<div className="heading">
-				<Logo size={"70px"} color={"var(--blue)"} />
+				<Logo fontSize={"70px"} color={"var(--blue)"} />
 			</div>
 
 			<img src={BannerImage} alt="logo-image" className="bannerImage" />

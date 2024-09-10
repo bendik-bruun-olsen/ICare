@@ -2,7 +2,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { User } from "../../types";
 
-const getUserData = async (email: string): Promise<User | null> => {
+export default async function getUserData(email: string): Promise<User | null> {
 	const userDocRef = doc(db, "users", email);
 	const docSnap = await getDoc(userDocRef);
 	if (docSnap.exists()) {
@@ -11,6 +11,4 @@ const getUserData = async (email: string): Promise<User | null> => {
 		console.error("No such document!");
 		return null;
 	}
-};
-
-export default getUserData;
+}

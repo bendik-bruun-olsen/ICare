@@ -18,7 +18,7 @@ import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
 import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
 import { useNotification } from "../../hooks/useNotification";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
-import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
+import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
 
 const FormField = ({
 	label,
@@ -27,7 +27,7 @@ const FormField = ({
 	onChange,
 	required = false,
 	type,
-}: FormFieldProps) => (
+}: FormFieldProps): JSX.Element => (
 	<InputWrapper
 		className={`${styles.inputWrapper} inputWrapper`}
 		labelProps={{
@@ -51,7 +51,7 @@ const FormField = ({
 	</InputWrapper>
 );
 
-export default function CreatePatientPage() {
+export default function CreatePatientPage(): JSX.Element {
 	const { addNotification } = useNotification();
 	const [isLoading, setIsLoading] = useState(false);
 	const [caretakerEmail, setCaretakerEmail] = useState("");
@@ -61,7 +61,7 @@ export default function CreatePatientPage() {
 	const [profileImage, setProfileImage] = useState<File | null>(null);
 
 	useEffect(() => {
-		const fetchDefaultPictureUrl = async () => {
+		const fetchDefaultPictureUrl = async (): Promise<void> => {
 			const url = await getDefaultPictureUrl(addNotification);
 			if (!url) return;
 			setPictureUrl(url);
@@ -69,16 +69,16 @@ export default function CreatePatientPage() {
 		fetchDefaultPictureUrl();
 	});
 
-	const isFormDataValid = (formData: NewPatient) => {
+	const isFormDataValid = (formData: NewPatient): boolean => {
 		const { age, phone } = formData;
 		if (isNaN(Number(age))) return false;
 		if (isNaN(Number(phone))) return false;
 		return true;
 	};
 
-	const isCaretakersListEmpty = () => caretakers.length === 0;
+	const isCaretakersListEmpty = (): boolean => caretakers.length === 0;
 
-	const isCaretakerDataValid = async () => {
+	const isCaretakerDataValid = async (): Promise<boolean> => {
 		if (caretakerEmail === "") {
 			addNotification("Please enter an email address", NotificationType.ERROR);
 			return false;
@@ -100,7 +100,9 @@ export default function CreatePatientPage() {
 		return true;
 	};
 
-	const handleFormFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleFormFieldChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	): void => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({
 			...prevData,
@@ -108,7 +110,9 @@ export default function CreatePatientPage() {
 		}));
 	};
 
-	const addCaretaker = async (e: React.FormEvent) => {
+	const addCaretaker = async (
+		e: React.FormEvent
+	): Promise<void | Caretaker[]> => {
 		e.preventDefault();
 
 		if (!(await isCaretakerDataValid())) return;
@@ -123,7 +127,7 @@ export default function CreatePatientPage() {
 		setCaretakerEmail("");
 	};
 
-	const removeCaretakerFromList = (email: string) => {
+	const removeCaretakerFromList = (email: string): void => {
 		setCaretakers((prevCaretakers) =>
 			prevCaretakers.filter((caretaker) => caretaker.email !== email)
 		);

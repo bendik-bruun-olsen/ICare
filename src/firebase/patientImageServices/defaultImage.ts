@@ -3,7 +3,7 @@ import { NotificationContext, NotificationType } from "../../types";
 
 export const getDefaultPictureUrl = async (
 	addNotification: NotificationContext["addNotification"]
-) => {
+): Promise<string | void> => {
 	const storage = getStorage();
 	const defaultPictureRef = ref(storage, "Default.png");
 	try {

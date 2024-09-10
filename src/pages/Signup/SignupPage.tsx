@@ -19,7 +19,7 @@ const initialErrorState = {
 	confirmPassword: false,
 };
 
-export default function SignupPage() {
+export default function SignupPage(): JSX.Element {
 	const [formData, setFormData] = useState<{
 		[key: string]: string;
 	}>({
@@ -35,13 +35,13 @@ export default function SignupPage() {
 	const navigate = useNavigate();
 	const { addNotification } = useNotification();
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
 		setErrors((prev) => ({ ...prev, [name]: false }));
 	};
 
-	const validateForm = () => {
+	const validateForm = (): boolean => {
 		const updatedErrors = { ...initialErrorState };
 
 		updatedErrors.name = !formData.name;
@@ -60,7 +60,9 @@ export default function SignupPage() {
 		return !Object.values(updatedErrors).includes(true);
 	};
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (
+		e: React.FormEvent<HTMLFormElement>
+	): Promise<void> => {
 		e.preventDefault();
 
 		if (!validateForm()) return;
@@ -106,7 +108,11 @@ export default function SignupPage() {
 
 	if (isLoading) return <Loading />;
 
-	const renderInput = (label: string, name: string, type: string) => (
+	const renderInput = (
+		label: string,
+		name: string,
+		type: string
+	): JSX.Element => (
 		<>
 			<div className={styles.labelContainer}>
 				<Label label={label} htmlFor={name}>
@@ -128,7 +134,7 @@ export default function SignupPage() {
 	return (
 		<div className="pageWrapper">
 			<div className={styles.heading}>
-				<Logo size="60px" color="var(--blue)" />
+				<Logo fontSize="60px" color="var(--blue)" />
 			</div>
 
 			<form className={styles.inputContainer} onSubmit={handleSubmit}>

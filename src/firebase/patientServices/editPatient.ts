@@ -6,7 +6,7 @@ export const editPatient = async (
 	formData: NewPatient,
 	caretakers: Caretaker[],
 	id: string
-) => {
+): Promise<string> => {
 	if (!id) {
 		throw new Error("Document ID is required to edit patient details.");
 	}

@@ -13,7 +13,7 @@ import { NotificationContext, NotificationType } from "../../types";
 export const deleteTodoItem = async (
 	todoId: string,
 	addNotification: NotificationContext["addNotification"]
-) => {
+): Promise<void> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");
@@ -36,7 +36,7 @@ export const deleteTodoItem = async (
 export const deleteTodoSeries = async (
 	seriesId: string,
 	addNotification: NotificationContext["addNotification"]
-) => {
+): Promise<void> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");

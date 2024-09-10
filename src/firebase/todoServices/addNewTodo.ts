@@ -4,14 +4,14 @@ import {
 	NotificationContext,
 	NotificationType,
 	ToDo,
-	TodoSeriesInfoInterface,
+	TodoSeriesInfo,
 } from "../../types";
 
 export const addSingleNewTodo = async (
 	todo: ToDo,
 	currentUserName: string,
 	addNotification: NotificationContext["addNotification"]
-): Promise<> => {
+): Promise<void> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");
@@ -32,10 +32,10 @@ export const addSingleNewTodo = async (
 
 export const addMultipleNewTodos = async (
 	todos: ToDo[],
-	seriesInfo: TodoSeriesInfoInterface,
+	seriesInfo: TodoSeriesInfo,
 	currentUserName: string,
 	addNotification: NotificationContext["addNotification"]
-) => {
+): Promise<void> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoSeriesInfoCollection = collection(patientRef, "todoSeriesInfo");

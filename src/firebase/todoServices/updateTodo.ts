@@ -7,7 +7,7 @@ export async function updateToDoStatusInDatabase(
 	newStatus: string,
 	currentUser: string,
 	addNotification: NotificationContext["addNotification"]
-) {
+): Promise<void> {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoRef = doc(patientRef, "todoItems", todoId);

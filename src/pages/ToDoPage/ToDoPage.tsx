@@ -31,7 +31,7 @@ const ToDoPage: React.FC = () => {
 	useEffect(() => {
 		if (!selectedDate) return setHasError(true);
 
-		async function fetchData() {
+		async function fetchData(): Promise<void> {
 			setIsLoading(true);
 			try {
 				const data = await getTodosBySelectedDate(
@@ -50,7 +50,10 @@ const ToDoPage: React.FC = () => {
 		fetchData();
 	}, [selectedDate]);
 
-	const handleStatusChange = async (todoId: string, newStatus: ToDoStatus) => {
+	const handleStatusChange = async (
+		todoId: string,
+		newStatus: ToDoStatus
+	): Promise<void> => {
 		if (!categorizedTodos) return;
 
 		const flattenedTodos = Object.values(categorizedTodos).flat();

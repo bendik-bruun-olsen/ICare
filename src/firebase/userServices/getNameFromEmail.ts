@@ -1,7 +1,9 @@
-import { doc, getDoc } from "firebase/firestore";
+import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-export const getNameFromEmail = async (email: string) => {
+export default async function getNameFromEmail(
+	email: string
+): Promise<DocumentData | null> {
 	try {
 		const userRef = doc(db, "users", email);
 		const userSnap = await getDoc(userRef);
@@ -12,4 +14,4 @@ export const getNameFromEmail = async (email: string) => {
 	} catch {
 		return null;
 	}
-};
+}

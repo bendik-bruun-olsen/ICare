@@ -1,19 +1,16 @@
-import React from "react";
 import router from "./routes";
 import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth/useAuth";
 import { NotificationProvider } from "./context/NotificationContext";
-import SnackBar from "./components/SnackBar/SnackBar";
+import Snackbar from "./components/Snackbar/Snackbar";
 
-const App: React.FC = () => {
+export default function App(): JSX.Element {
 	return (
 		<AuthProvider>
 			<NotificationProvider>
 				<RouterProvider router={router} />
-				<SnackBar />
+				<Snackbar />
 			</NotificationProvider>
 		</AuthProvider>
 	);
-};
-
-export default App;
+}

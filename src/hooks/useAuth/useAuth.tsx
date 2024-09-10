@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 			}
 			setLoading(false);
 		});
-		return () => unsubscribe();
+		return (): void => unsubscribe();
 	}, []);
 
 	return (

@@ -1,15 +1,13 @@
-import BackHomeButton from "../components/BackHomeButton";
+import Logo from "../components/Logo/Logo";
 import Navbar from "../components/Navbar/Navbar";
 
-const ContactDetailsPage = () => {
+export default function ContactDetailsPage(): JSX.Element {
 	return (
 		<>
-			<Navbar leftContent={<BackHomeButton />} centerContent="Contact" />
+			<Navbar leftContent={<Logo />} centerContent="Contact" />
 			<div className="pageWrapper">
 				<h2>ContactPage</h2>
 			</div>
 		</>
 	);
-};
-
-export default ContactDetailsPage;
+}

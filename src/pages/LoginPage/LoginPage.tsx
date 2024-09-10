@@ -12,7 +12,7 @@ import { useNotification } from "../../hooks/useNotification";
 import Loading from "../../components/Loading/Loading";
 import { NotificationType } from "../../types";
 
-export default function LoginPage() {
+export default function LoginPage(): JSX.Element {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [notificationMessage] = useState<string | undefined>("");
@@ -23,17 +23,19 @@ export default function LoginPage() {
 	const { addNotification } = useNotification();
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		setEmail(e.target.value);
 		setEmailError("");
 	};
 
-	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handlePasswordChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	): void => {
 		setPassword(e.target.value);
 		setPasswordError("");
 	};
 
-	const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
+	const signIn = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
 		e.preventDefault();
 
 		let hasValidationError = false;
@@ -81,7 +83,7 @@ export default function LoginPage() {
 	return (
 		<div className={styles.loginPageWrapper}>
 			<div className={styles.heading}>
-				<Logo size={"70px"} color={"var(--blue)"} />
+				<Logo fontSize={"70px"} color={"var(--blue)"} />
 			</div>
 
 			<img src={BannerImage} alt="logo-image" className={styles.bannerImage} />

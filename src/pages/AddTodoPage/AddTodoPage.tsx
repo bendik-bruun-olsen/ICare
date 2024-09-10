@@ -4,7 +4,7 @@ import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription/TitleDescription";
-import AddButton from "../../components/AddButton";
+import AddButton from "../../components/AddButton/AddButton";
 import styles from "./AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import {
@@ -17,7 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
 	TodoItemInputStatusProps,
 	ToDo,
-	TodoSeriesInfoInterface,
+	TodoSeriesInfo,
 	TodoSeriesInputStatusProps,
 	ToDoStatus,
 	NotificationType,
@@ -51,7 +51,7 @@ const AddToDoPage: React.FC = () => {
 	const [isRepeating, setIsRepeating] = useState(false);
 	const [todoItem, setTodoItem] = useState<ToDo>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
-		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
+		useState<TodoSeriesInfo>(defaultTodoSeries);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
 		useState<TodoItemInputStatusProps>(defaultTodoItemInputStatus);
 	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
@@ -83,7 +83,7 @@ const AddToDoPage: React.FC = () => {
 		clearTodoItemInputStatus(todoItem, setTodoItemInputFieldStatus);
 	}, [todoItem, todoSeriesInfo]);
 
-	const handleToggleRepeat = () => {
+	const handleToggleRepeat = (): boolean | void => {
 		setIsRepeating((isRepeating) => {
 			if (!isRepeating) {
 				const currentDay = daysOfTheWeek[todoItem.date.toDate().getDay()];
@@ -104,7 +104,7 @@ const AddToDoPage: React.FC = () => {
 		});
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent): Promise<void | boolean> => {
 		e.preventDefault();
 		try {
 			setIsLoading(true);
@@ -185,7 +185,7 @@ const AddToDoPage: React.FC = () => {
 		}
 	};
 
-	const handleDateChange = (field: string, date: string) => {
+	const handleDateChange = (field: string, date: string): void => {
 		const newTimestamp = Timestamp.fromDate(new Date(date));
 		if (isRepeating) {
 			if (field === "startDate") setEndDateMinValue(new Date(date));
@@ -195,7 +195,7 @@ const AddToDoPage: React.FC = () => {
 		setTodoItem((prev) => ({ ...prev, [field]: newTimestamp }));
 	};
 
-	const handleDayToggle = (day: string) => {
+	const handleDayToggle = (day: string): TodoSeriesInfo | void => {
 		setTodoSeriesInfo((prev) => {
 			const isSelected = prev.selectedDays.includes(day);
 			const selectedDays = isSelected
@@ -205,7 +205,7 @@ const AddToDoPage: React.FC = () => {
 		});
 	};
 
-	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		if (isRepeating) {
 			setTodoSeriesInfo((prev) => ({ ...prev, time: e.target.value }));
 			return;

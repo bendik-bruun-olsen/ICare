@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { ToDo, TodoSeriesInfoInterface, ToDoStatus } from "../types";
+import { ToDo, TodoSeriesInfo, ToDoStatus } from "../types";
 
 export const defaultTodoItem: ToDo = {
 	title: "",
@@ -14,7 +14,7 @@ export const defaultTodoItem: ToDo = {
 	completedBy: null,
 };
 
-export const defaultTodoSeries: TodoSeriesInfoInterface = {
+export const defaultTodoSeries: TodoSeriesInfo = {
 	title: "",
 	description: "",
 	time: "00:00",

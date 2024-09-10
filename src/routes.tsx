@@ -20,7 +20,7 @@ import { Navigate } from "react-router-dom";
 import CreatePatientPage from "./pages/CreatePatientPage/CreatePatientPage";
 import PatientDetailsPage from "./pages/PatientDetailsPage/PatientDetailsPage";
 
-const RequireAuthWrapper = () => {
+const RequireAuthWrapper = (): JSX.Element => {
 	const { isUserLoggedIn } = useAuth();
 	return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
 };

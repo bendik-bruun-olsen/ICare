@@ -1,23 +1,20 @@
 import React from "react";
 import { Button } from "@equinor/eds-core-react";
-import styled from "styled-components";
-
-const StyledButton = styled.div`
-	width: fit-content;
-`;
+import styles from "./AddButton.module.css";
 
 interface AddButtonProps {
 	label: string;
 	onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
-const AddButton: React.FC<AddButtonProps> = ({ label, onClick }) => {
+export default function AddButton({
+	label,
+	onClick,
+}: AddButtonProps): React.ReactElement {
 	return (
-		<StyledButton>
+		<div className={styles.button}>
 			<Button as="button" type="submit" onClick={onClick}>
 				{label}
 			</Button>
-		</StyledButton>
+		</div>
 	);
-};
-
-export default AddButton;
+}

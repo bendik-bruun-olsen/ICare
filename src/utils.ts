@@ -13,7 +13,7 @@ import {
 	NotificationType,
 	TodoItemInputStatusProps,
 	ToDo,
-	TodoSeriesInfoInterface,
+	TodoSeriesInfo,
 	TodoSeriesInputStatusProps,
 } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
@@ -186,7 +186,7 @@ export const validateTodoItemFields = (
 };
 
 export const validateTodoSeriesFields = (
-	todoSeriesInfo: TodoSeriesInfoInterface,
+	todoSeriesInfo: TodoSeriesInfo,
 	setTodoSeriesInputVariants: Dispatch<
 		SetStateAction<TodoSeriesInputStatusProps>
 	>,
@@ -245,7 +245,7 @@ export const clearTodoItemInputStatus = (
 };
 
 export const clearTodoSeriesInputStatus = (
-	todoSeriesInfo: TodoSeriesInfoInterface,
+	todoSeriesInfo: TodoSeriesInfo,
 	setTodoSeriesInputFieldStatus: Dispatch<
 		SetStateAction<TodoSeriesInputStatusProps>
 	>

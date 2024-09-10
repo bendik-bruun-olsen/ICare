@@ -44,7 +44,7 @@ export interface ToDo {
 	completedBy: string | null;
 }
 
-export interface TodoSeriesInfoInterface {
+export interface TodoSeriesInfo {
 	title: string;
 	description: string;
 	time: string;

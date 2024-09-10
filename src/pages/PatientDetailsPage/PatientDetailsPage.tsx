@@ -18,8 +18,7 @@ import { uploadProfilePicture } from "../../firebase/patientImageServices/patien
 import { remove_outlined, add, edit } from "@equinor/eds-icons";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import Loading from "../../components/Loading/Loading";
-import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
-
+import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
 const FormField = ({
 	label,
 	name,
@@ -27,7 +26,7 @@ const FormField = ({
 	onChange,
 	required = false,
 	type,
-}: FormFieldProps) => (
+}: FormFieldProps): JSX.Element => (
 	<InputWrapper
 		className={`${styles.inputWrapper} inputWrapper`}
 		labelProps={{
@@ -51,7 +50,7 @@ const FormField = ({
 	</InputWrapper>
 );
 
-export default function PatientDetailsPage() {
+export default function PatientDetailsPage(): JSX.Element {
 	const { addNotification } = useNotification();
 	const [isLoading, setIsLoading] = useState(false);
 	const [caretakerEmail, setCaretakerEmail] = useState("");
@@ -65,7 +64,7 @@ export default function PatientDetailsPage() {
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
-		const fetchDefaultPictureUrl = async () => {
+		const fetchDefaultPictureUrl = async (): Promise<void> => {
 			const url = await getDefaultPictureUrl(addNotification);
 			if (!url) return;
 			setPictureUrl(url);
@@ -84,7 +83,7 @@ export default function PatientDetailsPage() {
 			}
 		}, 2000);
 
-		return () => {
+		return (): void => {
 			if (timerRef.current) {
 				clearTimeout(timerRef.current);
 			}
@@ -92,7 +91,7 @@ export default function PatientDetailsPage() {
 	}, [formData, caretakers, isChanged]);
 
 	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
+		const handleClickOutside = (event: MouseEvent): void => {
 			if (
 				fullInfoContainerRef.current &&
 				!fullInfoContainerRef.current.contains(event.target as Node)
@@ -104,7 +103,7 @@ export default function PatientDetailsPage() {
 			}
 		};
 
-		const handleBeforeUnload = () => {
+		const handleBeforeUnload = (): void => {
 			if (isChanged) {
 				editPatient(formData, caretakers, formData.id);
 			}
@@ -113,13 +112,13 @@ export default function PatientDetailsPage() {
 		document.addEventListener("mousedown", handleClickOutside);
 		window.addEventListener("beforeunload", handleBeforeUnload);
 
-		return () => {
+		return (): void => {
 			document.removeEventListener("mousedown", handleClickOutside);
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 		};
 	}, [formData, isChanged, caretakers]);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({
 			...prevData,
@@ -129,16 +128,16 @@ export default function PatientDetailsPage() {
 		setIsChanged(true);
 	};
 
-	const isCaretakersListEmpty = () => caretakers.length === 0;
+	const isCaretakersListEmpty = (): boolean => caretakers.length === 0;
 
-	const isFormDataValid = (formData: NewPatient) => {
+	const isFormDataValid = (formData: NewPatient): boolean => {
 		const { age, phone } = formData;
 		if (isNaN(Number(age))) return false;
 		if (isNaN(Number(phone))) return false;
 		return true;
 	};
 
-	const isCaretakerDataValid = async () => {
+	const isCaretakerDataValid = async (): Promise<boolean> => {
 		if (caretakerEmail === "") {
 			addNotification("Please enter an email address", NotificationType.ERROR);
 			return false;
@@ -160,7 +159,7 @@ export default function PatientDetailsPage() {
 		return true;
 	};
 
-	const submitPatientData = async () => {
+	const submitPatientData = async (): Promise<void> => {
 		try {
 			setIsLoading(true);
 			const patientId = await addPatient(formData, caretakers);
@@ -176,7 +175,7 @@ export default function PatientDetailsPage() {
 		}
 	};
 
-	const addCaretaker = async (e: React.FormEvent) => {
+	const addCaretaker = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
 		if (!(await isCaretakerDataValid())) return;
 
@@ -189,14 +188,14 @@ export default function PatientDetailsPage() {
 		setCaretakerEmail("");
 	};
 
-	const deleteCaretaker = (email: string) => {
+	const deleteCaretaker = (email: string): void => {
 		setCaretakers((prevCaretakers) =>
 			prevCaretakers.filter((caretaker) => caretaker.email !== email)
 		);
 		addNotification("Caretaker removed successfully", NotificationType.SUCCESS);
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
 
 		if (!isFormDataValid(formData)) {
@@ -215,7 +214,7 @@ export default function PatientDetailsPage() {
 		await submitPatientData();
 	};
 
-	const handleEditClick = () => {
+	const handleEditClick = (): void => {
 		setIsEditing(true);
 	};
 

@@ -8,6 +8,7 @@ import {
 	query,
 	where,
 	Timestamp,
+	DocumentData,
 } from "firebase/firestore";
 
 export const getTodo = async (
@@ -34,7 +35,7 @@ export const getTodo = async (
 export const getTodoSeriesInfo = async (
 	seriesId: string,
 	addNotification: NotificationContext["addNotification"]
-) => {
+): Promise<DocumentData | null> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
@@ -54,7 +55,7 @@ export const getTodoSeriesInfo = async (
 export const getTodosBySelectedDate = async (
 	selectedDate: Date,
 	addNotification: NotificationContext["addNotification"]
-) => {
+): Promise<[] | void> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");
