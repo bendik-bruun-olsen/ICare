@@ -1,29 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import { Paths } from "../../paths";
+import styles from "./Logo.module.css";
 
 interface LogoProps {
-	size?: string;
+	fontSize?: string;
 	color?: string;
 }
 
 export default function Logo({
-	size = "32px",
+	fontSize = "32px",
 	color = "var(--white)",
-}: LogoProps) {
+}: LogoProps): JSX.Element {
 	const navigate = useNavigate();
-	const handleClick = () => navigate(Paths.HOME);
+	const handleClick = (): void => navigate(Paths.HOME);
 	return (
 		<span
 			onClick={handleClick}
-			style={{
-				color: color,
-				textAlign: "center",
-				fontSize: size,
-				fontFamily: "'Lora', serif",
-				fontWeight: "500",
-				fontStyle: "italic",
-				cursor: "pointer",
-			}}
+			className={styles.logo}
+			style={{ fontSize, color }}
 		>
 			iCare
 		</span>

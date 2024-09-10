@@ -19,7 +19,7 @@ export default function TaskOptionsModal({
 	currentTaskStatus,
 	todoItem,
 	selectedDate,
-}: Props) {
+}: Props): JSX.Element {
 	return (
 		<>
 			<div className={styles.modalOverlay} onClick={onClose}></div>

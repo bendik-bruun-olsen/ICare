@@ -19,6 +19,18 @@ export enum NotificationType {
 	INFO = "info",
 }
 
+export interface Notification {
+	id: number;
+	message: string;
+	type: NotificationType;
+}
+
+export interface NotificationContext {
+	notifications: Notification[];
+	addNotification: (message: string, type: NotificationType) => void;
+	removeNotification: (id: number) => void;
+}
+
 export interface ToDo {
 	title: string;
 	description: string;
@@ -40,18 +52,6 @@ export interface TodoSeriesInfoInterface {
 	startDate: Timestamp;
 	endDate: Timestamp;
 	selectedDays: string[];
-}
-
-export interface Notification {
-	id: number;
-	message: string;
-	type: NotificationType;
-}
-
-export interface NotificationContext {
-	notifications: Notification[];
-	addNotification: (message: string, type: NotificationType) => void;
-	removeNotification: (id: number) => void;
 }
 
 export interface DeleteConfirmModalProps {
@@ -106,14 +106,14 @@ export interface Caretaker {
 	email: string;
 }
 
-export type FormFieldProps = {
+export interface FormFieldProps {
 	label?: string;
 	name: string;
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	required?: boolean;
 	type: string;
-};
+}
 
 export interface PatientProfilePictureProps {
 	setProfileImage: Dispatch<SetStateAction<File | null>>;

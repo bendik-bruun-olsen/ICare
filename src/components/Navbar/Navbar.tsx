@@ -16,17 +16,17 @@ interface NavbarProps {
 	centerContent: string;
 }
 
-export default function Navbar({ centerContent }: NavbarProps) {
+export default function Navbar({ centerContent }: NavbarProps): JSX.Element {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const navigate = useNavigate();
 	const username = useAuth().userData?.name;
 	const { addNotification } = useNotification();
 
-	const toggleModalVisibility = () => {
+	const toggleModalVisibility = (): void => {
 		setIsModalOpen((prev) => !prev);
 	};
 
-	const handleSignOut = async () => {
+	const handleSignOut = async (): Promise<void> => {
 		try {
 			await auth.signOut();
 			addNotification("Logged out successfully!", NotificationType.SUCCESS);

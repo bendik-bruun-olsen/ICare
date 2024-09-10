@@ -18,7 +18,7 @@ const todos = [
 	{ category: "Exercise", completed: 2, all: 3, icon: walk },
 ];
 
-export default function RemainingTodos() {
+export default function RemainingTodos(): JSX.Element {
 	return (
 		<div className={styles.remainingTodosOuterWrapper}>
 			<div className={styles.titleWrapper}>

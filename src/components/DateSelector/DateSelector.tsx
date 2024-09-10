@@ -15,17 +15,17 @@ const DateSelector: FC<DatesSelectorProps> = ({
 	selectedDate,
 	setSelectedDate,
 }) => {
-	const handleDateChange = (newDate: Date) => {
+	const handleDateChange = (newDate: Date): void => {
 		setSelectedDate(newDate);
 	};
 
-	const handlePrevDate = () => {
+	const handlePrevDate = (): void => {
 		const prevDate = new Date(selectedDate);
 		prevDate.setDate(prevDate.getDate() - 1);
 		setSelectedDate(prevDate);
 	};
 
-	const handleNextDate = () => {
+	const handleNextDate = (): void => {
 		const nextDate = new Date(selectedDate);
 		nextDate.setDate(nextDate.getDate() + 1);
 		setSelectedDate(nextDate);
@@ -40,7 +40,7 @@ const DateSelector: FC<DatesSelectorProps> = ({
 					color={"var(--blue)"}
 					size={24}
 				/>
-				<div style={{ width: "10px" }} />
+				<div className={styles.spacer} />
 				<DatePicker
 					value={selectedDate}
 					onChange={handleDateChange}
@@ -50,7 +50,7 @@ const DateSelector: FC<DatesSelectorProps> = ({
 						year: "numeric",
 					}}
 				/>
-				<div style={{ width: "10px" }} />
+				<div className={styles.spacer} />
 				<Icon
 					data={arrow_forward_ios}
 					onClick={handleNextDate}

@@ -3,23 +3,23 @@ import { Input, Label, TextField } from "@equinor/eds-core-react";
 import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
 import styles from "./TitleDescription.module.css";
 
-type TitleDescriptionProps = {
+interface TitleDescription {
 	title: string;
 	setTitle: (value: string) => void;
-	titleVariant: Variants | undefined;
+	titleVariant?: Variants;
 	description: string;
 	setDescription: (value: string) => void;
-	descriptionVariant: Variants | undefined;
-};
+	descriptionVariant?: Variants;
+}
 
-const TitleDescription: React.FC<TitleDescriptionProps> = ({
+export default function TitleDescription({
 	title,
 	setTitle,
 	titleVariant,
 	description,
 	setDescription,
 	descriptionVariant,
-}) => {
+}: TitleDescription): JSX.Element {
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.title}>
@@ -49,6 +49,4 @@ const TitleDescription: React.FC<TitleDescriptionProps> = ({
 			</div>
 		</div>
 	);
-};
-
-export default TitleDescription;
+}

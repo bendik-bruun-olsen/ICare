@@ -23,7 +23,7 @@ const DaysComponent: React.FC<DaysComponentProps> = ({
 	onDayToggle,
 	variant,
 }) => {
-	const handleButtonClick = (label: string) => {
+	const handleButtonClick = (label: string): void => {
 		onDayToggle(label);
 	};
 
@@ -35,17 +35,17 @@ const DaysComponent: React.FC<DaysComponentProps> = ({
 		.filter((button) => button.isSelected)
 		.map((button) => button.index);
 
-	const getOutlineClass = () => {
-		switch (variant) {
-			case "error":
-				return styles.errorOutline;
-			case "warning":
-				return styles.warningOutline;
-			case "success":
-				return styles.successOutline;
-			default:
-				return styles.transparentOutline;
+	const getOutlineClass = (): string => {
+		if (variant === "error") {
+			return styles.errorOutline;
 		}
+		if (variant === "warning") {
+			return styles.warningOutline;
+		}
+		if (variant === "success") {
+			return styles.successOutline;
+		}
+		return styles.transparentOutline;
 	};
 
 	return (

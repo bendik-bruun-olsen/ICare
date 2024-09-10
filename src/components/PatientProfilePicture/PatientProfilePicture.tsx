@@ -10,7 +10,7 @@ import { useNotification } from "../../hooks/useNotification";
 
 export default function PatientProfilePicture({
 	setProfileImage,
-}: PatientProfilePictureProps) {
+}: PatientProfilePictureProps): JSX.Element {
 	const { currentUser } = useAuth();
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const { addNotification } = useNotification();
@@ -23,7 +23,7 @@ export default function PatientProfilePicture({
 	const isEditingPatient = !!patientId;
 
 	useEffect(() => {
-		const fetchData = async () => {
+		const fetchData = async (): Promise<void> => {
 			try {
 				if (isEditingPatient) {
 					const patient = await getPatient(patientId, addNotification);
@@ -54,7 +54,9 @@ export default function PatientProfilePicture({
 		fetchData();
 	}, [isEditingPatient]);
 
-	const handleImageAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleImageAdd = async (
+		e: React.ChangeEvent<HTMLInputElement>
+	): Promise<void> => {
 		if (e.target.files && e.target.files[0] && currentUser?.email) {
 			const image = e.target.files[0];
 			setProfileImage(image);

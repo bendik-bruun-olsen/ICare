@@ -2,22 +2,22 @@ import React from "react";
 import { useNotification } from "../../hooks/useNotification";
 import { Icon, Button } from "@equinor/eds-core-react";
 import { close } from "@equinor/eds-icons";
-import "./SnackBar.css";
+import styles from "./Snackbar.module.css";
 
 const SnackBar: React.FC = () => {
 	const { notifications, removeNotification } = useNotification();
 
 	return (
-		<div className="snackbar-container">
+		<div className={styles.snackbarContainer}>
 			{notifications && (
 				<div
 					key={notifications.id}
-					className={`snackbar ${
+					className={`${styles.snackbar} ${
 						notifications.type === "success"
-							? "snackbar-success"
+							? styles.snackbarSuccess
 							: notifications.type === "error"
-							? "snackbar-error"
-							: ""
+							? styles.snackbarError
+							: {}
 					}`}
 				>
 					<span>{notifications.message}</span>
@@ -26,7 +26,7 @@ const SnackBar: React.FC = () => {
 						onClick={() => {
 							removeNotification();
 						}}
-						className="snackbar-button"
+						className={styles.snackbarButton}
 					>
 						<Icon data={close} />
 					</Button>

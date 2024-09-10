@@ -1,61 +1,61 @@
 import React, { createContext, useState, useRef, ReactNode } from "react";
 
-type Notification = {
-    id: number;
-    message: string;
-    type: "success" | "error" | "info";
-} | null;
+interface Notification {
+	id: number;
+	message: string;
+	type: "success" | "error" | "info";
+}
 
-type NotificationContextType = {
-    notifications: Notification;
-    addNotification: (
-        message: string,
-        type: "success" | "error" | "info"
-    ) => void;
-    removeNotification: () => void;
-};
+interface NotificationContext {
+	notifications: Notification;
+	addNotification: (
+		message: string,
+		type: "success" | "error" | "info"
+	) => void;
+	removeNotification: () => void;
+}
 
 export const NotificationContext = createContext<
-    NotificationContextType | undefined
+	NotificationContext | undefined
 >(undefined);
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
-    children,
+	children,
 }) => {
-    const [notifications, setNotifications] = useState<Notification>(null);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const [notifications, setNotifications] = useState<Notification | null>(null);
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const addNotification = (
-        message: string,
-        type: "success" | "error" | "info"
-    ) => {
-        const id = Date.now();
+	const addNotification = (
+		message: string,
+		type: "success" | "error" | "info"
+	) => {
+		const id = Date.now();
 
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
 
-        setNotifications({ id, message, type });
+		setNotifications({ id, message, type });
 
-        timeoutRef.current = setTimeout(() => {
-            removeNotification();
-        }, 5000);
-    };
+		timeoutRef.current = setTimeout(() => {
+			removeNotification();
+		}, 5000);
+	};
 
-    const removeNotification = () => {
-        setNotifications(null);
+	const removeNotification = () => {
+		setNotifications(null);
 
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-            timeoutRef.current = null;
-        }
-    };
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+			timeoutRef.current = null;
+		}
+	};
 
-    return (
-        <NotificationContext.Provider
-            value={{ notifications, addNotification, removeNotification }}
-        >
-            {children}
-        </NotificationContext.Provider>
-    );
+	return (
+		<NotificationContext.Provider
+			value={{ notifications, addNotification, removeNotification }}
+		>
+			{children}
+		</NotificationContext.Provider>
+	);
 };

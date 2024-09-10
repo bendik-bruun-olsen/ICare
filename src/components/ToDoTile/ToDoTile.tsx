@@ -25,7 +25,7 @@ export default function ToDoTile({
 	selectedDate,
 	todoItem,
 	onStatusChange,
-}: ToDoTileProps) {
+}: ToDoTileProps): JSX.Element {
 	const [currentTaskStatus, setCurrentTaskStatus] = useState<ToDoStatus>(
 		todoItem.status
 	);
@@ -50,7 +50,7 @@ export default function ToDoTile({
 	const defaultContentMaxHeight = 65;
 
 	useEffect(() => {
-		const fetchNames = async () => {
+		const fetchNames = async (): Promise<void> => {
 			if (todoItem.createdBy) {
 				const name = await getNameFromEmail(todoItem.createdBy);
 				if (name) {
@@ -70,7 +70,7 @@ export default function ToDoTile({
 	}, [todoItem.createdBy, todoItem.completedBy]);
 
 	useEffect(() => {
-		const fetchCompletedByNameUsingEmail = async () => {
+		const fetchCompletedByNameUsingEmail = async (): Promise<void> => {
 			if (todoItem.completedBy) {
 				const name = await getNameFromEmail(todoItem.completedBy);
 				if (name) {
@@ -98,7 +98,7 @@ export default function ToDoTile({
 		}
 	}, [isMenuExpanded]);
 
-	const setOverflowStatus = () => {
+	const setOverflowStatus = (): void => {
 		if (overflowTimeoutRef.current) {
 			clearTimeout(overflowTimeoutRef.current);
 		}
@@ -112,13 +112,13 @@ export default function ToDoTile({
 		}
 	};
 
-	const handleMenuExpand = () => {
+	const handleMenuExpand = (): void => {
 		setIsMenuExpanded((prev) => !prev);
 	};
 
-	const toggleModal = () => setIsModalOpen((prev) => !prev);
+	const toggleModal = (): void => setIsModalOpen((prev) => !prev);
 
-	const handleOptionsClick = () => {
+	const handleOptionsClick = (): void => {
 		if (optionsIconRef.current) {
 			const rect = optionsIconRef.current.getBoundingClientRect();
 			const spaceBelow = window.innerHeight - rect.bottom;
@@ -127,7 +127,7 @@ export default function ToDoTile({
 		toggleModal();
 	};
 
-	const handleStatusChange = async (newStatus: ToDoStatus) => {
+	const handleStatusChange = async (newStatus: ToDoStatus): Promise<void> => {
 		if (!currentUser) return;
 
 		setCurrentTaskStatus(newStatus);
@@ -149,7 +149,7 @@ export default function ToDoTile({
 		);
 	};
 
-	const renderChip = () => {
+	const renderChip = (): JSX.Element => {
 		const chipMapping = {
 			[ToDoStatus.checked]: { variant: "active", label: "Completed" },
 			[ToDoStatus.unchecked]: { variant: "default", label: "Active" },
