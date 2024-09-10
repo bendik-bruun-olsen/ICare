@@ -1,5 +1,10 @@
 import { Button, Icon, Input, InputWrapper } from "@equinor/eds-core-react";
-import { Caretaker, FormFieldProps, NewPatient } from "../../types";
+import {
+	Caretaker,
+	FormFieldProps,
+	NewPatient,
+	NotificationType,
+} from "../../types";
 import styles from "./PatientDetailsPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";

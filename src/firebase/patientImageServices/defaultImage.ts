@@ -1,5 +1,5 @@
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
-import { NotificationContext } from "../../types";
+import { NotificationContext, NotificationType } from "../../types";
 
 export const getDefaultPictureUrl = async (
 	addNotification: NotificationContext["addNotification"]

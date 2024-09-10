@@ -3,13 +3,13 @@ import { Input, Button, InputWrapper } from "@equinor/eds-core-react";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
 import styles from "./RecoverPasswordPage.module.css";
-import styled from "styled-components";
 import { sendResetEmail } from "../../utils";
 import { checkUserExists } from "../../utils";
 import { useNotification } from "../../hooks/useNotification";
 import Loading from "../../components/Loading/Loading";
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
+import { NotificationType } from "../../types";
 
 export default function RecoverPasswordPage() {
 	const [email, setEmail] = useState<string>("");

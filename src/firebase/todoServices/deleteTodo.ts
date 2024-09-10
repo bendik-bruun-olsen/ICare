@@ -8,7 +8,7 @@ import {
 	writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import { NotificationContext } from "../../types";
+import { NotificationContext, NotificationType } from "../../types";
 
 export const deleteTodoItem = async (
 	todoId: string,

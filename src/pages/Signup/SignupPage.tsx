@@ -10,6 +10,7 @@ import { FirebaseError } from "firebase/app";
 import Logo from "../../components/Logo/Logo";
 import { useNotification } from "../../hooks/useNotification";
 import Loading from "../../components/Loading/Loading";
+import { NotificationType } from "../../types";
 
 const initialErrorState = {
 	name: false,

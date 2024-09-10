@@ -4,7 +4,7 @@ import { camera_add_photo } from "@equinor/eds-icons";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import styles from "./PatientProfilePicture.module.css";
-import { PatientProfilePictureProps } from "../../types";
+import { NotificationType, PatientProfilePictureProps } from "../../types";
 import { getPatient } from "../../firebase/patientServices/getPatient";
 import { useNotification } from "../../hooks/useNotification";
 

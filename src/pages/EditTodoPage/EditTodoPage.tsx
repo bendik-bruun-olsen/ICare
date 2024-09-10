@@ -96,7 +96,7 @@ const EditToDoPage: React.FC = () => {
 	async function fetchTodoItem(itemId: string): Promise<boolean> {
 		const result = await getTodo(itemId, addNotification);
 		if (result) {
-			setTodoItem(result as ToDo);
+			setTodoItem(result);
 			return true;
 		}
 		return false;

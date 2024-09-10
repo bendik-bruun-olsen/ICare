@@ -1,6 +1,6 @@
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
-import { NotificationContext } from "../../types";
+import { NotificationContext, NotificationType } from "../../types";
 
 export async function updateToDoStatusInDatabase(
 	todoId: string,

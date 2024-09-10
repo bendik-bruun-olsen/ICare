@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { NotificationContext } from "../../types";
+import { NotificationContext, NotificationType } from "../../types";
 
 export const getPatient = async (
 	patientId: string,

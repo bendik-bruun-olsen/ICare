@@ -10,6 +10,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { FirestoreError } from "firebase/firestore";
 import { useNotification } from "../../hooks/useNotification";
 import Loading from "../../components/Loading/Loading";
+import { NotificationType } from "../../types";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");

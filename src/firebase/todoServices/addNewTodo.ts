@@ -11,7 +11,7 @@ export const addSingleNewTodo = async (
 	todo: ToDo,
 	currentUserName: string,
 	addNotification: NotificationContext["addNotification"]
-) => {
+): Promise<> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");
