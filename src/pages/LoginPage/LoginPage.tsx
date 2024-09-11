@@ -1,6 +1,6 @@
 import { auth } from "../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
@@ -8,7 +8,7 @@ import { Paths } from "../../paths";
 import styles from "./LoginPage.module.css";
 import { useNavigate, Link } from "react-router-dom";
 import { FirestoreError } from "firebase/firestore";
-import { useNotification } from "../../hooks/useNotification";
+import { NotificationContext } from "../../context/NotificationContext";
 import Loading from "../../components/Loading/Loading";
 import { NotificationType } from "../../types";
 
@@ -20,7 +20,7 @@ export default function LoginPage(): JSX.Element {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { addNotification } = useNotification();
+  const { addNotification } = useContext(NotificationContext);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -67,7 +67,7 @@ export default function LoginPage(): JSX.Element {
         setPasswordError("Invalid email or password.");
         addNotification(
           "Invalid login credentials. Please try again.",
-          "error"
+          NotificationType.ERROR
         );
       }
       setHasError(true);

@@ -1,6 +1,6 @@
 import { auth, db } from "../../firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Label, Input, Button } from "@equinor/eds-core-react";
 import { Paths } from "../../paths";
 import { useNavigate, Link } from "react-router-dom";
@@ -8,7 +8,8 @@ import { doc, setDoc } from "firebase/firestore";
 import styles from "./SignupPage.module.css";
 import { FirebaseError } from "firebase/app";
 import Logo from "../../components/Logo/Logo";
-import { useNotification } from "../../hooks/useNotification";
+import { NotificationContext } from "../../context/NotificationContext";
+
 import Loading from "../../components/Loading/Loading";
 import { NotificationType } from "../../types";
 
@@ -33,7 +34,7 @@ export default function SignupPage(): JSX.Element {
   );
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { addNotification } = useNotification();
+  const { addNotification } = useContext(NotificationContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
