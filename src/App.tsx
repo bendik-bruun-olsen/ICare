@@ -5,12 +5,12 @@ import { NotificationProvider } from "./context/NotificationContext";
 import Snackbar from "./components/Snackbar/Snackbar";
 
 export default function App(): JSX.Element {
-	return (
-		<AuthProvider>
-			<NotificationProvider>
-				<RouterProvider router={router} />
-				<Snackbar />
-			</NotificationProvider>
-		</AuthProvider>
-	);
+  return (
+    <AuthProvider>
+      <NotificationProvider>
+        <RouterProvider router={router} />
+        <Snackbar />
+      </NotificationProvider>
+    </AuthProvider>
+  );
 }
