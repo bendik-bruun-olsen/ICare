@@ -15,9 +15,9 @@ interface NotificationContext {
 	removeNotification: () => void;
 }
 
-export const NotificationContext = createContext<
-	NotificationContext | undefined
->(undefined);
+export const NotificationContext = createContext<NotificationContext>(
+	{} as NotificationContext
+);
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({
 	children,
