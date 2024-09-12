@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Icon } from "@equinor/eds-core-react";
 import { camera_add_photo } from "@equinor/eds-icons";
 import { useAuth } from "../../hooks/useAuth/useAuth";
@@ -6,14 +6,14 @@ import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaul
 import styles from "./PatientProfilePicture.module.css";
 import { NotificationType, PatientProfilePictureProps } from "../../types";
 import { getPatient } from "../../firebase/patientServices/getPatient";
-import { useNotification } from "../../hooks/useNotification";
+import { NotificationContext } from "../../context/NotificationContext";
 
 export default function PatientProfilePicture({
 	setProfileImage,
 }: PatientProfilePictureProps): JSX.Element {
 	const { currentUser } = useAuth();
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
-	const { addNotification } = useNotification();
+	const { addNotification } = useContext(NotificationContext);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const profileContainerRef = useRef<HTMLDivElement>(null);
