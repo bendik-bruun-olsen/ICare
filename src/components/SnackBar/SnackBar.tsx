@@ -6,7 +6,6 @@ import { NotificationContext } from "../../context/NotificationContext";
 import { NotificationType } from "../../types";
 
 const Snackbar: React.FC = () => {
-  // const { notifications, removeNotification } = useNotification();
   const { notifications, removeNotification } = useContext(NotificationContext);
 
   return (
