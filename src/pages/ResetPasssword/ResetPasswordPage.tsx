@@ -6,8 +6,7 @@ import { Input, InputWrapper, Button } from "@equinor/eds-core-react";
 import { Paths } from "../../paths";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
-import "./ResetPasswordPage.modules.css";
-
+import styles from "./ResetPasswordPage.module.css";
 import Loading from "../../components/Loading/Loading";
 import { NotificationType } from "../../types";
 import { NotificationContext } from "../../context/NotificationContext";
@@ -64,19 +63,19 @@ export default function ResetPasswordPage(): JSX.Element {
 
   return (
     <div className="pageWrapper " id="resetWrapper">
-      <div className="heading">
+      <div className={styles.heading}>
         <Logo fontSize={"70px"} color={"var(--blue)"} />
       </div>
 
-      <img src={BannerImage} alt="logo-image" className="bannerImage" />
-      <div className="formContainer">
+      <img src={BannerImage} alt="logo-image" className={styles.bannerImage} />
+      <div className={styles.formContainer}>
         <form onSubmit={handleResetPassword}>
           <InputWrapper
-            className="input"
+            className={styles.input}
             labelProps={{
               label: "New password",
               htmlFor: "textfield-password",
-              style: { display: "block" },
+              // style: { display: "block" },
             }}
           >
             <Input
@@ -88,11 +87,11 @@ export default function ResetPasswordPage(): JSX.Element {
             />
           </InputWrapper>
           <InputWrapper
-            className="input"
+            className={styles.input}
             labelProps={{
               label: "Confirm new password",
               htmlFor: "textfield-password",
-              style: { display: "block" },
+              // style: { display: "block" },
             }}
           >
             <Input
@@ -103,7 +102,7 @@ export default function ResetPasswordPage(): JSX.Element {
               required
             />
           </InputWrapper>
-          <Button type="submit" style={{ marginLeft: "0.5rem" }}>
+          <Button type="submit" className={styles.resetButton}>
             Reset Password
           </Button>
         </form>
