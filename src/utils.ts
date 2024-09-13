@@ -9,23 +9,18 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase/firebase";
 import {
-	NotificationContext,
 	NotificationType,
 	TodoItemInputStatusProps,
 	ToDo,
-	TodoSeriesInfo,
-	TodoSeriesInputStatusProps,
+	validateDateRangeProps,
+	validateTodoItemFieldsProps,
+	validateTodoSeriesFieldsProps,
+	clearTodoSeriesInputStatusProps,
+	GenerateTodosForSeriesProps,
 } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
-
-interface GenerateTodosForSeriesProps {
-	newTodo: ToDo;
-	startDate: string;
-	endDate: string;
-	selectedDaysNumbers: number[];
-}
 
 export function getStartOfDay(selectedDate: Date): Date {
 	const startOfDay = new Date(selectedDate);
@@ -159,11 +154,11 @@ export const generateTodosForSeries = ({
 	return newTodos;
 };
 
-export const validateTodoItemFields = (
-	todoItem: ToDo,
-	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemInputStatusProps>>,
-	addNotification: NotificationContext["addNotification"]
-): boolean => {
+export const validateTodoItemFields = ({
+	todoItem,
+	setTodoItemInputVariants,
+	addNotification,
+}: validateTodoItemFieldsProps): boolean => {
 	const fields = [
 		{ key: "title", value: todoItem.title },
 		{ key: "description", value: todoItem.description },
@@ -193,13 +188,11 @@ export const validateTodoItemFields = (
 	return isValid;
 };
 
-export const validateTodoSeriesFields = (
-	todoSeriesInfo: TodoSeriesInfo,
-	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesInputStatusProps>
-	>,
-	addNotification: NotificationContext["addNotification"]
-): boolean => {
+export const validateTodoSeriesFields = ({
+	todoSeriesInfo,
+	setTodoSeriesInputVariants,
+	addNotification,
+}: validateTodoSeriesFieldsProps): boolean => {
 	const fields = [
 		{ key: "title", value: todoSeriesInfo.title },
 		{ key: "description", value: todoSeriesInfo.description },
@@ -237,12 +230,17 @@ export const validateTodoSeriesFields = (
 	return isValid;
 };
 
-export const clearTodoItemInputStatus = (
-	todoItem: ToDo,
+interface clearTodoItemInputStatusProps {
+	todoItem: ToDo;
 	setTodoItemInputFieldStatus: Dispatch<
 		SetStateAction<TodoItemInputStatusProps>
-	>
-): void => {
+	>;
+}
+
+export const clearTodoItemInputStatus = ({
+	todoItem,
+	setTodoItemInputFieldStatus,
+}: clearTodoItemInputStatusProps): void => {
 	setTodoItemInputFieldStatus((prev) => ({
 		title: todoItem.title ? undefined : prev.title,
 		description: todoItem.description ? undefined : prev.description,
@@ -252,12 +250,10 @@ export const clearTodoItemInputStatus = (
 	}));
 };
 
-export const clearTodoSeriesInputStatus = (
-	todoSeriesInfo: TodoSeriesInfo,
-	setTodoSeriesInputFieldStatus: Dispatch<
-		SetStateAction<TodoSeriesInputStatusProps>
-	>
-): void => {
+export const clearTodoSeriesInputStatus = ({
+	todoSeriesInfo,
+	setTodoSeriesInputFieldStatus,
+}: clearTodoSeriesInputStatusProps): void => {
 	setTodoSeriesInputFieldStatus((prev) => ({
 		title: todoSeriesInfo.title ? undefined : prev.title,
 		description: todoSeriesInfo.description ? undefined : prev.description,
@@ -270,11 +266,11 @@ export const clearTodoSeriesInputStatus = (
 	}));
 };
 
-export const validateDateRange = (
-	startDate: Timestamp,
-	endDate: Timestamp,
-	addNotification: NotificationContext["addNotification"]
-): boolean => {
+export const validateDateRange = ({
+	startDate,
+	endDate,
+	addNotification,
+}: validateDateRangeProps): boolean => {
 	if (startDate.seconds > endDate.seconds) {
 		addNotification(
 			"End date cannot be before start date",

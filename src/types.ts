@@ -125,3 +125,30 @@ export interface EmergencyContact {
 	email: string;
 	relation: string;
 }
+
+export interface validateDateRangeProps {
+	startDate: Timestamp;
+	endDate: Timestamp;
+	addNotification: NotificationContext["addNotification"];
+}
+
+export interface clearTodoSeriesInputStatusProps {
+	todoSeriesInfo: TodoSeriesInfo;
+	setTodoSeriesInputFieldStatus: Dispatch<
+		SetStateAction<TodoSeriesInputStatusProps>
+	>;
+}
+
+export interface validateTodoSeriesFieldsProps {
+	todoSeriesInfo: TodoSeriesInfo;
+	setTodoSeriesInputVariants: Dispatch<
+		SetStateAction<TodoSeriesInputStatusProps>
+	>;
+	addNotification: NotificationContext["addNotification"];
+}
+
+export interface validateTodoItemFieldsProps {
+	todoItem: ToDo;
+	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemInputStatusProps>>;
+	addNotification: NotificationContext["addNotification"];
+}
