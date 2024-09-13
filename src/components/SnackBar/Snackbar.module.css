@@ -1,4 +1,4 @@
-.snackbar-container {
+.snackbarContainer {
 	position: absolute;
 	bottom: 20px;
 	right: 20px;
@@ -16,14 +16,14 @@
 	gap: 7px;
 }
 
-.snackbar-success {
+.snackbarSuccess {
 	background-color: var(--blue);
 }
 
-.snackbar-error {
+.snackbarError {
 	background-color: #b9331bf6;
 }
-.snackbar-button {
+.snackbarButton {
 	background-color: transparent !important;
 	box-shadow: none !important;
 }

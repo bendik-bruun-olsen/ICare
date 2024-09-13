@@ -1,23 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Input, Button, InputWrapper } from "@equinor/eds-core-react";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
 import styles from "./RecoverPasswordPage.module.css";
-import styled from "styled-components";
 import { sendResetEmail } from "../../utils";
 import { checkUserExists } from "../../utils";
-import { useNotification } from "../../hooks/useNotification";
+import { NotificationContext } from "../../context/NotificationContext";
 import Loading from "../../components/Loading/Loading";
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
+import { NotificationType } from "../../types";
 
-export default function RecoverPasswordPage() {
+export default function RecoverPasswordPage(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [message] = useState<string>("");
-  const { addNotification } = useNotification();
+  const { addNotification } = useContext(NotificationContext);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
+  const handleForgotPassword = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
 
     const exists = await checkUserExists(email);
@@ -25,18 +25,18 @@ export default function RecoverPasswordPage() {
       setIsLoading(true);
       if (exists) {
         await sendResetEmail(email);
-        addNotification("Password reset email sent!", "success");
-      } else {
-        addNotification("User does not exist", "info");
+        addNotification("Password reset email sent!", NotificationType.SUCCESS);
+        return;
       }
+      addNotification("User does not exist", NotificationType.ERROR);
     } catch (error) {
-      addNotification("Error sending Email.", "error");
+      addNotification("Error sending Email.", NotificationType.ERROR);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);
   };
 
@@ -45,7 +45,7 @@ export default function RecoverPasswordPage() {
   return (
     <div className="pageWrapper">
       <div className={styles.heading}>
-        <Logo size={"70px"} color={"var(--blue)"} />
+        <Logo fontSize={"70px"} color={"var(--blue)"} />
       </div>
 
       <img src={BannerImage} alt="logo-image" className={styles.bannerImage} />

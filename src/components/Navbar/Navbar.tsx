@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styles from "./Navbar.module.css";
 import { Icon } from "@equinor/eds-core-react";
 import { person, contacts, log_out, account_circle } from "@equinor/eds-icons";
@@ -7,31 +7,32 @@ import { NavLink } from "react-router-dom";
 import { Paths } from "../../paths";
 import { auth } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
-import { useNotification } from "../../hooks/useNotification";
 import { capitalizeUsername } from "../../utils";
 import Logo from "../Logo/Logo";
+import { NotificationType } from "../../types";
+import { NotificationContext } from "../../context/NotificationContext";
 
 interface NavbarProps {
 	centerContent: string;
 }
 
-export default function Navbar({ centerContent }: NavbarProps) {
+export default function Navbar({ centerContent }: NavbarProps): JSX.Element {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const navigate = useNavigate();
 	const username = useAuth().userData?.name;
-	const { addNotification } = useNotification();
+	const addNotification = useContext(NotificationContext).addNotification;
 
-	const toggleModalVisibility = () => {
+	const toggleModalVisibility = (): void => {
 		setIsModalOpen((prev) => !prev);
 	};
 
-	const handleSignOut = async () => {
+	const handleSignOut = async (): Promise<void> => {
 		try {
 			await auth.signOut();
-			addNotification("Logged out successfully!", "success");
+			addNotification("Logged out successfully!", NotificationType.SUCCESS);
 		} catch {
 			navigate(Paths.ERROR);
-			addNotification("Error! Please try again later", "error");
+			addNotification("Error! Please try again later", NotificationType.ERROR);
 		}
 	};
 

@@ -1,25 +1,26 @@
-import { useEffect, useState } from "react";
+/* eslint-disable no-mixed-spaces-and-tabs */
+import { useContext, useEffect, useState } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
 import SelectCategory from "../../components/SelectCategory/SelectCategory";
 import DaysComponent from "../../components/DaysComponent/DaysComponent";
 import TitleDescription from "../../components/TitleDescription/TitleDescription";
-import AddButton from "../../components/AddButton";
+import AddButton from "../../components/AddButton/AddButton";
 import styles from "./AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import {
 	addSingleNewTodo,
 	addMultipleNewTodos,
 } from "../../firebase/todoServices/addNewTodo";
-import { useNotification } from "../../hooks/useNotification";
 import { Timestamp } from "firebase/firestore";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
 	TodoItemInputStatusProps,
-	TodoItemInterface,
-	TodoSeriesInfoInterface,
+	ToDo,
+	TodoSeriesInfo,
 	TodoSeriesInputStatusProps,
 	ToDoStatus,
+	NotificationType,
 } from "../../types";
 import {
 	formatTimestampToDateString,
@@ -42,23 +43,22 @@ import {
 } from "../../constants/defaultTodoValues";
 import Loading from "../../components/Loading/Loading";
 import { useAuth } from "../../hooks/useAuth/useAuth";
+import { NotificationContext } from "../../context/NotificationContext";
 
 const AddToDoPage: React.FC = () => {
 	const location = useLocation();
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isRepeating, setIsRepeating] = useState(false);
-	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
+	const [todoItem, setTodoItem] = useState<ToDo>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
-		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
+		useState<TodoSeriesInfo>(defaultTodoSeries);
 	const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
 		useState<TodoItemInputStatusProps>(defaultTodoItemInputStatus);
 	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
 		useState<TodoSeriesInputStatusProps>(defaultTodoSeriesInputStatus);
-	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
-		undefined
-	);
-	const { addNotification } = useNotification();
+	const [endDateMinValue, setEndDateMinValue] = useState<Date>();
+	const { addNotification } = useContext(NotificationContext);
 	const navigate = useNavigate();
 	const currentUserEmail = useAuth().userData?.email;
 
@@ -82,7 +82,7 @@ const AddToDoPage: React.FC = () => {
 		clearTodoItemInputStatus(todoItem, setTodoItemInputFieldStatus);
 	}, [todoItem, todoSeriesInfo]);
 
-	const handleToggleRepeat = () => {
+	const handleToggleRepeat = (): boolean | void => {
 		setIsRepeating((isRepeating) => {
 			if (!isRepeating) {
 				const currentDay = daysOfTheWeek[todoItem.date.toDate().getDay()];
@@ -103,7 +103,7 @@ const AddToDoPage: React.FC = () => {
 		});
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent): Promise<void | boolean> => {
 		e.preventDefault();
 		try {
 			setIsLoading(true);
@@ -131,7 +131,7 @@ const AddToDoPage: React.FC = () => {
 					todoSeriesInfo.selectedDays
 				);
 				if (selectedDaysNumbers.includes(-1)) {
-					addNotification("Invalid day selected", "error");
+					addNotification("Invalid day selected", NotificationType.ERROR);
 					setHasError(true);
 					return;
 				}
@@ -147,12 +147,12 @@ const AddToDoPage: React.FC = () => {
 					createdBy: "",
 					completedBy: null,
 				};
-				const newTodos = generateTodosForSeries(
+				const newTodos = generateTodosForSeries({
 					newTodo,
-					formatTimestampToDateString(todoSeriesInfo.startDate),
-					formatTimestampToDateString(todoSeriesInfo.endDate),
-					selectedDaysNumbers
-				);
+					startDate: formatTimestampToDateString(todoSeriesInfo.startDate),
+					endDate: formatTimestampToDateString(todoSeriesInfo.endDate),
+					selectedDaysNumbers,
+				});
 				await addMultipleNewTodos(
 					newTodos,
 					todoSeriesInfo,
@@ -184,7 +184,7 @@ const AddToDoPage: React.FC = () => {
 		}
 	};
 
-	const handleDateChange = (field: string, date: string) => {
+	const handleDateChange = (field: string, date: string): void => {
 		const newTimestamp = Timestamp.fromDate(new Date(date));
 		if (isRepeating) {
 			if (field === "startDate") setEndDateMinValue(new Date(date));
@@ -194,7 +194,7 @@ const AddToDoPage: React.FC = () => {
 		setTodoItem((prev) => ({ ...prev, [field]: newTimestamp }));
 	};
 
-	const handleDayToggle = (day: string) => {
+	const handleDayToggle = (day: string): TodoSeriesInfo | void => {
 		setTodoSeriesInfo((prev) => {
 			const isSelected = prev.selectedDays.includes(day);
 			const selectedDays = isSelected
@@ -204,7 +204,7 @@ const AddToDoPage: React.FC = () => {
 		});
 	};
 
-	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		if (isRepeating) {
 			setTodoSeriesInfo((prev) => ({ ...prev, time: e.target.value }));
 			return;

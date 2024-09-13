@@ -1,6 +1,6 @@
 import { auth } from "../../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Input, Label, Button } from "@equinor/eds-core-react";
 import BannerImage from "../../assets/images/Logo.png";
 import Logo from "../../components/Logo/Logo";
@@ -8,10 +8,11 @@ import { Paths } from "../../paths";
 import styles from "./LoginPage.module.css";
 import { useNavigate, Link } from "react-router-dom";
 import { FirestoreError } from "firebase/firestore";
-import { useNotification } from "../../hooks/useNotification";
+import { NotificationContext } from "../../context/NotificationContext";
 import Loading from "../../components/Loading/Loading";
+import { NotificationType } from "../../types";
 
-export default function LoginPage() {
+export default function LoginPage(): JSX.Element {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [notificationMessage] = useState<string | undefined>("");
@@ -19,20 +20,22 @@ export default function LoginPage() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { addNotification } = useNotification();
+  const { addNotification } = useContext(NotificationContext);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);
     setEmailError("");
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     setPassword(e.target.value);
     setPasswordError("");
   };
 
-  const signIn = async (e: React.FormEvent<HTMLFormElement>) => {
+  const signIn = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     let hasValidationError = false;
@@ -52,7 +55,7 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
-      addNotification("Login successful!", "success");
+      addNotification("Login successful!", NotificationType.SUCCESS);
       navigate(Paths.HOME);
     } catch (err) {
       const error = err as FirestoreError;
@@ -64,11 +67,10 @@ export default function LoginPage() {
         setPasswordError("Invalid email or password.");
         addNotification(
           "Invalid login credentials. Please try again.",
-          "error"
+          NotificationType.ERROR
         );
-      } else {
-        setHasError(true);
       }
+      setHasError(true);
     } finally {
       setIsLoading(false);
     }
@@ -80,7 +82,7 @@ export default function LoginPage() {
   return (
     <div className={styles.loginPageWrapper}>
       <div className={styles.heading}>
-        <Logo size={"70px"} color={"var(--blue)"} />
+        <Logo fontSize={"70px"} color={"var(--blue)"} />
       </div>
 
       <img src={BannerImage} alt="logo-image" className={styles.bannerImage} />

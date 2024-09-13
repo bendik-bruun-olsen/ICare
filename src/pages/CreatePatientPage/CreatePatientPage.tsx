@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import styles from "./CreatePatientPage.module.css";
 import { InputWrapper, Input, Button, Icon } from "@equinor/eds-core-react";
@@ -6,18 +6,19 @@ import { add, remove_outlined } from "@equinor/eds-icons";
 import Loading from "../../components/Loading/Loading";
 
 import {
-	CaretakerInformationInterface,
+	Caretaker,
 	FormFieldProps,
-	PatientFormDataInterface,
+	NotificationType,
+	NewPatient,
 } from "../../types";
 import { addPatient } from "../../firebase/patientServices/addPatient";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
 import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
-import { useNotification } from "../../hooks/useNotification";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
-import { getNameFromEmail } from "../../firebase/userServices/getNameFromEmail";
+import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
+import { NotificationContext } from "../../context/NotificationContext";
 
 const FormField = ({
 	label,
@@ -26,7 +27,7 @@ const FormField = ({
 	onChange,
 	required = false,
 	type,
-}: FormFieldProps) => (
+}: FormFieldProps): JSX.Element => (
 	<InputWrapper
 		className={`${styles.inputWrapper} inputWrapper`}
 		labelProps={{
@@ -50,21 +51,17 @@ const FormField = ({
 	</InputWrapper>
 );
 
-export default function CreatePatientPage() {
-	const { addNotification } = useNotification();
+export default function CreatePatientPage(): JSX.Element {
+	const { addNotification } = useContext(NotificationContext);
 	const [isLoading, setIsLoading] = useState(false);
 	const [caretakerEmail, setCaretakerEmail] = useState("");
-	const [caretakers, setCaretakers] = useState<CaretakerInformationInterface[]>(
-		[]
-	);
-	const [formData, setFormData] = useState<PatientFormDataInterface>(
-		defaultPatientFormData
-	);
+	const [caretakers, setCaretakers] = useState<Caretaker[]>([]);
+	const [formData, setFormData] = useState<NewPatient>(defaultPatientFormData);
 	const [pictureUrl, setPictureUrl] = useState("");
 	const [profileImage, setProfileImage] = useState<File | null>(null);
 
 	useEffect(() => {
-		const fetchDefaultPictureUrl = async () => {
+		const fetchDefaultPictureUrl = async (): Promise<void> => {
 			const url = await getDefaultPictureUrl(addNotification);
 			if (!url) return;
 			setPictureUrl(url);
@@ -72,23 +69,23 @@ export default function CreatePatientPage() {
 		fetchDefaultPictureUrl();
 	});
 
-	const isFormDataValid = (formData: PatientFormDataInterface) => {
+	const isFormDataValid = (formData: NewPatient): boolean => {
 		const { age, phone } = formData;
 		if (isNaN(Number(age))) return false;
 		if (isNaN(Number(phone))) return false;
 		return true;
 	};
 
-	const isCaretakersListEmpty = () => caretakers.length === 0;
+	const isCaretakersListEmpty = (): boolean => caretakers.length === 0;
 
-	const isCaretakerDataValid = async () => {
+	const isCaretakerDataValid = async (): Promise<boolean> => {
 		if (caretakerEmail === "") {
-			addNotification("Please enter an email address", "error");
+			addNotification("Please enter an email address", NotificationType.ERROR);
 			return false;
 		}
 
 		if (!(await checkEmailExists(caretakerEmail))) {
-			addNotification("Email does not exist", "error");
+			addNotification("Email does not exist", NotificationType.ERROR);
 			return false;
 		}
 
@@ -97,13 +94,15 @@ export default function CreatePatientPage() {
 		);
 
 		if (emailAlreadyAdded) {
-			addNotification("Caretaker already added", "error");
+			addNotification("Caretaker already added", NotificationType.ERROR);
 			return false;
 		}
 		return true;
 	};
 
-	const handleFormFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleFormFieldChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	): void => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({
 			...prevData,
@@ -111,12 +110,15 @@ export default function CreatePatientPage() {
 		}));
 	};
 
-	const addCaretaker = async (e: React.FormEvent) => {
+	const addCaretaker = async (
+		e: React.FormEvent
+	): Promise<void | Caretaker[]> => {
 		e.preventDefault();
 
 		if (!(await isCaretakerDataValid())) return;
 
 		const caretakerName = await getNameFromEmail(caretakerEmail);
+		if (!caretakerName) return;
 
 		setCaretakers((prevCaretakers) => [
 			...prevCaretakers,
@@ -126,15 +128,15 @@ export default function CreatePatientPage() {
 		setCaretakerEmail("");
 	};
 
-	const removeCaretakerFromList = (email: string) => {
+	const removeCaretakerFromList = (email: string): void => {
 		setCaretakers((prevCaretakers) =>
 			prevCaretakers.filter((caretaker) => caretaker.email !== email)
 		);
-		addNotification("Caretaker removed successfully", "success");
+		addNotification("Caretaker removed successfully", NotificationType.SUCCESS);
 	};
 
 	// Refactor if we find a better solution
-	const submitPatientData = async () => {
+	const submitPatientData = async (): Promise<void> => {
 		try {
 			setIsLoading(true);
 			const patientId = await addPatient(formData, caretakers);
@@ -142,24 +144,27 @@ export default function CreatePatientPage() {
 			if (profileImage) {
 				uploadProfilePicture(profileImage, patientId);
 			}
-			addNotification("Patient created successfully", "success");
+			addNotification("Patient created successfully", NotificationType.SUCCESS);
 		} catch {
-			addNotification("Failed to create patient", "error");
+			addNotification("Failed to create patient", NotificationType.ERROR);
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
 
 		if (!isFormDataValid(formData)) {
-			addNotification("Invalid form data", "error");
+			addNotification("Invalid form data", NotificationType.ERROR);
 			return;
 		}
 
 		if (isCaretakersListEmpty()) {
-			addNotification("Please add at least one caretaker", "error");
+			addNotification(
+				"Please add at least one caretaker",
+				NotificationType.ERROR
+			);
 			return;
 		}
 

@@ -14,13 +14,13 @@ import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
-import ResetPasswordPage from "./pages/ResetPasssword/ResetPasswordPage";
+import ResetPasswordPage from "./pages/ResetPassword/ResetPasswordPage";
 import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";
 import { Navigate } from "react-router-dom";
 import CreatePatientPage from "./pages/CreatePatientPage/CreatePatientPage";
 import PatientDetailsPage from "./pages/PatientDetailsPage/PatientDetailsPage";
 
-const RequireAuthWrapper = () => {
+const RequireAuthWrapper = (): JSX.Element => {
 	const { isUserLoggedIn } = useAuth();
 	return isUserLoggedIn ? <Outlet /> : <Navigate to={Paths.LOGIN} replace />;
 };

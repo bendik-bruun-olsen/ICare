@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Checkbox, TextField } from "@equinor/eds-core-react";
 import { Timestamp } from "firebase/firestore";
@@ -13,7 +13,6 @@ import Loading from "../../components/Loading/Loading";
 import ErrorPage from "../ErrorPage/ErrorPage";
 
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import { useNotification } from "../../hooks/useNotification";
 
 import { Paths } from "../../paths";
 
@@ -37,8 +36,8 @@ import {
 } from "../../constants/defaultTodoValues";
 
 import {
-	TodoSeriesInfoInterface,
-	TodoItemInterface,
+	TodoSeriesInfo,
+	ToDo,
 	TodoItemInputStatusProps,
 	TodoSeriesInputStatusProps,
 } from "../../types";
@@ -59,6 +58,7 @@ import {
 	deleteTodoItem,
 	deleteTodoSeries,
 } from "../../firebase/todoServices/deleteTodo";
+import { NotificationContext } from "../../context/NotificationContext";
 
 interface LocationState {
 	selectedDate: Date;
@@ -78,13 +78,13 @@ const EditToDoPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-	const [todoItem, setTodoItem] = useState<TodoItemInterface>(defaultTodoItem);
+	const [todoItem, setTodoItem] = useState<ToDo>(defaultTodoItem);
 	const [todoSeriesInfo, setTodoSeriesInfo] =
-		useState<TodoSeriesInfoInterface>(defaultTodoSeries);
+		useState<TodoSeriesInfo>(defaultTodoSeries);
 	const { todoId: todoItemIdFromParams } = useParams<{
 		todoId: string;
 	}>();
-	const { addNotification } = useNotification();
+	const { addNotification } = useContext(NotificationContext);
 	const [todoItemInputStatus, setTodoItemInputStatus] =
 		useState<TodoItemInputStatusProps>(defaultTodoItemInputStatus);
 	const [todoSeriesInputStatus, setTodoSeriesInputStatus] =
@@ -96,7 +96,7 @@ const EditToDoPage: React.FC = () => {
 	async function fetchTodoItem(itemId: string): Promise<boolean> {
 		const result = await getTodo(itemId, addNotification);
 		if (result) {
-			setTodoItem(result as TodoItemInterface);
+			setTodoItem(result);
 			return true;
 		}
 		return false;
@@ -111,7 +111,7 @@ const EditToDoPage: React.FC = () => {
 
 		const result = await getTodoSeriesInfo(seriesId, addNotification);
 		if (result) {
-			setTodoSeriesInfo(result as TodoSeriesInfoInterface);
+			setTodoSeriesInfo(result as TodoSeriesInfo);
 			setEndDateMinValue(result.startDate.toDate());
 			return true;
 		}
@@ -284,11 +284,11 @@ const EditToDoPage: React.FC = () => {
 			}
 			if (!isCreatingNewSeries) {
 				if (!handleValidateItemFields()) return;
-				const itemEditSuccess = await editTodoItem(
-					itemId,
-					todoItem,
-					addNotification
-				);
+				const itemEditSuccess = await editTodoItem({
+					todoId: itemId,
+					updatedTodo: todoItem,
+					addNotification,
+				});
 				if (itemEditSuccess) {
 					navigate(Paths.TODO, {
 						state: { selectedDate: DateSelectedInTodoPage },

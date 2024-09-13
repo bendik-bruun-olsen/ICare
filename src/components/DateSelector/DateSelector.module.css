@@ -8,3 +8,7 @@
 .datePickerWrapper svg {
 	cursor: pointer;
 }
+
+.spacer {
+	width: 10px;
+}

@@ -10,7 +10,7 @@ import getDefaultProfilePictureUrl from "../../firebase/UserProfilePictureServic
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import styles from "./ProfilePicture.module.css";
 
-const ProfilePicture: React.FC = () => {
+export default function ProfilePicture(): React.ReactElement {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>(
     "Max file size: 1 MB"
@@ -20,30 +20,31 @@ const ProfilePicture: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const fetchUserProfilePic = async () => {
-      if (currentUser?.email) {
-        const userFolder = currentUser.email;
-        const userProfile = await getUserProfile(currentUser.email);
+    const fetchUserProfilePic = async (): Promise<void> => {
+      if (!currentUser?.email) {
+        loadDefaultProfilePicture();
+        return;
+      }
+      const userFolder = currentUser.email;
+      const userProfile = await getUserProfile(currentUser.email);
 
-        if (userProfile?.profilePictureUrl) {
-          try {
-            const imageUrl = await getProfilePictureUrl(
-              `profilePictures/${userFolder}/`
-            );
-            if (imageUrl) {
-              setSelectedImage(imageUrl);
-            } else {
-              await updateUserProfilePicture(currentUser.email, "");
-              loadDefaultProfilePicture();
-            }
-          } catch (error) {
-            console.error("Error checking profile picture in storage:", error);
-            loadDefaultProfilePicture();
-          }
-        } else {
+      if (!userProfile?.profilePictureUrl) {
+        loadDefaultProfilePicture();
+        return;
+      }
+
+      try {
+        const imageUrl = await getProfilePictureUrl(
+          `profilePictures/${userFolder}/`
+        );
+        if (!imageUrl) {
+          await updateUserProfilePicture(currentUser.email, "");
           loadDefaultProfilePicture();
+          return;
         }
-      } else {
+        setSelectedImage(imageUrl);
+      } catch (error) {
+        console.error("Error checking profile picture in storage:", error);
         loadDefaultProfilePicture();
       }
     };
@@ -51,7 +52,7 @@ const ProfilePicture: React.FC = () => {
     fetchUserProfilePic();
   }, [currentUser]);
 
-  const loadDefaultProfilePicture = async () => {
+  const loadDefaultProfilePicture = async (): Promise<void> => {
     try {
       const defaultUrl = await getDefaultProfilePictureUrl();
       setSelectedImage(defaultUrl);
@@ -61,7 +62,9 @@ const ProfilePicture: React.FC = () => {
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const fileSizeMB = file.size / (1024 * 1024);
@@ -117,7 +120,7 @@ const ProfilePicture: React.FC = () => {
           id="imageFile"
           capture="user"
           accept="image/*"
-          style={{ display: "none" }}
+          className={styles.input}
           ref={fileInputRef}
           onChange={handleImageUpload}
         />
@@ -130,6 +133,4 @@ const ProfilePicture: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default ProfilePicture;
+}

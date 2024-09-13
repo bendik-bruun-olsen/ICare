@@ -1,19 +1,19 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Icon } from "@equinor/eds-core-react";
 import { camera_add_photo } from "@equinor/eds-icons";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import styles from "./PatientProfilePicture.module.css";
-import { PatientProfilePictureProps } from "../../types";
+import { NotificationType, PatientProfilePictureProps } from "../../types";
 import { getPatient } from "../../firebase/patientServices/getPatient";
-import { useNotification } from "../../hooks/useNotification";
+import { NotificationContext } from "../../context/NotificationContext";
 
 export default function PatientProfilePicture({
 	setProfileImage,
-}: PatientProfilePictureProps) {
+}: PatientProfilePictureProps): JSX.Element {
 	const { currentUser } = useAuth();
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
-	const { addNotification } = useNotification();
+	const { addNotification } = useContext(NotificationContext);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const profileContainerRef = useRef<HTMLDivElement>(null);
@@ -23,7 +23,7 @@ export default function PatientProfilePicture({
 	const isEditingPatient = !!patientId;
 
 	useEffect(() => {
-		const fetchData = async () => {
+		const fetchData = async (): Promise<void> => {
 			try {
 				if (isEditingPatient) {
 					const patient = await getPatient(patientId, addNotification);
@@ -48,13 +48,15 @@ export default function PatientProfilePicture({
 					setSelectedImage(defaultPictureUrl);
 				}
 			} catch (error) {
-				addNotification("Failed to fetch patient data", "error");
+				addNotification("Failed to fetch patient data", NotificationType.ERROR);
 			}
 		};
 		fetchData();
 	}, [isEditingPatient]);
 
-	const handleImageAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleImageAdd = async (
+		e: React.ChangeEvent<HTMLInputElement>
+	): Promise<void> => {
 		if (e.target.files && e.target.files[0] && currentUser?.email) {
 			const image = e.target.files[0];
 			setProfileImage(image);

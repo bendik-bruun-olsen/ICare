@@ -9,30 +9,32 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase/firebase";
 import {
-	NotificationContextType,
-	ToDo,
+	NotificationType,
 	TodoItemInputStatusProps,
-	TodoItemInterface,
-	TodoSeriesInfoInterface,
-	TodoSeriesInputStatusProps,
+	ToDo,
+	validateDateRangeProps,
+	validateTodoItemFieldsProps,
+	validateTodoSeriesFieldsProps,
+	clearTodoSeriesInputStatusProps,
+	GenerateTodosForSeriesProps,
 } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
 
-export function getStartOfDay(selectedDate: Date) {
+export function getStartOfDay(selectedDate: Date): Date {
 	const startOfDay = new Date(selectedDate);
 	startOfDay.setHours(0, 0, 0, 0);
 	return startOfDay;
 }
 
-export function getEndOfDay(selectedDate: Date) {
+export function getEndOfDay(selectedDate: Date): Date {
 	const endOfDay = new Date(selectedDate);
 	endOfDay.setHours(23, 59, 59, 999);
 	return endOfDay;
 }
 
-export const capitalizeUsername = (username: string) => {
+export const capitalizeUsername = (username: string): string => {
 	if (!username) return "";
 	return username
 		.split(" ")
@@ -53,7 +55,9 @@ export const checkUserExists = async (email: string): Promise<boolean> => {
 			where("email", "==", email)
 		);
 		const querySnapshot = await getDocs(userQuery);
-		return !querySnapshot.empty;
+		const userExists = !querySnapshot.empty;
+
+		return userExists;
 	} catch {
 		return false;
 	}
@@ -68,15 +72,18 @@ export const formatTimestampToDateString = (timestamp: Timestamp): string => {
 	return timestamp.toDate().toISOString().substring(0, 10);
 };
 
-export const groupTodosByCategory = (todos: TodoItemInterface[]) => {
-	const grouped: { [key: string]: TodoItemInterface[] } = {};
+export const groupTodosByCategory = (
+	todos: ToDo[]
+): { [key: string]: ToDo[] } => {
+	const grouped: { [key: string]: ToDo[] } = {};
 	todos.forEach((todo) => {
 		if (todo.status === "ignore") {
 			if (!grouped["Ignored"]) {
 				grouped["Ignored"] = [];
 			}
 			grouped["Ignored"].push(todo);
-		} else {
+		}
+		if (todo.status !== "ignore") {
 			const category = todo.category || "Others";
 			if (!grouped[category]) {
 				grouped[category] = [];
@@ -88,10 +95,10 @@ export const groupTodosByCategory = (todos: TodoItemInterface[]) => {
 };
 
 export const sortTodosGroup = (groupedTodos: {
-	[key: string]: TodoItemInterface[];
-}) => {
+	[key: string]: ToDo[];
+}): { [key: string]: ToDo[] } => {
 	const priorityOrder = ["Medicine", "Food", "Exercise", "Social", "Others"];
-	const sortedGroup: { [key: string]: TodoItemInterface[] } = {};
+	const sortedGroup: { [key: string]: ToDo[] } = {};
 	Object.keys(groupedTodos)
 		.sort((a, b) => {
 			const indexA = priorityOrder.indexOf(a);
@@ -109,43 +116,32 @@ export const sortTodosGroup = (groupedTodos: {
 	return sortedGroup;
 };
 
-export const mapSelectedDaysToNumbers = (selectedDays: string[]) => {
+export const mapSelectedDaysToNumbers = (selectedDays: string[]): number[] => {
 	return selectedDays.map((day) => {
-		switch (day) {
-			case "sunday":
-				return 0;
-			case "monday":
-				return 1;
-			case "tuesday":
-				return 2;
-			case "wednesday":
-				return 3;
-			case "thursday":
-				return 4;
-			case "friday":
-				return 5;
-			case "saturday":
-				return 6;
-			default:
-				return -1;
-		}
+		if (day === "monday") return 1;
+		if (day === "tuesday") return 2;
+		if (day === "wednesday") return 3;
+		if (day === "thursday") return 4;
+		if (day === "friday") return 5;
+		if (day === "saturday") return 6;
+		if (day === "sunday") return 0;
+		return -1;
 	});
 };
 
-export const generateTodosForSeries = (
-	newTodo: TodoItemInterface,
-	startDate: string,
-	endDate: string,
-	selectedDaysNumbers: number[]
-) => {
+export const generateTodosForSeries = ({
+	newTodo,
+	startDate,
+	endDate,
+	selectedDaysNumbers,
+}: GenerateTodosForSeriesProps): ToDo[] => {
 	const newTodos = [];
 	const currentDate = new Date(startDate);
+	const isCurrentDayWithinSelectedDays = selectedDaysNumbers.includes(
+		currentDate.getDay()
+	);
 	while (currentDate <= new Date(endDate)) {
-		if (
-			selectedDaysNumbers.includes(
-				currentDate.getDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6
-			)
-		) {
+		if (isCurrentDayWithinSelectedDays) {
 			const todoForDay = {
 				...newTodo,
 				date: Timestamp.fromDate(currentDate),
@@ -158,11 +154,11 @@ export const generateTodosForSeries = (
 	return newTodos;
 };
 
-export const validateTodoItemFields = (
-	todoItem: TodoItemInterface,
-	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemInputStatusProps>>,
-	addNotification: NotificationContextType["addNotification"]
-) => {
+export const validateTodoItemFields = ({
+	todoItem,
+	setTodoItemInputVariants,
+	addNotification,
+}: validateTodoItemFieldsProps): boolean => {
 	const fields = [
 		{ key: "title", value: todoItem.title },
 		{ key: "description", value: todoItem.description },
@@ -183,19 +179,20 @@ export const validateTodoItemFields = (
 	});
 
 	if (!isValid) {
-		addNotification("Please fill in all required fields", "error");
+		addNotification(
+			"Please fill in all required fields",
+			NotificationType.ERROR
+		);
 	}
 
 	return isValid;
 };
 
-export const validateTodoSeriesFields = (
-	todoSeriesInfo: TodoSeriesInfoInterface,
-	setTodoSeriesInputVariants: Dispatch<
-		SetStateAction<TodoSeriesInputStatusProps>
-	>,
-	addNotification: NotificationContextType["addNotification"]
-) => {
+export const validateTodoSeriesFields = ({
+	todoSeriesInfo,
+	setTodoSeriesInputVariants,
+	addNotification,
+}: validateTodoSeriesFieldsProps): boolean => {
 	const fields = [
 		{ key: "title", value: todoSeriesInfo.title },
 		{ key: "description", value: todoSeriesInfo.description },
@@ -224,18 +221,26 @@ export const validateTodoSeriesFields = (
 	});
 
 	if (!isValid) {
-		addNotification("Please fill in all required fields", "error");
+		addNotification(
+			"Please fill in all required fields",
+			NotificationType.ERROR
+		);
 	}
 
 	return isValid;
 };
 
-export const clearTodoItemInputStatus = (
-	todoItem: TodoItemInterface,
+interface clearTodoItemInputStatusProps {
+	todoItem: ToDo;
 	setTodoItemInputFieldStatus: Dispatch<
 		SetStateAction<TodoItemInputStatusProps>
-	>
-) => {
+	>;
+}
+
+export const clearTodoItemInputStatus = ({
+	todoItem,
+	setTodoItemInputFieldStatus,
+}: clearTodoItemInputStatusProps): void => {
 	setTodoItemInputFieldStatus((prev) => ({
 		title: todoItem.title ? undefined : prev.title,
 		description: todoItem.description ? undefined : prev.description,
@@ -244,12 +249,11 @@ export const clearTodoItemInputStatus = (
 		time: todoItem.time ? undefined : prev.time,
 	}));
 };
-export const clearTodoSeriesInputStatus = (
-	todoSeriesInfo: TodoSeriesInfoInterface,
-	setTodoSeriesInputFieldStatus: Dispatch<
-		SetStateAction<TodoSeriesInputStatusProps>
-	>
-) => {
+
+export const clearTodoSeriesInputStatus = ({
+	todoSeriesInfo,
+	setTodoSeriesInputFieldStatus,
+}: clearTodoSeriesInputStatusProps): void => {
 	setTodoSeriesInputFieldStatus((prev) => ({
 		title: todoSeriesInfo.title ? undefined : prev.title,
 		description: todoSeriesInfo.description ? undefined : prev.description,
@@ -262,13 +266,16 @@ export const clearTodoSeriesInputStatus = (
 	}));
 };
 
-export const validateDateRange = (
-	startDate: Timestamp,
-	endDate: Timestamp,
-	addNotification: NotificationContextType["addNotification"]
-) => {
+export const validateDateRange = ({
+	startDate,
+	endDate,
+	addNotification,
+}: validateDateRangeProps): boolean => {
 	if (startDate.seconds > endDate.seconds) {
-		addNotification("End date cannot be before start date", "error");
+		addNotification(
+			"End date cannot be before start date",
+			NotificationType.ERROR
+		);
 		return false;
 	}
 	return true;

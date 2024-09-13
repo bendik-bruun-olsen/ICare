@@ -7,7 +7,7 @@ interface PatientDetailsProps {
 export default function PatientDetails({
 	patientName,
 	age,
-}: PatientDetailsProps) {
+}: PatientDetailsProps): JSX.Element {
 	return (
 		<>
 			<div className={styles.patientDetailsWrapper}>

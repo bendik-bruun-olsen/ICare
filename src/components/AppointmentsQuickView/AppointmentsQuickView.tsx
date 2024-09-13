@@ -15,7 +15,7 @@ export default function AppointmentsQuickView({
 	firstAppointmentTime,
 	secondAppointment,
 	secondAppointmentTime,
-}: AppointmentsQuickViewProps) {
+}: AppointmentsQuickViewProps): JSX.Element {
 	return (
 		<div className={styles.appointmentsOuterWrapper}>
 			<div className={styles.titleWrapper}>

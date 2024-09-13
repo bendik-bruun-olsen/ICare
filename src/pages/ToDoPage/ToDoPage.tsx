@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Button } from "@equinor/eds-core-react";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import ToDoTile from "../../components/ToDoTile/ToDoTile";
@@ -7,13 +7,13 @@ import { Icon } from "@equinor/eds-core-react";
 import { add } from "@equinor/eds-icons";
 import Navbar from "../../components/Navbar/Navbar";
 import { groupTodosByCategory, sortTodosGroup } from "../../utils";
-import { TodoItemInterface, ToDoStatus } from "../../types";
+import { ToDo, ToDoStatus } from "../../types";
 import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
-import { useNotification } from "../../hooks/useNotification";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import Loading from "../../components/Loading/Loading";
 import { Paths } from "../../paths";
+import { NotificationContext } from "../../context/NotificationContext";
 
 const ToDoPage: React.FC = () => {
 	const location = useLocation();
@@ -22,16 +22,16 @@ const ToDoPage: React.FC = () => {
 		: new Date();
 	const [selectedDate, setSelectedDate] = useState(initialDate);
 	const [categorizedTodos, setCategorizedTodos] = useState<{
-		[key: string]: TodoItemInterface[];
+		[key: string]: ToDo[];
 	}>({});
 	const [isLoading, setIsLoading] = useState(false);
 	const [hasError, setHasError] = useState(false);
-	const { addNotification } = useNotification();
+	const { addNotification } = useContext(NotificationContext);
 
 	useEffect(() => {
 		if (!selectedDate) return setHasError(true);
 
-		async function fetchData() {
+		async function fetchData(): Promise<void> {
 			setIsLoading(true);
 			try {
 				const data = await getTodosBySelectedDate(
@@ -39,9 +39,7 @@ const ToDoPage: React.FC = () => {
 					addNotification
 				);
 				if (data) {
-					const groupedTodos = groupTodosByCategory(
-						data as TodoItemInterface[]
-					);
+					const groupedTodos = groupTodosByCategory(data as ToDo[]);
 					const sortedTodosGroup = sortTodosGroup(groupedTodos);
 					setCategorizedTodos(sortedTodosGroup);
 				}
@@ -52,7 +50,10 @@ const ToDoPage: React.FC = () => {
 		fetchData();
 	}, [selectedDate]);
 
-	const handleStatusChange = async (todoId: string, newStatus: ToDoStatus) => {
+	const handleStatusChange = async (
+		todoId: string,
+		newStatus: ToDoStatus
+	): Promise<void> => {
 		if (!categorizedTodos) return;
 
 		const flattenedTodos = Object.values(categorizedTodos).flat();

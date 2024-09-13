@@ -4,7 +4,7 @@ import AppointmentsQuickView from "../../components/AppointmentsQuickView/Appoin
 import RemainingTodos from "../../components/RemainingTodos/RemainingTodos";
 import style from "./HomePage.module.css";
 
-const HomePage = () => {
+export default function HomePage(): JSX.Element {
 	return (
 		<>
 			<Navbar centerContent="Home" />
@@ -22,6 +22,4 @@ const HomePage = () => {
 			</div>
 		</>
 	);
-};
-
-export default HomePage;
+}

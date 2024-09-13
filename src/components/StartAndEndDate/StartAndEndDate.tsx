@@ -4,15 +4,15 @@ import { DatePicker } from "@equinor/eds-core-react";
 import { Variants } from "@equinor/eds-core-react/dist/types/components/types";
 import styles from "./StartAndEndDate.module.css";
 
-type StartAndEndDateProps = {
+interface StartAndEndDate {
 	label: string;
 	value: string;
 	onChange: (date: string) => void;
-	variant: Variants | undefined;
-	minValue: Date | undefined;
-};
+	variant?: Variants;
+	minValue?: Date;
+}
 
-const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
+const StartAndEndDate: React.FC<StartAndEndDate> = ({
 	label,
 	value,
 	onChange,
@@ -25,7 +25,7 @@ const StartAndEndDate: React.FC<StartAndEndDateProps> = ({
 		setSelectedDate(new Date(value));
 	}, [value]);
 
-	const handleDateChange = (newDate: Date) => {
+	const handleDateChange = (newDate: Date): void => {
 		if (newDate === null) {
 			return;
 		}

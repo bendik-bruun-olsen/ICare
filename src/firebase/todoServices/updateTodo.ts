@@ -1,13 +1,13 @@
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
-import { NotificationContextType } from "../../types";
+import { NotificationContext, NotificationType } from "../../types";
 
 export async function updateToDoStatusInDatabase(
 	todoId: string,
 	newStatus: string,
 	currentUser: string,
-	addNotification: NotificationContextType["addNotification"]
-) {
+	addNotification: NotificationContext["addNotification"]
+): Promise<void> {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoRef = doc(patientRef, "todoItems", todoId);
@@ -21,6 +21,6 @@ export async function updateToDoStatusInDatabase(
 
 		await updateDoc(todoRef, updatedMetaData);
 	} catch {
-		addNotification("Error updating todo status", "error");
+		addNotification("Error updating todo status", NotificationType.ERROR);
 	}
 }

@@ -4,12 +4,12 @@ import { edit } from "@equinor/eds-icons";
 import getUserData from "../../firebase/UserProfileService/getUserData";
 import updateUserData from "../../firebase/UserProfileService/updateUserData";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import { UserData } from "../../types";
+import { User } from "../../types";
 import SavingSpinner from "../SavingSpinner/SavingSpinner";
 import styles from "./UserProfileForm.module.css";
 
-const UserProfileForm: React.FC = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
+export default function UserProfileForm(): React.ReactElement {
+  const [userData, setUserData] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -20,7 +20,7 @@ const UserProfileForm: React.FC = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (): Promise<void> => {
       if (currentUser?.email) {
         const data = await getUserData(currentUser.email);
         if (data) {
@@ -81,7 +81,7 @@ const UserProfileForm: React.FC = () => {
       }
     }, 2000);
 
-    return () => {
+    return (): void => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
@@ -89,27 +89,27 @@ const UserProfileForm: React.FC = () => {
   }, [userData, saveDataToFirebase, isChanged]);
 
   useEffect(() => {
-    const handleClick = (event: MouseEvent) => {
+    const handleClick = (event: MouseEvent): void => {
       const target = event.target as Node;
-
-      if (
+      const isClickedOutsideContainer =
         fullInfoContainerRef.current &&
-        !fullInfoContainerRef.current.contains(target)
-      ) {
+        !fullInfoContainerRef.current.contains(target);
+      const isClickedOnForm =
+        target !== nameInputRef.current &&
+        (target instanceof HTMLInputElement ||
+          target instanceof HTMLSelectElement);
+
+      if (isClickedOutsideContainer) {
         if (!validateNameField()) {
           event.preventDefault();
           event.stopPropagation();
-        } else {
-          if (isChanged) {
-            saveDataToFirebase();
-          }
-          setIsEditing(false);
         }
-      } else if (
-        target !== nameInputRef.current &&
-        (target instanceof HTMLInputElement ||
-          target instanceof HTMLSelectElement)
-      ) {
+        if (isChanged) {
+          saveDataToFirebase();
+        }
+        setIsEditing(false);
+      }
+      if (isClickedOnForm) {
         if (!validateNameField()) {
           event.preventDefault();
           event.stopPropagation();
@@ -117,7 +117,7 @@ const UserProfileForm: React.FC = () => {
       }
     };
 
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = (): void => {
       if (isChanged) {
         saveDataToFirebase();
       }
@@ -126,13 +126,13 @@ const UserProfileForm: React.FC = () => {
     document.addEventListener("mousedown", handleClick);
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
+    return (): void => {
       document.removeEventListener("mousedown", handleClick);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [validateNameField, saveDataToFirebase, isChanged]);
 
-  const handleEditClick = () => {
+  const handleEditClick = (): void => {
     setIsEditing(true);
     if (nameInputRef.current) {
       nameInputRef.current.focus();
@@ -145,7 +145,7 @@ const UserProfileForm: React.FC = () => {
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  ): void => {
     const { id, value } = e.target;
 
     setUserData(
@@ -153,7 +153,7 @@ const UserProfileForm: React.FC = () => {
         ({
           ...prevData,
           [id]: value,
-        } as UserData)
+        } as User)
     );
 
     setIsChanged(true);
@@ -229,6 +229,4 @@ const UserProfileForm: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default UserProfileForm;
+}

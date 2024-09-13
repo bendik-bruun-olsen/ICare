@@ -1,6 +1,6 @@
 import { auth, db } from "../../firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Label, Input, Button } from "@equinor/eds-core-react";
 import { Paths } from "../../paths";
 import { useNavigate, Link } from "react-router-dom";
@@ -8,8 +8,10 @@ import { doc, setDoc } from "firebase/firestore";
 import styles from "./SignupPage.module.css";
 import { FirebaseError } from "firebase/app";
 import Logo from "../../components/Logo/Logo";
-import { useNotification } from "../../hooks/useNotification";
+import { NotificationContext } from "../../context/NotificationContext";
+
 import Loading from "../../components/Loading/Loading";
+import { NotificationType } from "../../types";
 
 const initialErrorState = {
   name: false,
@@ -18,7 +20,7 @@ const initialErrorState = {
   confirmPassword: false,
 };
 
-export default function SignupPage() {
+export default function SignupPage(): JSX.Element {
   const [formData, setFormData] = useState<{
     [key: string]: string;
   }>({
@@ -32,15 +34,15 @@ export default function SignupPage() {
   );
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { addNotification } = useNotification();
+  const { addNotification } = useContext(NotificationContext);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: false }));
   };
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     const updatedErrors = { ...initialErrorState };
 
     updatedErrors.name = !formData.name;
@@ -51,7 +53,7 @@ export default function SignupPage() {
     const passwordsMatch = formData.password === formData.confirmPassword;
 
     if (!passwordsMatch) {
-      addNotification("Passwords do not match", "error");
+      addNotification("Passwords do not match", NotificationType.ERROR);
       updatedErrors.password = true;
       updatedErrors.confirmPassword = true;
     }
@@ -59,7 +61,9 @@ export default function SignupPage() {
     return !Object.values(updatedErrors).includes(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -78,7 +82,10 @@ export default function SignupPage() {
         name: formData.name,
         email: formData.email,
       });
-      addNotification("You have successfully signed up!", "success");
+      addNotification(
+        "You have successfully signed up!",
+        NotificationType.SUCCESS
+      );
       navigate(Paths.LOGIN);
     } catch (err) {
       const error = err as FirebaseError;
@@ -87,11 +94,11 @@ export default function SignupPage() {
       );
       const weakPassword = error.message.includes("auth/weak-password");
       if (emailAlreadyInUse) {
-        addNotification("Email already in use", "info");
+        addNotification("Email already in use", NotificationType.ERROR);
         return;
       }
       if (weakPassword) {
-        addNotification("Password is too weak", "error");
+        addNotification("Password is too weak", NotificationType.ERROR);
         return;
       }
       navigate(Paths.ERROR);
@@ -102,7 +109,11 @@ export default function SignupPage() {
 
   if (isLoading) return <Loading />;
 
-  const renderInput = (label: string, name: string, type: string) => (
+  const renderInput = (
+    label: string,
+    name: string,
+    type: string
+  ): JSX.Element => (
     <>
       <div className={styles.labelContainer}>
         <Label label={label} htmlFor={name}>
@@ -124,7 +135,7 @@ export default function SignupPage() {
   return (
     <div className="pageWrapper">
       <div className={styles.heading}>
-        <Logo size="60px" color="var(--blue)" />
+        <Logo fontSize="60px" color="var(--blue)" />
       </div>
 
       <form className={styles.inputContainer} onSubmit={handleSubmit}>

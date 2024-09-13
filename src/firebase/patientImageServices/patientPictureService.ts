@@ -9,7 +9,10 @@ import { db } from "../firebase";
 
 const storage = getStorage();
 
-export const uploadProfilePicture = async (file: File, patientId: string) => {
+export const uploadProfilePicture = async (
+	file: File,
+	patientId: string
+): Promise<void> => {
 	const storageRef = ref(storage, `patientImages/${patientId}/${file.name}`);
 	await uploadBytesResumable(storageRef, file);
 	const downloadUrl = await getDownloadURL(storageRef);

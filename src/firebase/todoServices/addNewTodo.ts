@@ -1,46 +1,44 @@
 import { db } from "../../firebase/firebase";
 import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
 import {
-	NotificationContextType,
-	TodoItemInterface,
-	TodoSeriesInfoInterface,
+	NotificationContext,
+	NotificationType,
+	ToDo,
+	TodoSeriesInfo,
 } from "../../types";
 
 export const addSingleNewTodo = async (
-	todo: TodoItemInterface,
+	todo: ToDo,
 	currentUserName: string,
-	addNotification: NotificationContextType["addNotification"]
-) => {
+	addNotification: NotificationContext["addNotification"]
+): Promise<void> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
 		const todoCollection = collection(patientRef, "todoItems");
 		const todoItemRef = doc(todoCollection);
 
-		const updatedTodo = {
+		const updatedTodo: ToDo = {
 			...todo,
 			id: todoItemRef.id,
 			createdBy: currentUserName,
 		};
 
 		await setDoc(todoItemRef, updatedTodo);
-		addNotification("Todo added successfully", "success");
+		addNotification("Todo added successfully", NotificationType.SUCCESS);
 	} catch {
-		addNotification("Error adding todo", "error");
+		addNotification("Error adding todo", NotificationType.ERROR);
 	}
 };
 
 export const addMultipleNewTodos = async (
-	todos: TodoItemInterface[],
-	seriesInfo: TodoSeriesInfoInterface,
+	todos: ToDo[],
+	seriesInfo: TodoSeriesInfo,
 	currentUserName: string,
-	addNotification: NotificationContextType["addNotification"]
-) => {
+	addNotification: NotificationContext["addNotification"]
+): Promise<void> => {
 	try {
 		const patientRef = doc(db, "patientdetails", "patient@patient.com");
-		const todoSeriesInfoCollection = collection(
-			patientRef,
-			"todoSeriesInfo"
-		);
+		const todoSeriesInfoCollection = collection(patientRef, "todoSeriesInfo");
 		const todoCollection = collection(patientRef, "todoItems");
 
 		const batch = writeBatch(db);
@@ -60,8 +58,8 @@ export const addMultipleNewTodos = async (
 		});
 
 		await batch.commit();
-		addNotification("Series added successfully", "success");
+		addNotification("Series added successfully", NotificationType.SUCCESS);
 	} catch {
-		addNotification("Error adding series", "error");
+		addNotification("Error adding series", NotificationType.ERROR);
 	}
 };

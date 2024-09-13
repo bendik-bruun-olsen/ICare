@@ -1,14 +1,13 @@
 import styles from "./DeleteConfirmModal.module.css";
 import { DeleteConfirmModalProps } from "../../types";
 import { Button } from "@equinor/eds-core-react";
-// import React from 'react';
 
 export default function DeleteConfirmModal({
 	isOpen,
 	onClose,
 	onConfirm,
 	type,
-}: DeleteConfirmModalProps) {
+}: DeleteConfirmModalProps): JSX.Element | null {
 	if (!isOpen) return null;
 	return (
 		<div className={styles.overlay}>
