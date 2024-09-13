@@ -57,9 +57,7 @@ const AddToDoPage: React.FC = () => {
 		useState<TodoItemInputStatusProps>(defaultTodoItemInputStatus);
 	const [todoSeriesInputFieldStatus, setTodoSeriesInputFieldStatus] =
 		useState<TodoSeriesInputStatusProps>(defaultTodoSeriesInputStatus);
-	const [endDateMinValue, setEndDateMinValue] = useState<Date | undefined>(
-		undefined
-	);
+	const [endDateMinValue, setEndDateMinValue] = useState<Date>();
 	const { addNotification } = useContext(NotificationContext);
 	const navigate = useNavigate();
 	const currentUserEmail = useAuth().userData?.email;
