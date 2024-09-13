@@ -142,8 +142,11 @@ export const generateTodosForSeries = ({
 }: GenerateTodosForSeriesProps): ToDo[] => {
 	const newTodos = [];
 	const currentDate = new Date(startDate);
+	const isCurrentDayWithinSelectedDays = selectedDaysNumbers.includes(
+		currentDate.getDay()
+	);
 	while (currentDate <= new Date(endDate)) {
-		if (selectedDaysNumbers.includes(currentDate.getDay())) {
+		if (isCurrentDayWithinSelectedDays) {
 			const todoForDay = {
 				...newTodo,
 				date: Timestamp.fromDate(currentDate),

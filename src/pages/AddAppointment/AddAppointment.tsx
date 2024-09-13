@@ -8,7 +8,7 @@ import AddButton from "../../components/AddButton/AddButton";
 import styles from "../AddTodoPage/AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 
-const AddAppointment: React.FC = () => {
+export default function AddAppointment(): JSX.Element {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 
@@ -90,5 +90,4 @@ const AddAppointment: React.FC = () => {
 			</div>
 		</>
 	);
-};
-export default AddAppointment;
+}

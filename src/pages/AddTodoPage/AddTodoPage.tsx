@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
 import { useContext, useEffect, useState } from "react";
 import { Checkbox, TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
