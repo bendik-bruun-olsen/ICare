@@ -29,6 +29,7 @@ const FormField = ({
 	onChange,
 	required = false,
 	type,
+	readOnly = false,
 }: FormFieldProps): JSX.Element => (
 	<InputWrapper
 		className={`${styles.inputWrapper} inputWrapper`}
@@ -49,6 +50,7 @@ const FormField = ({
 			value={value}
 			onChange={onChange}
 			type={type}
+			readOnly={readOnly}
 		/>
 	</InputWrapper>
 );
@@ -64,7 +66,6 @@ export default function PatientDetailsPage(): JSX.Element {
 	const [isEditing, setIsEditing] = useState(false);
 	const [isChanged, setIsChanged] = useState(false);
 	const fullInfoContainerRef = useRef<HTMLDivElement>(null);
-	const timerRef = useRef<NodeJS.Timeout | null>(null);
 	const { currentPatientId } = useAuth();
 
 	useEffect(() => {
@@ -74,42 +75,23 @@ export default function PatientDetailsPage(): JSX.Element {
 			setPictureUrl(url);
 		};
 		fetchDefaultPictureUrl();
-	});
+	}, []);
 
 	useEffect(() => {
+		if (!currentPatientId) {
+			addNotification("Error fetching patient details", NotificationType.ERROR);
+			return;
+		}
 		if (currentPatientId) {
-			getPatient(currentPatientId, addNotification).then((formData) => {
-				if (formData) {
-					setFormData(formData as NewPatient);
-					setCaretakers(formData.caretakers);
+			getPatient(currentPatientId, addNotification).then((currentPatient) => {
+				if (currentPatient) {
+					setFormData(currentPatient as NewPatient);
+					setCaretakers(currentPatient.caretakers);
 				}
+				return;
 			});
-			if (!currentPatientId) {
-				addNotification(
-					"Error fetching patient details",
-					NotificationType.ERROR
-				);
-			}
 		}
-	}, [currentPatientId, formData]);
-
-	useEffect(() => {
-		if (timerRef.current) {
-			clearTimeout(timerRef.current);
-		}
-
-		timerRef.current = setTimeout(() => {
-			if (isChanged) {
-				editPatient(formData, caretakers, formData.id);
-			}
-		}, 2000);
-
-		return (): void => {
-			if (timerRef.current) {
-				clearTimeout(timerRef.current);
-			}
-		};
-	}, [formData, caretakers, isChanged]);
+	}, [currentPatientId]);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent): void => {
@@ -153,8 +135,8 @@ export default function PatientDetailsPage(): JSX.Element {
 
 	const isFormDataValid = (formData: NewPatient): boolean => {
 		const { age, phone } = formData;
-		if (isNaN(Number(age))) return false;
-		if (isNaN(Number(phone))) return false;
+		if (typeof age !== "number") return false;
+		if (typeof phone !== "number") return false;
 		return true;
 	};
 
@@ -164,7 +146,9 @@ export default function PatientDetailsPage(): JSX.Element {
 			return false;
 		}
 
-		if (!(await checkEmailExists(caretakerEmail))) {
+		const emailExists = await checkEmailExists(caretakerEmail);
+
+		if (!emailExists) {
 			addNotification("Email does not exist", NotificationType.ERROR);
 			return false;
 		}
@@ -239,10 +223,6 @@ export default function PatientDetailsPage(): JSX.Element {
 		await submitPatientData();
 	};
 
-	const handleEditClick = (): void => {
-		setIsEditing(true);
-	};
-
 	const personalInfoFields = [
 		{ label: "Name", name: "name", required: true, type: "text" },
 		{ label: "Age", name: "age", required: false, type: "number" },
@@ -270,8 +250,12 @@ export default function PatientDetailsPage(): JSX.Element {
 					<div className={`${styles.personalInfoSection} dropShadow`}>
 						<div className={styles.headlineAndIcon}>
 							<h2 className={styles.headlineText}>Personal Information</h2>
-							<Button type="button" variant="ghost_icon">
-								<Icon data={edit} onClick={handleEditClick} />
+							<Button
+								type="button"
+								variant="ghost_icon"
+								onClick={() => setIsEditing((prev) => !prev)}
+							>
+								<Icon data={edit} />
 							</Button>
 						</div>
 						{personalInfoFields.map((field) => (
@@ -279,10 +263,11 @@ export default function PatientDetailsPage(): JSX.Element {
 								key={field.name}
 								label={field.label}
 								name={field.name}
-								value={formData[field.name] as string}
+								value={formData[field.name]}
 								onChange={handleChange}
 								required={field.required}
 								type={field.type}
+								readOnly={!isEditing}
 							/>
 						))}
 					</div>
@@ -293,9 +278,10 @@ export default function PatientDetailsPage(): JSX.Element {
 								key={field.name}
 								label={field.label}
 								name={field.name}
-								value={formData[field.name] as string}
+								value={formData[field.name]}
 								onChange={handleChange}
 								type={field.type}
+								readOnly={!isEditing}
 							/>
 						))}
 					</div>

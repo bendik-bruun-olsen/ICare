@@ -46,8 +46,12 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 	const [loading, setLoading] = useState(true);
 	const [userData, setUserData] = useState<userDataType | null>(null);
 	const [currentPatientId, setCurrentPatientId] = useState<string | null>(
-		"bMwXOP6ePL7sV1oTMql6"
+		localStorage.getItem("currentPatientId") || null
 	);
+
+	useEffect(() => {
+		localStorage.setItem("currentPatientId", currentPatientId || "");
+	}, [currentPatientId]);
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {

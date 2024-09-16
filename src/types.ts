@@ -113,6 +113,7 @@ export interface FormFieldProps {
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	required?: boolean;
 	type: string;
+	readOnly?: boolean;
 }
 
 export interface PatientProfilePictureProps {
