@@ -188,9 +188,12 @@ export default function PatientDetailsPage(): JSX.Element {
 			if (profileImage) {
 				uploadProfilePicture(profileImage, patientId);
 			}
-			addNotification("Patient created successfully", NotificationType.SUCCESS);
+			addNotification(
+				"Patient details saved successfully",
+				NotificationType.SUCCESS
+			);
 		} catch {
-			addNotification("Failed to create patient", NotificationType.ERROR);
+			addNotification("Failed to save patient details", NotificationType.ERROR);
 		} finally {
 			setIsLoading(false);
 		}
