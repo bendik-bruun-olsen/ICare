@@ -11,126 +11,126 @@ import { useAuth } from "../../hooks/useAuth/useAuth";
 import styles from "./ProfilePicture.module.css";
 
 export default function ProfilePicture(): React.ReactElement {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>(
-    "Max file size: 1 MB"
-  );
-  const [isFileSizeError, setIsFileSizeError] = useState<boolean>(false);
-  const { currentUser } = useAuth();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+	const [selectedImage, setSelectedImage] = useState<string | null>(null);
+	const [errorMessage, setErrorMessage] = useState<string>(
+		"Max file size: 1 MB"
+	);
+	const [isFileSizeError, setIsFileSizeError] = useState<boolean>(false);
+	const { currentUser } = useAuth();
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const fetchUserProfilePic = async (): Promise<void> => {
-      if (!currentUser?.email) {
-        loadDefaultProfilePicture();
-        return;
-      }
-      const userFolder = currentUser.email;
-      const userProfile = await getUserProfile(currentUser.email);
+	useEffect(() => {
+		const fetchUserProfilePic = async (): Promise<void> => {
+			if (!currentUser?.email) {
+				loadDefaultProfilePicture();
+				return;
+			}
+			const userFolder = currentUser.email;
+			const userProfile = await getUserProfile(currentUser.email);
 
-      if (!userProfile?.profilePictureUrl) {
-        loadDefaultProfilePicture();
-        return;
-      }
+			if (!userProfile?.profilePictureUrl) {
+				loadDefaultProfilePicture();
+				return;
+			}
 
-      try {
-        const imageUrl = await getProfilePictureUrl(
-          `profilePictures/${userFolder}/`
-        );
-        if (!imageUrl) {
-          await updateUserProfilePicture(currentUser.email, "");
-          loadDefaultProfilePicture();
-          return;
-        }
-        setSelectedImage(imageUrl);
-      } catch (error) {
-        console.error("Error checking profile picture in storage:", error);
-        loadDefaultProfilePicture();
-      }
-    };
+			try {
+				const imageUrl = await getProfilePictureUrl(
+					`profilePictures/${userFolder}/`
+				);
+				if (!imageUrl) {
+					await updateUserProfilePicture(currentUser.email, "");
+					loadDefaultProfilePicture();
+					return;
+				}
+				setSelectedImage(imageUrl);
+			} catch (error) {
+				console.error("Error checking profile picture in storage:", error);
+				loadDefaultProfilePicture();
+			}
+		};
 
-    fetchUserProfilePic();
-  }, [currentUser]);
+		fetchUserProfilePic();
+	}, [currentUser]);
 
-  const loadDefaultProfilePicture = async (): Promise<void> => {
-    try {
-      const defaultUrl = await getDefaultProfilePictureUrl();
-      setSelectedImage(defaultUrl);
-    } catch (error) {
-      console.error("Error loading default profile picture:", error);
-      setSelectedImage("/Default.png");
-    }
-  };
+	const loadDefaultProfilePicture = async (): Promise<void> => {
+		try {
+			const defaultUrl = await getDefaultProfilePictureUrl();
+			setSelectedImage(defaultUrl);
+		} catch (error) {
+			console.error("Error loading default profile picture:", error);
+			setSelectedImage("/Default.png");
+		}
+	};
 
-  const handleImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): Promise<void> => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const fileSizeMB = file.size / (1024 * 1024);
-      if (fileSizeMB > 1) {
-        setErrorMessage("File is too big. Max size is 1 MB.");
-        setIsFileSizeError(true);
-        return;
-      }
+	const handleImageUpload = async (
+		e: React.ChangeEvent<HTMLInputElement>
+	): Promise<void> => {
+		if (e.target.files && e.target.files[0]) {
+			const file = e.target.files[0];
+			const fileSizeMB = file.size / (1024 * 1024);
+			if (fileSizeMB > 1) {
+				setErrorMessage("File is too big. Max size is 1 MB.");
+				setIsFileSizeError(true);
+				return;
+			}
 
-      setErrorMessage("Max file size: 1 MB");
-      setIsFileSizeError(false);
-      const userFolder = currentUser?.email;
-      const storagePath = `profilePictures/${userFolder}/`;
+			setErrorMessage("Max file size: 1 MB");
+			setIsFileSizeError(false);
+			const userFolder = currentUser?.email;
+			const storagePath = `profilePictures/${userFolder}/`;
 
-      try {
-        await deleteAllFilesInFolder(storagePath);
-        const newFileName = `${Date.now()}_${file.name}`;
-        const downloadURL = await uploadProfilePicture(
-          `${storagePath}${newFileName}`,
-          file
-        );
-        if (currentUser?.email) {
-          await updateUserProfilePicture(currentUser.email, downloadURL);
-          setSelectedImage(downloadURL);
-        }
-      } catch (error) {
-        console.error("Error uploading profile picture:", error);
-        setErrorMessage("Failed to upload profile picture. Please try again.");
-        setIsFileSizeError(true);
-      }
-    }
-  };
+			try {
+				await deleteAllFilesInFolder(storagePath);
+				const newFileName = `${Date.now()}_${file.name}`;
+				const downloadURL = await uploadProfilePicture(
+					`${storagePath}${newFileName}`,
+					file
+				);
+				if (currentUser?.email) {
+					await updateUserProfilePicture(currentUser.email, downloadURL);
+					setSelectedImage(downloadURL);
+				}
+			} catch (error) {
+				console.error("Error uploading profile picture:", error);
+				setErrorMessage("Failed to upload profile picture. Please try again.");
+				setIsFileSizeError(true);
+			}
+		}
+	};
 
-  return (
-    <div className={styles.profilePictureContainer}>
-      <div className={styles.imageContainer}>
-        <div>
-          <img
-            src={selectedImage || "/default-profile-image.jpg"}
-            alt="Profile"
-            className={styles.profilePic}
-          />
-          <div
-            className={`${styles.errorMessage} ${
-              isFileSizeError ? styles.error : ""
-            }`}
-          >
-            {errorMessage}
-          </div>
-        </div>
-        <input
-          type="file"
-          id="imageFile"
-          capture="user"
-          accept="image/*"
-          className={styles.input}
-          ref={fileInputRef}
-          onChange={handleImageUpload}
-        />
-        <div
-          className={styles.cameraIcon}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Icon data={camera_add_photo} />
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<div className={styles.profilePictureContainer}>
+			<div className={styles.imageContainer}>
+				<div>
+					<img
+						src={selectedImage || "/default-profile-image.jpg"}
+						alt="Profile"
+						className={styles.profilePic}
+					/>
+					<div
+						className={`${styles.errorMessage} ${
+							isFileSizeError ? styles.error : ""
+						}`}
+					>
+						{errorMessage}
+					</div>
+				</div>
+				<input
+					type="file"
+					id="imageFile"
+					capture="user"
+					accept="image/*"
+					className={styles.input}
+					ref={fileInputRef}
+					onChange={handleImageUpload}
+				/>
+				<div
+					className={styles.cameraIcon}
+					onClick={() => fileInputRef.current?.click()}
+				>
+					<Icon data={camera_add_photo} />
+				</div>
+			</div>
+		</div>
+	);
 }

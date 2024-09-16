@@ -1,9 +1,9 @@
 import React, {
-  useContext,
-  useState,
-  useEffect,
-  createContext,
-  ReactNode,
+	useContext,
+	useState,
+	useEffect,
+	createContext,
+	ReactNode,
 } from "react";
 import { auth } from "../../firebase/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
@@ -11,75 +11,89 @@ import { db } from "../../firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 interface AuthContextType {
-  currentUser: User | null;
-  isUserLoggedIn: boolean;
-  loading: boolean;
-  userData: userDataType | null;
+	currentUser: User | null;
+	isUserLoggedIn: boolean;
+	loading: boolean;
+	userData: userDataType | null;
+	currentPatientId: string | null;
+	setCurrentPatientId: (patientId: string | null) => void;
 }
 
 interface Props {
-  children?: ReactNode;
+	children?: ReactNode;
 }
 
 interface userDataType {
-  name: string;
-  email: string;
-  type: string;
+	name: string;
+	email: string;
+	type: string;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  currentUser: null,
-  isUserLoggedIn: false,
-  loading: true,
-  userData: null,
+	currentUser: null,
+	isUserLoggedIn: false,
+	loading: true,
+	userData: null,
+	currentPatientId: null,
+	setCurrentPatientId: () => {},
 });
 
 export const useAuth = (): AuthContextType => useContext(AuthContext);
 
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState<userDataType | null>(null);
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
+	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [userData, setUserData] = useState<userDataType | null>(null);
+	const [currentPatientId, setCurrentPatientId] = useState<string | null>(
+		"bMwXOP6ePL7sV1oTMql6"
+	);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setCurrentUser(user);
-        setIsUserLoggedIn(true);
-        const result = await fetchUserData(user.email);
-        if (result) setUserData(result);
-      }
-      if (!user) {
-        setCurrentUser(null);
-        setIsUserLoggedIn(false);
-        setUserData(null);
-      }
-      setLoading(false);
-    });
-    return (): void => unsubscribe();
-  }, []);
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				setCurrentUser(user);
+				setIsUserLoggedIn(true);
+				const result = await fetchUserData(user.email);
+				if (result) setUserData(result);
+			}
+			if (!user) {
+				setCurrentUser(null);
+				setIsUserLoggedIn(false);
+				setUserData(null);
+			}
+			setLoading(false);
+		});
+		return (): void => unsubscribe();
+	}, []);
 
-  return (
-    <AuthContext.Provider
-      value={{ currentUser, isUserLoggedIn, loading, userData }}
-    >
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+	return (
+		<AuthContext.Provider
+			value={{
+				currentUser,
+				isUserLoggedIn,
+				loading,
+				userData,
+				currentPatientId,
+				setCurrentPatientId,
+			}}
+		>
+			{!loading && children}
+		</AuthContext.Provider>
+	);
 };
 
 async function fetchUserData(
-  email: string | null
+	email: string | null
 ): Promise<userDataType | null> {
-  if (!email) return null;
+	if (!email) return null;
 
-  const userDoc = doc(db, "users", email);
-  const docSnap = await getDoc(userDoc);
+	const userDoc = doc(db, "users", email);
+	const docSnap = await getDoc(userDoc);
 
-  if (docSnap.exists()) {
-    return docSnap.data() as userDataType;
-  }
+	if (docSnap.exists()) {
+		return docSnap.data() as userDataType;
+	}
 
-  return null;
+	return null;
 }

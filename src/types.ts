@@ -152,3 +152,10 @@ export interface validateTodoItemFieldsProps {
 	setTodoItemInputVariants: Dispatch<SetStateAction<TodoItemInputStatusProps>>;
 	addNotification: NotificationContext["addNotification"];
 }
+
+export interface GenerateTodosForSeriesProps {
+	newTodo: ToDo;
+	startDate: string;
+	endDate: string;
+	selectedDaysNumbers: number[];
+}

@@ -19,6 +19,8 @@ import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaul
 import Loading from "../../components/Loading/Loading";
 import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
 import { NotificationContext } from "../../context/NotificationContext";
+import { getPatient } from "../../firebase/patientServices/getPatient";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 
 const FormField = ({
 	label,
@@ -63,6 +65,7 @@ export default function PatientDetailsPage(): JSX.Element {
 	const [isChanged, setIsChanged] = useState(false);
 	const fullInfoContainerRef = useRef<HTMLDivElement>(null);
 	const timerRef = useRef<NodeJS.Timeout | null>(null);
+	const { currentPatientId } = useAuth();
 
 	useEffect(() => {
 		const fetchDefaultPictureUrl = async (): Promise<void> => {
@@ -72,6 +75,23 @@ export default function PatientDetailsPage(): JSX.Element {
 		};
 		fetchDefaultPictureUrl();
 	});
+
+	useEffect(() => {
+		if (currentPatientId) {
+			getPatient(currentPatientId, addNotification).then((formData) => {
+				if (formData) {
+					setFormData(formData as NewPatient);
+					setCaretakers(formData.caretakers);
+				}
+			});
+			if (!currentPatientId) {
+				addNotification(
+					"Error fetching patient details",
+					NotificationType.ERROR
+				);
+			}
+		}
+	}, [currentPatientId, formData]);
 
 	useEffect(() => {
 		if (timerRef.current) {

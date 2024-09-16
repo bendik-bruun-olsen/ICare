@@ -14,6 +14,10 @@ export default function PatientProfilePicture({
 	const { currentUser } = useAuth();
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const { addNotification } = useContext(NotificationContext);
+	const [errorMessage, setErrorMessage] = useState<string>(
+		"Max file size: 1 MB"
+	);
+	const [isFileSizeError, setIsFileSizeError] = useState<boolean>(false);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const profileContainerRef = useRef<HTMLDivElement>(null);
@@ -58,6 +62,16 @@ export default function PatientProfilePicture({
 		e: React.ChangeEvent<HTMLInputElement>
 	): Promise<void> => {
 		if (e.target.files && e.target.files[0] && currentUser?.email) {
+			const file = e.target.files[0];
+			const fileSizeMB = file.size / (1024 * 1024);
+			if (fileSizeMB > 1) {
+				setErrorMessage("File is too big. Max size is 1 MB.");
+				setIsFileSizeError(true);
+				return;
+			}
+
+			setErrorMessage("Max file size: 1 MB");
+			setIsFileSizeError(false);
 			const image = e.target.files[0];
 			setProfileImage(image);
 			setSelectedImage(URL.createObjectURL(image));
@@ -86,6 +100,13 @@ export default function PatientProfilePicture({
 					className={styles.imageInput}
 					ref={fileInputRef}
 				/>
+			</div>
+			<div
+				className={`${styles.errorMessage} ${
+					isFileSizeError ? styles.error : ""
+				}`}
+			>
+				{errorMessage}
 			</div>
 		</div>
 	);

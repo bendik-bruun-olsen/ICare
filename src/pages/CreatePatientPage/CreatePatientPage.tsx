@@ -19,6 +19,9 @@ import PatientProfilePicture from "../../components/PatientProfilePicture/Patien
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
 import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
 import { NotificationContext } from "../../context/NotificationContext";
+import { useAuth } from "../../hooks/useAuth/useAuth";
+import { useNavigate } from "react-router-dom";
+import { Paths } from "../../paths";
 
 const FormField = ({
 	label,
@@ -59,6 +62,8 @@ export default function CreatePatientPage(): JSX.Element {
 	const [formData, setFormData] = useState<NewPatient>(defaultPatientFormData);
 	const [pictureUrl, setPictureUrl] = useState("");
 	const [profileImage, setProfileImage] = useState<File | null>(null);
+	const { setCurrentPatientId } = useAuth();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchDefaultPictureUrl = async (): Promise<void> => {
@@ -135,14 +140,13 @@ export default function CreatePatientPage(): JSX.Element {
 		addNotification("Caretaker removed successfully", NotificationType.SUCCESS);
 	};
 
-	// Refactor if we find a better solution
 	const submitPatientData = async (): Promise<void> => {
 		try {
 			setIsLoading(true);
 			const patientId = await addPatient(formData, caretakers);
-
+			setCurrentPatientId(patientId);
 			if (profileImage) {
-				uploadProfilePicture(profileImage, patientId);
+				await uploadProfilePicture(profileImage, patientId);
 			}
 			addNotification("Patient created successfully", NotificationType.SUCCESS);
 		} catch {
@@ -169,6 +173,7 @@ export default function CreatePatientPage(): JSX.Element {
 		}
 
 		await submitPatientData();
+		navigate(Paths.HOME);
 	};
 
 	const personalInfoFields = [
