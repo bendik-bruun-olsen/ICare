@@ -12,7 +12,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { editPatient } from "../../firebase/patientServices/editPatient";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
-import { addPatient } from "../../firebase/patientServices/addPatient";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
 import { remove_outlined, add, edit } from "@equinor/eds-icons";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
@@ -21,7 +20,6 @@ import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
 import { NotificationContext } from "../../context/NotificationContext";
 import { getPatient } from "../../firebase/patientServices/getPatient";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import { useParams } from "react-router-dom";
 
 const FormField = ({
 	label,
@@ -71,9 +69,11 @@ export default function PatientDetailsPage(): JSX.Element {
 
 	useEffect(() => {
 		const fetchDefaultPictureUrl = async (): Promise<void> => {
+			setIsLoading(true);
 			const url = await getDefaultPictureUrl(addNotification);
 			if (!url) return;
 			setPictureUrl(url);
+			setIsLoading(false);
 		};
 		fetchDefaultPictureUrl();
 	}, []);
@@ -94,34 +94,6 @@ export default function PatientDetailsPage(): JSX.Element {
 		}
 	}, [currentPatientId]);
 
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent): void => {
-			if (
-				fullInfoContainerRef.current &&
-				!fullInfoContainerRef.current.contains(event.target as Node)
-			) {
-				if (isChanged) {
-					editPatient(formData, caretakers, formData.id);
-				}
-				setIsEditing(false);
-			}
-		};
-
-		const handleBeforeUnload = (): void => {
-			if (isChanged) {
-				editPatient(formData, caretakers, formData.id);
-			}
-		};
-
-		document.addEventListener("mousedown", handleClickOutside);
-		window.addEventListener("beforeunload", handleBeforeUnload);
-
-		return (): void => {
-			document.removeEventListener("mousedown", handleClickOutside);
-			window.removeEventListener("beforeunload", handleBeforeUnload);
-		};
-	}, [formData, isChanged, caretakers]);
-
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = e.target;
 		setFormData((prevData) => ({
@@ -140,6 +112,7 @@ export default function PatientDetailsPage(): JSX.Element {
 	};
 
 	const isCaretakerDataValid = async (): Promise<boolean> => {
+		setIsLoading(true);
 		if (caretakerEmail === "") {
 			addNotification("Please enter an email address", NotificationType.ERROR);
 			return false;
@@ -160,26 +133,8 @@ export default function PatientDetailsPage(): JSX.Element {
 			addNotification("Caretaker already added", NotificationType.ERROR);
 			return false;
 		}
+		setIsLoading(false);
 		return true;
-	};
-
-	const submitPatientData = async (): Promise<void> => {
-		try {
-			setIsLoading(true);
-			const patientId = await addPatient(formData, caretakers);
-
-			if (profileImage) {
-				uploadProfilePicture(profileImage, patientId);
-			}
-			addNotification(
-				"Patient details saved successfully",
-				NotificationType.SUCCESS
-			);
-		} catch {
-			addNotification("Failed to save patient details", NotificationType.ERROR);
-		} finally {
-			setIsLoading(false);
-		}
 	};
 
 	const addCaretaker = async (e: React.FormEvent): Promise<void> => {
@@ -205,8 +160,9 @@ export default function PatientDetailsPage(): JSX.Element {
 
 	const handleSubmit = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
+		setIsLoading(true);
 
-		if (!isFormDataValid(formData)) {
+		if (isFormDataValid(formData)) {
 			addNotification("Invalid form data", NotificationType.ERROR);
 			return;
 		}
@@ -219,7 +175,29 @@ export default function PatientDetailsPage(): JSX.Element {
 			return;
 		}
 
-		await submitPatientData();
+		if (!currentPatientId) {
+			return;
+		}
+
+		if (profileImage) {
+			uploadProfilePicture(profileImage, currentPatientId);
+		}
+
+		if (currentPatientId) {
+			try {
+				await editPatient(formData, caretakers, currentPatientId);
+				addNotification(
+					"Patient details updated successfully",
+					NotificationType.SUCCESS
+				);
+			} catch (error) {
+				addNotification(
+					"Failed to update patient details",
+					NotificationType.ERROR
+				);
+			}
+		}
+		setIsLoading(false);
 	};
 
 	const personalInfoFields = [
@@ -319,6 +297,11 @@ export default function PatientDetailsPage(): JSX.Element {
 						</ul>
 					</div>
 				</form>
+				<div className={styles.saveIcon}>
+					<Button onClick={handleSubmit} disabled={!isChanged || isLoading}>
+						Save
+					</Button>
+				</div>
 			</div>
 		</>
 	);

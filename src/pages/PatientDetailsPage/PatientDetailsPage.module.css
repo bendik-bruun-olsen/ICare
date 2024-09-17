@@ -114,6 +114,12 @@ label {
 	margin-bottom: 15px;
 }
 
+.saveIcon {
+	display: flex;
+	margin-top: 25px;
+	justify-content: flex-end;
+}
+
 @media (max-width: 425px) {
 	.nameAndEmail span {
 		width: 130px;
