@@ -1,0 +1,27 @@
+.headlineText {
+  color: var(--black);
+}
+.patientList {
+  display: flex;
+  flex-direction: column;
+  max-width: 750px;
+  margin: 0 auto;
+  padding: calc(20px + var(--navbar-height)) 20px 20px 20px;
+}
+.administeredPatientList {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--fadedblue);
+  list-style-type: none;
+}
+.assignedPatientList {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--fadedblue);
+  list-style-type: none;
+}
+.addIcon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
