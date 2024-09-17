@@ -10,7 +10,7 @@ export const editPatient = async (
 	if (!id) {
 		throw new Error("Document ID is required to edit patient details.");
 	}
-	const patientRef = doc(collection(db, "patientdetails"), id);
+	const patientRef = doc(collection(db, "patientdetails", id));
 	await updateDoc(patientRef, { ...formData, caretakers });
 	return patientRef.id;
 };

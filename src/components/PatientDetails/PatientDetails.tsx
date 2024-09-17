@@ -1,4 +1,8 @@
+import { Link } from "react-router-dom";
 import styles from "./PatientDetails.module.css";
+import { Paths } from "../../paths";
+import { useAuth } from "../../hooks/useAuth/useAuth";
+
 interface PatientDetailsProps {
 	patientName: string;
 	age: string;
@@ -8,6 +12,8 @@ export default function PatientDetails({
 	patientName,
 	age,
 }: PatientDetailsProps): JSX.Element {
+	const { currentPatientId: patientId } = useAuth();
+	if (!patientId) return <></>;
 	return (
 		<>
 			<div className={styles.patientDetailsWrapper}>
@@ -22,7 +28,7 @@ export default function PatientDetails({
 					</div>
 				</div>
 				<div className={styles.morePatientDetails}>
-					<p>Patient details</p>
+					<Link to={Paths.PATIENT_DETAILS}>Patient details</Link>
 				</div>
 			</div>
 		</>

@@ -21,6 +21,7 @@ import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
 import { NotificationContext } from "../../context/NotificationContext";
 import { getPatient } from "../../firebase/patientServices/getPatient";
 import { useAuth } from "../../hooks/useAuth/useAuth";
+import { useParams } from "react-router-dom";
 
 const FormField = ({
 	label,
@@ -131,8 +132,6 @@ export default function PatientDetailsPage(): JSX.Element {
 		setIsChanged(true);
 	};
 
-	const isCaretakersListEmpty = (): boolean => caretakers.length === 0;
-
 	const isFormDataValid = (formData: NewPatient): boolean => {
 		const { age, phone } = formData;
 		if (typeof age !== "number") return false;
@@ -212,7 +211,7 @@ export default function PatientDetailsPage(): JSX.Element {
 			return;
 		}
 
-		if (isCaretakersListEmpty()) {
+		if (caretakers.length === 0) {
 			addNotification(
 				"Please add at least one caretaker",
 				NotificationType.ERROR
