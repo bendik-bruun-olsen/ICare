@@ -11,21 +11,21 @@
 .administeredPatientList {
   display: flex;
   flex-direction: column;
-  background-color: var(--fadedblue);
+
   list-style-type: none;
 }
 .assignedPatientList {
   display: flex;
   flex-direction: column;
-  background-color: var(--fadedblue);
+
   list-style-type: none;
 }
 .administeredPatientListItem,
 .assignedPatientListItem {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
 
+  align-items: center;
+  background-color: var(--fadedblue);
   margin: 5px 0;
   padding: 15px 15px;
   border-radius: 5px;
@@ -64,7 +64,9 @@
   color: var(--black);
   margin-bottom: 15px;
 }
-
+.headlineText2 {
+  margin: 15px 0;
+}
 @media (max-width: 425px) {
   .nameAndEmail span {
     width: 130px;

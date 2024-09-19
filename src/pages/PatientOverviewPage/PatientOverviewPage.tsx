@@ -39,7 +39,7 @@ export default function PatientOverview(): JSX.Element {
   }, [currentUser?.email, addNotification]);
 
   const fetchPatients = async (): Promise<void> => {
-    if (!currentUser) return;
+    if (!currentUser || !currentUser.email) return;
 
     const userRef = doc(db, "users", currentUser.email);
     const userDoc = await getDoc(userRef);
@@ -61,7 +61,7 @@ export default function PatientOverview(): JSX.Element {
     <div className={styles.pageWrapper}>
       <Navbar centerContent="Patient Overview" />
       <div className={styles.patientList}>
-        <div className={`${styles.administeredPatientInfoSection} dropShadow`}>
+        <div className={`${styles.administeredPatientInfoSection} `}>
           <h2 className={styles.headlineText}>My Administered Patients</h2>
           <ul className={styles.administeredPatientList}>
             {createdPatients.length === 0 ? (
@@ -86,8 +86,8 @@ export default function PatientOverview(): JSX.Element {
             )}
           </ul>
         </div>
-        <div className={`${styles.assignedPatientInfoSection} dropShadow`}>
-          <h2 className={styles.headlineText}>My Assigned Patients</h2>
+        <div className={`${styles.assignedPatientInfoSection} `}>
+          <h2 className={styles.headlineText2}>My Assigned Patients</h2>
           <ul className={styles.assignedPatientList}>
             {assignedPatients.length === 0 ? (
               <li>No assigned patients found.</li>
