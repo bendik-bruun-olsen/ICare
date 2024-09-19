@@ -1,32 +1,77 @@
-import { collection, doc, setDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { Caretaker, NewPatient } from "../../types";
 import { db } from "../firebase";
 import { getAuth } from "firebase/auth";
 
 export const addPatient = async (
-	formData: NewPatient,
-	caretakers: Caretaker[],
-	id?: string
+  formData: NewPatient,
+  caretakers: Caretaker[],
+  id?: string
 ): Promise<string> => {
-	const auth = getAuth();
-	const currentUser = auth.currentUser;
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
 
-	if (!currentUser) {
-		throw new Error("No user is currently logged in.");
-	}
+  if (!currentUser) {
+    throw new Error("No user is currently logged in.");
+  }
 
-	const patientRef = id
-		? doc(db, "patientdetails", id)
-		: doc(collection(db, "patientdetails"));
+  try {
+    const patientRef = id
+      ? doc(db, "patientdetails", id)
+      : doc(collection(db, "patientdetails"));
 
-	const patientData = {
-		...formData,
-		caretakers,
-		createdBy: {
-			userEmail: currentUser.email,
-		},
-	};
+    const patientData = {
+      ...formData,
+      caretakers,
+      createdBy: {
+        userEmail: currentUser.email,
+      },
+    };
 
-	await setDoc(patientRef, patientData);
-	return patientRef.id;
+    await setDoc(patientRef, patientData);
+    console.log("Patient added successfully:", patientRef.id);
+
+    const userRef = doc(db, "users", currentUser.uid);
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      await setDoc(userRef, {
+        administeredPatients: [],
+        assignedPatients: [],
+      });
+      console.log("User document created:", currentUser.uid);
+    }
+
+    const adminUseRef = doc(db, "users", currentUser.email);
+    await updateDoc(adminUseRef, {
+      administeredPatients: arrayUnion({
+        patientId: patientRef.id,
+        patientName: formData.name,
+      }),
+    });
+    console.log("Administered patient added to user:", currentUser.uid);
+
+    for (const caretaker of caretakers) {
+      const caretakerUserRef = doc(db, "users", caretaker.email);
+      await updateDoc(caretakerUserRef, {
+        assignedPatients: arrayUnion({
+          patientId: patientRef.id,
+          patientName: formData.name,
+        }),
+      });
+      console.log("Assigned patient added to caretaker:", caretaker.email);
+    }
+
+    return patientRef.id;
+  } catch (error) {
+    console.error("Error adding patient:", error);
+    throw error;
+  }
 };
