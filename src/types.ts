@@ -118,6 +118,8 @@ export interface FormFieldProps {
 
 export interface PatientProfilePictureProps {
   setProfileImage: Dispatch<SetStateAction<File | null>>;
+  patientId: string;
+  showIcon?: boolean;
 }
 
 export interface EmergencyContact {

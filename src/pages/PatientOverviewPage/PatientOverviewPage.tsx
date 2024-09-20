@@ -1,6 +1,5 @@
 import styles from "./PatientOverviewPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
-
 import { Paths } from "../../paths";
 import { NotificationContext } from "../../context/NotificationContext";
 import { useContext, useEffect, useState } from "react";
@@ -9,9 +8,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, Icon } from "@equinor/eds-core-react";
 import { add } from "@equinor/eds-icons";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
-
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { db } from "../../firebase/firebase";
+import { getPatientPictureUrl } from "../../firebase/patientImageServices/getPatientPicture";
 
 export default function PatientOverview(): JSX.Element {
   const { addNotification } = useContext(NotificationContext);
@@ -19,7 +18,7 @@ export default function PatientOverview(): JSX.Element {
   const [pictureUrl, setPictureUrl] = useState("");
   const [createdPatients, setCreatedPatients] = useState<DocumentData[]>([]);
   const [assignedPatients, setAssignedPatients] = useState<DocumentData[]>([]);
-  const { currentUser, setCurrentPatientId } = useAuth();
+  const { currentUser, setCurrentPatientId, currentPatientId } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,7 +29,21 @@ export default function PatientOverview(): JSX.Element {
     };
     fetchDefaultPictureUrl();
   }, [addNotification]);
+  useEffect(() => {
+    const fetchProfilePicture = async (): Promise<void> => {
+      if (currentUser?.email && currentPatientId) {
+        const url = await getPatientPictureUrl(
+          currentUser.email,
+          currentPatientId
+        );
+        if (url) {
+          setPictureUrl(url);
+        }
+      }
+    };
 
+    fetchProfilePicture();
+  }, [currentUser, currentPatientId]);
   useEffect(() => {
     const fetchAllPatients = async (): Promise<void> => {
       await fetchPatients();
@@ -74,7 +87,11 @@ export default function PatientOverview(): JSX.Element {
                   onClick={() => handlePatientClick(patient.patientId)}
                 >
                   <div className={styles.picNameAndEmail}>
-                    <img src={pictureUrl} alt="Default profile picture" />
+                    <img
+                      src={patient.profilePictureUrl || pictureUrl}
+                      alt={`${patient.patientName}'s profile`}
+                      className={styles.profilePicture}
+                    />
                     <div className={styles.nameAndEmail}>
                       <h3>{patient.patientName}</h3>
 
@@ -99,7 +116,11 @@ export default function PatientOverview(): JSX.Element {
                   onClick={() => handlePatientClick(patient.patientId)}
                 >
                   <div className={styles.picNameAndEmail}>
-                    <img src={pictureUrl} alt="Default profile picture" />
+                    <img
+                      src={patient.profilePictureUrl || pictureUrl}
+                      alt={`${patient.patientName}'s profile`}
+                      className={styles.profilePicture}
+                    ></img>
                     <div className={styles.nameAndEmail}>
                       <h3>{patient.patientName}</h3>
 
