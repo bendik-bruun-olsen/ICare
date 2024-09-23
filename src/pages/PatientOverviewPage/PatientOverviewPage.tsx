@@ -82,14 +82,7 @@ export default function PatientOverview(): JSX.Element {
                   onClick={() => handlePatientClick(patient.patientId)}
                 >
                   <div className={styles.picNameAndEmail}>
-                    <PatientProfilePicture
-                      patientId={patient.patientId}
-                      setProfileImage={async () =>
-                        await fetchProfilePictureForPatient(patient.patientId)
-                      }
-                      showIcon={false}
-                      showMaxFileSize={false}
-                    />
+                    <img src=""
                     <div className={styles.nameAndEmail}>
                       <h3>{patient.patientName}</h3>
                       <span>{patient.age}</span>
