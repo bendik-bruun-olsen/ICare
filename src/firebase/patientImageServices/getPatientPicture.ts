@@ -1,10 +1,11 @@
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 
-export const getPatientPictureUrl = async (
-	patientId: string
+export const getPatientPicture = async (
+	patientId: string,
+	file: File
 ): Promise<string | null> => {
 	const storage = getStorage();
-	const storageRef = ref(storage, `patientImages/${patientId}`);
+	const storageRef = ref(storage, `patientImages/${patientId}/${file.name}`);
 	try {
 		const downloadURL = await getDownloadURL(storageRef);
 		return downloadURL;

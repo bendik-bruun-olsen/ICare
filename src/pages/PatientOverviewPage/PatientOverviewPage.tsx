@@ -10,7 +10,7 @@ import { add } from "@equinor/eds-icons";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { db } from "../../firebase/firebase";
-import { getPatientPictureUrl } from "../../firebase/patientImageServices/getPatientPicture";
+import { getPatientPicture } from "../../firebase/patientImageServices/getPatientPicture";
 import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
 
 export default function PatientOverview(): JSX.Element {
@@ -34,7 +34,7 @@ export default function PatientOverview(): JSX.Element {
 	const fetchProfilePictureForPatient = async (
 		patientId: string
 	): Promise<string> => {
-		const url = await getPatientPictureUrl(patientId);
+		const url = await getPatientPicture(patientId);
 		return url || pictureUrl;
 	};
 

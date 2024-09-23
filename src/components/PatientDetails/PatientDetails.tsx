@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import styles from "./PatientDetails.module.css";
 import { Paths } from "../../paths";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import { getPatientPictureUrl } from "../../firebase/patientImageServices/getPatientPicture";
+import { getPatientPicture } from "../../firebase/patientImageServices/getPatientPicture";
 import { useEffect, useState } from "react";
 import PatientProfilePicture from "../PatientProfilePicture/PatientProfilePicture";
 
@@ -21,7 +21,7 @@ export default function PatientDetails({
 	useEffect(() => {
 		const fetchProfilePicture = async (): Promise<void> => {
 			if (currentUser?.email && currentPatientId) {
-				const url = await getPatientPictureUrl(
+				const url = await getPatientPicture(
 					currentUser.email,
 					currentPatientId
 				);

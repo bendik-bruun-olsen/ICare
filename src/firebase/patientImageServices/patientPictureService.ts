@@ -13,7 +13,7 @@ export const uploadProfilePicture = async (
 	patientId: string,
 	file: File
 ): Promise<string> => {
-	const storageRef = ref(storage, `patientImages/${patientId}`);
+	const storageRef = ref(storage, `patientImages/${patientId}/${file.name}`);
 	await uploadBytesResumable(storageRef, file);
 	const downloadUrl = await getDownloadURL(storageRef);
 	const patientRef = doc(db, "patientdetails", patientId);
