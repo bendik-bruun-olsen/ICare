@@ -11,135 +11,135 @@ import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaul
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { db } from "../../firebase/firebase";
 import { getPatientPictureUrl } from "../../firebase/patientImageServices/getPatientPicture";
+import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
 
 export default function PatientOverview(): JSX.Element {
-  const { addNotification } = useContext(NotificationContext);
+	const { addNotification } = useContext(NotificationContext);
 
-  const [pictureUrl, setPictureUrl] = useState("");
-  const [createdPatients, setCreatedPatients] = useState<DocumentData[]>([]);
-  const [assignedPatients, setAssignedPatients] = useState<DocumentData[]>([]);
-  const { currentUser, setCurrentPatientId, currentPatientId } = useAuth();
-  const navigate = useNavigate();
+	const [pictureUrl, setPictureUrl] = useState("");
+	const [createdPatients, setCreatedPatients] = useState<DocumentData[]>([]);
+	const [assignedPatients, setAssignedPatients] = useState<DocumentData[]>([]);
+	const { currentUser, setCurrentPatientId, currentPatientId } = useAuth();
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchDefaultPictureUrl = async (): Promise<void> => {
-      const url = await getDefaultPictureUrl(addNotification);
-      if (!url) return;
-      setPictureUrl(url);
-    };
-    fetchDefaultPictureUrl();
-  }, [addNotification]);
-  useEffect(() => {
-    const fetchProfilePicture = async (): Promise<void> => {
-      if (currentUser?.email && currentPatientId) {
-        const url = await getPatientPictureUrl(
-          currentUser.email,
-          currentPatientId
-        );
-        if (url) {
-          setPictureUrl(url);
-        }
-      }
-    };
+	useEffect(() => {
+		const fetchDefaultPictureUrl = async (): Promise<void> => {
+			const url = await getDefaultPictureUrl(addNotification);
+			if (!url) return;
+			setPictureUrl(url);
+		};
+		fetchDefaultPictureUrl();
+	}, []);
 
-    fetchProfilePicture();
-  }, [currentUser, currentPatientId]);
-  useEffect(() => {
-    const fetchAllPatients = async (): Promise<void> => {
-      await fetchPatients();
-    };
-    fetchAllPatients();
-  }, [currentUser?.email, addNotification]);
+	const fetchProfilePictureForPatient = async (
+		patientId: string
+	): Promise<string> => {
+		const url = await getPatientPictureUrl(patientId);
+		return url || pictureUrl;
+	};
 
-  const fetchPatients = async (): Promise<void> => {
-    if (!currentUser || !currentUser.email) return;
+	useEffect(() => {
+		const fetchAllPatients = async (): Promise<void> => {
+			await fetchPatients();
+		};
+		fetchAllPatients();
+	}, [currentUser?.email]);
 
-    const userRef = doc(db, "users", currentUser.email);
-    const userDoc = await getDoc(userRef);
+	const fetchPatients = async (): Promise<void> => {
+		if (!currentUser || !currentUser.email) return;
 
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
+		const userRef = doc(db, "users", currentUser.email);
+		const userDoc = await getDoc(userRef);
 
-      setCreatedPatients(userData.administeredPatients || []);
-      setAssignedPatients(userData.assignedPatients || []);
-    }
-  };
+		if (userDoc.exists()) {
+			const userData = userDoc.data();
 
-  const handlePatientClick = (patientId: string): void => {
-    setCurrentPatientId(patientId);
-    navigate(Paths.HOME);
-  };
+			setCreatedPatients(userData.administeredPatients || []);
+			setAssignedPatients(userData.assignedPatients || []);
+		}
+	};
 
-  return (
-    <div className={styles.pageWrapper}>
-      <Navbar centerContent="Patient Overview" />
-      <div className={styles.patientList}>
-        <div className={`${styles.administeredPatientInfoSection} `}>
-          <h2 className={styles.headlineText}>My Administered Patients</h2>
-          <ul className={styles.administeredPatientList}>
-            {createdPatients.length === 0 ? (
-              <li>No administered patients found.</li>
-            ) : (
-              createdPatients.map((patient) => (
-                <li
-                  key={patient.patientId}
-                  className={styles.administeredPatientListItem}
-                  onClick={() => handlePatientClick(patient.patientId)}
-                >
-                  <div className={styles.picNameAndEmail}>
-                    <img
-                      src={patient.profilePictureUrl || pictureUrl}
-                      alt={`${patient.patientName}'s profile`}
-                      className={styles.profilePicture}
-                    />
-                    <div className={styles.nameAndEmail}>
-                      <h3>{patient.patientName}</h3>
+	const handlePatientClick = (patientId: string): void => {
+		setCurrentPatientId(patientId);
+		navigate(Paths.HOME);
+	};
 
-                      <span>{patient.age}</span>
-                    </div>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
-        <div className={`${styles.assignedPatientInfoSection} `}>
-          <h2 className={styles.headlineText2}>My Assigned Patients</h2>
-          <ul className={styles.assignedPatientList}>
-            {assignedPatients.length === 0 ? (
-              <li>No assigned patients found.</li>
-            ) : (
-              assignedPatients.map((patient) => (
-                <li
-                  key={patient.patientId}
-                  className={styles.assignedPatientListItem}
-                  onClick={() => handlePatientClick(patient.patientId)}
-                >
-                  <div className={styles.picNameAndEmail}>
-                    <img
-                      src={patient.profilePictureUrl || pictureUrl}
-                      alt={`${patient.patientName}'s profile`}
-                      className={styles.profilePicture}
-                    ></img>
-                    <div className={styles.nameAndEmail}>
-                      <h3>{patient.patientName}</h3>
+	return (
+		<div className={styles.pageWrapper}>
+			<Navbar centerContent="Patient Overview" />
+			<div className={styles.patientList}>
+				<div className={styles.administeredPatientInfoSection}>
+					<h2 className={styles.headlineText}>My Administered Patients</h2>
+					<ul className={styles.administeredPatientList}>
+						{createdPatients.length === 0 ? (
+							<li>No administered patients found.</li>
+						) : (
+							createdPatients.map((patient) => (
+								<li
+									key={patient.patientId}
+									className={styles.administeredPatientListItem}
+									onClick={() => handlePatientClick(patient.patientId)}
+								>
+									<div className={styles.picNameAndEmail}>
+										<PatientProfilePicture
+											patientId={patient.patientId}
+											setProfileImage={async () =>
+												await fetchProfilePictureForPatient(patient.patientId)
+											}
+											showIcon={false}
+											showMaxFileSize={false}
+										/>
+										<div className={styles.nameAndEmail}>
+											<h3>{patient.patientName}</h3>
+											<span>{patient.age}</span>
+										</div>
+									</div>
+								</li>
+							))
+						)}
+					</ul>
+				</div>
 
-                      <span>{patient.patientAge}</span>
-                    </div>
-                  </div>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
-      </div>
-      <Link to={Paths.CREATE_PATIENT}>
-        <div className={styles.addIcon}>
-          <Button variant="contained_icon">
-            <Icon data={add} size={32} />
-          </Button>
-        </div>
-      </Link>
-    </div>
-  );
+				{/* Assigned Patients */}
+				<div className={styles.assignedPatientInfoSection}>
+					<h2 className={styles.headlineText2}>My Assigned Patients</h2>
+					<ul className={styles.assignedPatientList}>
+						{assignedPatients.length === 0 ? (
+							<li>No assigned patients found.</li>
+						) : (
+							assignedPatients.map((patient) => (
+								<li
+									key={patient.patientId}
+									className={styles.assignedPatientListItem}
+									onClick={() => handlePatientClick(patient.patientId)}
+								>
+									<div className={styles.picNameAndEmail}>
+										<PatientProfilePicture
+											patientId={patient.patientId}
+											setProfileImage={async () =>
+												await fetchProfilePictureForPatient(patient.patientId)
+											}
+											showIcon={false}
+											showMaxFileSize={false}
+										/>
+										<div className={styles.nameAndEmail}>
+											<h3>{patient.patientName}</h3>
+											<span>{patient.patientAge}</span>
+										</div>
+									</div>
+								</li>
+							))
+						)}
+					</ul>
+				</div>
+			</div>
+			<Link to={Paths.CREATE_PATIENT}>
+				<div className={styles.addIcon}>
+					<Button variant="contained_icon">
+						<Icon data={add} size={32} />
+					</Button>
+				</div>
+			</Link>
+		</div>
+	);
 }
