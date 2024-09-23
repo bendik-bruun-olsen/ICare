@@ -13,7 +13,6 @@ import { getAuth } from "firebase/auth";
 export const addPatient = async (
 	formData: NewPatient,
 	caretakers: Caretaker[],
-	profilePictureUrl: string,
 	id?: string
 ): Promise<string> => {
 	const auth = getAuth();
@@ -34,7 +33,6 @@ export const addPatient = async (
 			createdBy: {
 				userEmail: currentUser.email,
 			},
-			profilePictureUrl,
 		};
 
 		await setDoc(patientRef, patientData);
