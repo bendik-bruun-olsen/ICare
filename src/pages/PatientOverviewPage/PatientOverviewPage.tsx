@@ -11,16 +11,17 @@ import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaul
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { db } from "../../firebase/firebase";
 import { getPatientPicture } from "../../firebase/patientImageServices/getPatientPicture";
-import PatientProfilePicture from "../../components/PatientProfilePicture/PatientProfilePicture";
+
 import { deletePatient } from "../../firebase/patientServices/deletePatient";
 
 export default function PatientOverview(): JSX.Element {
   const { addNotification } = useContext(NotificationContext);
 
-  const [pictureUrl, setPictureUrl] = useState("");
+  const [pictureUrl, setPictureUrl] = useState<{ [key: string]: string }>({});
+
   const [createdPatients, setCreatedPatients] = useState<DocumentData[]>([]);
   const [assignedPatients, setAssignedPatients] = useState<DocumentData[]>([]);
-  const { currentUser, setCurrentPatientId, currentPatientId } = useAuth();
+  const { currentUser, setCurrentPatientId } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,9 +35,29 @@ export default function PatientOverview(): JSX.Element {
 
   const fetchProfilePictureForPatient = async (
     patientId: string
-  ): Promise<string> => {
-    const url = await getPatientPicture(patientId);
-    return url || pictureUrl;
+  ): Promise<void> => {
+    try {
+      const imageUrl = await getPatientPicture(patientId);
+      setPictureUrl((prevImages) => ({
+        ...prevImages,
+        [patientId]: imageUrl || prevImages[patientId],
+      }));
+      if (!imageUrl) {
+        const defaultPictureUrl = await getDefaultPictureUrl(addNotification);
+        if (!defaultPictureUrl) return;
+        setPictureUrl((prevImages) => ({
+          ...prevImages,
+          [patientId]: defaultPictureUrl,
+        }));
+      }
+    } catch (error) {
+      const imageUrl = await getPatientPicture(patientId);
+      console.error("Error fetching profile picture:", error);
+      setPictureUrl((prevImages) => ({
+        ...prevImages,
+        [patientId]: imageUrl || prevImages[patientId],
+      }));
+    }
   };
 
   useEffect(() => {
@@ -54,6 +75,17 @@ export default function PatientOverview(): JSX.Element {
 
     if (userDoc.exists()) {
       const userData = userDoc.data();
+
+      const createdPatientList = userData.administeredPatients || [];
+      const assignedPatientList = userData.assignedPatients || [];
+
+      createdPatientList.forEach((patient: DocumentData) => {
+        fetchProfilePictureForPatient(patient.patientId);
+      });
+
+      assignedPatientList.forEach((patient: DocumentData) => {
+        fetchProfilePictureForPatient(patient.patientId);
+      });
 
       setCreatedPatients(userData.administeredPatients || []);
       setAssignedPatients(userData.assignedPatients || []);
@@ -82,12 +114,15 @@ export default function PatientOverview(): JSX.Element {
                   onClick={() => handlePatientClick(patient.patientId)}
                 >
                   <div className={styles.picNameAndEmail}>
-                    <img src=""
+                    <img
+                      src={pictureUrl[patient.patientId] || pictureUrl}
+                      alt="Patient Profile"
+                    />
                     <div className={styles.nameAndEmail}>
                       <h3>{patient.patientName}</h3>
-                      <span>{patient.age}</span>
                     </div>
                   </div>
+                  <div className={styles.button}></div>
                   <Button
                     type="button"
                     onClick={() =>
@@ -111,18 +146,13 @@ export default function PatientOverview(): JSX.Element {
             ) : (
               assignedPatients.map((patient) => (
                 <li
-                  key={patient.patientId}
                   className={styles.assignedPatientListItem}
                   onClick={() => handlePatientClick(patient.patientId)}
                 >
                   <div className={styles.picNameAndEmail}>
-                    <PatientProfilePicture
-                      patientId={patient.patientId}
-                      setProfileImage={async () =>
-                        await fetchProfilePictureForPatient(patient.patientId)
-                      }
-                      showIcon={false}
-                      showMaxFileSize={false}
+                    <img
+                      src={pictureUrl[patient.patientId] || pictureUrl}
+                      alt="Patient Profile"
                     />
                     <div className={styles.nameAndEmail}>
                       <h3>{patient.patientName}</h3>

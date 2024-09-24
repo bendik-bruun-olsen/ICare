@@ -8,4 +8,6 @@ export const defaultPatientFormData: NewPatient = {
   diagnoses: "",
   allergies: "",
   caretakers: [],
+  profilePictureUrl: "",
+  createdBy: "",
 };

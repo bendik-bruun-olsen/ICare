@@ -6,13 +6,12 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { Caretaker, NewPatient } from "../../types";
+import { NewPatient } from "../../types";
 import { db } from "../firebase";
 import { getAuth } from "firebase/auth";
 
 export const addPatient = async (
   formData: NewPatient,
-  caretakers: Caretaker[],
   id?: string
 ): Promise<string> => {
   const auth = getAuth();
@@ -27,15 +26,11 @@ export const addPatient = async (
       ? doc(db, "patientdetails", id)
       : doc(collection(db, "patientdetails"));
 
-    const patientData = {
-      ...formData,
-      caretakers,
-      createdBy: {
-        userEmail: currentUser.email,
-      },
-    };
+    if (currentUser.email) {
+      formData.createdBy = currentUser.email;
+    }
 
-    await setDoc(patientRef, patientData);
+    await setDoc(patientRef, formData);
 
     const userRef = doc(db, "users", currentUser.uid);
     const userDoc = await getDoc(userRef);
@@ -48,6 +43,7 @@ export const addPatient = async (
     }
 
     const adminUseRef = doc(db, "users", currentUser.email);
+
     await updateDoc(adminUseRef, {
       administeredPatients: arrayUnion({
         patientId: patientRef.id,
@@ -55,7 +51,7 @@ export const addPatient = async (
       }),
     });
 
-    for (const caretaker of caretakers) {
+    for (const caretaker of formData.caretakers) {
       const caretakerUserRef = doc(db, "users", caretaker.email);
       await updateDoc(caretakerUserRef, {
         assignedPatients: arrayUnion({

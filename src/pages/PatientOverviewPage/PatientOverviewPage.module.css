@@ -23,7 +23,7 @@
 .administeredPatientListItem,
 .assignedPatientListItem {
   display: flex;
-
+  justify-content: space-between;
   align-items: center;
   background-color: var(--fadedblue);
   margin: 5px 0;
@@ -67,6 +67,7 @@
 .headlineText2 {
   margin: 15px 0;
 }
+
 @media (max-width: 425px) {
   .nameAndEmail span {
     width: 130px;

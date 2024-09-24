@@ -100,6 +100,7 @@ export interface NewPatient {
   allergies: string;
   caretakers: Caretaker[];
   profilePictureUrl?: string;
+  createdBy?: string;
 }
 
 export interface Patient {
@@ -111,6 +112,8 @@ export interface Patient {
   allergies: string;
   caretakers: Caretaker[];
   profilePictureUrl?: string;
+  id: string;
+  createdBy: string;
 }
 
 export interface Caretaker {

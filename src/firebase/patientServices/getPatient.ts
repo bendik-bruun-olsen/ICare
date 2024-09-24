@@ -1,11 +1,11 @@
-import { doc, DocumentData, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { NotificationContext, NotificationType } from "../../types";
+import { NewPatient, NotificationContext, NotificationType } from "../../types";
 
 export const getPatient = async (
   patientId: string,
   addNotification: NotificationContext["addNotification"]
-): Promise<DocumentData | null> => {
+): Promise<NewPatient | null> => {
   try {
     const patientRef = doc(db, "patientdetails", patientId);
     const patientSnap = await getDoc(patientRef);
