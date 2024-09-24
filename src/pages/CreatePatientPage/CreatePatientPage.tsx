@@ -143,6 +143,7 @@ export default function CreatePatientPage(): JSX.Element {
   const submitPatientData = async (): Promise<void> => {
     try {
       setIsLoading(true);
+      formData.caretakers = caretakers;
       const patientId = await addPatient(formData);
       setCurrentPatientId(patientId);
       if (profileImage) {

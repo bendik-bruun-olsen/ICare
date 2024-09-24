@@ -14,7 +14,7 @@ export const getPatient = async (
       addNotification("Patient not found", NotificationType.ERROR);
       return null;
     }
-    console.log(patientSnap.data());
+    console.log("patient:", patientSnap.data());
     return patientSnap.data();
   } catch {
     addNotification("Error fetching patient", NotificationType.ERROR);

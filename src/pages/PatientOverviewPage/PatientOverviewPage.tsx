@@ -28,7 +28,7 @@ export default function PatientOverview(): JSX.Element {
     const fetchDefaultPictureUrl = async (): Promise<void> => {
       const url = await getDefaultPictureUrl(addNotification);
       if (!url) return;
-      setPictureUrl(url);
+      setPictureUrl({ default: url });
     };
     fetchDefaultPictureUrl();
   }, []);
@@ -92,6 +92,10 @@ export default function PatientOverview(): JSX.Element {
     }
   };
 
+  const handleDelete = async (patientId: string): Promise<void> => {
+    await deletePatient(patientId);
+  };
+
   const handlePatientClick = (patientId: string): void => {
     setCurrentPatientId(patientId);
     navigate(Paths.HOME);
@@ -125,19 +129,16 @@ export default function PatientOverview(): JSX.Element {
                   <div className={styles.button}></div>
                   <Button
                     type="button"
-                    onClick={() =>
-                      deletePatient(patient.patientId, addNotification)
-                    }
+                    onClick={() => handleDelete(patient.patientId)}
+                    variant="ghost_icon"
                   >
-                    <Icon data={remove_outlined} color="var(--lightblue)" />
+                    <Icon data={remove_outlined} color="var(--blue)" />
                   </Button>
                 </li>
               ))
             )}
           </ul>
         </div>
-
-        {/* Assigned Patients */}
         <div className={styles.assignedPatientInfoSection}>
           <h2 className={styles.headlineText2}>My Assigned Patients</h2>
           <ul className={styles.assignedPatientList}>
@@ -156,16 +157,14 @@ export default function PatientOverview(): JSX.Element {
                     />
                     <div className={styles.nameAndEmail}>
                       <h3>{patient.patientName}</h3>
-                      <span>{patient.patientAge}</span>
                     </div>
                   </div>
                   <Button
                     type="button"
-                    onClick={() =>
-                      deletePatient(patient.patientId, addNotification)
-                    }
+                    onClick={() => handleDelete(patient.patientId)}
+                    variant="ghost_icon"
                   >
-                    <Icon data={remove_outlined} color="var(--lightblue)" />
+                    <Icon data={remove_outlined} color="var(--blue)" />
                   </Button>
                 </li>
               ))

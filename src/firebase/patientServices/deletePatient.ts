@@ -11,9 +11,9 @@ import { db } from "../firebase";
 import { NotificationContext, NotificationType } from "../../types";
 
 export const deletePatient = async (
-  patientId: string,
-  patientName: string,
-  addNotification: NotificationContext["addNotification"]
+  patientId: string
+
+  // addNotification: NotificationContext["addNotification"]
 ): Promise<void> => {
   try {
     const patientRef = doc(db, "patientdetails", patientId);
@@ -22,16 +22,16 @@ export const deletePatient = async (
     const managedPatient = doc(userCollection, patientId);
 
     const q = query(
-      userRef,
+      userCollection,
       where("administeredPatient", "array-contains", {
         patientId: patientId,
-        patientName: patientName,
-      })
+      }),
+      where("assignedPatient", "array-contains", { patientId: patientId })
     );
 
     const querySnap = await getDocs(q);
     if (querySnap.empty) {
-      addNotification("No patients found", NotificationType.ERROR);
+      // addNotification("No patients found", NotificationType.ERROR);
       return;
     }
 
@@ -40,18 +40,15 @@ export const deletePatient = async (
       batch.delete(doc.ref);
     });
 
-    batch.delete(userRef);
+    batch.delete(managedPatient);
 
     if (!patientRef) {
-      addNotification("Patient not found", NotificationType.ERROR);
+      // addNotification("Patient not found", NotificationType.ERROR);
     }
 
-    await Promise.all([
-      deleteDoc(patientRef),
-      /*batch.commit()*/ deleteDoc(managedPatient),
-    ]);
-    addNotification("Patient deleted", NotificationType.SUCCESS);
+    await Promise.all([deleteDoc(patientRef), batch.commit()]);
+    // addNotification("Patient deleted", NotificationType.SUCCESS);
   } catch {
-    addNotification("Could not delete patient", NotificationType.ERROR);
+    // addNotification("Could not delete patient", NotificationType.ERROR);
   }
 };

@@ -30,6 +30,8 @@ export const addPatient = async (
       formData.createdBy = currentUser.email;
     }
 
+    console.log("formData:", formData);
+
     await setDoc(patientRef, formData);
 
     const userRef = doc(db, "users", currentUser.uid);
