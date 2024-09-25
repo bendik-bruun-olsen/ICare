@@ -15,175 +15,166 @@ import { deletePatient } from "../../firebase/patientServices/deletePatient";
 import { NotificationType } from "../../types";
 
 export default function PatientOverview(): JSX.Element {
-  const { addNotification } = useContext(NotificationContext);
+	const { addNotification } = useContext(NotificationContext);
 
-  const [pictureUrl, setPictureUrl] = useState<{ [key: string]: string }>({});
+	const [pictureUrl, setPictureUrl] = useState<{ [key: string]: string }>({});
 
-  const [createdPatients, setCreatedPatients] = useState<DocumentData[]>([]);
-  const [assignedPatients, setAssignedPatients] = useState<DocumentData[]>([]);
-  const { currentUser, setCurrentPatientId } = useAuth();
-  const navigate = useNavigate();
+	const [createdPatients, setCreatedPatients] = useState<DocumentData[]>([]);
+	const [assignedPatients, setAssignedPatients] = useState<DocumentData[]>([]);
+	const { currentUser, setCurrentPatientId } = useAuth();
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchDefaultPictureUrl = async (): Promise<void> => {
-      const url = await getDefaultPictureUrl(addNotification);
-      if (!url) return;
-      setPictureUrl({ default: url });
-    };
-    fetchDefaultPictureUrl();
-  }, []);
+	useEffect(() => {
+		const fetchDefaultPictureUrl = async (): Promise<void> => {
+			const url = await getDefaultPictureUrl(addNotification);
+			if (!url) return;
+			setPictureUrl({ default: url });
+		};
+		fetchDefaultPictureUrl();
+	}, []);
 
-  const fetchProfilePictureForPatient = async (
-    patientId: string
-  ): Promise<void> => {
-    try {
-      const imageUrl = await getPatientPicture(patientId);
-      setPictureUrl((prevImages) => ({
-        ...prevImages,
-        [patientId]: imageUrl || prevImages[patientId],
-      }));
-      if (!imageUrl) {
-        const defaultPictureUrl = await getDefaultPictureUrl(addNotification);
-        if (!defaultPictureUrl) return;
-        setPictureUrl((prevImages) => ({
-          ...prevImages,
-          [patientId]: defaultPictureUrl,
-        }));
-      }
-    } catch (error) {
-      const imageUrl = await getPatientPicture(patientId);
-      console.error("Error fetching profile picture:", error);
-      setPictureUrl((prevImages) => ({
-        ...prevImages,
-        [patientId]: imageUrl || prevImages[patientId],
-      }));
-    }
-  };
+	const fetchProfilePictureForPatient = async (
+		patientId: string
+	): Promise<void> => {
+		try {
+			const imageUrl = await getPatientPicture(patientId);
+			setPictureUrl((prevImages) => ({
+				...prevImages,
+				[patientId]: imageUrl || prevImages[patientId],
+			}));
+			if (!imageUrl) {
+				const defaultPictureUrl = await getDefaultPictureUrl(addNotification);
+				if (!defaultPictureUrl) return;
+				setPictureUrl((prevImages) => ({
+					...prevImages,
+					[patientId]: defaultPictureUrl,
+				}));
+			}
+		} catch (error) {
+			const imageUrl = await getPatientPicture(patientId);
+			console.error("Error fetching profile picture:", error);
+			setPictureUrl((prevImages) => ({
+				...prevImages,
+				[patientId]: imageUrl || prevImages[patientId],
+			}));
+		}
+	};
 
-  useEffect(() => {
-    const fetchAllPatients = async (): Promise<void> => {
-      await fetchPatients();
-    };
-    fetchAllPatients();
-  }, [currentUser?.email]);
+	useEffect(() => {
+		const fetchAllPatients = async (): Promise<void> => {
+			await fetchPatients();
+		};
+		fetchAllPatients();
+	}, [currentUser?.email]);
 
-  const fetchPatients = async (): Promise<void> => {
-    if (!currentUser || !currentUser.email) return;
+	const fetchPatients = async (): Promise<void> => {
+		if (!currentUser || !currentUser.email) return;
 
-    const userRef = doc(db, "users", currentUser.email);
-    const userDoc = await getDoc(userRef);
+		const userRef = doc(db, "users", currentUser.email);
+		const userDoc = await getDoc(userRef);
 
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
+		if (userDoc.exists()) {
+			const userData = userDoc.data();
 
-      const createdPatientList = userData.administeredPatients || [];
-      const assignedPatientList = userData.assignedPatients || [];
+			const createdPatientList = userData.administeredPatients || [];
+			const assignedPatientList = userData.assignedPatients || [];
 
-      createdPatientList.forEach((patient: DocumentData) => {
-        fetchProfilePictureForPatient(patient.patientId);
-      });
+			createdPatientList.forEach((patient: DocumentData) => {
+				fetchProfilePictureForPatient(patient.patientId);
+			});
 
-      assignedPatientList.forEach((patient: DocumentData) => {
-        fetchProfilePictureForPatient(patient.patientId);
-      });
+			assignedPatientList.forEach((patient: DocumentData) => {
+				fetchProfilePictureForPatient(patient.patientId);
+			});
 
-      setCreatedPatients(userData.administeredPatients || []);
-      setAssignedPatients(userData.assignedPatients || []);
-    }
-  };
+			setCreatedPatients(userData.administeredPatients || []);
+			setAssignedPatients(userData.assignedPatients || []);
+		}
+	};
 
-  const handleDelete = async (patientId: string): Promise<void> => {
-    try {
-      await deletePatient(patientId);
-      addNotification("Patient deleted successfully", NotificationType.SUCCESS);
-    } catch (error) {
-      addNotification("Failed to delete patient", NotificationType.ERROR);
-    }
-  };
+	const handlePatientClick = (patientId: string): void => {
+		setCurrentPatientId(patientId);
+		navigate(Paths.HOME);
+	};
 
-  const handlePatientClick = (patientId: string): void => {
-    setCurrentPatientId(patientId);
-    navigate(Paths.HOME);
-  };
-
-  return (
-    <div className={styles.pageWrapper}>
-      <Navbar centerContent="Patient Overview" />
-      <div className={styles.patientList}>
-        <div className={styles.administeredPatientInfoSection}>
-          <h2 className={styles.headlineText}>My Administered Patients</h2>
-          <ul className={styles.administeredPatientList}>
-            {createdPatients.length === 0 ? (
-              <li>No administered patients found.</li>
-            ) : (
-              createdPatients.map((patient) => (
-                <li
-                  key={patient.patientId}
-                  className={styles.administeredPatientListItem}
-                  onClick={() => handlePatientClick(patient.patientId)}
-                >
-                  <div className={styles.picNameAndEmail}>
-                    <img
-                      src={pictureUrl[patient.patientId] || pictureUrl}
-                      alt="Patient Profile"
-                    />
-                    <div className={styles.nameAndEmail}>
-                      <h3>{patient.patientName}</h3>
-                    </div>
-                  </div>
-                  <div className={styles.button}></div>
-                  <Button
-                    type="button"
-                    onClick={() => handleDelete(patient.patientId)}
-                    variant="ghost_icon"
-                  >
-                    <Icon data={remove_outlined} color="var(--blue)" />
-                  </Button>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
-        <div className={styles.assignedPatientInfoSection}>
-          <h2 className={styles.headlineText2}>My Assigned Patients</h2>
-          <ul className={styles.assignedPatientList}>
-            {assignedPatients.length === 0 ? (
-              <li>No assigned patients found.</li>
-            ) : (
-              assignedPatients.map((patient) => (
-                <li
-                  className={styles.assignedPatientListItem}
-                  onClick={() => handlePatientClick(patient.patientId)}
-                >
-                  <div className={styles.picNameAndEmail}>
-                    <img
-                      src={pictureUrl[patient.patientId] || pictureUrl}
-                      alt="Patient Profile"
-                    />
-                    <div className={styles.nameAndEmail}>
-                      <h3>{patient.patientName}</h3>
-                    </div>
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={() => handleDelete(patient.patientId)}
-                    variant="ghost_icon"
-                  >
-                    <Icon data={remove_outlined} color="var(--blue)" />
-                  </Button>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
-      </div>
-      <Link to={Paths.CREATE_PATIENT}>
-        <div className={styles.addIcon}>
-          <Button variant="contained_icon">
-            <Icon data={add} size={32} />
-          </Button>
-        </div>
-      </Link>
-    </div>
-  );
+	return (
+		<div className={styles.pageWrapper}>
+			<Navbar centerContent="Patient Overview" />
+			<div className={styles.patientList}>
+				<div className={styles.administeredPatientInfoSection}>
+					<h2 className={styles.headlineText}>My Administered Patients</h2>
+					<ul className={styles.administeredPatientList}>
+						{createdPatients.length === 0 ? (
+							<li>No administered patients found.</li>
+						) : (
+							createdPatients.map((patient) => (
+								<li
+									key={patient.patientId}
+									className={styles.administeredPatientListItem}
+									onClick={() => handlePatientClick(patient.patientId)}
+								>
+									<div className={styles.picNameAndEmail}>
+										<img
+											src={pictureUrl[patient.patientId] || pictureUrl}
+											alt="Patient Profile"
+										/>
+										<div className={styles.nameAndEmail}>
+											<h3>{patient.patientName}</h3>
+										</div>
+									</div>
+									<div className={styles.button}></div>
+									<Button
+										type="button"
+										onClick={() => handleDelete(patient.patientId)}
+										variant="ghost_icon"
+									>
+										<Icon data={remove_outlined} color="var(--blue)" />
+									</Button>
+								</li>
+							))
+						)}
+					</ul>
+				</div>
+				<div className={styles.assignedPatientInfoSection}>
+					<h2 className={styles.headlineText2}>My Assigned Patients</h2>
+					<ul className={styles.assignedPatientList}>
+						{assignedPatients.length === 0 ? (
+							<li>No assigned patients found.</li>
+						) : (
+							assignedPatients.map((patient) => (
+								<li
+									className={styles.assignedPatientListItem}
+									onClick={() => handlePatientClick(patient.patientId)}
+								>
+									<div className={styles.picNameAndEmail}>
+										<img
+											src={pictureUrl[patient.patientId] || pictureUrl}
+											alt="Patient Profile"
+										/>
+										<div className={styles.nameAndEmail}>
+											<h3>{patient.patientName}</h3>
+										</div>
+									</div>
+									<Button
+										type="button"
+										onClick={() => handleDelete(patient.patientId)}
+										variant="ghost_icon"
+									>
+										<Icon data={remove_outlined} color="var(--blue)" />
+									</Button>
+								</li>
+							))
+						)}
+					</ul>
+				</div>
+			</div>
+			<Link to={Paths.CREATE_PATIENT}>
+				<div className={styles.addIcon}>
+					<Button variant="contained_icon">
+						<Icon data={add} size={32} />
+					</Button>
+				</div>
+			</Link>
+		</div>
+	);
 }

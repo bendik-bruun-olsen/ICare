@@ -3,21 +3,20 @@ import { db } from "../firebase";
 import { NewPatient, NotificationContext, NotificationType } from "../../types";
 
 export const getPatient = async (
-  patientId: string,
-  addNotification: NotificationContext["addNotification"]
+	patientId: string,
+	addNotification: NotificationContext["addNotification"]
 ): Promise<NewPatient | null> => {
-  try {
-    const patientRef = doc(db, "patientdetails", patientId);
-    const patientSnap = await getDoc(patientRef);
+	try {
+		const patientRef = doc(db, "patientdetails", patientId);
+		const patientSnap = await getDoc(patientRef);
 
-    if (!patientSnap.exists()) {
-      addNotification("Patient not found", NotificationType.ERROR);
-      return null;
-    }
-    // console.log("patient:", patientSnap.data());
-    return patientSnap.data();
-  } catch {
-    addNotification("Error fetching patient", NotificationType.ERROR);
-    return null;
-  }
+		if (!patientSnap.exists()) {
+			addNotification("Patient not found", NotificationType.ERROR);
+			return null;
+		}
+		return patientSnap.data();
+	} catch {
+		addNotification("Error fetching patient", NotificationType.ERROR);
+		return null;
+	}
 };
