@@ -11,8 +11,8 @@ import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaul
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { db } from "../../firebase/firebase";
 import { getPatientPicture } from "../../firebase/patientImageServices/getPatientPicture";
-
 import { deletePatient } from "../../firebase/patientServices/deletePatient";
+import { NotificationType } from "../../types";
 
 export default function PatientOverview(): JSX.Element {
   const { addNotification } = useContext(NotificationContext);
@@ -93,7 +93,12 @@ export default function PatientOverview(): JSX.Element {
   };
 
   const handleDelete = async (patientId: string): Promise<void> => {
-    await deletePatient(patientId);
+    try {
+      await deletePatient(patientId);
+      addNotification("Patient deleted successfully", NotificationType.SUCCESS);
+    } catch (error) {
+      addNotification("Failed to delete patient", NotificationType.ERROR);
+    }
   };
 
   const handlePatientClick = (patientId: string): void => {
