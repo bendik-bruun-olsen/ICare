@@ -151,7 +151,9 @@ export default function CreatePatientPage(): JSX.Element {
           patientId,
           profileImage
         );
-        setPictureUrl(profilePictureUrl);
+        if (typeof profilePictureUrl === "string") {
+          setPictureUrl(profilePictureUrl);
+        }
       }
       addNotification("Patient created successfully", NotificationType.SUCCESS);
     } catch {

@@ -13,7 +13,7 @@ export default function HomePage(): JSX.Element {
   const { currentPatientId } = useAuth();
   const [patientdetails, setPatientDetails] = useState<{
     name: string;
-    age: number;
+    age: string;
   }>();
   const { addNotification } = useContext(NotificationContext);
 
@@ -31,7 +31,7 @@ export default function HomePage(): JSX.Element {
         );
       }
     }
-  }, [currentPatientId]);
+  }, [currentPatientId, addNotification]);
 
   return (
     <>

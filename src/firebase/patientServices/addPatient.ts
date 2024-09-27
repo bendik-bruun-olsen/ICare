@@ -30,8 +30,6 @@ export const addPatient = async (
       formData.createdBy = currentUser.email;
     }
 
-    console.log("formData:", formData);
-
     await setDoc(patientRef, formData);
 
     const userRef = doc(db, "users", currentUser.uid);
@@ -44,6 +42,9 @@ export const addPatient = async (
       });
     }
 
+    if (!currentUser.email) {
+      throw new Error("Current user email is null.");
+    }
     const adminUseRef = doc(db, "users", currentUser.email);
 
     await updateDoc(adminUseRef, {
