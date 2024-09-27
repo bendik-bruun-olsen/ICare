@@ -36,21 +36,22 @@ export default async function deletePatientfromUserDB(
         addNotification(`User ${userEmail} not found`, NotificationType.ERROR);
         continue;
       }
-
       const userData = userSnapshot.data();
-      console.log("userData", userData);
 
-      const administeredPatients = userData.administeredPatient;
-
+      const administeredPatients = userData.administeredPatients || [];
       const updatedAdministeredPatient = administeredPatients.filter(
         (administeredPatients: { id: string }) =>
-          administeredPatients.id !== patientId
+          administeredPatients.id === patientId
       );
-      const assignedPatients = userData.assignedPatients;
+      const assignedPatients = userData.assignedPatients || [];
       const updatedAssignedPatient = assignedPatients.filter(
-        (assignedPatients: { id: string }) => assignedPatients.id !== patientId
+        (assignedPatients: { id: string }) => assignedPatients.id === patientId
       );
 
+      await updateDoc(userDocRef, {
+        administeredPatients: updatedAdministeredPatient,
+        assignedPatients: updatedAssignedPatient,
+      });
       await updateDoc(userDocRef, {
         administeredPatients: updatedAdministeredPatient,
         assignedPatients: updatedAssignedPatient,
