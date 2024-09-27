@@ -3,10 +3,10 @@ import { getUserEmailFromPatient } from "./getUserEmailFromPatient";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-export default async function deletePatientfromUserDB(
+export const deletePatientfromUserDB = async (
   patientId: string,
   addNotification: NotificationContext["addNotification"]
-): Promise<string[] | void> {
+): Promise<string[] | void> => {
   try {
     const usersEmail = await getUserEmailFromPatient(
       patientId,
@@ -66,4 +66,4 @@ export default async function deletePatientfromUserDB(
     console.error("Error updating caretakers:", error);
     addNotification("Error updating caretakers", NotificationType.ERROR);
   }
-}
+};

@@ -164,7 +164,7 @@ export default function PatientDetailsPage(): JSX.Element {
   const handleDelete = async (currentPatientId: string): Promise<void> => {
     try {
       //   patientId = currentPatientId || "";
-      await deletePatientfromUserDB(currentPatientId, addNotification);
+      await deletePatient(currentPatientId, addNotification);
       addNotification("Patient deleted successfully", NotificationType.SUCCESS);
     } catch (error) {
       addNotification("Failed to delete patient", NotificationType.ERROR);
