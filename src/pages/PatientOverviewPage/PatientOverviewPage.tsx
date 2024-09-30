@@ -6,13 +6,11 @@ import { useContext, useEffect, useState } from "react";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Icon } from "@equinor/eds-core-react";
-import { add, remove_outlined } from "@equinor/eds-icons";
+import { add } from "@equinor/eds-icons";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { db } from "../../firebase/firebase";
 import { getPatientPicture } from "../../firebase/patientImageServices/getPatientPicture";
-import { deletePatient } from "../../firebase/patientServices/deletePatient";
-import { NotificationType } from "../../types";
 
 export default function PatientOverview(): JSX.Element {
 	const { addNotification } = useContext(NotificationContext);
@@ -122,14 +120,6 @@ export default function PatientOverview(): JSX.Element {
 											<h3>{patient.patientName}</h3>
 										</div>
 									</div>
-									<div className={styles.button}></div>
-									<Button
-										type="button"
-										onClick={() => handleDelete(patient.patientId)}
-										variant="ghost_icon"
-									>
-										<Icon data={remove_outlined} color="var(--blue)" />
-									</Button>
 								</li>
 							))
 						)}
@@ -155,13 +145,6 @@ export default function PatientOverview(): JSX.Element {
 											<h3>{patient.patientName}</h3>
 										</div>
 									</div>
-									<Button
-										type="button"
-										onClick={() => handleDelete(patient.patientId)}
-										variant="ghost_icon"
-									>
-										<Icon data={remove_outlined} color="var(--blue)" />
-									</Button>
 								</li>
 							))
 						)}

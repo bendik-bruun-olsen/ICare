@@ -79,12 +79,23 @@ export interface TodoSeriesInputStatusProps {
 	category?: Variants;
 }
 
+export interface AssignedPatient {
+	patientId: string;
+	patientName: string;
+}
+
+export interface AdministeredPatient {
+	patientId: string;
+	patientName: string;
+}
 export interface User {
 	name: string;
 	age?: number;
 	gender?: GenderOptions;
 	phone?: string;
 	email: string;
+	administeredPatients: AdministeredPatient[];
+	assignedPatients: AssignedPatient[];
 }
 
 export interface UserProfilePicUrl {

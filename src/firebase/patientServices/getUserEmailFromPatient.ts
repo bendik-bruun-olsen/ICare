@@ -1,10 +1,10 @@
-import { Caretaker, NotificationContext, NotificationType } from "../../types";
+import { NotificationContext, NotificationType } from "../../types";
 import { getPatient } from "./getPatient";
 
 export const getUserEmailFromPatient = async (
 	patientId: string,
 	addNotification: NotificationContext["addNotification"]
-): Promise<Caretaker[] | string | undefined> => {
+): Promise<string[]> => {
 	try {
 		const patientData = await getPatient(patientId, addNotification);
 
@@ -18,16 +18,14 @@ export const getUserEmailFromPatient = async (
 		);
 		const createdByEmail = patientData.createdBy;
 
-		const emailList: (Caretaker | string | undefined)[] = [
-			...caretakerEmail,
-			createdByEmail,
-		];
+		const emailList: string[] = [...caretakerEmail, createdByEmail];
 
-		if (!emailList) return;
+		if (!emailList) return [];
 
 		console.log("userEmail:", emailList);
 		return emailList;
 	} catch {
 		addNotification("Error fetching patient", NotificationType.ERROR);
+		return [];
 	}
 };
