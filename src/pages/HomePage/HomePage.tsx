@@ -7,52 +7,59 @@ import { useAuth } from "../../hooks/useAuth/useAuth";
 import { useContext, useEffect, useState } from "react";
 import { getPatient } from "../../firebase/patientServices/getPatient";
 import { NotificationContext } from "../../context/NotificationContext";
-import { NotificationType } from "../../types";
+import { NotificationType, ToDo } from "../../types";
+import countingTodos from "../../firebase/countingTodosService/countingTodos";
+import { Button } from "@equinor/eds-core-react";
 
-export default function HomePage(): JSX.Element {
-  const { currentPatientId } = useAuth();
-  const [patientdetails, setPatientDetails] = useState<{
-    name: string;
-    age: string;
-  }>();
-  const { addNotification } = useContext(NotificationContext);
+export default function HomePage(todos: ToDo[], todoId: string): JSX.Element {
+	const { currentPatientId } = useAuth();
+	const [patientdetails, setPatientDetails] = useState<{
+		name: string;
+		age: string;
+	}>();
+	const { addNotification } = useContext(NotificationContext);
 
-  useEffect(() => {
-    if (currentPatientId) {
-      getPatient(currentPatientId, addNotification).then((data) => {
-        if (data && "name" in data && "age" in data) {
-          setPatientDetails({ name: data.name, age: data.age });
-        }
-      });
-      if (!currentPatientId) {
-        addNotification(
-          "Error fetching patient details",
-          NotificationType.ERROR
-        );
-      }
-    }
-  }, [currentPatientId, addNotification]);
+	useEffect(() => {
+		if (currentPatientId) {
+			getPatient(currentPatientId, addNotification).then((data) => {
+				if (data && "name" in data && "age" in data) {
+					setPatientDetails({ name: data.name, age: data.age });
+				}
+			});
+			if (!currentPatientId) {
+				addNotification(
+					"Error fetching patient details",
+					NotificationType.ERROR
+				);
+			}
+		}
+	}, [currentPatientId, addNotification]);
 
-  return (
-    <>
-      <Navbar centerContent="Home" />
-      <div className={style.pageContainer}>
-        <div className={style.pageContent}>
-          {patientdetails && (
-            <PatientDetails
-              patientName={patientdetails.name}
-              age={patientdetails.age.toString()}
-            />
-          )}
-          <AppointmentsQuickView
-            firstAppointment="Doctor's appointment"
-            firstAppointmentTime="09:30"
-            secondAppointment="Physical therapy"
-            secondAppointmentTime="12:00"
-          />
-          <RemainingTodos />
-        </div>
-      </div>
-    </>
-  );
+	const handleButtonClick = async () => {
+		await countingTodos(todos, todoId, addNotification);
+	};
+
+	return (
+		<>
+			<Navbar centerContent="Home" />
+			<div className={style.pageContainer}>
+				<div className={style.pageContent}>
+					{patientdetails && (
+						<PatientDetails
+							patientName={patientdetails.name}
+							age={patientdetails.age.toString()}
+						/>
+					)}
+					<AppointmentsQuickView
+						firstAppointment="Doctor's appointment"
+						firstAppointmentTime="09:30"
+						secondAppointment="Physical therapy"
+						secondAppointmentTime="12:00"
+					/>
+					<RemainingTodos />
+				</div>
+			</div>
+			<Button onClick={handleButtonClick}>Click me for fun stuff</Button>
+		</>
+	);
 }
