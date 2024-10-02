@@ -244,8 +244,8 @@ export const validateTodoSeriesFields = ({
 
 interface clearTodoItemInputStatusProps {
   todoItem: ToDo;
-  setTodoItemInputFieldStatus: Dispatch<
-    SetStateAction<TodoItemInputStatusProps>
+  setTodoItemInputFieldStatus: React.Dispatch<
+    React.SetStateAction<TodoItemInputStatusProps>
   >;
 }
 
