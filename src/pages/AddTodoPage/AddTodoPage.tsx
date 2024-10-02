@@ -60,6 +60,8 @@ const AddToDoPage: React.FC = () => {
   const { addNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
   const currentUserEmail = useAuth().userData?.email;
+  const { currentPatientId } = useAuth();
+  const patientId = currentPatientId || "";
 
   useEffect(() => {
     if (!location.state.selectedDate) {
@@ -162,6 +164,7 @@ const AddToDoPage: React.FC = () => {
           newTodos,
           todoSeriesInfo,
           currentUserEmail,
+          patientId,
           addNotification
         );
         return navigate(Paths.TODO, {
@@ -178,7 +181,12 @@ const AddToDoPage: React.FC = () => {
         )
           return;
         if (!currentUserEmail) return setHasError(true);
-        await addSingleNewTodo(todoItem, currentUserEmail, addNotification);
+        await addSingleNewTodo(
+          todoItem,
+          currentUserEmail,
+          patientId,
+          addNotification
+        );
         return navigate(Paths.TODO, {
           state: { selectedDate: todoItem.date.toDate() },
         });

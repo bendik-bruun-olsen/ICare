@@ -168,7 +168,7 @@ export const generateTodosForSeries = ({
 
 export const validateTodoItemFields = ({
   todoItem,
-  setTodoItemInputVariants,
+  setTodoItemInputFieldStatus,
   addNotification,
 }: validateTodoItemFieldsProps): boolean => {
   const fields = [
@@ -182,7 +182,7 @@ export const validateTodoItemFields = ({
 
   fields.forEach((field) => {
     if (!field.value) {
-      setTodoItemInputVariants((prev) => ({
+      setTodoItemInputFieldStatus((prev) => ({
         ...prev,
         [field.key]: "error",
       }));
@@ -202,7 +202,7 @@ export const validateTodoItemFields = ({
 
 export const validateTodoSeriesFields = ({
   todoSeriesInfo,
-  setTodoSeriesInputVariants,
+  setTodoSeriesInputFieldStatus,
   addNotification,
 }: validateTodoSeriesFieldsProps): boolean => {
   const fields = [
@@ -224,7 +224,7 @@ export const validateTodoSeriesFields = ({
 
   fields.forEach((field) => {
     if (!field.value) {
-      setTodoSeriesInputVariants((prev) => ({
+      setTodoSeriesInputFieldStatus((prev) => ({
         ...prev,
         [field.key]: "error",
       }));
