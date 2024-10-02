@@ -1,48 +1,62 @@
 import { Icon } from "@equinor/eds-core-react";
 import {
-	restaurant,
-	group,
-	walk,
-	arrow_forward,
-	hospital,
+  restaurant,
+  group,
+  walk,
+  arrow_forward,
+  hospital,
 } from "@equinor/eds-icons";
 import styles from "./RemainingTodos.module.css";
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
 import RemainingTodoItem from "./RemainingTodoItem";
+import { ToDo } from "../../types";
 
-const todos = [
-	{ category: "Food", completed: 3, all: 6, icon: restaurant },
-	{ category: "Medicine", completed: 2, all: 5, icon: hospital },
-	{ category: "Social", completed: 1, all: 1, icon: group },
-	{ category: "Exercise", completed: 2, all: 3, icon: walk },
-];
+interface RemainingTodosProps {
+  todos: ToDo[];
+}
 
-export default function RemainingTodos(): JSX.Element {
-	return (
-		<div className={styles.remainingTodosOuterWrapper}>
-			<div className={styles.titleWrapper}>
-				<h2>ToDo</h2>
-				<Link to={Paths.TODO}>
-					<div className={styles.arrowIconWrapper}>
-						<span>All Todos</span>
-						<Icon data={arrow_forward} />
-					</div>
-				</Link>
-			</div>
-			<div className={styles.remainingTodosInnerWrapper}>
-				{todos.map((todo) => {
-					return (
-						<RemainingTodoItem
-							categoryTitle={todo.category}
-							completedTodosCount={todo.completed}
-							allTodosCount={todo.all}
-							icon={todo.icon}
-							key={todo.all}
-						/>
-					);
-				})}
-			</div>
-		</div>
-	);
+export default function RemainingTodos({
+  todos,
+}: RemainingTodosProps): JSX.Element {
+  const categorizedTodos = [
+    { category: "Food", icon: restaurant },
+    { category: "Medicine", icon: hospital },
+    { category: "Social", icon: group },
+    { category: "Exercise", icon: walk },
+  ];
+
+  return (
+    <div className={styles.remainingTodosOuterWrapper}>
+      <div className={styles.titleWrapper}>
+        <h2>ToDo</h2>
+        <Link to={Paths.TODO}>
+          <div className={styles.arrowIconWrapper}>
+            <span>All Todos</span>
+            <Icon data={arrow_forward} />
+          </div>
+        </Link>
+      </div>
+      <div className={styles.remainingTodosInnerWrapper}>
+        {categorizedTodos.map((category) => {
+          const todosInCategory = todos.filter(
+            (todo) => todo.category === category.category
+          );
+          const completedTodosCount = todosInCategory.filter(
+            (todo) => todo.status === "completed"
+          ).length;
+
+          return (
+            <RemainingTodoItem
+              categoryTitle={category.category}
+              completedTodosCount={completedTodosCount}
+              allTodosCount={todosInCategory.length}
+              icon={category.icon}
+              key={category.category}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
 }

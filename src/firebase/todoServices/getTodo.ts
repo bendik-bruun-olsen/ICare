@@ -13,10 +13,11 @@ import {
 
 export const getTodo = async (
   todoId: string,
+  patientId: string,
   addNotification: NotificationContext["addNotification"]
 ): Promise<ToDo | undefined> => {
   try {
-    const patientRef = doc(db, "patientdetails", "patient@patient.com");
+    const patientRef = doc(db, "patientdetails", patientId);
     const todoRef = doc(patientRef, "todoItems", todoId);
     const todoSnap = await getDoc(todoRef);
 
@@ -34,10 +35,11 @@ export const getTodo = async (
 
 export const getTodoSeriesInfo = async (
   seriesId: string,
+  patientId: string,
   addNotification: NotificationContext["addNotification"]
 ): Promise<DocumentData | null> => {
   try {
-    const patientRef = doc(db, "patientdetails", "patient@patient.com");
+    const patientRef = doc(db, "patientdetails", patientId);
     const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
 
     const seriesInfoSnap = await getDoc(seriesInfoRef);
@@ -54,10 +56,11 @@ export const getTodoSeriesInfo = async (
 
 export const getTodosBySelectedDate = async (
   selectedDate: Date,
+  patientId: string,
   addNotification: NotificationContext["addNotification"]
-): Promise<[] | void> => {
+): Promise<ToDo[]> => {
   try {
-    const patientRef = doc(db, "patientdetails", "patient@patient.com");
+    const patientRef = doc(db, "patientdetails", patientId);
     const todoCollection = collection(patientRef, "todoItems");
 
     const startOfDay = Timestamp.fromDate(
@@ -90,10 +93,11 @@ export const getTodosBySelectedDate = async (
 };
 
 export const getTodoSeriesIdByTodoId = async (
-  todoId: string
+  todoId: string,
+  patientId: string
 ): Promise<string | null> => {
   try {
-    const patientRef = doc(db, "patientdetails", "patient@patient.com");
+    const patientRef = doc(db, "patientdetails", patientId);
     const todoCollection = collection(patientRef, "todoItems");
     const todoRef = doc(todoCollection, todoId);
     const todoSnap = await getDoc(todoRef);
