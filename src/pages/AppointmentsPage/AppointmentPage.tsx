@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DateSelector from "../components/DateSelector/DateSelector";
-import { db } from "../../src/firebase/firebase";
+import DateSelector from "../../components/DateSelector/DateSelector";
+import { db } from "../../firebase/firebase";
 import {
   collection,
   query,
@@ -9,6 +9,13 @@ import {
   Timestamp,
   doc,
 } from "firebase/firestore";
+import { Link } from "react-router-dom";
+import { Paths } from "../../paths";
+import { add } from "@equinor/eds-icons";
+import { Button, Icon } from "@equinor/eds-core-react";
+import styles from "./AppointmentPage.module.css";
+import { useAuth } from "../../hooks/useAuth/useAuth";
+import { getEndOfDay, getStartOfDay } from "../../utils";
 
 interface Appointment {
   id: string;
@@ -19,6 +26,8 @@ interface Appointment {
 }
 
 const AppointmentPage: React.FC = () => {
+  const { currentPatientId } = useAuth();
+  const patientId = currentPatientId || "";
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
@@ -26,15 +35,12 @@ const AppointmentPage: React.FC = () => {
     const fetchAppointments = async (): Promise<void> => {
       try {
         const appointmentRef = collection(
-          doc(db, "patientdetails", "patient@patient.com"),
+          doc(db, "patientdetails", patientId),
           "appointments"
         );
 
-        const startOfDay = new Date(selectedDate);
-        startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(selectedDate);
-        endOfDay.setHours(23, 59, 59, 999);
-
+        const startOfDay = getStartOfDay(selectedDate);
+        const endOfDay = getEndOfDay(selectedDate);
         const q = query(
           appointmentRef,
           where("startDate", ">=", Timestamp.fromDate(startOfDay)),
@@ -71,6 +77,15 @@ const AppointmentPage: React.FC = () => {
             </li>
           ))}
         </ul>
+      </div>
+      <div>
+        <Link to={Paths.ADD_APPOINTMENT} state={{ selectedDate }}>
+          <div className={styles.addIcon}>
+            <Button variant="contained_icon">
+              <Icon data={add} size={32} />
+            </Button>
+          </div>
+        </Link>
       </div>
     </div>
   );

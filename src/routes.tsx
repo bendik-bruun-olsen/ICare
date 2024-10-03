@@ -7,7 +7,7 @@ import Signup from "./pages/Signup/SignupPage";
 import ToDoPage from "./pages/ToDoPage/ToDoPage";
 import AddTodoPage from "./pages/AddTodoPage/AddTodoPage";
 import EditToDoPage from "./pages/EditTodoPage/EditTodoPage";
-import Appointment from "./pages/AppointmentPage";
+import Appointment from "./pages/AppointmentsPage/AppointmentPage";
 import AddAppointment from "./pages/AddAppointment/AddAppointment";
 import EditAppointment from "./pages/EditAppointmentPage";
 import ContactDetailsPage from "./pages/ContactDetailsPage";

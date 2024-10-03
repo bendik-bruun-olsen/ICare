@@ -143,13 +143,6 @@ export default function ToDoTile({
       }
 
       onStatusChange(todoItem.id, newStatus);
-      console.log(
-        "Updating ToDo status in database with the following details:"
-      );
-      console.log("ToDo ID:", todoItem.id);
-      console.log("New Status:", newStatus);
-      console.log("Current User:", currentUser);
-      console.log("Patient ID:", todoItem.patientId);
 
       await updateToDoStatusInDatabase(
         todoItem.id,
@@ -158,9 +151,7 @@ export default function ToDoTile({
         todoItem.patientId,
         addNotification
       );
-      console.log("ToDo status updated successfully.");
     } catch (error) {
-      console.error("Error updating ToDo status:", error);
       addNotification("Error updating ToDo status", NotificationType.ERROR);
     }
   };
