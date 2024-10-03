@@ -12,14 +12,11 @@ export const deletePatientfromPatientDB = async (
 
     if (!patientRef) {
       addNotification("Patient not found", NotificationType.ERROR);
-      console.log("Patient not found");
     }
 
     await deleteDoc(patientRef);
     addNotification("Patient deleted", NotificationType.SUCCESS);
-    console.log("Patient deleted");
   } catch {
     addNotification("Could not delete patient", NotificationType.ERROR);
-    console.log("Could not delete patient");
   }
 };
