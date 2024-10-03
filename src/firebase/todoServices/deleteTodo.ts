@@ -26,7 +26,7 @@ export const deleteTodoItem = async (
     }
     await deleteDoc(todoRef);
     addNotification("Todo deleted successfully", NotificationType.SUCCESS);
-  } catch {
+  } catch (error) {
     addNotification(
       "Error deleting todo, please try again later",
       NotificationType.ERROR
@@ -60,7 +60,7 @@ export const deleteTodoSeries = async (
 
     await batch.commit();
     addNotification("Series deleted successfully", NotificationType.SUCCESS);
-  } catch {
+  } catch (error) {
     addNotification(
       "Error deleting series, please try again later",
       NotificationType.ERROR

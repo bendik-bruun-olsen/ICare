@@ -42,7 +42,8 @@ export const editTodoItem = async ({
     await updateDoc(todoRef, { ...updatedTodo });
     addNotification("Todo edited successfully", NotificationType.SUCCESS);
     return true;
-  } catch {
+  } catch (error) {
+    console.error("Error editing ToDo item:", error);
     addNotification("Error editing todo", NotificationType.ERROR);
     return false;
   }
@@ -116,7 +117,9 @@ export const editTodoSeries = async (
     await batch.commit();
     addNotification("Series edited successfully", NotificationType.SUCCESS);
     return true;
-  } catch {
+  } catch (error) {
+    // Add error parameter here
+    console.error("Error editing ToDo series:", error);
     addNotification("Error editing series", NotificationType.ERROR);
     return false;
   }
@@ -183,7 +186,9 @@ export const createTodoSeriesFromSingleTodo = async (
       NotificationType.SUCCESS
     );
     return true;
-  } catch {
+  } catch (error) {
+    // Add error parameter here
+    console.error("Error creating series for ToDo item:", error);
     addNotification("Error creating series for todo", NotificationType.ERROR);
     return false;
   }

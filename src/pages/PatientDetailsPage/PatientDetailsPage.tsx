@@ -13,18 +13,16 @@ import { checkEmailExists } from "../../firebase/patientServices/checkEmail";
 import { editPatient } from "../../firebase/patientServices/editPatient";
 import { defaultPatientFormData } from "../../constants/defaultPatientFormData";
 import { uploadProfilePicture } from "../../firebase/patientImageServices/patientPictureService";
-import { remove_outlined, add, edit, email } from "@equinor/eds-icons";
+import { remove_outlined, add, edit } from "@equinor/eds-icons";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import Loading from "../../components/Loading/Loading";
 import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
 import { NotificationContext } from "../../context/NotificationContext";
 import { getPatient } from "../../firebase/patientServices/getPatient";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import { deletePatient } from "../../firebase/patientServices/deletePatient";
-import { getUserEmailFromPatient } from "../../firebase/patientServices/getUserEmailFromPatient";
 import { deletePatientfromUserDB } from "../../firebase/patientServices/deletePatientfromUserDB";
 import { deletePatientfromPatientDB } from "../../firebase/patientServices/deletePatientfromPatientDB";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Paths } from "../../paths";
 
 const FormField = ({

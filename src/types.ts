@@ -42,6 +42,7 @@ export interface ToDo {
   id: string;
   createdBy: string;
   completedBy: string | null;
+  patientId: string;
 }
 
 export interface TodoSeriesInfo {

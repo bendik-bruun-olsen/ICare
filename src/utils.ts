@@ -244,6 +244,7 @@ export const validateTodoSeriesFields = ({
 
 interface clearTodoItemInputStatusProps {
   todoItem: ToDo;
+
   setTodoItemInputFieldStatus: React.Dispatch<
     React.SetStateAction<TodoItemInputStatusProps>
   >;
@@ -251,6 +252,7 @@ interface clearTodoItemInputStatusProps {
 
 export const clearTodoItemInputStatus = ({
   todoItem,
+
   setTodoItemInputFieldStatus,
 }: clearTodoItemInputStatusProps): void => {
   setTodoItemInputFieldStatus((prev) => ({

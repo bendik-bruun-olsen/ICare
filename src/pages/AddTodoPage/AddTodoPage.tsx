@@ -49,7 +49,12 @@ const AddToDoPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isRepeating, setIsRepeating] = useState(false);
-  const [todoItem, setTodoItem] = useState<ToDo>(defaultTodoItem);
+  const { currentPatientId } = useAuth();
+  const patientId = currentPatientId || "";
+  const [todoItem, setTodoItem] = useState<ToDo>({
+    ...defaultTodoItem,
+    patientId,
+  });
   const [todoSeriesInfo, setTodoSeriesInfo] =
     useState<TodoSeriesInfo>(defaultTodoSeries);
   const [todoItemInputFieldStatus, setTodoItemInputFieldStatus] =
@@ -60,8 +65,6 @@ const AddToDoPage: React.FC = () => {
   const { addNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
   const currentUserEmail = useAuth().userData?.email;
-  const { currentPatientId } = useAuth();
-  const patientId = currentPatientId || "";
 
   useEffect(() => {
     if (!location.state.selectedDate) {
@@ -153,6 +156,7 @@ const AddToDoPage: React.FC = () => {
           id: "",
           createdBy: "",
           completedBy: null,
+          patientId,
         };
         const newTodos = generateTodosForSeries({
           newTodo,

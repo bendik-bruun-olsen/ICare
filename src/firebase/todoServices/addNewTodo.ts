@@ -22,6 +22,7 @@ export const addSingleNewTodo = async (
       ...todo,
       id: todoItemRef.id,
       createdBy: currentUserName,
+      patientId,
     };
 
     await setDoc(todoItemRef, updatedTodo);
@@ -55,6 +56,7 @@ export const addMultipleNewTodos = async (
         seriesId: todoSeriesInfoRef.id,
         id: todoItemRef.id,
         createdBy: currentUserName,
+        patientId,
       };
       batch.set(todoItemRef, updatedTodo);
     });
