@@ -75,12 +75,8 @@ export default function HomePage(): JSX.Element {
               setSelectedDate={setSelectedDate}
             />
           </div>
-          <AppointmentsQuickView
-            firstAppointment="Doctor's appointment"
-            firstAppointmentTime="09:30"
-            secondAppointment="Physical therapy"
-            secondAppointmentTime="12:00"
-          />
+          <AppointmentsQuickView />
+
           <RemainingTodos todos={todos} />
         </div>
       </div>

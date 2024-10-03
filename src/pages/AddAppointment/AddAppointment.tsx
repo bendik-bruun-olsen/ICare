@@ -7,8 +7,11 @@ import TitleDescription from "../../components/TitleDescription/TitleDescription
 import AddButton from "../../components/AddButton/AddButton";
 import styles from "../AddTodoPage/AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
+import { useAuth } from "../../hooks/useAuth/useAuth";
 
 export default function AddAppointment(): JSX.Element {
+  const { currentPatientId } = useAuth();
+  const patientId = currentPatientId || "";
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -27,7 +30,7 @@ export default function AddAppointment(): JSX.Element {
       time,
     };
     try {
-      const patientRef = doc(db, "patientdetails", "patient@patient.com");
+      const patientRef = doc(db, "patientdetails", patientId);
       const appointmentRef = collection(patientRef, "appointments");
 
       const appointmentDocRef = await addDoc(appointmentRef, newTodo);
