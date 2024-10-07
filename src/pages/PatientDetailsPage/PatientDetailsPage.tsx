@@ -69,7 +69,7 @@ export default function PatientDetailsPage(): JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const fullInfoContainerRef = useRef<HTMLDivElement>(null);
-  const { currentPatientId } = useAuth();
+  const { setCurrentPatientId, currentPatientId } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -167,7 +167,7 @@ export default function PatientDetailsPage(): JSX.Element {
     try {
       await deletePatientfromUserDB(currentPatientId, addNotification);
       await deletePatientfromPatientDB(currentPatientId, addNotification);
-
+      setCurrentPatientId(null);
       addNotification("Patient deleted successfully", NotificationType.SUCCESS);
       navigate(Paths.PATIENT_OVERVIEW);
     } catch (error) {

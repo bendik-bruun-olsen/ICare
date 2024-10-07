@@ -8,12 +8,16 @@ import AddButton from "../../components/AddButton/AddButton";
 import styles from "../AddTodoPage/AddTodoPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../hooks/useAuth/useAuth";
+import { useNavigate } from "react-router-dom";
+import { Paths } from "../../paths";
+import { AppointmentStatus } from "../../types";
 
 export default function AddAppointment(): JSX.Element {
   const { currentPatientId } = useAuth();
   const patientId = currentPatientId || "";
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const navigate = useNavigate();
 
   const [startDate, setStartDate] = useState(
     new Date().toISOString().substring(0, 10)
@@ -23,18 +27,18 @@ export default function AddAppointment(): JSX.Element {
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
 
-    const newTodo = {
+    const newAppointment = {
       title,
       description,
       startDate: Timestamp.fromDate(new Date(startDate)),
       time,
+      newStatus: AppointmentStatus,
+      createdBy: "",
     };
     try {
       const patientRef = doc(db, "patientdetails", patientId);
       const appointmentRef = collection(patientRef, "appointments");
-
-      const appointmentDocRef = await addDoc(appointmentRef, newTodo);
-      console.log("Document written with ID: ", appointmentDocRef.id);
+      await addDoc(appointmentRef, newAppointment);
     } catch (e) {
       console.error("Error in adding appointment document: ", e);
     }
@@ -48,6 +52,7 @@ export default function AddAppointment(): JSX.Element {
     setDescription("");
     setStartDate(new Date().toISOString().substring(0, 10));
     setTime("");
+    navigate(Paths.APPOINTMENT);
   };
 
   return (

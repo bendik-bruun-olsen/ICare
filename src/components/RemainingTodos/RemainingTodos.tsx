@@ -43,7 +43,7 @@ export default function RemainingTodos({
             (todo) => todo.category === category.category
           );
           const completedTodosCount = todosInCategory.filter(
-            (todo) => todo.status === "completed"
+            (todo) => todo.status === "checked"
           ).length;
 
           return (

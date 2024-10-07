@@ -1,0 +1,45 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.modalContainer {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--white);
+  padding: 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+  outline: 1px solid var(--lightblue);
+  z-index: 5;
+}
+
+.dropdownAbove {
+  top: auto;
+  bottom: 100%;
+}
+
+.modalList {
+  border-radius: 5px;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+}
+
+.modalItem {
+  color: var(--black);
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  user-select: none;
+}
+
+.modalItem:hover {
+  background-color: var(--lightblue);
+}

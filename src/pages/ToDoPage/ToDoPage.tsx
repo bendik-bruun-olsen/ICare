@@ -52,7 +52,7 @@ const ToDoPage: React.FC = () => {
       }
     }
     fetchData();
-  }, [selectedDate, patientId, addNotification]);
+  }, [selectedDate, patientId]);
 
   const handleStatusChange = async (
     todoId: string,

@@ -33,19 +33,16 @@ export default function HomePage(): JSX.Element {
           setPatientDetails({ name: data.name, age: data.age });
         }
       });
-      if (!currentPatientId) {
-        addNotification(
-          "Error fetching patient details",
-          NotificationType.ERROR
-        );
-      }
     }
   }, [currentPatientId, addNotification]);
 
-  const patientId = currentPatientId || "";
+  const patientId = currentPatientId;
 
   useEffect(() => {
     async function fetchTodos(): Promise<void> {
+      if (!patientId) {
+        return;
+      }
       const fetchedTodos =
         (await getTodosBySelectedDate(
           selectedDate,
@@ -75,7 +72,12 @@ export default function HomePage(): JSX.Element {
               setSelectedDate={setSelectedDate}
             />
           </div>
-          <AppointmentsQuickView />
+          <AppointmentsQuickView
+            firstAppointment="Doctor"
+            firstAppointmentTime="08:30"
+            secondAppointment="Doctor again"
+            secondAppointmentTime="11:30"
+          />
 
           <RemainingTodos todos={todos} />
         </div>

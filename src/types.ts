@@ -8,6 +8,12 @@ export enum ToDoStatus {
   ignore = "ignore",
 }
 
+export enum AppointmentStatus {
+  unchecked = "unchecked",
+  checked = "checked",
+  ignore = "ignore",
+}
+
 export enum GenderOptions {
   MALE = "Male",
   FEMALE = "Female",
@@ -78,6 +84,17 @@ export interface TodoSeriesInputStatusProps {
   time?: Variants;
   selectedDays?: Variants;
   category?: Variants;
+}
+
+export interface Appointment {
+  id: string;
+  title: string;
+  description: string;
+  date: Timestamp;
+  time: string;
+  createdBy: string;
+  status: AppointmentStatus;
+  patientId: string;
 }
 
 export interface AssignedPatient {

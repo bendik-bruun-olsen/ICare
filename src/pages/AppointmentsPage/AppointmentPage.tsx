@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import { db } from "../../firebase/firebase";
 import {
@@ -16,17 +16,15 @@ import { Button, Icon } from "@equinor/eds-core-react";
 import styles from "./AppointmentPage.module.css";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { getEndOfDay, getStartOfDay } from "../../utils";
-
-interface Appointment {
-  id: string;
-  title: string;
-  description: string;
-  date: Timestamp;
-  time: string;
-}
+import { NotificationContext } from "../../context/NotificationContext";
+import { NotificationType } from "../../types";
+import Navbar from "../../components/Navbar/Navbar";
+import AppointmentTile from "../../components/AppointmentTile/AppointmentTile";
+import { Appointment } from "../../types";
 
 const AppointmentPage: React.FC = () => {
   const { currentPatientId } = useAuth();
+  const { addNotification } = useContext(NotificationContext);
   const patientId = currentPatientId || "";
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -51,6 +49,10 @@ const AppointmentPage: React.FC = () => {
           id: doc.id,
           ...doc.data(),
         })) as Appointment[];
+        if (fetchedAppointments.length === 0) {
+          addNotification("No appointments found", NotificationType.ERROR);
+          return;
+        }
         setAppointments(fetchedAppointments);
       } catch (error) {
         console.error("Error fetching appointments: ", error);
@@ -58,27 +60,29 @@ const AppointmentPage: React.FC = () => {
     };
 
     fetchAppointments();
-  }, [selectedDate]);
+  }, [selectedDate, patientId]);
 
   return (
-    <div>
-      <DateSelector
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-      />
-      <div>
-        <h2>Appointments for {selectedDate.toDateString()}</h2>
-        <ul>
-          {appointments.map((appointment) => (
-            <li key={appointment.id}>
-              <p>Title: {appointment.title}</p>
-              <p>Description: {appointment.description}</p>
-              <p>Time: {appointment.time}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
+    <>
+      <Navbar centerContent="Appointments" />
+      <div className={"pageWrapper " + styles.fullPage}>
+        <DateSelector
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+        />
+        <div>
+          <h2>Appointments for {selectedDate.toDateString()}</h2>
+          <ul>
+            {appointments.map((appointment) => (
+              <AppointmentTile
+                key={appointment.id}
+                appointmentItem={appointment}
+                selectedDate={selectedDate}
+                onStatusChange={() => {}}
+              />
+            ))}
+          </ul>
+        </div>
         <Link to={Paths.ADD_APPOINTMENT} state={{ selectedDate }}>
           <div className={styles.addIcon}>
             <Button variant="contained_icon">
@@ -87,7 +91,7 @@ const AppointmentPage: React.FC = () => {
           </div>
         </Link>
       </div>
-    </div>
+    </>
   );
 };
 

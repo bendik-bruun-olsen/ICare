@@ -72,7 +72,7 @@ export default function CreatePatientPage(): JSX.Element {
       setPictureUrl(url);
     };
     fetchDefaultPictureUrl();
-  });
+  }, []);
 
   const isFormDataValid = (formData: NewPatient): boolean => {
     const { age, phone } = formData;
