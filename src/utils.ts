@@ -11,9 +11,11 @@ import { db } from "./firebase/firebase";
 import {
   NotificationType,
   TodoItemInputStatusProps,
+  AppointmentInputStatusProps,
   ToDo,
   validateDateRangeProps,
   validateTodoItemFieldsProps,
+  validateAppointmentItemFieldsProps,
   validateTodoSeriesFieldsProps,
   clearTodoSeriesInputStatusProps,
   GenerateTodosForSeriesProps,
@@ -293,4 +295,37 @@ export const validateDateRange = ({
     return false;
   }
   return true;
+};
+
+export const validateAppointmentItemFields = ({
+  appointmentItem,
+  setAppointmentItemInputFieldStatus,
+  addNotification,
+}: validateAppointmentItemFieldsProps): boolean => {
+  const fields = [
+    { key: "title", value: appointmentItem.title },
+    { key: "description", value: appointmentItem.description },
+    { key: "date", value: appointmentItem.date },
+    { key: "time", value: appointmentItem.time },
+  ];
+  let isValid = true;
+
+  fields.forEach((field) => {
+    if (!field.value) {
+      setAppointmentItemInputFieldStatus((prev) => ({
+        ...prev,
+        [field.key]: "error",
+      }));
+      isValid = false;
+    }
+  });
+
+  if (!isValid) {
+    addNotification(
+      "Please fill in all required fields",
+      NotificationType.ERROR
+    );
+  }
+
+  return isValid;
 };

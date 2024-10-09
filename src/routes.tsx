@@ -9,7 +9,7 @@ import AddTodoPage from "./pages/AddTodoPage/AddTodoPage";
 import EditToDoPage from "./pages/EditTodoPage/EditTodoPage";
 import Appointment from "./pages/AppointmentsPage/AppointmentPage";
 import AddAppointment from "./pages/AddAppointment/AddAppointment";
-import EditAppointment from "./pages/EditAppointmentPage";
+import EditAppointment from "./pages/EditAppointment/EditAppointmentPage";
 import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import AboutUsPage from "./pages/AboutUsPage";

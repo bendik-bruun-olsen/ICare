@@ -65,7 +65,7 @@ export interface DeleteConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  type: "item" | "series";
+  type: "item" | "series" | "appointment";
 }
 
 export interface TodoItemInputStatusProps {
@@ -91,7 +91,7 @@ export interface Appointment {
   title: string;
   description: string;
   date: Timestamp;
-  time: string;
+  time: Timestamp;
   createdBy: string;
   status: AppointmentStatus;
   patientId: string;
@@ -212,4 +212,20 @@ export interface GenerateTodosForSeriesProps {
 export interface PatientPreview {
   name: string;
   email: string;
+}
+
+export interface AppointmentInputStatusProps {
+  title?: Variants;
+  description?: Variants;
+  category?: Variants;
+  date?: Variants;
+  time?: Variants;
+}
+
+export interface validateAppointmentItemFieldsProps {
+  appointmentItem: Appointment;
+  setAppointmentItemInputFieldStatus: Dispatch<
+    SetStateAction<AppointmentInputStatusProps>
+  >;
+  addNotification: NotificationContext["addNotification"];
 }

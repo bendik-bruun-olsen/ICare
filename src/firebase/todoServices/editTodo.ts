@@ -187,7 +187,6 @@ export const createTodoSeriesFromSingleTodo = async (
     );
     return true;
   } catch (error) {
-    // Add error parameter here
     console.error("Error creating series for ToDo item:", error);
     addNotification("Error creating series for todo", NotificationType.ERROR);
     return false;

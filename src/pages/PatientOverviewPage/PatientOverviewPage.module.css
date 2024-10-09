@@ -53,7 +53,7 @@
 .nameAndEmail h3 {
   color: var(--black);
 }
-.nameAndEmail span {
+.nameAndEmail {
   color: var(--black);
   white-space: nowrap;
   overflow: hidden;

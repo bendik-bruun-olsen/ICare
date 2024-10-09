@@ -18,7 +18,7 @@ import {
   clearTodoItemInputStatus,
   clearTodoSeriesInputStatus,
   validateDateRange,
-  validateTodoItemFields,
+  validateAppointmentItemFields,
   validateTodoSeriesFields,
 } from "../../utils";
 import {
@@ -217,7 +217,7 @@ const EditToDoPage: React.FC = () => {
 
   const handleValidateItemFields = (): boolean => {
     if (
-      !validateTodoItemFields({
+      !validateAppointmentItemFields({
         todoItem,
         setTodoItemInputFieldStatus,
         addNotification,

@@ -1,4 +1,4 @@
-import { updateDoc, doc } from "firebase/firestore";
+import { updateDoc, doc, collection } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { NotificationContext, NotificationType } from "../../types";
 
@@ -10,7 +10,8 @@ export async function updateAppointmentStatusInDB(
 ): Promise<void> {
   try {
     const patientRef = doc(db, "patientdetails", patientId);
-    const appointmentRef = doc(patientRef, "appointments", appointmentId);
+    const appointmentCollection = collection(patientRef, "appointments");
+    const appointmentRef = doc(appointmentCollection, appointmentId);
 
     const updatedMetaData = { status: newStatus };
 
