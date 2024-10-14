@@ -67,14 +67,13 @@ const EditAppointmentPage: React.FC = () => {
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const time = e.target.value;
-    const timeRegex = /^([0-1]\d|2[0-3]):([0-5]\d)$/; // Matches HH:MM format
+    const timeRegex = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
 
     if (timeRegex.test(time)) {
       setAppointment((prev) => ({ ...prev, time }));
     }
     if (!timeRegex.test(time)) {
       console.error("Invalid time format. Expected HH:MM");
-      // Optionally, you can set a default time or notify the user
     }
   };
 
@@ -225,6 +224,7 @@ const EditAppointmentPage: React.FC = () => {
                 </div>
                 <div className={styles.timeAndRepeatControls}>
                   <TextField
+                    className={styles.time}
                     id="time"
                     label="Select time"
                     type="time"

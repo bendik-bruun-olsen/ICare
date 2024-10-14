@@ -1,0 +1,13 @@
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 5px 0 5px;
+}
+
+.time {
+  margin-top: 10px;
+}
+
+.time span {
+  color: var(--black);
+}
