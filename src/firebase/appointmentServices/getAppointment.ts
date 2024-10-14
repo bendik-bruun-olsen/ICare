@@ -68,8 +68,6 @@ export const getAppointmentsBySelectedDate = async (
         id: doc.id,
       };
     });
-    console.log("appointments", appointmentCollection);
-    console.log("appointments with id", appointmentsWithId);
 
     return appointmentsWithId;
   } catch {

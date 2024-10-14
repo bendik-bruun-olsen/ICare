@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import DateSelector from "../../components/DateSelector/DateSelector";
-import { db } from "../../firebase/firebase";
-import { collection, getDocs, doc } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
 import { add } from "@equinor/eds-icons";
@@ -13,6 +11,7 @@ import { NotificationType } from "../../types";
 import Navbar from "../../components/Navbar/Navbar";
 import AppointmentTile from "../../components/AppointmentTile/AppointmentTile";
 import { Appointment } from "../../types";
+import { getAppointmentsBySelectedDate } from "../../firebase/appointmentServices/getAppointment";
 
 const AppointmentPage: React.FC = () => {
   const { currentPatientId } = useAuth();
@@ -24,31 +23,16 @@ const AppointmentPage: React.FC = () => {
   useEffect(() => {
     const fetchAppointments = async (): Promise<void> => {
       try {
-        const appointmentRef = collection(
-          doc(db, "patientdetails", patientId),
-          "appointments"
+        const fetchedAppointments = await getAppointmentsBySelectedDate(
+          selectedDate,
+          patientId,
+          addNotification
         );
 
-        const querySnapshot = await getDocs(appointmentRef);
-        const fetchedAppointments = querySnapshot.docs.map((doc) => {
-          const data = doc.data() as Appointment;
-
-          // Validate and format the time
-          const timeIsValid =
-            typeof data.time === "string" && /^\d{2}:\d{2}$/.test(data.time);
-          if (!timeIsValid) {
-            addNotification(
-              "Invalid time format for appointment",
-              NotificationType.ERROR
-            );
-            throw new Error("Invalid time format");
-          }
-
-          return {
-            ...data,
-            id: doc.id,
-          };
-        }) as Appointment[];
+        if (!fetchedAppointments) {
+          addNotification("No appointments", NotificationType.ERROR);
+          return;
+        }
 
         setAppointments(fetchedAppointments);
       } catch (error) {
@@ -58,7 +42,7 @@ const AppointmentPage: React.FC = () => {
     };
 
     fetchAppointments();
-  }, [patientId, addNotification]);
+  }, [selectedDate, patientId, addNotification]);
 
   return (
     <>
@@ -66,7 +50,7 @@ const AppointmentPage: React.FC = () => {
       <div className={"pageWrapper " + styles.fullPage}>
         <DateSelector
           selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
+          setSelectedDate={(prev) => setSelectedDate(prev)}
         />
         <div>
           <h2>Appointments for {selectedDate.toDateString()}</h2>

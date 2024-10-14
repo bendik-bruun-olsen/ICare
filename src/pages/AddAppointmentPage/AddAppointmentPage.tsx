@@ -29,14 +29,11 @@ export default function AddAppointmentPage(): JSX.Element {
     e.preventDefault();
 
     try {
-      console.log("appointmentData: ", appointmentData);
-      console.log("currentUser: ", currentUser);
-
       if (!currentUser) {
         return;
       }
 
-      addAppointment(appointmentData, patientId, currentUser, addNotification);
+      addAppointment(appointmentData, currentUser, patientId, addNotification);
     } catch (e) {
       console.error("Error in adding appointment document: ", e);
     }

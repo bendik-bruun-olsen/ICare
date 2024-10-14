@@ -13,8 +13,6 @@ export const addAppointment = async (
   addNotification: NotificationContext["addNotification"]
 ): Promise<void> => {
   try {
-    console.log("appointment", appointment);
-
     const patientRef = doc(db, "patientdetails", patientId);
     const appointmentCollection = collection(patientRef, "appointments");
     const appointmentRef = doc(appointmentCollection);
