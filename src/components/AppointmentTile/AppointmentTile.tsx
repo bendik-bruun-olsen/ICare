@@ -133,7 +133,7 @@ export default function AppointmentTile({
     const chipMapping = {
       [AppointmentStatus.checked]: { variant: "active", label: "Completed" },
       [AppointmentStatus.unchecked]: { variant: "default", label: "Active" },
-      [AppointmentStatus.ignore]: { variant: "error", label: "Ignored" },
+      [AppointmentStatus.cancelled]: { variant: "error", label: "Ignored" },
     };
     const currentChip = chipMapping[currentTaskStatus] || chipMapping.unchecked;
     return (
@@ -158,7 +158,7 @@ export default function AppointmentTile({
               : AppointmentStatus.checked
           )
         }
-        disabled={currentTaskStatus === AppointmentStatus.ignore}
+        disabled={currentTaskStatus === AppointmentStatus.cancelled}
       />
       <div
         className={`${styles.toDoWrapper} ${
@@ -167,7 +167,14 @@ export default function AppointmentTile({
       >
         <div className={styles.tags}>{renderChip()}</div>
         <h3 className={styles.title}>
-          {`${appointmentItem.time} - ${appointmentItem.title}`}
+          {`${
+            appointmentItem.time?.toDate
+              ? appointmentItem.time.toDate().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "No time"
+          } - ${appointmentItem.title}`}
         </h3>
         <div
           className={styles.contentContainer}

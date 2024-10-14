@@ -11,7 +11,10 @@ import ErrorPage from "../ErrorPage/ErrorPage";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { Paths } from "../../paths";
 import styles from "./EditAppointment.module.css";
-import { formatTimestampToDateString } from "../../utils";
+import {
+  formatTimestampToDateString,
+  validateAppointmentItemFields,
+} from "../../utils";
 import { Appointment, AppointmentInputStatusProps } from "../../types";
 import { getAppointment } from "../../firebase/appointmentServices/getAppointment";
 import { deleteAppointment } from "../../firebase/appointmentServices/deleteAppointment";
@@ -36,6 +39,7 @@ const EditAppointmentPage: React.FC = () => {
   const [appointment, setAppointment] = useState<Appointment>(
     defaultAppointmentForm
   );
+  const { appointmentId } = useParams<{ appointmentId: string }>();
   const { addNotification } = useContext(NotificationContext);
   const [appointmentInputFieldStatus, setAppointmentInputFieldStatus] =
     useState<AppointmentInputStatusProps>({});
@@ -58,43 +62,92 @@ const EditAppointmentPage: React.FC = () => {
   }
 
   useEffect(() => {
-    if (appointmentIdFromParams) {
-      fetchAppointment(appointmentIdFromParams).catch(() => setHasError(true));
+    if (appointmentId) {
+      fetchAppointment(appointmentId).catch(() => setHasError(true));
     }
-  }, [appointmentIdFromParams]);
+  }, [appointmentId, patientId]);
 
-  const handleTimeChange = (date: string): void => {
-    const newTimestamp = Timestamp.fromDate(new Date(date));
-    setAppointment((prev) => ({ ...prev, time: newTimestamp }));
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const time = e.target.value;
+    const timeRegex = /^([0-1]\d|2[0-3]):([0-5]\d)$/; // Matches HH:MM format
+
+    if (timeRegex.test(time)) {
+      setAppointment((prev) => ({ ...prev, time }));
+    }
+    if (!timeRegex.test(time)) {
+      console.error("Invalid time format. Expected HH:MM");
+      // Optionally, you can set a default time or notify the user
+    }
+  };
+
+  const isValidDate = (dateString: string): boolean => {
+    const timestamp = Date.parse(dateString);
+    return !isNaN(timestamp);
   };
 
   const handleDateChange = (date: string): void => {
-    const newTimestamp = Timestamp.fromDate(new Date(date));
+    if (!isValidDate(date)) {
+      console.error("Invalid date format");
+      return;
+    }
+
+    const newDate = new Date(date);
+    const currentTime = appointment.time || "00:00";
+    const timeParts = currentTime.split(":");
+
+    if (timeParts.length !== 2) {
+      console.error("Invalid time format");
+      return;
+    }
+
+    const [hours, minutes] = timeParts.map(Number);
+
+    if (
+      isNaN(hours) ||
+      hours < 0 ||
+      hours > 23 ||
+      isNaN(minutes) ||
+      minutes < 0 ||
+      minutes > 59
+    ) {
+      console.error("Invalid time values");
+      return;
+    }
+
+    newDate.setHours(hours);
+    newDate.setMinutes(minutes);
+
+    if (isNaN(newDate.getTime())) {
+      console.error("Resulting date is invalid");
+      return;
+    }
+
+    const newTimestamp = Timestamp.fromDate(newDate);
     setAppointment((prev) => ({ ...prev, date: newTimestamp }));
   };
 
-  // const handleValidateAppointmentFields = (): boolean => {
-  //   if (
-  //     !validateAppointmentFields({
-  //       appointment,
-  //       setAppointmentInputFieldStatus,
-  //       addNotification,
-  //     })
-  //   ) {
-  //     return false;
-  //   }
-  //   return true;
-  // };
+  const handleValidateAppointmentFields = (): boolean => {
+    if (
+      !validateAppointmentItemFields({
+        appointmentItem: appointment,
+        setAppointmentItemInputFieldStatus: setAppointmentInputFieldStatus,
+        addNotification,
+      })
+    ) {
+      return false;
+    }
+    return true;
+  };
 
   async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault();
-    const appointmentId = appointmentIdFromParams;
-    if (!appointmentId) return setHasError(true);
+    const id = appointmentId;
+    if (!id) return setHasError(true);
 
     try {
       setIsLoading(true);
 
-      // if (!handleValidateAppointmentFields()) return;
+      if (!handleValidateAppointmentFields()) return;
 
       const editSuccess = await editAppointment({
         appointmentId,
@@ -116,18 +169,14 @@ const EditAppointmentPage: React.FC = () => {
   }
 
   async function handleDelete(): Promise<void> {
-    if (!appointmentIdFromParams) {
+    if (!appointmentId) {
       setHasError(true);
       return;
     }
 
     try {
       setIsLoading(true);
-      await deleteAppointment(
-        appointmentIdFromParams,
-        patientId,
-        addNotification
-      );
+      await deleteAppointment(appointmentId, patientId, addNotification);
     } finally {
       setIsConfirmModalOpen(false);
       setIsLoading(false);
@@ -183,7 +232,9 @@ const EditAppointmentPage: React.FC = () => {
                     type="time"
                     name="time"
                     value={
-                      appointment.time.toDate().toTimeString().slice(0, 5) || ""
+                      typeof appointment.time === "string"
+                        ? appointment.time
+                        : ""
                     }
                     onChange={handleTimeChange}
                     style={{ width: "150px" }}

@@ -8,7 +8,7 @@ export enum Paths {
   EDIT_TODO = "/todo/edit-todo/:todoId",
   APPOINTMENT = "/appointment",
   ADD_APPOINTMENT = "/add-appointment",
-  EDIT_APPOINTMENT = "/edit-appointment",
+  EDIT_APPOINTMENT = "/edit-appointment/:appointmentId",
   CONTACT = "/contact",
   ABOUT = "/about-us",
   USER_PROFILE = "/user-profile",

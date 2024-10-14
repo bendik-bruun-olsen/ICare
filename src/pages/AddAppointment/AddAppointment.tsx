@@ -27,6 +27,12 @@ export default function AddAppointment(): JSX.Element {
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
 
+    // Ensure time is in the correct format
+    if (typeof time !== "string" || !/^\d{2}:\d{2}$/.test(time)) {
+      console.error("Invalid time format");
+      return;
+    }
+
     const newAppointment = {
       title,
       description,

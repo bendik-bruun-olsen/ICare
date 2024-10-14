@@ -1,21 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import { db } from "../../firebase/firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-  doc,
-} from "firebase/firestore";
+import { collection, getDocs, doc } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { Paths } from "../../paths";
 import { add } from "@equinor/eds-icons";
 import { Button, Icon } from "@equinor/eds-core-react";
 import styles from "./AppointmentPage.module.css";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import { getEndOfDay, getStartOfDay } from "../../utils";
 import { NotificationContext } from "../../context/NotificationContext";
 import { NotificationType } from "../../types";
 import Navbar from "../../components/Navbar/Navbar";
@@ -37,30 +29,36 @@ const AppointmentPage: React.FC = () => {
           "appointments"
         );
 
-        const startOfDay = getStartOfDay(selectedDate);
-        const endOfDay = getEndOfDay(selectedDate);
-        const q = query(
-          appointmentRef,
-          where("startDate", ">=", Timestamp.fromDate(startOfDay)),
-          where("startDate", "<=", Timestamp.fromDate(endOfDay))
-        );
-        const querySnapshot = await getDocs(q);
-        const fetchedAppointments = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Appointment[];
-        if (fetchedAppointments.length === 0) {
-          addNotification("No appointments found", NotificationType.ERROR);
-          return;
-        }
+        const querySnapshot = await getDocs(appointmentRef);
+        const fetchedAppointments = querySnapshot.docs.map((doc) => {
+          const data = doc.data() as Appointment;
+
+          // Validate and format the time
+          const timeIsValid =
+            typeof data.time === "string" && /^\d{2}:\d{2}$/.test(data.time);
+          if (!timeIsValid) {
+            addNotification(
+              "Invalid time format for appointment",
+              NotificationType.ERROR
+            );
+            throw new Error("Invalid time format");
+          }
+
+          return {
+            ...data,
+            id: doc.id,
+          };
+        }) as Appointment[];
+
         setAppointments(fetchedAppointments);
       } catch (error) {
         console.error("Error fetching appointments: ", error);
+        addNotification("Error fetching appointments", NotificationType.ERROR);
       }
     };
 
     fetchAppointments();
-  }, [selectedDate, patientId]);
+  }, [patientId, addNotification]);
 
   return (
     <>

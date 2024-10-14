@@ -23,6 +23,7 @@ import {
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
+import firebase from "firebase/compat/app";
 
 export function getStartOfDay(selectedDate: Date): Date {
   const startOfDay = new Date(selectedDate);
@@ -82,10 +83,13 @@ export const sendResetEmail = async (email: string): Promise<void> => {
   await sendPasswordResetEmail(auth, email);
 };
 
-export const formatTimestampToDateString = (timestamp: Timestamp): string => {
-  return timestamp.toDate().toISOString().substring(0, 10);
-};
-
+export function formatTimestampToDateString(
+  timestamp?: firebase.firestore.Timestamp
+): string {
+  return timestamp?.toDate
+    ? timestamp.toDate().toLocaleDateString()
+    : "No date available";
+}
 export const groupTodosByCategory = (
   todos: ToDo[]
 ): { [key: string]: ToDo[] } => {

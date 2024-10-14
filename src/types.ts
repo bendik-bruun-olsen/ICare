@@ -11,7 +11,7 @@ export enum ToDoStatus {
 export enum AppointmentStatus {
   unchecked = "unchecked",
   checked = "checked",
-  ignore = "ignore",
+  cancelled = "cancelled",
 }
 
 export enum GenderOptions {
@@ -19,6 +19,7 @@ export enum GenderOptions {
   FEMALE = "Female",
   OTHERS = "Others",
 }
+
 export enum NotificationType {
   SUCCESS = "success",
   ERROR = "error",
@@ -87,10 +88,11 @@ export interface TodoSeriesInputStatusProps {
 }
 
 export interface Appointment {
+  data: Timestamp;
   id: string;
   title: string;
   description: string;
-  date: Timestamp;
+  date: Date;
   time: Timestamp;
   createdBy: string;
   status: AppointmentStatus;
@@ -106,6 +108,7 @@ export interface AdministeredPatient {
   patientId: string;
   patientName: string;
 }
+
 export interface User {
   name: string;
   age?: number;
@@ -209,6 +212,7 @@ export interface GenerateTodosForSeriesProps {
   endDate: string;
   selectedDaysNumbers: number[];
 }
+
 export interface PatientPreview {
   name: string;
   email: string;

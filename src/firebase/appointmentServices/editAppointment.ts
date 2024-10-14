@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { collection, doc, updateDoc } from "firebase/firestore";
 import {
   NotificationContext,
   NotificationType,
@@ -20,10 +20,24 @@ export const editAppointment = async ({
   addNotification,
 }: EditAppointmentProps): Promise<boolean> => {
   try {
-    const patientRef = doc(db, "patientdetails", patientId);
-    const appointmentRef = doc(patientRef, "appointmentItems", appointmentId);
+    // Ensure time is stored as a string in the format HH:MM
+    const formattedAppointment = {
+      ...updatedAppointment,
+      time:
+        typeof updatedAppointment.time === "string"
+          ? updatedAppointment.time
+          : "",
+      date:
+        updatedAppointment.date instanceof Date
+          ? updatedAppointment.date
+          : new Date(updatedAppointment.date),
+    };
 
-    await updateDoc(appointmentRef, { ...updatedAppointment });
+    const patientRef = doc(db, "patientdetails", patientId);
+    const appointmentCollection = collection(patientRef, "appointments");
+    const appointmentRef = doc(appointmentCollection, appointmentId);
+
+    await updateDoc(appointmentRef, { ...formattedAppointment });
     addNotification(
       "Appointment edited successfully",
       NotificationType.SUCCESS

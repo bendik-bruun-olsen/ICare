@@ -21,7 +21,8 @@ export const getAppointment = async (
 ): Promise<Appointment | undefined> => {
   try {
     const patientRef = doc(db, "patientdetails", patientId);
-    const appointmentRef = doc(patientRef, "appointments", appointmentId);
+    const appointmentCollection = collection(patientRef, "appointments");
+    const appointmentRef = doc(appointmentCollection, appointmentId);
     const appointmentSnap = await getDoc(appointmentRef);
 
     if (!appointmentSnap.exists()) {
@@ -30,6 +31,12 @@ export const getAppointment = async (
     }
 
     const data = appointmentSnap.data() as Appointment;
+    if (!(data.date instanceof Timestamp)) {
+      data.date = Timestamp.fromDate(new Date(data.date));
+    }
+    if (!(data.time instanceof Timestamp)) {
+      data.time = Timestamp.fromDate(new Date(data.time));
+    }
     return data;
   } catch {
     addNotification("Error fetching appointment", NotificationType.ERROR);
@@ -65,6 +72,12 @@ export const getAppointmentsBySelectedDate = async (
 
     const appointmentsWithId = querySnap.docs.map((doc) => {
       const data = doc.data() as Appointment;
+      if (!(data.date instanceof Timestamp)) {
+        data.date = Timestamp.fromDate(new Date(data.date));
+      }
+      if (!(data.time instanceof Timestamp)) {
+        data.time = Timestamp.fromDate(new Date(data.time));
+      }
       return {
         ...data,
         id: doc.id,

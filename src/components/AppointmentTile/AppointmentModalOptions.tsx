@@ -34,21 +34,24 @@ export default function AppointmentModalOptions({
             className={styles.modalItem}
             onClick={() =>
               onStatusChange(
-                currentTaskStatus === AppointmentStatus.ignore
+                currentTaskStatus === AppointmentStatus.cancelled
                   ? AppointmentStatus.unchecked
-                  : AppointmentStatus.ignore
+                  : AppointmentStatus.cancelled
               )
             }
           >
             <p>
-              {currentTaskStatus === AppointmentStatus.ignore
+              {currentTaskStatus === AppointmentStatus.cancelled
                 ? "Mark as applicable"
                 : "Mark as N/A"}
             </p>
           </li>
           <li className={styles.modalItem}>
             <Link
-              to={Paths.EDIT_APPOINTMENT.replace(":todoId", appointmentItem.id)}
+              to={Paths.EDIT_APPOINTMENT.replace(
+                ":appointmentId",
+                appointmentItem.id
+              )}
               state={{ selectedDate, editingSeries: false }}
             >
               <p>Edit/Delete This Task</p>
