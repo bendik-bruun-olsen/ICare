@@ -20,13 +20,9 @@ export const editAppointment = async ({
   addNotification,
 }: EditAppointmentProps): Promise<boolean> => {
   try {
-    // Ensure time is stored as a string in the format HH:MM
     const formattedAppointment = {
       ...updatedAppointment,
-      time:
-        typeof updatedAppointment.time === "string"
-          ? updatedAppointment.time
-          : "",
+      time: updatedAppointment.time.toString(),
       date:
         updatedAppointment.date instanceof Date
           ? updatedAppointment.date

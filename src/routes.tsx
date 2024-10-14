@@ -8,7 +8,7 @@ import ToDoPage from "./pages/ToDoPage/ToDoPage";
 import AddTodoPage from "./pages/AddTodoPage/AddTodoPage";
 import EditToDoPage from "./pages/EditTodoPage/EditTodoPage";
 import Appointment from "./pages/AppointmentsPage/AppointmentPage";
-import AddAppointment from "./pages/AddAppointment/AddAppointment";
+import AddAppointmentPage from "./pages/AddAppointmentPage/AddAppointmentPage";
 import EditAppointment from "./pages/EditAppointment/EditAppointmentPage";
 import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
@@ -72,7 +72,7 @@ const protectedRoutes = [
   },
   {
     path: Paths.ADD_APPOINTMENT,
-    element: <AddAppointment />,
+    element: <AddAppointmentPage />,
   },
   {
     path: Paths.EDIT_APPOINTMENT,

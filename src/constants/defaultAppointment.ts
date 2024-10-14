@@ -6,7 +6,7 @@ export const defaultAppointmentForm: Appointment = {
   title: "",
   description: "",
   date: Timestamp.now(),
-  time: Timestamp.now(),
+  time: "00:00",
   createdBy: "",
   status: AppointmentStatus.unchecked,
   patientId: "",

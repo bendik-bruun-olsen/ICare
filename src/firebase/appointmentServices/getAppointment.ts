@@ -27,17 +27,8 @@ export const getAppointment = async (
 
     if (!appointmentSnap.exists()) {
       addNotification("Appointment not found", NotificationType.ERROR);
-      throw new Error("Appointment not found");
     }
-
-    const data = appointmentSnap.data() as Appointment;
-    if (!(data.date instanceof Timestamp)) {
-      data.date = Timestamp.fromDate(new Date(data.date));
-    }
-    if (!(data.time instanceof Timestamp)) {
-      data.time = Timestamp.fromDate(new Date(data.time));
-    }
-    return data;
+    return appointmentSnap.data() as Appointment;
   } catch {
     addNotification("Error fetching appointment", NotificationType.ERROR);
   }
@@ -72,12 +63,6 @@ export const getAppointmentsBySelectedDate = async (
 
     const appointmentsWithId = querySnap.docs.map((doc) => {
       const data = doc.data() as Appointment;
-      if (!(data.date instanceof Timestamp)) {
-        data.date = Timestamp.fromDate(new Date(data.date));
-      }
-      if (!(data.time instanceof Timestamp)) {
-        data.time = Timestamp.fromDate(new Date(data.time));
-      }
       return {
         ...data,
         id: doc.id,

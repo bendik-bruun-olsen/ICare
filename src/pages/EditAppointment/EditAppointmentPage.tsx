@@ -52,8 +52,6 @@ const EditAppointmentPage: React.FC = () => {
       patientId,
       addNotification
     );
-    console.log("result", result);
-
     if (result) {
       setAppointment(result);
       return true;

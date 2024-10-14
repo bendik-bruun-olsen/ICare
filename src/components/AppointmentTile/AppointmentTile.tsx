@@ -52,7 +52,6 @@ export default function AppointmentTile({
     const fetchNames = async (): Promise<void> => {
       if (appointmentItem.createdBy) {
         const name = await getNameFromEmail(appointmentItem.createdBy);
-        console.log("name", name);
 
         if (name) {
           const capitalizedName = capitalizeUsername(name);
@@ -167,14 +166,7 @@ export default function AppointmentTile({
       >
         <div className={styles.tags}>{renderChip()}</div>
         <h3 className={styles.title}>
-          {`${
-            appointmentItem.time?.toDate
-              ? appointmentItem.time.toDate().toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : "No time"
-          } - ${appointmentItem.title}`}
+          {`${appointmentItem.time} - ${appointmentItem.title}`}
         </h3>
         <div
           className={styles.contentContainer}

@@ -88,12 +88,11 @@ export interface TodoSeriesInputStatusProps {
 }
 
 export interface Appointment {
-  data: Timestamp;
   id: string;
   title: string;
   description: string;
-  date: Date;
-  time: Timestamp;
+  date: Timestamp;
+  time: string;
   createdBy: string;
   status: AppointmentStatus;
   patientId: string;

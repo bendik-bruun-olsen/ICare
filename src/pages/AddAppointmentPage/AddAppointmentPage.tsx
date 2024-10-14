@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { TextField } from "@equinor/eds-core-react";
 import StartAndEndDate from "../../components/StartAndEndDate/StartAndEndDate";
-import { db } from "../../firebase/firebase";
-import { collection, addDoc, doc, Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import TitleDescription from "../../components/TitleDescription/TitleDescription";
 import AddButton from "../../components/AddButton/AddButton";
 import styles from "../AddTodoPage/AddTodoPage.module.css";
@@ -10,41 +9,34 @@ import Navbar from "../../components/Navbar/Navbar";
 import { useAuth } from "../../hooks/useAuth/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Paths } from "../../paths";
-import { AppointmentStatus } from "../../types";
+import { Appointment } from "../../types";
+import { formatTimestampToDateString } from "../../utils";
+import { addAppointment } from "../../firebase/appointmentServices/addAppointment";
+import { NotificationContext } from "../../context/NotificationContext";
+import { defaultAppointmentForm } from "../../constants/defaultAppointment";
 
-export default function AddAppointment(): JSX.Element {
+export default function AddAppointmentPage(): JSX.Element {
   const { currentPatientId } = useAuth();
+  const currentUser = useAuth().userData?.email;
   const patientId = currentPatientId || "";
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const navigate = useNavigate();
-
-  const [startDate, setStartDate] = useState(
-    new Date().toISOString().substring(0, 10)
+  const { addNotification } = useContext(NotificationContext);
+  const [appointmentData, setAppointmentData] = useState<Appointment>(
+    defaultAppointmentForm
   );
-  const [time, setTime] = useState("");
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
 
-    // Ensure time is in the correct format
-    if (typeof time !== "string" || !/^\d{2}:\d{2}$/.test(time)) {
-      console.error("Invalid time format");
-      return;
-    }
-
-    const newAppointment = {
-      title,
-      description,
-      startDate: Timestamp.fromDate(new Date(startDate)),
-      time,
-      newStatus: AppointmentStatus,
-      createdBy: "",
-    };
     try {
-      const patientRef = doc(db, "patientdetails", patientId);
-      const appointmentRef = collection(patientRef, "appointments");
-      await addDoc(appointmentRef, newAppointment);
+      console.log("appointmentData: ", appointmentData);
+      console.log("currentUser: ", currentUser);
+
+      if (!currentUser) {
+        return;
+      }
+
+      addAppointment(appointmentData, patientId, currentUser, addNotification);
     } catch (e) {
       console.error("Error in adding appointment document: ", e);
     }
@@ -54,10 +46,6 @@ export default function AddAppointment(): JSX.Element {
     e: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
     await handleSubmit(e);
-    setTitle("");
-    setDescription("");
-    setStartDate(new Date().toISOString().substring(0, 10));
-    setTime("");
     navigate(Paths.APPOINTMENT);
   };
 
@@ -71,17 +59,32 @@ export default function AddAppointment(): JSX.Element {
             <div className={styles.formContainer}>
               <div className={styles.fieldContainer}>
                 <TitleDescription
-                  title={title}
-                  setTitle={setTitle}
-                  description={description}
-                  setDescription={setDescription}
+                  title={appointmentData.title}
+                  setTitle={(title) =>
+                    setAppointmentData((prev) => ({
+                      ...prev,
+                      title,
+                    }))
+                  }
+                  description={appointmentData.description}
+                  setDescription={(description) =>
+                    setAppointmentData((prev) => ({
+                      ...prev,
+                      description,
+                    }))
+                  }
                 />
               </div>
               <div className={styles.fieldContainer}>
                 <StartAndEndDate
                   label="Select Date"
-                  value={startDate}
-                  onChange={(date: string) => setStartDate(date)}
+                  value={formatTimestampToDateString(appointmentData.date)}
+                  onChange={(date) =>
+                    setAppointmentData((prev) => ({
+                      ...prev,
+                      date: Timestamp.fromDate(new Date(date)),
+                    }))
+                  }
                 />
               </div>
               <div className={styles.fieldContainer}>
@@ -89,10 +92,13 @@ export default function AddAppointment(): JSX.Element {
                   id="time"
                   label="Select time"
                   type="time"
-                  value={time}
+                  value={appointmentData.time}
                   className={styles.time}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setTime(e.target.value)
+                    setAppointmentData((prev) => ({
+                      ...prev,
+                      time: e.target.value,
+                    }))
                   }
                   style={{ width: "150px" }}
                 />
