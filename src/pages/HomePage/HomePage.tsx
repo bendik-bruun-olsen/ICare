@@ -11,8 +11,12 @@ import { NotificationType, ToDo } from "../../types";
 import DateSelector from "../../components/DateSelector/DateSelector";
 import { useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
+import { getQuickviewAppointments } from "../../firebase/appointmentServices/getQuickviewAppointments";
 
-export default function HomePage(): JSX.Element {
+export default function HomePage(
+  appointmentId: string,
+  patientId: string
+): JSX.Element {
   const location = useLocation();
   const initialDate = location.state
     ? new Date(location.state.selectedDate)
@@ -36,7 +40,7 @@ export default function HomePage(): JSX.Element {
     }
   }, [currentPatientId, addNotification]);
 
-  const patientId = currentPatientId;
+  // const patientId = currentPatientId;
 
   useEffect(() => {
     async function fetchTodos(): Promise<void> {
@@ -54,6 +58,14 @@ export default function HomePage(): JSX.Element {
 
     fetchTodos();
   }, [selectedDate, patientId, addNotification]);
+
+  const test = getQuickviewAppointments(
+    appointmentId,
+    patientId,
+    addNotification
+  );
+
+  console.log("test: ", test);
 
   return (
     <>
@@ -73,10 +85,10 @@ export default function HomePage(): JSX.Element {
             />
           </div>
           <AppointmentsQuickView
-            firstAppointment="Doctor"
-            firstAppointmentTime="08:30"
-            secondAppointment="Doctor again"
-            secondAppointmentTime="11:30"
+            firstAppointment="First Appointment"
+            firstAppointmentTime="10:00 AM"
+            secondAppointment="Second Appointment"
+            secondAppointmentTime="2:00 PM"
           />
 
           <RemainingTodos todos={todos} />
