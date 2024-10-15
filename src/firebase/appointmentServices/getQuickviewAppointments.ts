@@ -1,26 +1,39 @@
 import { Appointment, NotificationContext } from "../../types";
-import { getAppointment } from "./getAppointment";
+import { getAppointmentsBySelectedDate } from "./getAppointment";
 
 export const getQuickviewAppointments = async (
-  appointmentId: string,
-  patientId: string,
-  addNotification: NotificationContext["addNotification"]
+	selectedDate: Date,
+	patientId: string,
+	addNotification: NotificationContext["addNotification"]
 ): Promise<Appointment[]> => {
-  const fetchedAppointments: Appointment[] = await getAppointment(
-    appointmentId,
-    patientId,
-    addNotification
-  );
-  if (!fetchedAppointments) return [];
+	const fetchedAppointments: Appointment[] =
+		await getAppointmentsBySelectedDate(
+			selectedDate,
+			patientId,
+			addNotification
+		);
+	if (!fetchedAppointments) return [];
 
-  const now = new Date();
+	const now = new Date();
 
-  const sortedAppointments: Appointment[] = fetchedAppointments
-    .sort((a, b) => a.time.localeCompare(b.time))
-    .filter((appointment) => new Date(appointment.time) > now);
+	const sortedAppointments: Appointment[] = fetchedAppointments
+		.map((appointment) => {
+			const [hours, minutes] = appointment.time.split(":").map(Number);
+			const appointmentDateTime = new Date(selectedDate);
+			appointmentDateTime.setHours(hours, minutes, 0, 0);
 
-  sortedAppointments.slice(0, 2);
-  console.log("fetchedAppointments: ", fetchedAppointments);
-  console.log("sortedAppointments: ", sortedAppointments);
-  return sortedAppointments;
+			return {
+				...appointment,
+				appointmentDateTime,
+			};
+		})
+		.filter((appointment) => appointment.appointmentDateTime > now)
+		.sort(
+			(a, b) =>
+				a.appointmentDateTime.getTime() - b.appointmentDateTime.getTime()
+		);
+
+	const limitedAppointments = sortedAppointments.slice(0, 2);
+
+	return limitedAppointments;
 };

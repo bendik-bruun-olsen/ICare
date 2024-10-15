@@ -7,93 +7,110 @@ import { useAuth } from "../../hooks/useAuth/useAuth";
 import { useContext, useEffect, useState } from "react";
 import { getPatient } from "../../firebase/patientServices/getPatient";
 import { NotificationContext } from "../../context/NotificationContext";
-import { NotificationType, ToDo } from "../../types";
+import { ToDo } from "../../types";
 import DateSelector from "../../components/DateSelector/DateSelector";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
+import { Paths } from "../../paths";
 import { getQuickviewAppointments } from "../../firebase/appointmentServices/getQuickviewAppointments";
 
-export default function HomePage(
-  appointmentId: string,
-  patientId: string
-): JSX.Element {
-  const location = useLocation();
-  const initialDate = location.state
-    ? new Date(location.state.selectedDate)
-    : new Date();
-  const [selectedDate, setSelectedDate] = useState(initialDate);
-  const { currentPatientId } = useAuth();
-  const [patientDetails, setPatientDetails] = useState<{
-    name: string;
-    age: string;
-  }>();
-  const { addNotification } = useContext(NotificationContext);
-  const [todos, setTodos] = useState<ToDo[]>([]);
+export default function HomePage(): JSX.Element {
+	const location = useLocation();
+	const initialDate = location.state
+		? new Date(location.state.selectedDate)
+		: new Date();
+	const [selectedDate, setSelectedDate] = useState(initialDate);
+	const { currentPatientId } = useAuth();
+	const [patientDetails, setPatientDetails] = useState<{
+		name: string;
+		age: string;
+	}>();
+	const { addNotification } = useContext(NotificationContext);
+	const [todos, setTodos] = useState<ToDo[]>([]);
+	const navigate = useNavigate();
+	const [firstAppointment, setFirstAppointment] = useState<string>("");
+	const [firstAppointmentTime, setFirstAppointmentTime] = useState<string>("");
+	const [secondAppointment, setSecondAppointment] = useState<string>("");
+	const [secondAppointmentTime, setSecondAppointmentTime] =
+		useState<string>("");
 
-  useEffect(() => {
-    if (currentPatientId) {
-      getPatient(currentPatientId, addNotification).then((data) => {
-        if (data && "name" in data && "age" in data) {
-          setPatientDetails({ name: data.name, age: data.age });
-        }
-      });
-    }
-  }, [currentPatientId, addNotification]);
+	useEffect(() => {
+		if (currentPatientId) {
+			getPatient(currentPatientId, addNotification).then((data) => {
+				if (data && "name" in data && "age" in data) {
+					setPatientDetails({ name: data.name, age: data.age });
+				}
+			});
+		}
+		if (!currentPatientId) {
+			navigate(Paths.PATIENT_OVERVIEW);
+		}
+	}, [currentPatientId, addNotification]);
 
-  // const patientId = currentPatientId;
+	const patientId = currentPatientId;
 
-  useEffect(() => {
-    async function fetchTodos(): Promise<void> {
-      if (!patientId) {
-        return;
-      }
-      const fetchedTodos =
-        (await getTodosBySelectedDate(
-          selectedDate,
-          patientId,
-          addNotification
-        )) || [];
-      setTodos(fetchedTodos);
-    }
+	useEffect(() => {
+		async function fetchTodos(): Promise<void> {
+			if (!patientId) {
+				return;
+			}
+			const fetchedTodos =
+				(await getTodosBySelectedDate(
+					selectedDate,
+					patientId,
+					addNotification
+				)) || [];
+			setTodos(fetchedTodos);
+		}
 
-    fetchTodos();
-  }, [selectedDate, patientId, addNotification]);
+		fetchTodos();
+	}, [selectedDate, patientId, addNotification]);
 
-  const test = getQuickviewAppointments(
-    appointmentId,
-    patientId,
-    addNotification
-  );
+	useEffect(() => {
+		async function fetchQuickviewAppointments(): Promise<void> {
+			const appointments = await getQuickviewAppointments(
+				selectedDate,
+				patientId,
+				addNotification
+			);
+			if (appointments && appointments.length > 0) {
+				setFirstAppointment(appointments[0].title);
+				setFirstAppointmentTime(appointments[0].time);
+				if (appointments.length > 1) {
+					setSecondAppointment(appointments[1].title);
+					setSecondAppointmentTime(appointments[1].time);
+				}
+			}
+		}
+		fetchQuickviewAppointments();
+	}, [patientId, selectedDate]);
 
-  console.log("test: ", test);
-
-  return (
-    <>
-      <Navbar centerContent="Home" />
-      <div className={style.pageContainer}>
-        <div className={style.pageContent}>
-          {patientDetails && (
-            <PatientDetails
-              patientName={patientDetails.name}
-              age={patientDetails.age.toString()}
-            />
-          )}
-          <div className={style.dateSelector}>
-            <DateSelector
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-            />
-          </div>
-          <AppointmentsQuickView
-            firstAppointment="First Appointment"
-            firstAppointmentTime="10:00 AM"
-            secondAppointment="Second Appointment"
-            secondAppointmentTime="2:00 PM"
-          />
-
-          <RemainingTodos todos={todos} />
-        </div>
-      </div>
-    </>
-  );
+	return (
+		<>
+			<Navbar centerContent="Home" />
+			<div className={style.pageContainer}>
+				<div className={style.pageContent}>
+					{patientDetails && (
+						<PatientDetails
+							patientName={patientDetails.name}
+							age={patientDetails.age.toString()}
+						/>
+					)}
+					<div className={style.dateSelector}>
+						<DateSelector
+							selectedDate={selectedDate}
+							setSelectedDate={setSelectedDate}
+						/>
+					</div>
+					<AppointmentsQuickView
+						firstAppointment={firstAppointment}
+						firstAppointmentTime={firstAppointmentTime}
+						secondAppointment={secondAppointment}
+						secondAppointmentTime={secondAppointmentTime}
+					/>
+					<RemainingTodos todos={todos} />
+				</div>
+			</div>
+		</>
+	);
 }

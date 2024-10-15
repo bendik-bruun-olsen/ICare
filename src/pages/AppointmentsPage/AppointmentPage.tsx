@@ -12,76 +12,83 @@ import Navbar from "../../components/Navbar/Navbar";
 import AppointmentTile from "../../components/AppointmentTile/AppointmentTile";
 import { Appointment } from "../../types";
 import { getAppointmentsBySelectedDate } from "../../firebase/appointmentServices/getAppointment";
-import { constructFrom } from "date-fns/fp/constructFrom";
+import { getQuickviewAppointments } from "../../firebase/appointmentServices/getQuickviewAppointments";
 
 const AppointmentPage: React.FC = () => {
-  const { currentPatientId } = useAuth();
-  const { addNotification } = useContext(NotificationContext);
-  const patientId = currentPatientId || "";
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+	const { currentPatientId } = useAuth();
+	const { addNotification } = useContext(NotificationContext);
+	const patientId = currentPatientId || "";
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  useEffect(() => {
-    const fetchAppointments = async (): Promise<void> => {
-      try {
-        const fetchedAppointments = await getAppointmentsBySelectedDate(
-          selectedDate,
-          patientId,
-          addNotification
-        );
+	useEffect(() => {
+		const fetchAppointments = async (): Promise<void> => {
+			try {
+				const fetchedAppointments = await getAppointmentsBySelectedDate(
+					selectedDate,
+					patientId,
+					addNotification
+				);
 
-        console.log("fetchedAppointments: ", fetchedAppointments);
+				console.log("fetchedAppointments: ", fetchedAppointments);
 
-        if (!fetchedAppointments) {
-          addNotification("No appointments", NotificationType.ERROR);
-          return;
-        }
+				if (!fetchedAppointments) {
+					addNotification("No appointments", NotificationType.ERROR);
+					return;
+				}
 
-        const sortedAppointments: Appointment[] = fetchedAppointments.sort(
-          (a, b) => a.time.localeCompare(b.time)
-        );
+				const sortedAppointments: Appointment[] = fetchedAppointments.sort(
+					(a, b) => a.time.localeCompare(b.time)
+				);
 
-        setAppointments(sortedAppointments);
-      } catch (error) {
-        console.error("Error fetching appointments: ", error);
-        addNotification("Error fetching appointments", NotificationType.ERROR);
-      }
-    };
+				const test = await getQuickviewAppointments(
+					selectedDate,
+					patientId,
+					addNotification
+				);
+				console.log("test: ", test);
 
-    fetchAppointments();
-  }, [selectedDate, patientId, addNotification]);
+				setAppointments(sortedAppointments);
+			} catch (error) {
+				console.error("Error fetching appointments: ", error);
+				addNotification("Error fetching appointments", NotificationType.ERROR);
+			}
+		};
 
-  return (
-    <>
-      <Navbar centerContent="Appointments" />
-      <div className={"pageWrapper " + styles.fullPage}>
-        <DateSelector
-          selectedDate={selectedDate}
-          setSelectedDate={(prev) => setSelectedDate(prev)}
-        />
-        <div>
-          <h2>Appointments for {selectedDate.toDateString()}</h2>
-          <ul>
-            {appointments.map((appointment) => (
-              <AppointmentTile
-                key={appointment.id}
-                appointmentItem={appointment}
-                selectedDate={selectedDate}
-                onStatusChange={() => {}}
-              />
-            ))}
-          </ul>
-        </div>
-        <Link to={Paths.ADD_APPOINTMENT} state={{ selectedDate }}>
-          <div className={styles.addIcon}>
-            <Button variant="contained_icon">
-              <Icon data={add} size={32} />
-            </Button>
-          </div>
-        </Link>
-      </div>
-    </>
-  );
+		fetchAppointments();
+	}, [selectedDate, patientId, addNotification]);
+
+	return (
+		<>
+			<Navbar centerContent="Appointments" />
+			<div className={"pageWrapper " + styles.fullPage}>
+				<DateSelector
+					selectedDate={selectedDate}
+					setSelectedDate={(prev) => setSelectedDate(prev)}
+				/>
+				<div>
+					<h2>Appointments for {selectedDate.toDateString()}</h2>
+					<ul>
+						{appointments.map((appointment) => (
+							<AppointmentTile
+								key={appointment.id}
+								appointmentItem={appointment}
+								selectedDate={selectedDate}
+								onStatusChange={() => {}}
+							/>
+						))}
+					</ul>
+				</div>
+				<Link to={Paths.ADD_APPOINTMENT} state={{ selectedDate }}>
+					<div className={styles.addIcon}>
+						<Button variant="contained_icon">
+							<Icon data={add} size={32} />
+						</Button>
+					</div>
+				</Link>
+			</div>
+		</>
+	);
 };
 
 export default AppointmentPage;
