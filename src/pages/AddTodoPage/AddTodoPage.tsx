@@ -28,8 +28,8 @@ import {
   clearTodoItemInputStatus,
   clearTodoSeriesInputStatus,
   validateDateRange,
-  validateAppointmentItemFields,
   validateTodoSeriesFields,
+  validateTodoItemFields,
 } from "../../utils";
 import ErrorPage from "../ErrorPage/ErrorPage";
 import { Paths } from "../../paths";
@@ -177,7 +177,7 @@ const AddToDoPage: React.FC = () => {
       }
       if (!isRepeating) {
         if (
-          !validateAppointmentItemFields({
+          !validateTodoItemFields({
             todoItem,
             setTodoItemInputFieldStatus,
             addNotification,

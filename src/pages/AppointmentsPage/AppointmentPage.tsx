@@ -12,6 +12,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import AppointmentTile from "../../components/AppointmentTile/AppointmentTile";
 import { Appointment } from "../../types";
 import { getAppointmentsBySelectedDate } from "../../firebase/appointmentServices/getAppointment";
+import { constructFrom } from "date-fns/fp/constructFrom";
 
 const AppointmentPage: React.FC = () => {
   const { currentPatientId } = useAuth();
@@ -29,12 +30,18 @@ const AppointmentPage: React.FC = () => {
           addNotification
         );
 
+        console.log("fetchedAppointments: ", fetchedAppointments);
+
         if (!fetchedAppointments) {
           addNotification("No appointments", NotificationType.ERROR);
           return;
         }
 
-        setAppointments(fetchedAppointments);
+        const sortedAppointments: Appointment[] = fetchedAppointments.sort(
+          (a, b) => a.time.localeCompare(b.time)
+        );
+
+        setAppointments(sortedAppointments);
       } catch (error) {
         console.error("Error fetching appointments: ", error);
         addNotification("Error fetching appointments", NotificationType.ERROR);
