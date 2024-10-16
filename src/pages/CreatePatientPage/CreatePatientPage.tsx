@@ -78,6 +78,8 @@ export default function CreatePatientPage(): JSX.Element {
     const { age, phone } = formData;
     if (isNaN(Number(age))) return false;
     if (isNaN(Number(phone))) return false;
+    if (+age < 0 || +phone < 0) return false;
+    if (+age > 150) return false;
     return true;
   };
 

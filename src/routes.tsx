@@ -12,7 +12,7 @@ import AddAppointmentPage from "./pages/AddAppointmentPage/AddAppointmentPage";
 import EditAppointment from "./pages/EditAppointment/EditAppointmentPage";
 import ContactDetailsPage from "./pages/ContactDetailsPage";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
-import AboutUsPage from "./pages/AboutUsPage";
+import AboutUsPage from "./pages/AboutUsPage/AboutUsPage";
 import RecoverPasswordPage from "./pages/RecoverPassword/RecoverPasswordPage";
 import ResetPasswordPage from "./pages/ResetPassword/ResetPasswordPage";
 import UserProfilePage from "./pages/UserProfilePage/UserProfilePage";

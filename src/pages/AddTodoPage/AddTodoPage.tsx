@@ -158,12 +158,14 @@ const AddToDoPage: React.FC = () => {
           completedBy: null,
           patientId,
         };
+
         const newTodos = generateTodosForSeries({
           newTodo,
           startDate: formatTimestampToDateString(todoSeriesInfo.startDate),
           endDate: formatTimestampToDateString(todoSeriesInfo.endDate),
           selectedDaysNumbers,
         });
+
         await addMultipleNewTodos(
           newTodos,
           todoSeriesInfo,

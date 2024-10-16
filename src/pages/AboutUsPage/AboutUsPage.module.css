@@ -1,0 +1,36 @@
+.fullPage h1,
+h2,
+p,
+strong,
+ul,
+li {
+  color: var(--black);
+}
+
+.fullPage {
+  text-align: justify;
+}
+
+.fullPage li {
+  margin-top: 10px;
+  list-style: none;
+}
+
+h1 {
+  font-weight: 700 !important;
+}
+
+h2,
+h1 {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.lastParagraph {
+  margin-top: 20px;
+}
+
+img {
+  display: flex;
+  align-items: center;
+}

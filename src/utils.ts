@@ -11,18 +11,15 @@ import { db } from "./firebase/firebase";
 import {
   NotificationType,
   TodoItemInputStatusProps,
-  AppointmentInputStatusProps,
   ToDo,
   validateDateRangeProps,
   validateTodoItemFieldsProps,
   validateAppointmentItemFieldsProps,
   validateTodoSeriesFieldsProps,
   clearTodoSeriesInputStatusProps,
-  GenerateTodosForSeriesProps,
 } from "./types";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
-import { Dispatch, SetStateAction } from "react";
 import firebase from "firebase/compat/app";
 
 export function getStartOfDay(selectedDate: Date): Date {
@@ -147,6 +144,20 @@ export const mapSelectedDaysToNumbers = (selectedDays: string[]): number[] => {
   });
 };
 
+interface GenerateTodosForSeriesProps {
+  newTodo: ToDo;
+  startDate: string;
+  endDate: string;
+  selectedDaysNumbers: number[];
+}
+
+function isCurrentDayWithinSelectedDays(
+  days: number[],
+  currentDate: Date
+): boolean {
+  return days.includes(currentDate.getDay());
+}
+
 export const generateTodosForSeries = ({
   newTodo,
   startDate,
@@ -155,11 +166,16 @@ export const generateTodosForSeries = ({
 }: GenerateTodosForSeriesProps): ToDo[] => {
   const newTodos = [];
   const currentDate = new Date(startDate);
-  const isCurrentDayWithinSelectedDays = selectedDaysNumbers.includes(
-    currentDate.getDay()
-  );
   while (currentDate <= new Date(endDate)) {
-    if (isCurrentDayWithinSelectedDays) {
+    console.log("currentDate", currentDate);
+    console.log("day of current date", currentDate.getDay());
+    console.log("selectedDaysNumbers", selectedDaysNumbers);
+    console.log(
+      "isCurrentDayWithinSelectedDays",
+      isCurrentDayWithinSelectedDays(selectedDaysNumbers, currentDate)
+    );
+    if (isCurrentDayWithinSelectedDays(selectedDaysNumbers, currentDate)) {
+      console.log("valid day");
       const todoForDay = {
         ...newTodo,
         date: Timestamp.fromDate(currentDate),

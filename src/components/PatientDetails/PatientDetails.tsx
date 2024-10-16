@@ -37,7 +37,7 @@ export default function PatientDetails({
       <div className={styles.patientDetailsWrapper}>
         <div className={styles.patientInfoBlock}>
           <PatientProfilePicture
-            setProfileImage={() => null}
+            setProfileImage={pictureUrl}
             patientId={currentPatientId || ""}
             showIcon={false}
             showMaxFileSize={false}

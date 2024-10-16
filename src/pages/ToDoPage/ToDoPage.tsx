@@ -30,6 +30,7 @@ const ToDoPage: React.FC = () => {
   const { addNotification } = useContext(NotificationContext);
   const { currentPatientId } = useAuth();
   const patientId = currentPatientId || "";
+  const [noTodos, setNoTodos] = useState<boolean>(false);
 
   useEffect(() => {
     if (!selectedDate) return setHasError(true);
@@ -42,6 +43,10 @@ const ToDoPage: React.FC = () => {
           patientId,
           addNotification
         );
+        if (!data || data.length === 0) {
+          setNoTodos(true);
+          return;
+        }
         if (data) {
           const groupedTodos = groupTodosByCategory(data as ToDo[]);
           const sortedTodosGroup = sortTodosGroup(groupedTodos);
@@ -69,6 +74,30 @@ const ToDoPage: React.FC = () => {
     const updatedSortedTodosGroup = sortTodosGroup(updatedGroupedTodos);
     setCategorizedTodos(updatedSortedTodosGroup);
   };
+
+  if (noTodos) {
+    return (
+      <>
+        <Navbar centerContent="ToDo" />
+        <div className={"pageWrapper " + styles.fullPage}>
+          <DateSelector
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+          />
+          <div>
+            <h2>No todos for {selectedDate.toDateString()}</h2>
+            <Link to={Paths.ADD_TODO} state={{ selectedDate }}>
+              <div className={styles.addIcon}>
+                <Button variant="contained_icon">
+                  <Icon data={add} size={32} />
+                </Button>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (isLoading)
     return (

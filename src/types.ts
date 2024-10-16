@@ -205,13 +205,6 @@ export interface validateTodoItemFieldsProps {
   addNotification: NotificationContext["addNotification"];
 }
 
-export interface GenerateTodosForSeriesProps {
-  newTodo: ToDo;
-  startDate: string;
-  endDate: string;
-  selectedDaysNumbers: number[];
-}
-
 export interface PatientPreview {
   name: string;
   email: string;

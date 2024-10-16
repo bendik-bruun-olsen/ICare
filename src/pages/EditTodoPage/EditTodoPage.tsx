@@ -18,8 +18,8 @@ import {
   clearTodoItemInputStatus,
   clearTodoSeriesInputStatus,
   validateDateRange,
-  validateAppointmentItemFields,
   validateTodoSeriesFields,
+  validateTodoItemFields,
 } from "../../utils";
 import {
   daysOfTheWeek,
@@ -217,7 +217,7 @@ const EditToDoPage: React.FC = () => {
 
   const handleValidateItemFields = (): boolean => {
     if (
-      !validateAppointmentItemFields({
+      !validateTodoItemFields({
         todoItem,
         setTodoItemInputFieldStatus,
         addNotification,
@@ -228,13 +228,19 @@ const EditToDoPage: React.FC = () => {
   };
 
   const handleValidateSeriesFields = (): boolean => {
-    if (
-      !validateDateRange(
-        todoSeriesInfo.startDate,
-        todoSeriesInfo.endDate,
-        addNotification
-      )
-    ) {
+    const dateRangeIsValid = validateDateRange({
+      startDate: todoSeriesInfo.startDate,
+      endDate: todoSeriesInfo.endDate,
+      addNotification: addNotification,
+    });
+
+    const todoSeriesFieldsAreValid = validateTodoSeriesFields({
+      todoSeriesInfo,
+      setTodoSeriesInputFieldStatus,
+      addNotification,
+    });
+
+    if (!dateRangeIsValid) {
       setTodoSeriesInputFieldStatus((prev) => ({
         ...prev,
         endDate: "error",
@@ -242,14 +248,7 @@ const EditToDoPage: React.FC = () => {
 
       return false;
     }
-    if (
-      !validateTodoSeriesFields({
-        todoSeriesInfo,
-        setTodoSeriesInputFieldStatus,
-        addNotification,
-      })
-    )
-      return false;
+    if (!todoSeriesFieldsAreValid) return false;
     return true;
   };
 
@@ -286,6 +285,7 @@ const EditToDoPage: React.FC = () => {
           return;
         }
       }
+
       if (!isCreatingNewSeries) {
         if (!handleValidateItemFields()) return;
         const itemEditSuccess = await editTodoItem({
@@ -374,6 +374,8 @@ const EditToDoPage: React.FC = () => {
         <Loading />
       </>
     );
+
+  console.log(todoSeriesInfo);
 
   return (
     <>
