@@ -39,6 +39,9 @@ export const getAppointmentsBySelectedDate = async (
   patientId: string,
   addNotification: NotificationContext["addNotification"]
 ): Promise<Appointment[]> => {
+  console.log("selectedDate", selectedDate);
+  console.log("patientId", patientId);
+
   try {
     const patientRef = doc(db, "patientdetails", patientId);
     const appointmentCollection = collection(patientRef, "appointments");
@@ -68,6 +71,8 @@ export const getAppointmentsBySelectedDate = async (
         id: doc.id,
       };
     });
+
+    console.log("appointmentsWithId", appointmentsWithId);
 
     return appointmentsWithId;
   } catch {

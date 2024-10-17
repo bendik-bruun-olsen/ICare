@@ -16,14 +16,13 @@ import { getAppointmentsBySelectedDate } from "../../firebase/appointmentService
 const AppointmentPage: React.FC = () => {
   const { currentPatientId } = useAuth();
   const { addNotification } = useContext(NotificationContext);
-  const patientId = currentPatientId || "";
+  const patientId = currentPatientId;
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [noAppointments, setNoAppointments] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchAppointments = async (): Promise<void> => {
-      if (!patientId || !selectedDate) return;
+      if (!patientId) return;
       try {
         const fetchedAppointments = await getAppointmentsBySelectedDate(
           selectedDate,
@@ -31,16 +30,16 @@ const AppointmentPage: React.FC = () => {
           addNotification
         );
 
-        if (fetchedAppointments.length === 0) {
-          addNotification("No appointments", NotificationType.ERROR);
-          setNoAppointments(true);
-          return;
-        }
         const sortedAppointments: Appointment[] = fetchedAppointments.sort(
           (a, b) => a.time.localeCompare(b.time)
         );
 
         setAppointments(sortedAppointments);
+
+        if (fetchedAppointments.length === 0) {
+          addNotification("No appointments", NotificationType.INFO);
+          return;
+        }
       } catch (error) {
         console.error("Error fetching appointments: ", error);
         addNotification("Error fetching appointments", NotificationType.ERROR);
@@ -50,7 +49,7 @@ const AppointmentPage: React.FC = () => {
     fetchAppointments();
   }, [selectedDate, patientId]);
 
-  if (noAppointments === true) {
+  if (appointments.length === 0) {
     return (
       <>
         <Navbar centerContent="Appointments" />
