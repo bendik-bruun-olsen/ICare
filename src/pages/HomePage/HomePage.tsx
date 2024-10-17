@@ -79,6 +79,8 @@ export default function HomePage(): JSX.Element {
       if (appointments.length === 0) {
         setFirstAppointment("No appointments yet");
         setFirstAppointmentTime("");
+        setSecondAppointment("");
+        setSecondAppointmentTime("");
       }
       if (appointments && appointments.length > 0) {
         setFirstAppointment(appointments[0].title);
