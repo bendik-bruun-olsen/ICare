@@ -7,7 +7,7 @@ import { Icon } from "@equinor/eds-core-react";
 import { add } from "@equinor/eds-icons";
 import Navbar from "../../components/Navbar/Navbar";
 import { groupTodosByCategory, sortTodosGroup } from "../../utils";
-import { ToDo, ToDoStatus } from "../../types";
+import { NotificationType, ToDo, ToDoStatus } from "../../types";
 import { Link, useLocation } from "react-router-dom";
 import { getTodosBySelectedDate } from "../../firebase/todoServices/getTodo";
 import ErrorPage from "../ErrorPage/ErrorPage";
@@ -29,13 +29,13 @@ const ToDoPage: React.FC = () => {
   const [hasError, setHasError] = useState(false);
   const { addNotification } = useContext(NotificationContext);
   const { currentPatientId } = useAuth();
-  const patientId = currentPatientId || "";
-  const [noTodos, setNoTodos] = useState<boolean>(false);
+  const patientId = currentPatientId;
 
   useEffect(() => {
     if (!selectedDate) return setHasError(true);
 
     async function fetchData(): Promise<void> {
+      if (!patientId) return;
       setIsLoading(true);
       try {
         const data = await getTodosBySelectedDate(
@@ -43,14 +43,15 @@ const ToDoPage: React.FC = () => {
           patientId,
           addNotification
         );
-        if (!data || data.length === 0) {
-          setNoTodos(true);
-          return;
-        }
+        setIsLoading(true);
         if (data) {
           const groupedTodos = groupTodosByCategory(data as ToDo[]);
           const sortedTodosGroup = sortTodosGroup(groupedTodos);
           setCategorizedTodos(sortedTodosGroup);
+        }
+        if (!data || data.length === 0) {
+          addNotification("No todos", NotificationType.INFO);
+          return;
         }
       } finally {
         setIsLoading(false);
@@ -75,7 +76,7 @@ const ToDoPage: React.FC = () => {
     setCategorizedTodos(updatedSortedTodosGroup);
   };
 
-  if (noTodos) {
+  if (Object.keys(categorizedTodos).length === 0) {
     return (
       <>
         <Navbar centerContent="ToDo" />

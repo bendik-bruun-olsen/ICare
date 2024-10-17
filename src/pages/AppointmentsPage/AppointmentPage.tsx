@@ -19,6 +19,7 @@ const AppointmentPage: React.FC = () => {
   const patientId = currentPatientId;
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchAppointments = async (): Promise<void> => {
@@ -29,6 +30,7 @@ const AppointmentPage: React.FC = () => {
           patientId,
           addNotification
         );
+        setIsLoading(true);
 
         const sortedAppointments: Appointment[] = fetchedAppointments.sort(
           (a, b) => a.time.localeCompare(b.time)
@@ -43,6 +45,8 @@ const AppointmentPage: React.FC = () => {
       } catch (error) {
         console.error("Error fetching appointments: ", error);
         addNotification("Error fetching appointments", NotificationType.ERROR);
+      } finally {
+        setIsLoading(false);
       }
     };
 
