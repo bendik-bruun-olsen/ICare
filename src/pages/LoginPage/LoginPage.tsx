@@ -56,7 +56,7 @@ export default function LoginPage(): JSX.Element {
       setIsLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
       addNotification("Login successful!", NotificationType.SUCCESS);
-      navigate(Paths.HOME);
+      navigate(Paths.PATIENT_OVERVIEW);
     } catch (err) {
       const error = err as FirestoreError;
       const invalidEmail = error.message.includes("auth/invalid-email");

@@ -1,0 +1,75 @@
+.headlineText {
+  color: var(--black);
+}
+.patientList {
+  display: flex;
+  flex-direction: column;
+  max-width: 750px;
+  margin: 0 auto;
+  padding: calc(20px + var(--navbar-height)) 20px 20px 20px;
+}
+.administeredPatientList {
+  display: flex;
+  flex-direction: column;
+
+  list-style-type: none;
+}
+.assignedPatientList {
+  display: flex;
+  flex-direction: column;
+
+  list-style-type: none;
+}
+.administeredPatientListItem,
+.assignedPatientListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--fadedblue);
+  margin: 5px 0;
+  padding: 15px 15px;
+  border-radius: 5px;
+}
+.addIcon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+.picNameAndEmail {
+  display: flex;
+  align-items: center;
+}
+.picNameAndEmail img {
+  margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.nameAndEmail {
+  display: flex;
+  flex-direction: column;
+}
+.nameAndEmail h3 {
+  color: var(--black);
+}
+.nameAndEmail {
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headlineText {
+  color: var(--black);
+  margin-bottom: 15px;
+}
+.headlineText2 {
+  margin: 15px 0;
+}
+
+@media (max-width: 425px) {
+  .nameAndEmail span {
+    width: 130px;
+  }
+}

@@ -15,6 +15,8 @@ interface AuthContextType {
   isUserLoggedIn: boolean;
   loading: boolean;
   userData: userDataType | null;
+  currentPatientId: string | null;
+  setCurrentPatientId: (patientId: string | null) => void;
 }
 
 interface Props {
@@ -32,6 +34,8 @@ const AuthContext = createContext<AuthContextType>({
   isUserLoggedIn: false,
   loading: true,
   userData: null,
+  currentPatientId: null,
+  setCurrentPatientId: () => {},
 });
 
 export const useAuth = (): AuthContextType => useContext(AuthContext);
@@ -41,6 +45,13 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<userDataType | null>(null);
+  const [currentPatientId, setCurrentPatientId] = useState<string | null>(
+    localStorage.getItem("currentPatientId") || null
+  );
+
+  useEffect(() => {
+    localStorage.setItem("currentPatientId", currentPatientId || "");
+  }, [currentPatientId]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -62,7 +73,14 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ currentUser, isUserLoggedIn, loading, userData }}
+      value={{
+        currentUser,
+        isUserLoggedIn,
+        loading,
+        userData,
+        currentPatientId,
+        setCurrentPatientId,
+      }}
     >
       {!loading && children}
     </AuthContext.Provider>

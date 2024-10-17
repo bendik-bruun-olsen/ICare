@@ -1,11 +1,11 @@
-import { doc, DocumentData, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { NotificationContext, NotificationType } from "../../types";
+import { NotificationContext, NotificationType, Patient } from "../../types";
 
 export const getPatient = async (
 	patientId: string,
 	addNotification: NotificationContext["addNotification"]
-): Promise<DocumentData | null> => {
+): Promise<Patient | null> => {
 	try {
 		const patientRef = doc(db, "patientdetails", patientId);
 		const patientSnap = await getDoc(patientRef);
@@ -14,8 +14,7 @@ export const getPatient = async (
 			addNotification("Patient not found", NotificationType.ERROR);
 			return null;
 		}
-
-		return patientSnap.data();
+		return patientSnap.data() as Patient;
 	} catch {
 		addNotification("Error fetching patient", NotificationType.ERROR);
 		return null;

@@ -13,65 +13,71 @@ import { NotificationType } from "../../types";
 import { NotificationContext } from "../../context/NotificationContext";
 
 interface NavbarProps {
-	centerContent: string;
+  centerContent: string;
 }
 
 export default function Navbar({ centerContent }: NavbarProps): JSX.Element {
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const navigate = useNavigate();
-	const username = useAuth().userData?.name;
-	const addNotification = useContext(NotificationContext).addNotification;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const username = useAuth().userData?.name;
+  const addNotification = useContext(NotificationContext).addNotification;
 
-	const toggleModalVisibility = (): void => {
-		setIsModalOpen((prev) => !prev);
-	};
+  const toggleModalVisibility = (): void => {
+    setIsModalOpen((prev) => !prev);
+  };
 
-	const handleSignOut = async (): Promise<void> => {
-		try {
-			await auth.signOut();
-			addNotification("Logged out successfully!", NotificationType.SUCCESS);
-		} catch {
-			navigate(Paths.ERROR);
-			addNotification("Error! Please try again later", NotificationType.ERROR);
-		}
-	};
+  const handleSignOut = async (): Promise<void> => {
+    try {
+      await auth.signOut();
+      addNotification("Logged out successfully!", NotificationType.SUCCESS);
+    } catch {
+      navigate(Paths.ERROR);
+      addNotification("Error! Please try again later", NotificationType.ERROR);
+    }
+  };
 
-	return (
-		<nav className={styles.navbar}>
-			<div className={styles.leftContent}>
-				<Logo />
-			</div>
-			<div className={styles.centerContent}>
-				<h1>{centerContent}</h1>
-			</div>
-			<div className={styles.rightContent} onClick={toggleModalVisibility}>
-				<Icon className={styles.userIcon} data={person} size={32} />
-				<span>{capitalizeUsername(username ?? "")}</span>
-			</div>
-			{isModalOpen && (
-				<div className={styles.modalOverlay} onClick={toggleModalVisibility}>
-					<ul className={styles.modalList} onClick={(e) => e.stopPropagation()}>
-						<li className={styles.modalItem}>
-							<NavLink to={Paths.USER_PROFILE}>
-								<Icon data={account_circle} size={24} />
-								<span>User Profile</span>
-							</NavLink>
-						</li>
-						<li className={styles.modalItem}>
-							<NavLink to={Paths.ABOUT}>
-								<Icon data={contacts} size={24} />
-								<span>About Us</span>
-							</NavLink>
-						</li>
-						<li className={styles.modalItem}>
-							<div className={styles.signOutContainer} onClick={handleSignOut}>
-								<Icon data={log_out} size={24} />
-								<span>Sign Out</span>
-							</div>
-						</li>
-					</ul>
-				</div>
-			)}
-		</nav>
-	);
+  return (
+    <nav className={styles.navbar}>
+      <div className={styles.leftContent}>
+        <Logo />
+      </div>
+      <div className={styles.centerContent}>
+        <h1>{centerContent}</h1>
+      </div>
+      <div className={styles.rightContent} onClick={toggleModalVisibility}>
+        <Icon className={styles.userIcon} data={person} size={32} />
+        <span>{capitalizeUsername(username ?? "")}</span>
+      </div>
+      {isModalOpen && (
+        <div className={styles.modalOverlay} onClick={toggleModalVisibility}>
+          <ul className={styles.modalList} onClick={(e) => e.stopPropagation()}>
+            <li className={styles.modalItem}>
+              <NavLink to={Paths.USER_PROFILE}>
+                <Icon data={account_circle} size={24} />
+                <span>User Profile</span>
+              </NavLink>
+            </li>
+            <li className={styles.modalItem}>
+              <NavLink to={Paths.PATIENT_OVERVIEW}>
+                <Icon data={account_circle} size={24} />
+                <span>Switch Patient</span>
+              </NavLink>
+            </li>
+            <li className={styles.modalItem}>
+              <NavLink to={Paths.ABOUT}>
+                <Icon data={contacts} size={24} />
+                <span>About Us</span>
+              </NavLink>
+            </li>
+            <li className={styles.modalItem}>
+              <div className={styles.signOutContainer} onClick={handleSignOut}>
+                <Icon data={log_out} size={24} />
+                <span>Sign Out</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      )}
+    </nav>
+  );
 }

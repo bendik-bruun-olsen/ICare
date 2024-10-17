@@ -4,8 +4,11 @@
 }
 .loginPageWrapper {
   max-width: 960px;
-
   padding: calc(10px + var(--navbar-height)) 16px 0 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
 }
 .inputContainer {
   width: 100%;
@@ -56,4 +59,10 @@
   background-color: var(--fadedblue);
   padding: 15px;
   border-radius: 5px;
+}
+
+@media (min-width: 1024px) {
+  .loginPageWrapper {
+    width: 960px;
+  }
 }

@@ -1,41 +1,41 @@
 .fullPage {
-	width: 100%;
-	margin: 15px auto 80px auto;
-	padding-inline: 0 !important;
-	position: relative;
+  width: 100%;
+  margin: 15px auto 80px auto;
+  padding-inline: 0 !important;
+  position: relative;
 }
 
 .toDoTilesWrapper {
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .toDoTile {
-	margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .categoryStyle {
-	margin-top: 16px;
+  margin-top: 16px;
 }
 
 .categoryStyle h2 {
-	margin-left: 48px;
+  margin-left: 48px;
 }
 
 .addIcon {
-	position: fixed;
-	bottom: 30px;
-	right: 16px;
+  position: fixed;
+  bottom: 30px;
+  right: 16px;
 }
 
 .ignoreCategory {
-	opacity: 0.7;
+  opacity: 0.7;
 }
 
 @media screen and (min-width: 1024px) {
-	.addIcon {
-		position: absolute;
-		bottom: auto;
-	}
+  .addIcon {
+    position: absolute;
+    bottom: auto;
+  }
 }

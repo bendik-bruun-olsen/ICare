@@ -1,0 +1,19 @@
+.fullPage {
+  width: 100%;
+  margin: 15px auto 80px auto;
+  padding-inline: 0 !important;
+  position: relative;
+}
+
+.addIcon {
+  position: fixed;
+  bottom: 30px;
+  right: 16px;
+}
+
+@media screen and (min-width: 1024px) {
+  .addIcon {
+    position: absolute;
+    bottom: -50px;
+  }
+}

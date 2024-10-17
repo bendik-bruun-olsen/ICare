@@ -25,22 +25,25 @@ import {
 interface EditTodoItemProps {
 	todoId: string;
 	updatedTodo: ToDo;
+	patientId: string;
 	addNotification: NotificationContext["addNotification"];
 }
 
 export const editTodoItem = async ({
 	todoId,
 	updatedTodo,
+	patientId,
 	addNotification,
 }: EditTodoItemProps): Promise<boolean> => {
 	try {
-		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const patientRef = doc(db, "patientdetails", patientId);
 		const todoRef = doc(patientRef, "todoItems", todoId);
 
 		await updateDoc(todoRef, { ...updatedTodo });
 		addNotification("Todo edited successfully", NotificationType.SUCCESS);
 		return true;
-	} catch {
+	} catch (error) {
+		console.error("Error editing ToDo item:", error);
 		addNotification("Error editing todo", NotificationType.ERROR);
 		return false;
 	}
@@ -50,10 +53,11 @@ export const editTodoSeries = async (
 	seriesId: string,
 	updatedSeriesInfo: TodoSeriesInfo,
 	currentUser: string,
+	patientId: string,
 	addNotification: NotificationContext["addNotification"]
 ): Promise<boolean> => {
 	try {
-		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const patientRef = doc(db, "patientdetails", patientId);
 		const todoCollection = collection(patientRef, "todoItems");
 		const seriesInfoRef = doc(patientRef, "todoSeriesInfo", seriesId);
 
@@ -81,8 +85,8 @@ export const editTodoSeries = async (
 			updatedSeriesInfo.selectedDays
 		);
 
-		const newTodos = generateTodosForSeries(
-			{
+		const newTodos = generateTodosForSeries({
+			newTodo: {
 				title: updatedSeriesInfo.title,
 				description: updatedSeriesInfo.description,
 				time: updatedSeriesInfo.time,
@@ -93,11 +97,12 @@ export const editTodoSeries = async (
 				id: "",
 				createdBy: currentUser,
 				completedBy: null,
+				patientId: patientId,
 			},
-			formatTimestampToDateString(startOfToday),
-			formatTimestampToDateString(updatedSeriesInfo.endDate),
-			selectedDaysNumbers
-		);
+			startDate: formatTimestampToDateString(startOfToday),
+			endDate: formatTimestampToDateString(updatedSeriesInfo.endDate),
+			selectedDaysNumbers,
+		});
 
 		newTodos.forEach((todo) => {
 			const todoItemRef = doc(todoCollection);
@@ -113,7 +118,9 @@ export const editTodoSeries = async (
 		await batch.commit();
 		addNotification("Series edited successfully", NotificationType.SUCCESS);
 		return true;
-	} catch {
+	} catch (error) {
+		// Add error parameter here
+		console.error("Error editing ToDo series:", error);
 		addNotification("Error editing series", NotificationType.ERROR);
 		return false;
 	}
@@ -122,10 +129,11 @@ export const editTodoSeries = async (
 export const createTodoSeriesFromSingleTodo = async (
 	todoItem: ToDo,
 	seriesInfo: TodoSeriesInfo,
+	patientId: string,
 	addNotification: NotificationContext["addNotification"]
 ): Promise<boolean> => {
 	try {
-		const patientRef = doc(db, "patientdetails", "patient@patient.com");
+		const patientRef = doc(db, "patientdetails", patientId);
 		const seriesCollection = collection(patientRef, "todoSeriesInfo");
 		const todoCollection = collection(patientRef, "todoItems");
 		const todoRef = doc(todoCollection, todoItem.id);
@@ -157,12 +165,12 @@ export const createTodoSeriesFromSingleTodo = async (
 			seriesId: newSeriesRef.id,
 		};
 
-		const newTodos = generateTodosForSeries(
-			updatedTodoItem,
-			formatTimestampToDateString(startOfToday),
-			formatTimestampToDateString(updatedSeriesInfo.endDate),
-			selectedDaysNumbers
-		);
+		const newTodos = generateTodosForSeries({
+			newTodo: updatedTodoItem,
+			startDate: formatTimestampToDateString(startOfToday),
+			endDate: formatTimestampToDateString(updatedSeriesInfo.endDate),
+			selectedDaysNumbers,
+		});
 
 		newTodos.forEach((todo) => {
 			const todoDocRef = doc(todoCollection);
@@ -179,7 +187,8 @@ export const createTodoSeriesFromSingleTodo = async (
 			NotificationType.SUCCESS
 		);
 		return true;
-	} catch {
+	} catch (error) {
+		console.error("Error creating series for ToDo item:", error);
 		addNotification("Error creating series for todo", NotificationType.ERROR);
 		return false;
 	}

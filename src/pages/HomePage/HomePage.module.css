@@ -1,60 +1,66 @@
 .pageContainer {
-	width: 100%;
-	padding-inline: 24px;
-	display: flex;
-	justify-content: center;
-	padding-top: var(--navbar-height);
+  width: 100%;
+  padding-inline: 24px;
+  display: flex;
+  justify-content: center;
+  padding-top: var(--navbar-height);
 }
 
 .pageContent {
-	width: 100%;
-	max-width: 960px;
-	display: flex;
-	flex-direction: column;
-	gap: 40px;
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
-
+._datePickerWrapper_h739x_1 {
+  margin-top: 0px;
+}
+.dateSelector {
+  margin: 0px;
+  padding: 0px;
+}
 .remainingTodosOuterWrapper {
-	width: fit-content;
-	margin: 0 auto;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .remainingTodosInnerWrapper {
-	display: flex;
-	gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .remainingTodosContainer {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .arrowIconWrapper {
-	display: flex;
-	justify-content: end;
-	color: var(--lightblue);
+  display: flex;
+  justify-content: end;
+  color: var(--lightblue);
 }
 
 .arrowIconWrapper a {
-	display: flex;
-	color: var(--blue);
+  display: flex;
+  color: var(--blue);
 }
 
 .arrowIconWrapper span {
-	padding-top: 2px;
-	color: inherit;
+  padding-top: 2px;
+  color: inherit;
 }
 
 @media (min-width: 1024px) {
-	.remainingTodosOuterWrapper {
-		width: 960px;
-	}
-	.remainingTodosContainer {
-		flex-direction: row;
-		gap: 125px;
-	}
-	.remainingTodosInnerWrapper {
-		gap: 125px;
-	}
+  .remainingTodosOuterWrapper {
+    width: 960px;
+  }
+  .remainingTodosContainer {
+    flex-direction: row;
+    gap: 125px;
+  }
+  .remainingTodosInnerWrapper {
+    gap: 125px;
+  }
 }

@@ -1,0 +1,102 @@
+.checkboxAndToDoTileWrapper {
+  display: flex;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.checkboxWrapper {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  clip-path: circle(45% at 50% 50%);
+}
+
+.toDoWrapper {
+  width: 100%;
+  border-radius: 5px;
+  margin-right: 16px;
+  background-color: rgb(241, 241, 241);
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+  position: relative;
+  padding: 18px 10px 0 10px;
+}
+
+.tags {
+  position: absolute;
+  top: -11px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chipOutline {
+  border: 1px solid var(--blue);
+  border-radius: 20px;
+}
+
+.seriesIconContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+  width: 20px;
+  background-color: var(--blue);
+  border-radius: 50%;
+}
+
+.seriesIconContainer svg {
+  color: var(--white);
+}
+
+.title {
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.description {
+  font-size: 0.9rem;
+  padding-bottom: 10px;
+}
+
+.contentContainer {
+  transition: max-height 0.3s ease-out;
+  overflow: hidden;
+}
+
+.expandMenuButtonContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.expandMenuButton {
+  transform: rotate(90deg);
+}
+
+.optionsMenuContainer {
+  position: relative;
+}
+
+.metaDataAndOptionsContainer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.metaDataContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.metaDataText {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.checked {
+  background-color: var(--fadedblue);
+}
