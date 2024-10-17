@@ -1,82 +1,77 @@
 import {
-  NotificationContext,
-  NotificationType,
-  Appointment,
+	NotificationContext,
+	NotificationType,
+	Appointment,
 } from "../../types";
 import { db } from "../firebase";
 import {
-  doc,
-  collection,
-  getDoc,
-  getDocs,
-  query,
-  where,
-  Timestamp,
+	doc,
+	collection,
+	getDoc,
+	getDocs,
+	query,
+	where,
+	Timestamp,
 } from "firebase/firestore";
 
 export const getAppointment = async (
-  appointmentId: string,
-  patientId: string,
-  addNotification: NotificationContext["addNotification"]
+	appointmentId: string,
+	patientId: string,
+	addNotification: NotificationContext["addNotification"]
 ): Promise<Appointment | undefined> => {
-  try {
-    const patientRef = doc(db, "patientdetails", patientId);
-    const appointmentCollection = collection(patientRef, "appointments");
-    const appointmentRef = doc(appointmentCollection, appointmentId);
-    const appointmentSnap = await getDoc(appointmentRef);
+	try {
+		const patientRef = doc(db, "patientdetails", patientId);
+		const appointmentCollection = collection(patientRef, "appointments");
+		const appointmentRef = doc(appointmentCollection, appointmentId);
+		const appointmentSnap = await getDoc(appointmentRef);
 
-    if (!appointmentSnap.exists()) {
-      addNotification("Appointment not found", NotificationType.ERROR);
-    }
-    return appointmentSnap.data() as Appointment;
-  } catch {
-    addNotification("Error fetching appointment", NotificationType.ERROR);
-  }
+		if (!appointmentSnap.exists()) {
+			addNotification("Appointment not found", NotificationType.ERROR);
+		}
+		return appointmentSnap.data() as Appointment;
+	} catch {
+		addNotification("Error fetching appointment", NotificationType.ERROR);
+	}
 };
 
 export const getAppointmentsBySelectedDate = async (
-  selectedDate: Date,
-  patientId: string,
-  addNotification: NotificationContext["addNotification"]
+	selectedDate: Date,
+	patientId: string,
+	addNotification: NotificationContext["addNotification"]
 ): Promise<Appointment[]> => {
-  console.log("selectedDate", selectedDate);
-  console.log("patientId", patientId);
+	try {
+		const patientRef = doc(db, "patientdetails", patientId);
+		const appointmentCollection = collection(patientRef, "appointments");
 
-  try {
-    const patientRef = doc(db, "patientdetails", patientId);
-    const appointmentCollection = collection(patientRef, "appointments");
+		const startOfDay = Timestamp.fromDate(
+			new Date(selectedDate.setHours(0, 0, 0, 0))
+		);
+		const endOfDay = Timestamp.fromDate(
+			new Date(selectedDate.setHours(23, 59, 59, 999))
+		);
 
-    const startOfDay = Timestamp.fromDate(
-      new Date(selectedDate.setHours(0, 0, 0, 0))
-    );
-    const endOfDay = Timestamp.fromDate(
-      new Date(selectedDate.setHours(23, 59, 59, 999))
-    );
+		const q = query(
+			appointmentCollection,
+			where("date", ">=", startOfDay),
+			where("date", "<=", endOfDay)
+		);
 
-    const q = query(
-      appointmentCollection,
-      where("date", ">=", startOfDay),
-      where("date", "<=", endOfDay)
-    );
+		const querySnap = await getDocs(q);
+		if (querySnap.empty) {
+			return [];
+		}
 
-    const querySnap = await getDocs(q);
-    if (querySnap.empty) {
-      return [];
-    }
+		const appointmentsWithId = querySnap.docs.map((doc) => {
+			const data = doc.data() as Appointment;
+			return {
+				...data,
+				id: doc.id,
+			};
+		});
 
-    const appointmentsWithId = querySnap.docs.map((doc) => {
-      const data = doc.data() as Appointment;
-      return {
-        ...data,
-        id: doc.id,
-      };
-    });
-
-    console.log("appointmentsWithId", appointmentsWithId);
-
-    return appointmentsWithId;
-  } catch {
-    addNotification("Error fetching appointments", NotificationType.ERROR);
-    return [];
-  }
+		return appointmentsWithId;
+	} catch {
+		addNotification("Error fetching appointments", NotificationType.ERROR);
+		return [];
+	}
 };
