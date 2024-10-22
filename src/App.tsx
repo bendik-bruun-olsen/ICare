@@ -2,7 +2,7 @@ import router from "./routes";
 import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth/useAuth";
 import { NotificationProvider } from "./context/NotificationContext";
-import Snackbar from "./components/Snackbar/Snackbar";
+import Snackbar from "./components/SnackBar/Snackbar";
 
 export default function App(): JSX.Element {
 	return (

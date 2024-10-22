@@ -16,7 +16,7 @@ export default function PatientDetails({
 	age,
 }: PatientDetailsProps): JSX.Element {
 	const { currentUser, currentPatientId: patientId } = useAuth();
-	const [pictureUrl, setPictureUrl] = useState<string>("");
+	const [pictureUrl, setPictureUrl] = useState<File>();
 	const currentPatientId = useAuth().currentPatientId;
 
 	useEffect(() => {
@@ -38,7 +38,7 @@ export default function PatientDetails({
 			<div className={styles.patientDetailsWrapper}>
 				<div className={styles.patientInfoBlock}>
 					<PatientProfilePicture
-						setProfileImage={pictureUrl}
+						setProfileImage={setPictureUrl}
 						patientId={currentPatientId || ""}
 						showIcon={false}
 						showMaxFileSize={false}
