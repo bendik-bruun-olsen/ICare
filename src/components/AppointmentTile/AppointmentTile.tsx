@@ -1,14 +1,15 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Icon, Checkbox, Chip, Button } from "@equinor/eds-core-react";
+import { Icon, Button } from "@equinor/eds-core-react";
 import { arrow_back_ios, arrow_forward_ios } from "@equinor/eds-icons";
 import styles from "./AppointmentTile.module.css";
 import { Appointment, AppointmentStatus, NotificationType } from "../../types";
 import { capitalizeUsername } from "../../utils";
 import getNameFromEmail from "../../firebase/userServices/getNameFromEmail";
-import { useAuth } from "../../hooks/useAuth/useAuth";
-import AppointmentModalOptions from "./AppointmentModalOptions";
 import { NotificationContext } from "../../context/NotificationContext";
-import { updateAppointmentStatusInDB } from "../../firebase/appointmentServices/updateAppoinmentStatusInDB";
+import { useNavigate } from "react-router-dom";
+import { Paths } from "../../paths";
+import { deleteAppointment } from "../../firebase/appointmentServices/deleteAppointment";
+import DeleteConfirmModal from "../DeleteConfirmModal/DeleteConfirmModal";
 
 interface AppointmentTileProps {
   selectedDate: Date;
@@ -22,29 +23,23 @@ enum overflowStatus {
 }
 
 export default function AppointmentTile({
-  selectedDate,
   appointmentItem: appointmentItem,
-  onStatusChange,
 }: AppointmentTileProps): JSX.Element {
-  const [currentTaskStatus, setCurrentTaskStatus] = useState<AppointmentStatus>(
-    appointmentItem.status
-  );
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [displayDropdownAbove, setDisplayDropdownAbove] = useState(false);
   const [createdByName, setCreatedByName] = useState("unknown");
   const [isMenuExpanded, setIsMenuExpanded] = useState(false);
   const [contentMaxHeight, setContentMaxHeight] = useState("30px");
   const [contentContainerOverflow, setContentContainerOverflow] = useState(
     overflowStatus.hidden
   );
+  const navigate = useNavigate();
 
   const { addNotification } = useContext(NotificationContext);
-  const currentUser = useAuth().userData?.email;
 
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const optionsIconRef = useRef<SVGSVGElement>(null);
   const overflowTimeoutRef = useRef<number | undefined>();
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const defaultContentMaxHeight = 65;
 
@@ -96,75 +91,34 @@ export default function AppointmentTile({
     setIsMenuExpanded((prev) => !prev);
   };
 
-  const toggleModal = (): void => setIsModalOpen((prev) => !prev);
-
-  const handleOptionsClick = (): void => {
-    if (optionsIconRef.current) {
-      const rect = optionsIconRef.current.getBoundingClientRect();
-      const spaceBelow = window.innerHeight - rect.bottom;
-      setDisplayDropdownAbove(spaceBelow < 180);
-    }
-    toggleModal();
+  const navigateToEditPage = (): void => {
+    navigate(
+      Paths.EDIT_APPOINTMENT.replace(":appointmentId", appointmentItem.id)
+    );
   };
 
-  const handleStatusChange = async (
-    newStatus: AppointmentStatus
-  ): Promise<void> => {
-    if (!currentUser) return;
+  const handleDeleteAppointment = async (): Promise<void> => {
     try {
-      setCurrentTaskStatus(newStatus);
-      onStatusChange(appointmentItem.id, newStatus);
-      await updateAppointmentStatusInDB(
+      await deleteAppointment(
         appointmentItem.id,
-        newStatus,
         appointmentItem.patientId,
         addNotification
       );
+
+      location.reload();
     } catch (error) {
       addNotification(
-        "Error updating appointment status",
+        "Error deleting appointment, please try again later",
         NotificationType.ERROR
       );
+    } finally {
+      setIsConfirmModalOpen(false);
     }
-  };
-
-  const renderChip = (): JSX.Element => {
-    const chipMapping = {
-      [AppointmentStatus.checked]: { variant: "active", label: "Completed" },
-      [AppointmentStatus.unchecked]: { variant: "default", label: "Active" },
-      [AppointmentStatus.cancelled]: { variant: "error", label: "Ignored" },
-    };
-    const currentChip = chipMapping[currentTaskStatus] || chipMapping.unchecked;
-    return (
-      <div
-        className={currentChip.variant === "error" ? "" : styles.chipOutline}
-      >
-        <Chip variant={currentChip.variant as "default" | "active" | "error"}>
-          {currentChip.label}
-        </Chip>
-      </div>
-    );
   };
 
   return (
     <div className={styles.checkboxAndToDoTileWrapper}>
-      <Checkbox
-        checked={currentTaskStatus === AppointmentStatus.checked}
-        onChange={() =>
-          handleStatusChange(
-            currentTaskStatus === AppointmentStatus.checked
-              ? AppointmentStatus.unchecked
-              : AppointmentStatus.checked
-          )
-        }
-        disabled={currentTaskStatus === AppointmentStatus.cancelled}
-      />
-      <div
-        className={`${styles.toDoWrapper} ${
-          currentTaskStatus === AppointmentStatus.checked ? styles.checked : ""
-        }`}
-      >
-        <div className={styles.tags}>{renderChip()}</div>
+      <div className={`${styles.toDoWrapper}`}>
         <h3 className={styles.title}>
           {`${appointmentItem.time} - ${appointmentItem.title}`}
         </h3>
@@ -186,19 +140,18 @@ export default function AppointmentTile({
               </span>
             </div>
             <div className={styles.optionsMenuContainer}>
-              <Button onClick={handleOptionsClick} ref={optionsIconRef}>
-                Options
-              </Button>
-              {isModalOpen && (
-                <AppointmentModalOptions
-                  isAbove={displayDropdownAbove}
-                  onClose={toggleModal}
-                  onStatusChange={handleStatusChange}
-                  currentTaskStatus={currentTaskStatus}
-                  appointmentItem={appointmentItem}
-                  selectedDate={selectedDate}
-                />
-              )}
+              <div className={styles.buttons}>
+                <Button onClick={navigateToEditPage} ref={optionsIconRef}>
+                  Edit
+                </Button>
+                <Button
+                  onClick={() => setIsConfirmModalOpen(true)}
+                  ref={optionsIconRef}
+                  color="danger"
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -211,6 +164,12 @@ export default function AppointmentTile({
           </Button>
         </div>
       </div>
+      <DeleteConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleDeleteAppointment}
+        type="appointment"
+      />
     </div>
   );
 }

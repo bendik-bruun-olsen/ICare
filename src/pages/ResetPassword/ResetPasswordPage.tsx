@@ -70,41 +70,41 @@ export default function ResetPasswordPage(): JSX.Element {
       <img src={BannerImage} alt="logo-image" className={styles.bannerImage} />
       <div className={styles.formContainer}>
         <form onSubmit={handleResetPassword}>
-          <InputWrapper
-            className={styles.input}
-            labelProps={{
-              label: "New password",
-              htmlFor: "textfield-password",
-              // style: { display: "block" },
-            }}
-          >
-            <Input
-              type="password"
-              id="password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-            />
-          </InputWrapper>
-          <InputWrapper
-            className={styles.input}
-            labelProps={{
-              label: "Confirm new password",
-              htmlFor: "textfield-password",
-              // style: { display: "block" },
-            }}
-          >
-            <Input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              required
-            />
-          </InputWrapper>
-          <Button type="submit" className={styles.resetButton}>
-            Reset Password
-          </Button>
+          <div className="inputBackgroundBox">
+            <InputWrapper
+              className={styles.input}
+              labelProps={{
+                label: "New password",
+                htmlFor: "textfield-password",
+              }}
+            >
+              <Input
+                type="password"
+                id="password"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+              />
+            </InputWrapper>
+            <InputWrapper
+              className={styles.input}
+              labelProps={{
+                label: "Confirm new password",
+                htmlFor: "textfield-password",
+              }}
+            >
+              <Input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                required
+              />
+            </InputWrapper>
+          </div>
+          <div className={styles.resetButton}>
+            <Button type="submit">Reset Password</Button>
+          </div>
         </form>
       </div>
       {message && <p>{message}</p>}
