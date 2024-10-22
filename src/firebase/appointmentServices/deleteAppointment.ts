@@ -13,14 +13,17 @@ export const deleteAppointment = async (
     const appointmentRef = doc(appointmentCollection, appointmentId);
 
     if (!appointmentRef) {
-      addNotification("Todo not found", NotificationType.ERROR);
+      addNotification("Appointment not found", NotificationType.ERROR);
       return;
     }
     await deleteDoc(appointmentRef);
-    addNotification("Todo deleted successfully", NotificationType.SUCCESS);
+    addNotification(
+      "Appointment deleted successfully",
+      NotificationType.SUCCESS
+    );
   } catch (error) {
     addNotification(
-      "Error deleting todo, please try again later",
+      "Error deleting appointment, please try again later",
       NotificationType.ERROR
     );
   }

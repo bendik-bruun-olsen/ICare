@@ -26,7 +26,7 @@ export const editAppointment = async ({
       date:
         updatedAppointment.date instanceof Date
           ? updatedAppointment.date
-          : new Date(updatedAppointment.date),
+          : updatedAppointment.date.toDate(),
     };
 
     const patientRef = doc(db, "patientdetails", patientId);

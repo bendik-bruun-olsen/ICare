@@ -100,3 +100,9 @@
 .checked {
   background-color: var(--fadedblue);
 }
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-right: 5px;
+}
