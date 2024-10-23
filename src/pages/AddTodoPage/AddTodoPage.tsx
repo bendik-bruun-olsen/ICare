@@ -315,9 +315,15 @@ const AddToDoPage: React.FC = () => {
                     />
                     <StartAndEndDate
                       label={isRepeating ? "Start date" : "Date"}
-                      value={formatTimestampToDateString(
-                        isRepeating ? todoSeriesInfo.startDate : todoItem.date
-                      )}
+                      value={
+                        new Date(
+                          formatTimestampToDateString(
+                            isRepeating
+                              ? todoSeriesInfo.startDate
+                              : todoItem.date
+                          )
+                        )
+                      }
                       onChange={(date) =>
                         handleDateChange(
                           isRepeating ? "startDate" : "date",
@@ -359,9 +365,11 @@ const AddToDoPage: React.FC = () => {
                   <>
                     <StartAndEndDate
                       label="End date"
-                      value={formatTimestampToDateString(
-                        todoSeriesInfo.endDate
-                      )}
+                      value={
+                        new Date(
+                          formatTimestampToDateString(todoSeriesInfo.endDate)
+                        )
+                      }
                       onChange={(date) => handleDateChange("endDate", date)}
                       variant={todoSeriesInputFieldStatus.endDate}
                       minValue={endDateMinValue}

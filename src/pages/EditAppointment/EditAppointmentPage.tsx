@@ -216,7 +216,9 @@ const EditAppointmentPage: React.FC = () => {
                 <div className={styles.scheduleControlsContainer}>
                   <StartAndEndDate
                     label="Date"
-                    value={formatTimestampToDateString(appointment?.date)}
+                    value={
+                      new Date(formatTimestampToDateString(appointment?.date))
+                    }
                     onChange={handleDateChange}
                     variant={appointmentInputFieldStatus.date}
                     minValue={undefined}
