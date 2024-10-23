@@ -7,51 +7,36 @@ import { useEffect, useState } from "react";
 import PatientProfilePicture from "../PatientProfilePicture/PatientProfilePicture";
 
 interface PatientDetailsProps {
-	patientName: string;
-	age: string;
+  patientName: string;
+  age: string;
 }
 
 export default function PatientDetails({
-	patientName,
-	age,
+  patientName,
+  age,
 }: PatientDetailsProps): JSX.Element {
-	const { currentUser, currentPatientId: patientId } = useAuth();
-	const [pictureUrl, setPictureUrl] = useState<File>();
-	const currentPatientId = useAuth().currentPatientId;
+  const { currentPatientId: patientId } = useAuth();
+  const currentPatientId = useAuth().currentPatientId;
 
-	useEffect(() => {
-		const fetchProfilePicture = async (): Promise<void> => {
-			if (currentUser?.email && currentPatientId) {
-				const url = await getPatientPicture(currentPatientId);
-				if (url) {
-					setPictureUrl(url);
-				}
-			}
-		};
-
-		fetchProfilePicture();
-	}, [currentUser, currentPatientId]);
-
-	if (!patientId) return <></>;
-	return (
-		<>
-			<div className={styles.patientDetailsWrapper}>
-				<div className={styles.patientInfoBlock}>
-					<PatientProfilePicture
-						setProfileImage={setPictureUrl}
-						patientId={currentPatientId || ""}
-						showIcon={false}
-						showMaxFileSize={false}
-					/>
-					<div className={styles.PatientInfo}>
-						<h2>{patientName}</h2>
-						<p>Age: {age}</p>
-					</div>
-				</div>
-				<div className={styles.morePatientDetails}>
-					<Link to={Paths.PATIENT_DETAILS}>Patient details</Link>
-				</div>
-			</div>
-		</>
-	);
+  if (!patientId) return <></>;
+  return (
+    <>
+      <div className={styles.patientDetailsWrapper}>
+        <div className={styles.patientInfoBlock}>
+          <PatientProfilePicture
+            patientId={currentPatientId || ""}
+            showIcon={false}
+            showMaxFileSize={false}
+          />
+          <div className={styles.PatientInfo}>
+            <h2>{patientName}</h2>
+            <p>Age: {age}</p>
+          </div>
+        </div>
+        <div className={styles.morePatientDetails}>
+          <Link to={Paths.PATIENT_DETAILS}>Patient details</Link>
+        </div>
+      </div>
+    </>
+  );
 }

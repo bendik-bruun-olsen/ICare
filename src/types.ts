@@ -182,7 +182,7 @@ export type InfoFieldType = {
 };
 
 export interface PatientProfilePictureProps {
-  setProfileImage?: Dispatch<SetStateAction<File>>;
+  setProfileImage?: Dispatch<SetStateAction<File | null>>;
   patientId: string;
   showIcon?: boolean;
   showMaxFileSize?: boolean;
