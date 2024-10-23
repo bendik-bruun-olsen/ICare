@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import { Icon } from "@equinor/eds-core-react";
 import { camera_add_photo } from "@equinor/eds-icons";
-import { useAuth } from "../../hooks/useAuth/useAuth";
 import { getDefaultPictureUrl } from "../../firebase/patientImageServices/defaultImage";
 import styles from "./PatientProfilePicture.module.css";
 import { NotificationType, PatientProfilePictureProps } from "../../types";

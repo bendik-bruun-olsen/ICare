@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import styles from "./PatientDetails.module.css";
 import { Paths } from "../../paths";
 import { useAuth } from "../../hooks/useAuth/useAuth";
-import { getPatientPicture } from "../../firebase/patientImageServices/getPatientPicture";
-import { useEffect, useState } from "react";
 import PatientProfilePicture from "../PatientProfilePicture/PatientProfilePicture";
 
 interface PatientDetailsProps {
