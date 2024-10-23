@@ -75,7 +75,9 @@ export default function AddAppointmentPage(): JSX.Element {
               <div className={styles.fieldContainer}>
                 <StartAndEndDate
                   label="Select Date"
-                  value={formatTimestampToDateString(appointmentData.date)}
+                  value={
+                    new Date(formatTimestampToDateString(appointmentData.date))
+                  }
                   onChange={(date) =>
                     setAppointmentData((prev) => ({
                       ...prev,
