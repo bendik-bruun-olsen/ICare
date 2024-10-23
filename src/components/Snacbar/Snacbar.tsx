@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Icon, Button } from "@equinor/eds-core-react";
 import { close } from "@equinor/eds-icons";
-import styles from "./Snackbar.module.css";
+import styles from "./Snacbar.module.css";
 import { NotificationContext } from "../../context/NotificationContext";
 import { NotificationType } from "../../types";
 
