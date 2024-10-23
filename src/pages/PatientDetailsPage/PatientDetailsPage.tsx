@@ -2,8 +2,11 @@ import { Button, Icon, Input, InputWrapper } from "@equinor/eds-core-react";
 import {
   Caretaker,
   FormFieldProps,
+  InfoFieldType,
   NewPatient,
   NotificationType,
+  healthInfoFields,
+  personalInfoFields,
 } from "../../types";
 import styles from "./PatientDetailsPage.module.css";
 import Navbar from "../../components/Navbar/Navbar";
@@ -238,18 +241,6 @@ export default function PatientDetailsPage(): JSX.Element {
     setIsLoading(false);
   };
 
-  const personalInfoFields = [
-    { label: "Name", name: "name", required: true, type: "text" },
-    { label: "Age", name: "age", required: false, type: "number" },
-    { label: "Phone", name: "phone", required: true, type: "number" },
-    { label: "Address", name: "address", required: true, type: "text" },
-  ];
-
-  const healthInfoFields = [
-    { label: "Diagnoses", name: "diagnoses", type: "text" },
-    { label: "Allergies", name: "allergies", type: "text" },
-  ];
-
   if (isLoading) {
     return <Loading />;
   }
@@ -260,7 +251,7 @@ export default function PatientDetailsPage(): JSX.Element {
       <div className={styles.fullWrapper} ref={fullInfoContainerRef}>
         <div className={styles.profilePictureWrapper}>
           <PatientProfilePicture
-            setProfileImage={setProfileImage}
+            setProfileImage={setPictureUrl}
             patientId={currentPatientId || ""}
             showIcon={true}
             showMaxFileSize={true}
@@ -278,7 +269,7 @@ export default function PatientDetailsPage(): JSX.Element {
                 <Icon data={edit} />
               </Button>
             </div>
-            {personalInfoFields.map((field) => (
+            {personalInfoFields.map((field: InfoFieldType) => (
               <FormField
                 key={field.name}
                 label={field.label}
@@ -293,17 +284,20 @@ export default function PatientDetailsPage(): JSX.Element {
           </div>
           <div className={`${styles.healthInfoSection} dropShadow`}>
             <h2 className={styles.headlineText}>Health Information</h2>
-            {healthInfoFields.map((field) => (
-              <FormField
-                key={field.name}
-                label={field.label}
-                name={field.name}
-                value={formData[field.name]}
-                onChange={handleChange}
-                type={field.type}
-                readOnly={!isEditing}
-              />
-            ))}
+            {healthInfoFields.map((field) => {
+              console.log(formData[field.name]);
+              return (
+                <FormField
+                  key={field.name}
+                  label={field.label}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  type={field.type}
+                  readOnly={!isEditing}
+                />
+              );
+            })}
           </div>
           <div className={`${styles.caretakerInfoSection} dropShadow`}>
             <h2 className={styles.headlineText}>Assign caretakers</h2>

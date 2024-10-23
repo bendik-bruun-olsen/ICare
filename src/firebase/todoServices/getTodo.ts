@@ -85,7 +85,7 @@ export const getTodosBySelectedDate = async (
       ...doc.data(),
       id: doc.id,
     }));
-    return todosWithId;
+    return todosWithId as ToDo[];
   } catch {
     addNotification("Error fetching todos", NotificationType.ERROR);
     return [];

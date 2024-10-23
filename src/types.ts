@@ -3,225 +3,244 @@ import { Timestamp } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
 
 export enum ToDoStatus {
-	unchecked = "unchecked",
-	checked = "checked",
-	ignore = "ignore",
+  unchecked = "unchecked",
+  checked = "checked",
+  ignore = "ignore",
 }
 
 export enum AppointmentStatus {
-	unchecked = "unchecked",
-	checked = "checked",
-	cancelled = "cancelled",
+  unchecked = "unchecked",
+  checked = "checked",
+  cancelled = "cancelled",
 }
 
 export enum GenderOptions {
-	MALE = "Male",
-	FEMALE = "Female",
-	OTHERS = "Others",
+  MALE = "Male",
+  FEMALE = "Female",
+  OTHERS = "Others",
 }
 
 export enum NotificationType {
-	SUCCESS = "success",
-	ERROR = "error",
-	INFO = "info",
+  SUCCESS = "success",
+  ERROR = "error",
+  INFO = "info",
 }
 
 export interface Notification {
-	id: number;
-	message: string;
-	type: NotificationType;
+  id: number;
+  message: string;
+  type: NotificationType;
 }
 
 export interface NotificationContext {
-	notifications: Notification[];
-	addNotification: (message: string, type: NotificationType) => void;
-	removeNotification: (id: number) => void;
+  notifications: Notification[];
+  addNotification: (message: string, type: NotificationType) => void;
+  removeNotification: (id: number) => void;
 }
 
 export interface ToDo {
-	title: string;
-	description: string;
-	date: Timestamp;
-	time: string;
-	category: string | null;
-	status: ToDoStatus;
-	seriesId: string | null;
-	id: string;
-	createdBy: string;
-	completedBy: string | null;
-	patientId: string;
+  title: string;
+  description: string;
+  date: Timestamp;
+  time: string;
+  category: string | null;
+  status: ToDoStatus;
+  seriesId: string | null;
+  id: string;
+  createdBy: string;
+  completedBy: string | null;
+  patientId: string;
 }
 
 export interface TodoSeriesInfo {
-	title: string;
-	description: string;
-	time: string;
-	category: string | null;
-	startDate: Timestamp;
-	endDate: Timestamp;
-	selectedDays: string[];
+  title: string;
+  description: string;
+  time: string;
+  category: string | null;
+  startDate: Timestamp;
+  endDate: Timestamp;
+  selectedDays: string[];
 }
 
 export interface DeleteConfirmModalProps {
-	isOpen: boolean;
-	onClose: () => void;
-	onConfirm: () => void;
-	type: "item" | "series" | "appointment";
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  type: "item" | "series" | "appointment";
 }
 
 export interface TodoItemInputStatusProps {
-	title?: Variants;
-	description?: Variants;
-	category?: Variants;
-	date?: Variants;
-	time?: Variants;
+  title?: Variants;
+  description?: Variants;
+  category?: Variants;
+  date?: Variants;
+  time?: Variants;
 }
 
 export interface TodoSeriesInputStatusProps {
-	title?: Variants;
-	description?: Variants;
-	startDate?: Variants;
-	endDate?: Variants;
-	time?: Variants;
-	selectedDays?: Variants;
-	category?: Variants;
+  title?: Variants;
+  description?: Variants;
+  startDate?: Variants;
+  endDate?: Variants;
+  time?: Variants;
+  selectedDays?: Variants;
+  category?: Variants;
 }
 
 export interface Appointment {
-	id: string;
-	title: string;
-	description: string;
-	date: Timestamp;
-	time: string;
-	createdBy: string;
-	status: AppointmentStatus;
-	patientId: string;
+  id: string;
+  title: string;
+  description: string;
+  date: Timestamp;
+  time: string;
+  createdBy: string;
+  status: AppointmentStatus;
+  patientId: string;
 }
 
 export interface AssignedPatient {
-	patientId: string;
-	patientName: string;
+  patientId: string;
+  patientName: string;
 }
 
 export interface AdministeredPatient {
-	patientId: string;
-	patientName: string;
+  patientId: string;
+  patientName: string;
 }
 
 export interface User {
-	name: string;
-	age?: number;
-	gender?: GenderOptions;
-	phone?: string;
-	email: string;
-	administeredPatients: AdministeredPatient[];
-	assignedPatients: AssignedPatient[];
+  name: string;
+  age?: number;
+  gender?: GenderOptions;
+  phone?: string;
+  email: string;
+  administeredPatients: AdministeredPatient[];
+  assignedPatients: AssignedPatient[];
 }
 
 export interface UserProfilePicUrl {
-	profilePictureUrl?: string;
+  profilePictureUrl?: string;
 }
 
-export interface NewPatient {
-	name: string;
-	age: string;
-	phone: string;
-	address: string;
-	diagnoses: string;
-	allergies: string;
-	caretakers: Caretaker[];
-	profilePictureUrl?: string;
-	createdBy?: string;
-}
+export type NewPatient = {
+  name: string;
+  age: string;
+  phone: string;
+  address: string;
+  diagnoses: string;
+  allergies: string;
+  caretakers: Caretaker[];
+  profilePictureUrl?: string;
+  createdBy?: string;
+};
 
 export interface Patient {
-	name: string;
-	age: string;
-	phone: string;
-	address: string;
-	diagnoses: string;
-	allergies: string;
-	caretakers: Caretaker[];
-	profilePictureUrl?: string;
-	id: string;
-	createdBy: string;
+  name: string;
+  age: string;
+  phone: string;
+  address: string;
+  diagnoses: string;
+  allergies: string;
+  caretakers: Caretaker[];
+  profilePictureUrl?: string;
+  id: string;
+  createdBy: string;
 }
 
 export interface Caretaker {
-	name: string;
-	email: string;
+  name: string;
+  email: string;
 }
 
 export interface FormFieldProps {
-	label?: string;
-	name: string;
-	value: string;
-	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	required?: boolean;
-	type: string;
-	readOnly?: boolean;
+  label?: string;
+  name: string;
+  value?: string | Caretaker[];
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  type: string;
+  readOnly?: boolean;
 }
 
+export const personalInfoFields: Array<InfoFieldType> = [
+  { label: "Name", name: "name", required: true, type: "text" },
+  { label: "Age", name: "age", required: false, type: "number" },
+  { label: "Phone", name: "phone", required: true, type: "number" },
+  { label: "Address", name: "address", required: true, type: "text" },
+];
+
+export const healthInfoFields: Array<InfoFieldType> = [
+  { label: "Diagnoses", name: "diagnoses", type: "text" },
+  { label: "Allergies", name: "allergies", type: "text" },
+];
+
+export type InfoFieldType = {
+  label: string;
+  name: keyof Required<NewPatient>;
+  required?: boolean;
+  type: string;
+};
+
 export interface PatientProfilePictureProps {
-	setProfileImage: Dispatch<SetStateAction<File | null>>;
-	patientId: string;
-	showIcon?: boolean;
-	showMaxFileSize?: boolean;
+  setProfileImage?: Dispatch<SetStateAction<File>>;
+  patientId: string;
+  showIcon?: boolean;
+  showMaxFileSize?: boolean;
 }
 
 export interface EmergencyContact {
-	name: string;
-	phone: string;
-	email: string;
-	relation: string;
+  name: string;
+  phone: string;
+  email: string;
+  relation: string;
 }
 
 export interface validateDateRangeProps {
-	startDate: Timestamp;
-	endDate: Timestamp;
-	addNotification: NotificationContext["addNotification"];
+  startDate: Timestamp;
+  endDate: Timestamp;
+  addNotification: NotificationContext["addNotification"];
 }
 
 export interface clearTodoSeriesInputStatusProps {
-	todoSeriesInfo: TodoSeriesInfo;
-	setTodoSeriesInputFieldStatus: Dispatch<
-		SetStateAction<TodoSeriesInputStatusProps>
-	>;
+  todoSeriesInfo: TodoSeriesInfo;
+  setTodoSeriesInputFieldStatus: Dispatch<
+    SetStateAction<TodoSeriesInputStatusProps>
+  >;
 }
 
 export interface validateTodoSeriesFieldsProps {
-	todoSeriesInfo: TodoSeriesInfo;
-	setTodoSeriesInputFieldStatus: Dispatch<
-		SetStateAction<TodoSeriesInputStatusProps>
-	>;
-	addNotification: NotificationContext["addNotification"];
+  todoSeriesInfo: TodoSeriesInfo;
+  setTodoSeriesInputFieldStatus: Dispatch<
+    SetStateAction<TodoSeriesInputStatusProps>
+  >;
+  addNotification: NotificationContext["addNotification"];
 }
 
 export interface validateTodoItemFieldsProps {
-	todoItem: ToDo;
-	setTodoItemInputFieldStatus: Dispatch<
-		SetStateAction<TodoItemInputStatusProps>
-	>;
-	addNotification: NotificationContext["addNotification"];
+  todoItem: ToDo;
+  setTodoItemInputFieldStatus: Dispatch<
+    SetStateAction<TodoItemInputStatusProps>
+  >;
+  addNotification: NotificationContext["addNotification"];
 }
 
 export interface PatientPreview {
-	name: string;
-	email: string;
+  name: string;
+  email: string;
 }
 
 export interface AppointmentInputStatusProps {
-	title?: Variants;
-	description?: Variants;
-	category?: Variants;
-	date?: Variants;
-	time?: Variants;
+  title?: Variants;
+  description?: Variants;
+  category?: Variants;
+  date?: Variants;
+  time?: Variants;
 }
 
 export interface validateAppointmentItemFieldsProps {
-	appointmentItem: Appointment;
-	setAppointmentItemInputFieldStatus: Dispatch<
-		SetStateAction<AppointmentInputStatusProps>
-	>;
-	addNotification: NotificationContext["addNotification"];
+  appointmentItem: Appointment;
+  setAppointmentItemInputFieldStatus: Dispatch<
+    SetStateAction<AppointmentInputStatusProps>
+  >;
+  addNotification: NotificationContext["addNotification"];
 }
