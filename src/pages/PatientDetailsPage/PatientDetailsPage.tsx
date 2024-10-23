@@ -251,7 +251,7 @@ export default function PatientDetailsPage(): JSX.Element {
       <div className={styles.fullWrapper} ref={fullInfoContainerRef}>
         <div className={styles.profilePictureWrapper}>
           <PatientProfilePicture
-            setProfileImage={setPictureUrl}
+            setProfileImage={setProfileImage}
             patientId={currentPatientId || ""}
             showIcon={true}
             showMaxFileSize={true}
